@@ -1,0 +1,74 @@
+///////////////////////// Imports ///////////////////////////
+
+@import "compass";
+
+///////////////////////// Variables /////////////////////////
+
+$amy-tile-header-height: 26px;
+$amy-tile-border-width: 1px;
+//$amy-tile-border-width: 0;
+$amy-tile-status-icon-size: 10px;
+
+///////////////////////// Rules /////////////////////////////
+
+
+
+
+.tile {
+
+	background: rgba(.4, .4, .4, .5); // TODO: remove
+
+
+	@include user-select(none);
+	cursor:       crosshair;
+	text-align:   center;
+	overflow:     hidden;
+	border-width: $amy-tile-border-width;
+	&.active {
+		border-style: solid;
+	}
+	&:not(.active) {
+		border-style: dashed;
+	}
+
+	////////// The Header //////////
+
+	& > header {
+		display:         flex;
+		align-items:     center;
+		justify-content: center;
+		font-weight:     bold;
+		border-width:    1px;
+	}
+
+	&.open > header {
+		height:       $amy-tile-header-height;
+		border-style: none none solid none;
+		line-height:  $amy-tile-header-height;
+		font-size:    .8 * $amy-tile-header-height;
+		white-space:  nowrap;
+		overflow:     hidden;
+	}
+
+	&:not(.open) > header {
+		border-style: none;
+	}
+
+	////////// The Content Section //////////
+
+	& > section {
+		@include user-select(text);
+	}
+	&:not(.open) > section {
+		display: none;
+	}
+
+	////////// Hiding the header for tiles that are open & maximized //////////
+
+	&.hidden-header {
+		& > header {
+			display: none !important;
+		}
+	}
+
+}

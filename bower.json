@@ -1,0 +1,20 @@
+{
+  "name": "apinatomy-core",
+  "version": "0.1.1",
+  "authors": [
+    "mhelvens <mhelvens@gmail.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.1",
+    "jquery-ui": "~1.11.1"
+  }
+}

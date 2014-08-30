@@ -1,0 +1,11 @@
+{
+  "name": "apinatomy-core",
+  "version": "0.1.1",
+  "description": "",
+  "main": "apinatomy.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
