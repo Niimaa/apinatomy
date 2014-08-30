@@ -6,19 +6,11 @@
 
 $amy-tile-header-height: 26px;
 $amy-tile-border-width: 1px;
-//$amy-tile-border-width: 0;
 $amy-tile-status-icon-size: 10px;
 
 ///////////////////////// Rules /////////////////////////////
 
-
-
-
 .tile {
-
-	background: rgba(.4, .4, .4, .5); // TODO: remove
-
-
 	@include user-select(none);
 	cursor:       crosshair;
 	text-align:   center;
