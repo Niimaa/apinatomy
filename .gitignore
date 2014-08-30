@@ -1,0 +1,12 @@
+node_modules
+bower_components
+.grunt
+.sass-cache
+tmp
+gulp-tsc-tmp-*
+.gulp-tsc-tmp-*
+*.js.map
+*.d.ts
+*.css
+*.log
+SpecRunner.html
