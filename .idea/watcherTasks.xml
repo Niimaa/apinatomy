@@ -9,7 +9,7 @@
       <option name="fileExtension" value="scss" />
       <option name="immediateSync" value="true" />
       <option name="name" value="Compass scss" />
-      <option name="output" value="$PROJECT_DIR$" />
+      <option name="output" value="$FileNameWithoutExtension$.css" />
       <option name="outputFilters">
         <array />
       </option>
