@@ -3,10 +3,12 @@ define(['jquery', './util.js', './amy-tile.js'], function ($) {
 
 	$.CSS('.circuitboard.tilemap, .circuitboard .tilemap')
 		.addRule('display', 'flex')
-		.addRule('flex-direction', 'column');
+		.addRule('flex-direction', 'column')
+		.addRule('justify-content', 'space-between');
 	$.CSS('.circuitboard .tilerow')
 		.addRule('display', 'flex')
 		.addRule('flex-direction', 'row')
+		.addRule('justify-content', 'space-between')
 		.addRule('margin', 0)
 		.addRule('padding', 0)
 		.addRule('height', 0);
@@ -15,7 +17,7 @@ define(['jquery', './util.js', './amy-tile.js'], function ($) {
 
 	$.amyWidget('tilemap', {
 		cssClass:    "tilemap",
-		filter: $.returns(true),
+		filter:      $.returns(true),
 		model:       null,
 		tileSpacing: 0,
 		_cb:         null
