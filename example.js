@@ -14,7 +14,7 @@ requirejs.config({
 });
 
 //// Example application
-require(['jquery', 'src/amy-circuitboard.js', 'domReady!'], function ($) {
+require(['jquery', 'jquery-ui', 'src/amy-circuitboard.js', 'domReady!'], function ($) {
 
 	function Model(id, children) {
 		this.id = id;

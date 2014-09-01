@@ -1,17 +1,31 @@
 //noinspection BadExpressionStatementJS
 ({
-	baseUrl:                "./src",
 	paths:                  {
-		'jquery':    "../bower_components/jquery/dist/jquery",
-		'jquery-ui': "../bower_components/jquery-ui/jquery-ui"
+		'jquery':    "bower_components/jquery/dist/jquery",
+		'jquery-ui': "bower_components/jquery-ui/jquery-ui"
 	},
 	shim:                   {
 		'jquery':    { exports: '$' },
 		'jquery-ui': ['jquery']
 	},
-	include: ['amy-circuitboard', '../node_modules/almond/almond'],
+	include:                ['src/amy-circuitboard'],
 	exclude:                ['jquery', 'jquery-ui'],
-	out:                    "dist/amy-circuitboard.js",
+	out:                    "dist/amy-core.js",
 	findNestedDependencies: true,
-	removeCombined:         true
+	removeCombined:         true,
+	optimize:               'none',
+	onModuleBundleComplete: function (data) {
+		var fs = module.require('fs'),
+		    amdclean = module.require('amdclean'),
+		    outputFile = data.path,
+		    cleanedCode = amdclean.clean({
+			    'filePath': outputFile,
+			    transformAMDChecks: false,
+			    wrap: {
+				    start: 'define(["jquery", "jquery-ui"], function (jquery) {',
+				    end: '});'
+			    }
+		    });
+		fs.writeFileSync(outputFile, cleanedCode);
+	}
 })
