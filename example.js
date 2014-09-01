@@ -1,7 +1,20 @@
 'use strict';
 
-$(function () {
+//// RequireJS Configuration
+requirejs.config({
+	paths: {
+		'domReady':  'bower_components/requirejs-domready/domReady',
+		'jquery':    'bower_components/jquery/dist/jquery',
+		'jquery-ui': 'bower_components/jquery-ui/jquery-ui'
+	},
+	shim:  {
+		'jquery':    { exports: '$' },
+		'jquery-ui': ['jquery']
+	}
+});
 
+//// Example application
+require(['jquery', 'src/amy-circuitboard.js', 'domReady!'], function ($) {
 
 	function Model(id, children) {
 		this.id = id;
@@ -28,11 +41,10 @@ $(function () {
 	});
 
 
-
 	var cbe = $('#circuitboard');
 
 	var cb = cbe.circuitboard({
-		model: model,
+		model:       model,
 		tileSpacing: 4
 	}).circuitboard('instance');
 
@@ -42,27 +54,5 @@ $(function () {
 //			tile.weight = 4 - tile.weight;
 		})
 	});
-
-
-//	cbe.find(".tile").each(function () {
-//		var instance = $(this).tile('instance');
-//		var element = $(this);
-//		element.tile('instance').on('click', function (event) {
-//			console.log(event);
-//			element.css('background', 'green');
-//		});
-//	});
-
-
-//	$('#bla').hover(function (event) {
-////		console.log('mouseenter', event);
-////		event.stopPropagation();
-//		$(this).css('background', 'green');
-//	}, function (event) {
-////		console.log('mouseleave', event);
-////		event.stopPropagation();
-//		$(this).css('background', 'white');
-//	});
-
 
 });
