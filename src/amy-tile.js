@@ -1,5 +1,4 @@
 define(['jquery', './util.js'], function ($) {
-	'use strict';
 
 	$.CSS('.circuitboard .tile')
 		.addRule('margin', 0)
@@ -10,63 +9,81 @@ define(['jquery', './util.js'], function ($) {
 
 	$.amyWidget('tile', {
 		cssClass:    'tile',
-		filter:      $.returns(true),
+		filter:      ()=>true,
 		model:       null,
 		tileSpacing: 0,
 		_cb:         null
-	}, function Tile(that) {
+	}, function Tile() {
 
-		//// inform circuitboard of new tile
-		that.options._cb._registerTile(that);
+		/////////////////////////////////////////
+		//// inform circuitboard of new tile ////
+		/////////////////////////////////////////
 
-		//// Creates the mouse-related events on this tile object
-		$.each(['click', 'mouseover', 'mouseout'], function (index, signal) {
-			that.element.on(signal, function (event) {
+		this.options._cb._registerTile(this);
+
+		///////////////////////////////
+		//// supporting DOM-events ////
+		///////////////////////////////
+
+		$.each(['click', 'mouseover', 'mouseout'], (index, signal) => {
+			this.element.on(signal, (event) => {
 				event.stopPropagation();
-				that.trigger(signal, event);
+				this.trigger(signal, event);
 			});
 		});
 
-		//// 'active' property
-		that.element.addClass('active');
+		///////////////////////////
+		//// 'active' property ////
+		///////////////////////////
+
+		this.element.addClass('active');
 		// TODO: getter, setter
 
-		//// 'weight' property
+		///////////////////////////
+		//// 'weight' property ////
+		///////////////////////////
+
 		var _weight = 1;
-		Object.defineProperty(that, 'weight', {
-			get: function () { return _weight },
-			set: function (newWeight) {
+		Object.defineProperty(this, 'weight', {
+			get() { return _weight },
+			set(newWeight) {
 				// TODO: allow Infinity
 				_weight = newWeight;
 				this.element.nestedFlexGrow(newWeight);
 			}
 		});
 
-		//// 'open' property
+		/////////////////////////
+		//// 'open' property ////
+		/////////////////////////
+
 		var _open = false;
-		Object.defineProperty(that, 'open', {
-			get: function () { return _open },
-			set: function (shouldBeOpen) {
+		Object.defineProperty(this, 'open', {
+			get() { return _open },
+			set(shouldBeOpen) {
 				_open = shouldBeOpen;
-				that.element.toggleClass("open", _open);
+				this.element.toggleClass("open", _open);
 				if (_open) { _populateInnerTilemap() }
 			}
 		});
 
-		//// inner tilemap
+		///////////////////////
+		//// inner tilemap ////
+		///////////////////////
+
 		var _tilemap = null;
 
-		function _populateInnerTilemap() {
+		var _populateInnerTilemap = ()=>{
 			if (!_tilemap) {
-				_tilemap = that.element.tilemap({
-					filter:      that.options.filter,
-					model:       that.options.model,
-					tileSpacing: that.options.tileSpacing,
-					_cb:         that.options._cb
+				_tilemap = this.element.tilemap({
+					filter:      this.options.filter,
+					model:       this.options.model,
+					tileSpacing: this.options.tileSpacing,
+					_cb:         this.options._cb
 				}).tilemap('instance');
-				that.one('destroy', _tilemap.destroy.bind(_tilemap));
+				this.one('destroy', ()=>{ _tilemap.destroy() });
 			}
-		}
+		};
 
 	});
 

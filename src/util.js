@@ -1,128 +1,120 @@
 define(['jquery', 'jquery-ui'], function ($) {
-	'use strict';
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
-	$.fn.nestedFlexGrow = function (grow) {
-		this.css('flexGrow', grow);
-		var growSum = 0;
-		this.parent().children().each(function () {
-			//noinspection JSPotentiallyInvalidUsageOfThis
-			growSum += parseInt($(this).css('flexGrow'));
-		});
-		this.parent().css('flexGrow', growSum);
-		return this;
-	};
+	$.extend($.fn, {
+		  nestedFlexGrow(grow) {
+			  this.css('flexGrow', grow);
+			  var growSum = 0;
+			  this.parent().children().each(() => {
+				  //noinspection JSPotentiallyInvalidUsageOfThis
+				  growSum += parseInt($(this).css('flexGrow'));
+			  });
+			  this.parent().css('flexGrow', growSum);
+			  return this;
+		  }
+	});
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
-	$.CSS = (function () {
-		var stylesheet = $('<style>').appendTo('head')[0].sheet;
-		var cssRuleIndex = 0;
+	$.extend({
+		CSS: (()=>{
+			var stylesheet = $('<style>').appendTo('head')[0].sheet;
+			var cssRuleIndex = 0;
 
-		function formulateRule(selector, key, value, important) {
-			return (selector + '{' + key + ': ' + value + (important ? ' !important' : '') + '}');
-		}
+			function formulateRule(selector, key, value, important) {
+				return (selector + '{' + key + ': ' + value + (important ? ' !important' : '') + '}');
+			}
 
-		return function CSS(selector) {
-			var selectorObj = {
-				addRule:        function addRule(key, value, important) {
-					stylesheet.insertRule(
-						formulateRule(selector, key, value, important),
-						cssRuleIndex++
-					);
-					return selectorObj;
-				},
-				addAndKeepRule: function addAndKeepRule(key, value, important) {
-					stylesheet.insertRule(
-						formulateRule(selector, key, value, important),
-						cssRuleIndex
-					);
-					var savedCSSRuleIndex = cssRuleIndex;
-					return {
-						setValue: function (newValue, newImportant) {
-							stylesheet.deleteRule(savedCSSRuleIndex);
-							stylesheet.insertRule(
-								formulateRule(selector, key, newValue, newImportant),
-								savedCSSRuleIndex
-							);
-						}
-					};
-				}
+			return function CSS(selector) {
+				var selectorObj = {
+					addRule(key, value, important) {
+						stylesheet.insertRule(
+							  formulateRule(selector, key, value, important),
+							  cssRuleIndex++
+						);
+						return selectorObj;
+					},
+					addAndKeepRule(key, value, important) {
+						stylesheet.insertRule(
+							  formulateRule(selector, key, value, important),
+							  cssRuleIndex
+						);
+						var savedCSSRuleIndex = cssRuleIndex;
+						return {
+							setValue(newValue, newImportant) {
+								stylesheet.deleteRule(savedCSSRuleIndex);
+								stylesheet.insertRule(
+									  formulateRule(selector, key, newValue, newImportant),
+									  savedCSSRuleIndex
+								);
+							}
+						};
+					}
+				};
+				return selectorObj;
 			};
-			return selectorObj;
-		};
-	}());
+		})()
+	});
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
-	function signalHandlerMixin(that) {
+	function signalHandlerMixin() {
 		var _callbacks = {};
-		that._callback = function (signal) {
+
+		function _callback(signal) {
 			if (!_callbacks[signal]) {
 				_callbacks[signal] = $.Callbacks();
 			}
 			return _callbacks[signal];
-		};
-		that.on = function (signal, fn) {
-			that._callback(signal).add(fn);
-		};
-		that.one = function (signal, fn) {
-			function paddedFn() {
-				fn.apply(null, arguments);
-				that.off(signal, paddedFn);
-			}
+		}
 
-			that.on(signal, paddedFn);
-		};
-		that.once = function (signal, fn) {
-			that.one(signal, fn);
-		};
-		that.off = function (signal, fn) {
-			that._callback(signal).remove(fn);
-		};
-		that.trigger = function (signal) {
-			var callbacks = _callbacks[signal];
-			if (callbacks) {
-				callbacks.fire.apply(callbacks, [].slice.call(arguments, 1));
+		$.extend(this, {
+			on(signal, fn) { _callback(signal).add(fn) },
+			off(signal, fn) { _callback(signal).remove(fn) },
+			one(signal, fn) {
+				var paddedFn = ()=>{
+					fn.apply(null, arguments);
+					this.off(signal, paddedFn);
+				};
+				this.on(signal, paddedFn);
+			},
+			trigger(signal, ...args) {
+				var callbacks = _callbacks[signal];
+				if (callbacks) { callbacks.fire.apply(callbacks, args) }
 			}
-		};
+		});
+		this.once = this.one;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
-	$.amyWidget = function amyWidget(name, options, createFn) {
-		$.widget('apinatomy.' + name, {
-			options:  options,
-			_create:  function _create() {
-				var that = this;
+	$.extend({
+		amyWidget(name, options, createFn) {
+			$.widget(`apinatomy.${name}`, {
+				options: options,
+				_create() {
+					//// enable signal handling
+					signalHandlerMixin.call(this);
 
-				//// enable signal handling
-				signalHandlerMixin.call(that, that);
+					//// make the model available in the object itself
+					Object.defineProperty(this, 'model', {
+						get() { return this.options.model }
+					});
 
-				//// make the model available in the object itself
-				Object.defineProperty(that, 'model', {
-					get: function () { return that.options.model }
-				});
+					//// set the element class
+					this.element.addClass(this.options.cssClass);
+					this.one('destroy', function () {
+						this.element.removeClass(this.options.cssClass);
+					});
 
-				//// set the element class
-				that.element.addClass(that.options.cssClass);
-				that.one('destroy', function () {
-					that.element.removeClass(that.options.cssClass);
-				});
-
-				//// call the specific constructor
-				createFn.call(that, that);
-			},
-			_destroy: function _destroy() { this.trigger("destroy") }
-		});
-	};
-
-	////////////////////////////////////////////////////////////////////////////////////////////////
-
-	$.returns = function returns(value) {
-		return function () { return value; }
-	};
+					//// call the specific constructor
+					createFn.call(this);
+				},
+				_destroy() { this.trigger("destroy") }
+			});
+		}
+	});
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 

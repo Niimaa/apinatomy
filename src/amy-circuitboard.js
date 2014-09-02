@@ -1,59 +1,60 @@
 define(['jquery', './util.js', './amy-tilemap.js'], function ($) {
-	'use strict';
 
 	$.amyWidget('circuitboard', {
 		cssClass:    "circuitboard",
-		filter:      $.returns(true),
+		filter:      ()=>true,
 		model:       null,
 		entityCache: {},
 		tileSpacing: 0
-	}, function Circuitboard(that) {
+	}, function Circuitboard() {
 
 		//// keeping track of tiles
 		var _tilesByModelId = {};
-		that._registerTile = function _registerTile(tile) { // used by tiles
-			if (!_tilesByModelId[tile.model.id]) {
-				_tilesByModelId[tile.model.id] = [];
-			}
-			_tilesByModelId[tile.model.id].push(tile);
-			that.trigger('tilecreated', tile);
-		};
-		that.onTileCreated = function onTileCreated(tileSelector, fn) {
-			//// `tileSelector` is optional, i.e., a single argument is `fn`
-			if (typeof arguments[1] === 'undefined') {
-				fn = arguments[0];
-				tileSelector = null;
-			}
+		$.extend(this, {
+			_registerTile(tile) { // used by tiles
+				if (!_tilesByModelId[tile.model.id]) {
+					_tilesByModelId[tile.model.id] = [];
+				}
+				_tilesByModelId[tile.model.id].push(tile);
+				this.trigger('tilecreated', tile);
+			},
+			onTileCreated(tileSelector, fn) {
+				//// `tileSelector` is optional, i.e., a single argument is `fn`
+				if (typeof arguments[1] === 'undefined') {
+					fn = arguments[0];
+					tileSelector = null;
+				}
 
-			//// build the filter based on the selector
-			var filter = null;
-			if (!tileSelector) { // no tile selector = all tiles
-				filter = $.returns(true);
-			} else if (typeof tileSelector === 'string') { // model.id
-				filter = function (tile) { return tile.model.id === tileSelector };
-			}
+				//// build the filter based on the selector
+				var filter = null;
+				if (!tileSelector) { // no tile selector = all tiles
+					filter = ()=>true;
+				} else if (typeof tileSelector === 'string') { // model.id
+					filter = (tile) => (tile.model.id === tileSelector);
+				}
 
-			//// apply the callback for existing tiles
-			$.each(_tilesByModelId, function (modelId, tiles) {
-				$.each(tiles, function (index, tile) {
+				//// apply the callback for existing tiles
+				$.each(_tilesByModelId, (modelId, tiles) => {
+					$.each(tiles, (index, tile) => {
+						if (filter(tile)) { fn(tile) }
+					});
+				});
+
+				//// set up the callbacks for future tiles
+				this.on('tilecreated', (tile) => {
 					if (filter(tile)) { fn(tile) }
 				});
-			});
-
-			//// set up the callbacks for future tiles
-			that.on('tilecreated', function (tile) {
-				if (filter(tile)) { fn(tile) }
-			});
-		};
+			}
+		});
 
 		//// the root tilemap
-		var _tilemap = that.element.tilemap({
-			filter:      that.options.filter,
-			model:       that.options.model,
-			tileSpacing: that.options.tileSpacing,
-			_cb:         that
+		var _tilemap = this.element.tilemap({
+			filter:      this.options.filter,
+			model:       this.options.model,
+			tileSpacing: this.options.tileSpacing,
+			_cb:         this
 		}).tilemap('instance');
-		that.one('destroy', _tilemap.destroy.bind(_tilemap));
+		this.one('destroy', ()=>{ _tilemap.destroy() });
 
 	});
 

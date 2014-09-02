@@ -1,78 +1,85 @@
 define(['jquery', './util.js', './amy-tile.js'], function ($) {
-	'use strict';
+
+	/////////////////////////////////////
+	//// Functional stylesheet rules ////
+	/////////////////////////////////////
 
 	$.CSS('.circuitboard.tilemap, .circuitboard .tilemap')
-		.addRule('display', 'flex')
-		.addRule('flex-direction', 'column')
-		.addRule('justify-content', 'space-between');
+		  .addRule('display', 'flex')
+		  .addRule('flex-direction', 'column')
+		  .addRule('justify-content', 'space-between');
 	$.CSS('.circuitboard .tilerow')
-		.addRule('display', 'flex')
-		.addRule('flex-direction', 'row')
-		.addRule('justify-content', 'space-between')
-		.addRule('margin', 0)
-		.addRule('padding', 0)
-		.addRule('height', 0);
+		  .addRule('display', 'flex')
+		  .addRule('flex-direction', 'row')
+		  .addRule('justify-content', 'space-between')
+		  .addRule('margin', 0)
+		  .addRule('padding', 0)
+		  .addRule('height', 0);
 	$.CSS('.tilerow:last-child') // to overwrite tile spacing
-		.addRule('margin-bottom', 0, true);
+		  .addRule('margin-bottom', 0, true);
+
+	////////////////////////
+	//// Tilemap Widget ////
+	////////////////////////
 
 	$.amyWidget('tilemap', {
-		cssClass:    "tilemap",
-		filter:      $.returns(true),
-		model:       null,
+		cssClass: "tilemap",
+		filter: ()=>true,
+		model: null,
 		tileSpacing: 0,
-		_cb:         null
-	}, function Tilemap(that) {
+		_cb: null
+	}, function Tilemap() {
 
-		that._refreshTiles = function () {
-			//// if there's no model, empty out and return
-			if (!that.model || !that.model.getChildIds || !that.model.getChild) {
-				that.element.empty();
-				return;
-			}
+		$.extend(this, {
+			_refreshTiles() {
+				//// if there's no model, empty out and return
+				if (!this.model || !this.model.getChildIds || !this.model.getChild) {
+					this.element.empty();
+					return;
+				}
 
-			//// load the models of children that ought be displayed
-			var childrenToDisplay = [];
-			$.each(that.model.getChildIds(), function (index, childId) {
-				function getChild() {
-					if (!that.options._cb.options.entityCache[childId]) {
-						that.options._cb.options.entityCache[childId] =
-							that.model.getChild(childId);
+				//// load the models of children that ought be displayed
+				var childrenToDisplay = [];
+				$.each(this.model.getChildIds(), (index, childId) => {
+					var getChild = ()=>{
+						if (!this.options._cb.options.entityCache[childId]) {
+							this.options._cb.options.entityCache[childId] =
+								  this.model.getChild(childId);
+						}
+						return this.options._cb.options.entityCache[childId];
+					};
+
+					if (this.options.filter(childId, getChild)) {
+						childrenToDisplay.push(getChild());
 					}
-					return that.options._cb.options.entityCache[childId];
-				}
+				});
 
-				if (that.options.filter(childId, getChild)) {
-					childrenToDisplay.push(getChild());
+				//// (re)layout the tiles
+				this.element.children().empty(); // TODO: maintain reference to tile elements
+				this.element.empty();
+				var rowCount = Math.round(Math.sqrt(childrenToDisplay.length));
+				var colCount = Math.ceil(childrenToDisplay.length / rowCount);
+				while (rowCount--) {
+					var row = $('<div/>').addClass('tilerow').appendTo(this.element);
+					for (var column = 0; column < colCount && childrenToDisplay.length > 0; column += 1) {
+						var tile = $('<div/>').tile({
+							filter: this.options.filter,
+							model: childrenToDisplay.pop(),
+							tileSpacing: this.options.tileSpacing,
+							_cb: this.options._cb
+						}).appendTo(row).nestedFlexGrow(1).tile('instance');
+						tile.one('destroy', tile.destroy.bind(tile));
+					}
 				}
-			});
-
-			//// (re)layout the tiles
-			that.element.children().empty(); // TODO: maintain reference to tile elements
-			that.element.empty();
-			var rowCount = Math.round(Math.sqrt(childrenToDisplay.length));
-			var colCount = Math.ceil(childrenToDisplay.length / rowCount);
-			while (rowCount--) {
-				var row = $('<div/>').addClass('tilerow').appendTo(that.element);
-				for (var column = 0; column < colCount && childrenToDisplay.length > 0; column += 1) {
-					var tile = $('<div/>').tile({
-						filter:      that.options.filter,
-						model:       childrenToDisplay.pop(),
-						tileSpacing: that.options.tileSpacing,
-						_cb:         that.options._cb
-					}).appendTo(row).nestedFlexGrow(1).tile('instance');
-					tile.one('destroy', tile.destroy.bind(tile));
-				}
+			},
+			_refreshTileSpacing() {
+				this.element.children().css('margin-bottom', this.options.tileSpacing);
+				this.element.children().children().css('margin-right', this.options.tileSpacing);
 			}
-		};
+		});
 
-		that._refreshTileSpacing = function () {
-			var that = this;
-			that.element.children().css('margin-bottom', that.options.tileSpacing);
-			that.element.children().children().css('margin-right', that.options.tileSpacing);
-		};
-
-		that._refreshTiles();
-		that._refreshTileSpacing();
+		this._refreshTiles();
+		this._refreshTileSpacing();
 
 	});
 

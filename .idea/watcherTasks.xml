@@ -21,6 +21,26 @@
       <option name="workingDir" value="$PROJECT_DIR$" />
       <envs />
     </TaskOptions>
+    <TaskOptions isEnabled="false">
+      <option name="arguments" value="--source-maps --out dist/$FilePathRelativeToProjectRoot$ --script $FilePathRelativeToProjectRoot$" />
+      <option name="checkSyntaxErrors" value="true" />
+      <option name="description" value="Transpiles ECMAScript 6 code to ECMAScript 5" />
+      <option name="exitCodeBehavior" value="ERROR" />
+      <option name="fileExtension" value="js" />
+      <option name="immediateSync" value="true" />
+      <option name="name" value="Traceur compiler" />
+      <option name="output" value="dist/$FilePathRelativeToProjectRoot$:$FileDirRelativeToProjectRoot$/$FileNameWithoutExtension$.map" />
+      <option name="outputFilters">
+        <array />
+      </option>
+      <option name="outputFromStdout" value="false" />
+      <option name="passParentEnvs" value="true" />
+      <option name="program" value="$ProjectFileDir$/node_modules/traceur/traceur" />
+      <option name="scopeName" value="Project Files" />
+      <option name="trackOnlyRoot" value="true" />
+      <option name="workingDir" value="$ProjectFileDir$" />
+      <envs />
+    </TaskOptions>
   </component>
 </project>
 
