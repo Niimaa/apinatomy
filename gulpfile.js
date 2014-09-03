@@ -12,14 +12,13 @@ gulp.task('traceur', function (callback) {
             script: true,
             sourceMaps: true
         }))
-        .pipe(gulp.dest('tmp-build'))
-        .pipe(gulp.dest('dist')) // temporary?
+        .pipe(gulp.dest('dist'))
         .on('end', callback);
 });
 
 gulp.task('webpack', ['traceur'], function (callback) {
     webpack({
-        entry: './tmp-build/amy-circuitboard.js',
+        entry: './dist/amy-circuitboard.js',
         output: {
             path: './dist',
             filename: 'amy-core.js',
@@ -43,12 +42,12 @@ gulp.task('uglify', ['webpack'], function (callback) {
         .on('end', callback);
 });
 
-gulp.task('clean-tmp', ['traceur', 'webpack'], function (callback) {
-    rimraf('tmp-build', callback);
-});
+//gulp.task('clean-tmp', ['traceur', 'webpack'], function (callback) {
+//    rimraf('tmp-build', callback);
+//});
 
-gulp.task('build', ['traceur', 'webpack', 'uglify', 'clean-tmp']);
+gulp.task('build', ['traceur', 'webpack', 'uglify']);
 
 gulp.task('watch', function () {
-    gulp.watch(['**/*.js', '!bower_components/**/*.*', '!node_modules/**/*.*', '!gulpfile.js'], ['traceur', 'webpack']);
+    gulp.watch(['src/**/*.js'], ['build']);
 });

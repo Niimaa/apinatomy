@@ -1,4 +1,4 @@
-define(['jquery'], function ($) {
+define(['jquery', '../util.js'], function ($) {
 
     $.CSS('.skinned-tile')
         .addRule('display', 'flex')
@@ -11,7 +11,6 @@ define(['jquery'], function ($) {
         .addRule('border-width', '1px')
         .addRule('overflow', 'hidden');
     $.CSS('.skinned-tile.open > header')
-        .addRule('flex-grow', 0)
         .addRule('height', '26px')
         .addRule('border-style', 'none none solid none')
         .addRule('line-height', '26px')
@@ -20,6 +19,8 @@ define(['jquery'], function ($) {
     $.CSS('.skinned-tile:not(.open) > header')
         .addRule('flex-grow', 1);
     $.CSS('.skinned-tile.open > section')
+        .addRule('flex-grow', 1);
+    $.CSS('.skinned-tile:not(.open) > section')
         .addRule('display', 'none');
 
     return function skin(tile) {
@@ -27,5 +28,6 @@ define(['jquery'], function ($) {
         origElement.addClass('skinned-tile');
         origElement.append(`<header>${tile.model.id}</header><section/>`);
         tile.html = origElement.children('section');
+        tile.html.css('padding', tile.options.tileSpacing)
     }
 });

@@ -5,10 +5,10 @@ define(['jquery', 'jquery-ui'], function ($) {
 	$.extend($.fn, {
 		  nestedFlexGrow(grow) {
 			  this.css('flexGrow', grow);
+              this.data('amyFlexGrowTarget', grow);
 			  var growSum = 0;
-			  this.parent().children().each(() => {
-				  //noinspection JSPotentiallyInvalidUsageOfThis
-				  growSum += parseInt($(this).css('flexGrow'));
+			  this.parent().children().each(function () {
+				  growSum += parseFloat($(this).data('amyFlexGrowTarget'));
 			  });
 			  this.parent().css('flexGrow', growSum);
 			  return this;

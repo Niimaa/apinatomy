@@ -15,22 +15,22 @@ define(['jquery', './util.js'], function ($) {
 		_cb:         null
 	}, function Tile() {
 
-		/////////////////////////////////////////
-		//// inform circuitboard of new tile ////
-		/////////////////////////////////////////
-
-		this.options._cb._registerTile(this);
-
 		///////////////////////////////
 		//// supporting DOM-events ////
 		///////////////////////////////
 
-		$.each(['click', 'mouseover', 'mouseout'], (index, signal) => {
-			this.element.on(signal, (event) => {
-				event.stopPropagation();
-				this.trigger(signal, event);
-			});
-		});
+        $.each(['click', 'mouseover', 'mouseout'], (index, signal) => {
+            this.element.on(signal, (event) => {
+                event.stopPropagation();
+                this.trigger(signal, event);
+            });
+        });
+
+        $.each(['mouseenter', 'mouseleave'], (index, signal) => {
+            this.element.on(signal, (event) => {
+                this.trigger(signal, event);
+            });
+        });
 
         ///////////////////////////////////////////
         //// public access to the HTML element ////
@@ -87,7 +87,7 @@ define(['jquery', './util.js'], function ($) {
 
 		var _populateInnerTilemap = ()=>{
 			if (!_tilemap) {
-				_tilemap = this.element.tilemap({
+				_tilemap = this.html.tilemap({
 					filter:      this.options.filter,
 					model:       this.options.model,
 					tileSpacing: this.options.tileSpacing,
@@ -96,6 +96,12 @@ define(['jquery', './util.js'], function ($) {
 				this.one('destroy', ()=>{ _tilemap.destroy() });
 			}
 		};
+
+        /////////////////////////////////////////
+        //// inform circuitboard of new tile ////
+        /////////////////////////////////////////
+
+        this.options._cb._registerTile(this);
 
 	});
 
