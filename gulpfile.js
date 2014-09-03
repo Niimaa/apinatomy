@@ -32,10 +32,19 @@ gulp.task('webpack', ['traceur'], function (callback) {
 	})
 });
 
-gulp.task('build', ['traceur', 'webpack'], function (callback) {
+gulp.task('uglify', ['webpack'], function (callback) {
 	gulp.src('./dist/amy-core.js')
 		  .pipe(uglify())
 		  .pipe(rename({suffix: '.min'}))
-		  .pipe(gulp.dest('./dist'))
-		  .on('end', function () { rimraf('tmp-build', callback) });
+		  .on('end', callback);
+});
+
+gulp.task('clean-tmp', ['traceur', 'webpack'], function (callback) {
+	rimraf('tmp-build', callback);
+});
+
+gulp.task('build', ['traceur', 'webpack', 'uglify', 'clean-tmp']);
+
+gulp.task('watch', function () {
+	gulp.watch(['**/*.js', '!bower_components/**/*.*', '!node_modules/**/*.*'], ['traceur', 'webpack']);
 });
