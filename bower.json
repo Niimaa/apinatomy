@@ -1,25 +1,23 @@
 {
-  "name": "apinatomy-core",
-  "version": "0.1.1",
-  "authors": [
-    "mhelvens <mhelvens@gmail.com>"
-  ],
-  "license": "MIT",
-  "private": true,
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
-  ],
-  "dependencies": {
-    "jquery": "~2.1.1",
-    "jquery-ui": "~1.11.1"
-  },
-  "devDependencies": {
-    "requirejs-domready": "~2.0.1",
-    "requirejs": "~2.1.14",
-    "traceur": "~0.0.58"
-  }
+    "name": "apinatomy-core",
+    "version": "0.3.0",
+    "description": "the core component (widget) of the ApiNATOMY circuit-board",
+    "authors": [
+        { "name": "Michiel Helvensteijn", "email": "mhelvens@gmail.com" }
+    ],
+    "license": "MIT",
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components"
+    ],
+    "dependencies": {
+        "jquery": "~2.1.1",
+        "jquery-ui": "~1.11.1"
+    },
+    "devDependencies": {
+        "requirejs-domready": "~2.0.1",
+        "requirejs": "~2.1.14",
+        "traceur": "~0.0.58"
+    }
 }
