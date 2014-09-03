@@ -32,6 +32,18 @@ define(['jquery', './util.js'], function ($) {
 			});
 		});
 
+        ///////////////////////////////////////////
+        //// public access to the HTML element ////
+        ///////////////////////////////////////////
+
+        var _html = this.element;
+        Object.defineProperty(this, 'html', {
+            get() { return _html },
+            set(newHtml) { _html = newHtml }
+        });
+
+        // TODO: public access to D3 layer and three.js layer
+
 		///////////////////////////
 		//// 'active' property ////
 		///////////////////////////
