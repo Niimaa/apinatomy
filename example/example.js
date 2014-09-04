@@ -11,52 +11,70 @@ requirejs.config({
 	}
 });
 
-//// Example application
+//
+// Example application
+//
+
 require(['jquery', '../dist/plugins/amy-tileskin', 'jquery-ui', '../dist/amy-core.min', 'domReady!'], function ($, skin) {
 
-	function Model(fields, children) {
-        $.extend(this, fields);
-		this._children = children;
-		this.getChild = function (id) {
-			return this._children[id];
+	//
+	// Set up a model offering the required API (which is still under design)
+	//
+	function equipWithAPI(obj) {
+		obj.getChild = function (id) {
+			return obj.children[id];
 		};
-		this.getChildIds = function () {
-			return Object.keys(this._children);
+		obj.getChildIds = function () {
+			return obj.children ? Object.keys(obj.children) : 0;
 		};
+		if (obj.children) {
+			$.each(obj.children, function (childId, child) {
+				child.id = childId;
+				equipWithAPI(child);
+			});
+		}
+		return obj;
 	}
-
-	var model = new Model({
-        id: 's'
-    }, {
-		a: { id: 'a', color: 'red' },
-		b: { id: 'b', color: 'blue' },
-		c: { id: 'c', color: 'gray' },
-		d: new Model({ id: 'd', color: 'green' }, {
-			x: { id: 'x' },
-			y: { id: 'y' },
-			z: { id: 'z' }
-		}),
-		e: { id: 'e', color: 'purple' }
+	var model = equipWithAPI({
+		id: 's',
+		children: {
+			a: { css: { backgroundColor: 'red' } },
+			b: { css: { backgroundColor: 'blue' } },
+			c: { css: { backgroundColor: 'gray' } },
+			d: {
+				css: { backgroundColor: 'green' },
+				children: {
+					d1: { css: { backgroundColor: 'lightgreen' } },
+					d2: { css: { backgroundColor: 'lightgreen' } },
+					d3: { css: { backgroundColor: 'lightgreen' } }
+				}
+			},
+			e: { css: { backgroundColor: 'purple' } }
+		}
 	});
 
+	//
+	// Use the $.fn.circuitboard method to instantiate the circuit-board
+	//
 	var cb = $('#circuitboard').circuitboard({
 		model: model,
 		tileSpacing: 4
 	}).circuitboard('instance');
 
-    cb.onTileCreated(skin);
+	//
+	// Apply the 'skin' plugin, which gives tiles a header
+	//
+	cb.onTileCreated(skin);
 
-    cb.onTileCreated(function (tile) {
-        tile.on('click', function () {
-            tile.open = !tile.open;
-            tile.weight = tile.open ? 2 : 1;
-        });
-    });
-
-//    cb.onTileCreated(function (tile) {
-//        tile.on('mouseenter', function () { tile.weight = 2; });
-//        tile.on('mouseleave', function () { tile.weight = 1; });
-//    });
-
+	//
+	// Open and close tiles by a click.
+	// Make open tiles twice as large as closed ones.
+	//
+	cb.onTileCreated(function (tile) {
+		tile.on('click', function () {
+			tile.open = !tile.open;
+			tile.weight = tile.open ? 2 : 1;
+		});
+	});
 
 });
