@@ -1,11 +1,8 @@
 node_modules
 bower_components
-.grunt
 .sass-cache
 tmp
-gulp-tsc-tmp-*
-.gulp-tsc-tmp-*
-*.js.map
+dist
 *.d.ts
 *.css
 *.log
