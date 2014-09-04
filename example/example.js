@@ -15,7 +15,7 @@ requirejs.config({
 // Example application
 //
 
-require(['jquery', '../dist/plugins/amy-tileskin', 'jquery-ui', '../dist/amy-core.min', 'domReady!'], function ($, skin) {
+require(['jquery', '../dist/plugins/amy-tileskin', 'jquery-ui', '../dist/amd/amy-core.min', 'domReady!'], function ($, skin) {
 
 	//
 	// Set up a model offering the required API (which is still under design)
