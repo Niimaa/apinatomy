@@ -3,27 +3,45 @@ define(['jquery', 'jquery-ui'], function ($) {
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
 	$.extend($.fn, {
-		  nestedFlexGrow(grow) {
-			  this.css('flexGrow', grow);
-              this.data('amyFlexGrowTarget', grow);
-			  var growSum = 0;
-			  this.parent().children().each(function () {
-				  growSum += parseFloat($(this).data('amyFlexGrowTarget'));
-			  });
-			  this.parent().css('flexGrow', growSum);
-			  return this;
-		  }
+		nestedFlexGrow(grow) {
+			this.css('flexGrow', grow);
+			this.data('amyFlexGrowTarget', grow);
+			var growSum = 0;
+			this.parent().children().each(function () {
+				growSum += parseFloat($(this).data('amyFlexGrowTarget'));
+			});
+			this.parent().css('flexGrow', growSum);
+			return this;
+		}
 	});
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
 	$.extend({
-		CSS: (()=>{
+		CSS: (()=> {
 			var stylesheet = $('<style>').appendTo('head')[0].sheet;
 			var cssRuleIndex = 0;
 
+			var PREFIXES = [ "", "-moz-", "-webkit-", "-o-", "-ms-" ];
+			var prefixedPropCache = {};
+			function prefixedProperty(prop) {
+				if (!prefixedPropCache[prop]) {
+					var vendorProp, div = document.createElement("div");
+					for (var i = 0; i < PREFIXES.length; i++) {
+						vendorProp = PREFIXES[i] + prop;
+						if (vendorProp in div.style) {
+							div = null;
+							prefixedPropCache[prop] = vendorProp;
+							break;
+						}
+					}
+				}
+
+				return prefixedPropCache[prop];
+			}
+
 			function formulateRule(selector, key, value, important) {
-				return (selector + '{' + key + ': ' + value + (important ? ' !important' : '') + '}');
+				return `${selector} { ${prefixedProperty(key)}: ${value} ${important?'!important':''} }`;
 			}
 
 			return function CSS(selector) {
@@ -73,7 +91,7 @@ define(['jquery', 'jquery-ui'], function ($) {
 			on(signal, fn) { _callback(signal).add(fn) },
 			off(signal, fn) { _callback(signal).remove(fn) },
 			one(signal, fn) {
-				var paddedFn = ()=>{
+				var paddedFn = ()=> {
 					fn.apply(null, arguments);
 					this.off(signal, paddedFn);
 				};
