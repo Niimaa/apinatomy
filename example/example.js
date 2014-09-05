@@ -63,6 +63,7 @@ require(['jquery', '../dist/plugins/amy-tileskin', 'jquery-ui', '../dist/amd/amy
 
 	//
 	// Apply the 'skin' plugin, which gives tiles a header
+	// and applies css from the model
 	//
 	cb.onTileCreated(skin);
 
