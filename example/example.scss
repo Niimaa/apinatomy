@@ -8,79 +8,80 @@ $amy-tile-status-icon-size: 10px;
 
 html, body {
 	position: absolute;
-	width:    100%;
-	height:   100%;
-	margin:   0;
-	padding:  0;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
 }
 
 body {
-	display:         flex;
-	align-items:     center;
+	display: flex;
+	align-items: center;
 	justify-content: center;
 }
 
 #circuitboard {
 	height: 90%;
-	width:  90%;
+	width: 90%;
 
-	div {
+	.tile, .tilerow {
 		transition-property: flex-grow;
 		transition-duration: .2s;
 	}
 }
 
 .tile {
-	user-select:  none;
-	cursor:       pointer;
-	text-align:   center;
-	overflow:     hidden;
+	user-select: none;
+	cursor: pointer;
+	text-align: center;
+	overflow: hidden;
 	border-width: $amy-tile-border-width;
-	&.active {
+}
+	.tile.active {
 		border-style: solid;
 	}
-	&:not(.active) {
+.tile:not(.active) {
 		border-style: dashed;
 	}
 
-	////////// The Header //////////
+////////// The Header //////////
 
-	& > header {
-		display:         flex;
-		align-items:     center;
-		justify-content: center;
-		font-weight:     bold;
-		border-width:    1px;
-	}
-
-	&.open > header {
-		height:       $amy-tile-header-height;
-		border-style: none none solid none;
-		line-height:  $amy-tile-header-height;
-		font-size:    .8 * $amy-tile-header-height;
-		white-space:  nowrap;
-		overflow:     hidden;
-	}
-
-	&:not(.open) > header {
-		border-style: none;
-	}
-
-	////////// The Content Section //////////
-
-	& > section {
-		user-select: text;
-	}
-	&:not(.open) > section {
-		display: none;
-	}
-
-	////////// Hiding the header for tiles that are open & maximized //////////
-
-	&.hidden-header {
-		& > header {
-			display: none !important;
-		}
-	}
-
+.tile > header {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: bold;
+	border-width: 1px;
 }
+
+.tile.open > header {
+	height: $amy-tile-header-height;
+	border-style: none none solid none;
+	line-height: $amy-tile-header-height;
+	font-size: .8 * $amy-tile-header-height;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.tile:not(.open) > header {
+	border-style: none;
+}
+
+////////// The Content Section //////////
+
+.tile > section {
+	user-select: text;
+}
+
+.tile:not(.open) > section {
+	display: none;
+}
+
+////////// Hiding the header for tiles that are open & maximized //////////
+
+.tile.hidden-header {
+	& > header {
+		display: none !important;
+	}
+}
+

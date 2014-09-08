@@ -2,13 +2,17 @@
   <dictionary name="mhelvens">
     <words>
       <w>amdclean</w>
+      <w>autoprefixer</w>
       <w>circuitboarddestroy</w>
       <w>concat</w>
       <w>flexbox</w>
+      <w>gutil</w>
+      <w>rimraf</w>
       <w>tilecreated</w>
       <w>tilemap</w>
       <w>tilerow</w>
       <w>traceur</w>
+      <w>uglify</w>
     </words>
   </dictionary>
 </component>

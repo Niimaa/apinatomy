@@ -1,11 +1,4 @@
-define(['jquery', './util.js'], function ($) {
-
-	$.CSS('.circuitboard .tile')
-		.addRule('margin', 0)
-		.addRule('padding', 0)
-		.addRule('width', 0);
-	$.CSS('.tile:last-child') // to overwrite tile spacing
-		.addRule('margin-right', 0, true);
+define(['jquery', './amy-util.js'], function ($) {
 
 	$.amyWidget('tile', {
 		cssClass:    'tile',

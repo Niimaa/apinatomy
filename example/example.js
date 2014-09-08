@@ -4,8 +4,8 @@
 requirejs.config({
 	paths: {
 		'domReady': '../bower_components/requirejs-domready/domReady',
-		'jquery': '../bower_components/jquery/dist/jquery',
-		'jquery-ui': '../bower_components/jquery-ui/jquery-ui'
+        'jquery': '../bower_components/jquery/dist/jquery',
+        'jquery-ui': '../bower_components/jquery-ui/jquery-ui'
 	},
 	shim: {
 		'jquery': { exports: '$' },

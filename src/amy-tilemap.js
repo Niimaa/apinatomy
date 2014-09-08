@@ -1,26 +1,4 @@
-define(['jquery', './util.js', './amy-tile.js'], function ($) {
-
-	/////////////////////////////////////
-	//// Functional stylesheet rules ////
-	/////////////////////////////////////
-
-	$.CSS('.circuitboard.tilemap, .circuitboard .tilemap')
-		  .addRule('display', 'flex')
-		  .addRule('flex-direction', 'column')
-		  .addRule('justify-content', 'space-between');
-	$.CSS('.circuitboard .tilerow')
-		  .addRule('display', 'flex')
-		  .addRule('flex-direction', 'row')
-		  .addRule('justify-content', 'space-between')
-		  .addRule('margin', 0)
-		  .addRule('padding', 0)
-		  .addRule('height', 0);
-	$.CSS('.tilerow:last-child') // to overwrite tile spacing
-		  .addRule('margin-bottom', 0, true);
-
-	////////////////////////
-	//// Tilemap Widget ////
-	////////////////////////
+define(['jquery', './amy-util.js', './amy-tile.js', './amy-tilemap.scss'], function ($) {
 
 	$.amyWidget('tilemap', {
 		cssClass: "tilemap",

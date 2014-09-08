@@ -17,66 +17,6 @@ define(['jquery', 'jquery-ui'], function ($) {
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
-	$.extend({
-		CSS: (()=> {
-			var stylesheet = $('<style>').appendTo('head')[0].sheet;
-			var cssRuleIndex = 0;
-
-			var PREFIXES = [ "", "-moz-", "-webkit-", "-o-", "-ms-" ];
-			var prefixedPropCache = {};
-			function prefixedProperty(prop) {
-				if (!prefixedPropCache[prop]) {
-					var vendorProp, div = document.createElement("div");
-					for (var i = 0; i < PREFIXES.length; i++) {
-						vendorProp = PREFIXES[i] + prop;
-						if (vendorProp in div.style) {
-							div = null;
-							prefixedPropCache[prop] = vendorProp;
-							break;
-						}
-					}
-				}
-
-				return prefixedPropCache[prop];
-			}
-
-			function formulateRule(selector, key, value, important) {
-				return `${selector} { ${prefixedProperty(key)}: ${value} ${important?'!important':''} }`;
-			}
-
-			return function CSS(selector) {
-				var selectorObj = {
-					addRule(key, value, important) {
-						stylesheet.insertRule(
-							  formulateRule(selector, key, value, important),
-							  cssRuleIndex++
-						);
-						return selectorObj;
-					},
-					addAndKeepRule(key, value, important) {
-						stylesheet.insertRule(
-							  formulateRule(selector, key, value, important),
-							  cssRuleIndex
-						);
-						var savedCSSRuleIndex = cssRuleIndex;
-						return {
-							setValue(newValue, newImportant) {
-								stylesheet.deleteRule(savedCSSRuleIndex);
-								stylesheet.insertRule(
-									  formulateRule(selector, key, newValue, newImportant),
-									  savedCSSRuleIndex
-								);
-							}
-						};
-					}
-				};
-				return selectorObj;
-			};
-		})()
-	});
-
-	////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function signalHandlerMixin() {
 		var _callbacks = {};
 
