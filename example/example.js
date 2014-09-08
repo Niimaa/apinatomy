@@ -1,4 +1,6 @@
-//// RequireJS Configuration
+//
+// RequireJS Configuration
+//
 requirejs.config({
 	paths: {
 		'domReady': '../bower_components/requirejs-domready/domReady',
@@ -14,8 +16,7 @@ requirejs.config({
 //
 // Example application
 //
-
-require(['jquery', '../dist/plugins/amy-tileskin', 'jquery-ui', '../dist/amd/amy-core.min', 'domReady!'], function ($, skin) {
+require(['jquery', '../dist/amy-skin.min', 'jquery-ui', '../dist/amy-circuitboard.min', 'domReady!'], function ($, skin) {
 
 	//
 	// Set up a model offering the required API (which is still under design)

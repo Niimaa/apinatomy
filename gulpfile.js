@@ -13,13 +13,25 @@ var NO_LIB = ['!bower_components/**/*.*', '!node_modules/**/*.*'];
 
 /////////
 
+var MODULES = [
+	{
+		file: 'amy-circuitboard.js',
+		externals: ['jquery', 'jquery-ui']
+	}, {
+		file: 'amy-skin.js',
+		externals: ['jquery', 'jquery-ui']
+	}
+];
+
+/////////
+
 gulp.task('traceur', function (callback) {
 	gulp.src('src/**/*.js')
 		  .pipe(traceur({
 			  script: true,
 			  sourceMaps: true
 		  }))
-		  .pipe(gulp.dest('dist'))
+		  .pipe(gulp.dest('.traceur-output'))
 		  .on('end', callback);
 });
 
@@ -33,35 +45,36 @@ function getWebpackCallback(cb) {
 	};
 }
 
-gulp.task('webpack:amd', ['traceur'], function (callback) {
-	webpack({
-		entry: './dist/amy-circuitboard.js',
-		output: {
-			path: './dist/amd',
-			filename: 'amy-core.js',
-			libraryTarget: 'amd'
-		},
-		externals: ['jquery', 'jquery-ui']
-	}, getWebpackCallback(callback))
-});
-gulp.task('webpack:var', ['traceur'], function (callback) {
-	webpack({
-		entry: './dist/amy-circuitboard.js',
-		output: {
-			path: './dist/var',
-			filename: 'amy-core.js',
-			libraryTarget: 'var'
-		},
-		externals: {'jquery': 'jQuery', 'jquery-ui': 'jQuery'}
-	}, getWebpackCallback(callback))
+gulp.task('webpack', ['traceur'], function (callback) {
+	MODULES.forEach(function (m) {
+		var nCall = callback;
+		callback = function () {
+			webpack({
+				entry: './.traceur-output/' + m.file,
+				output: {
+					path: './dist',
+					filename: m.file,
+					libraryTarget: 'umd'
+				},
+				externals: m.externals
+			}, getWebpackCallback(nCall));
+		};
+	});
+	callback();
 });
 
-gulp.task('uglify', ['webpack:amd'], function (callback) {
-	gulp.src('dist/amd/amy-core.js')
-		  .pipe(uglify())
-		  .pipe(rename({suffix: '.min'}))
-		  .pipe(gulp.dest('dist/amd'))
-		  .on('end', callback);
+gulp.task('uglify', ['webpack'], function (callback) {
+	MODULES.forEach(function (m) {
+		var nCall = callback;
+		callback = function () {
+			gulp.src('dist/' + m.file)
+				  .pipe(uglify())
+				  .pipe(rename({suffix: '.min'}))
+				  .pipe(gulp.dest('dist'))
+				  .on('end', nCall);
+		};
+	});
+	callback();
 });
 
 gulp.task('sass', function (callback) {
@@ -71,17 +84,16 @@ gulp.task('sass', function (callback) {
 		  .on('end', callback);
 });
 
-gulp.task('karma', ['webpack:var'], function () {
+gulp.task('karma', ['webpack'], function () {
 	return gulp.src([
 		'bower_components/jquery/dist/jquery.js',
 		'bower_components/jquery-ui/jquery-ui.js',
-		'dist/var/**/*.js',
+		'dist/**/*.min.js',
 		'test/**/*.js'
-	])
-		  .pipe(karma({ configFile: 'karma.conf.js' }));
+	]).pipe(karma({ configFile: 'karma.conf.js' }));
 });
 
-gulp.task('build', ['traceur', 'webpack:amd', 'uglify', 'sass']);
+gulp.task('build', ['traceur', 'webpack', 'uglify', 'sass']);
 
 gulp.task('watch', function () {
 	gulp.watch(['src/**/*.js'], ['build']);
