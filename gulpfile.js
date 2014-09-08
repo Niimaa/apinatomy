@@ -11,7 +11,7 @@ var gulp = require('gulp'),
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 var EXTERNAL_MODULES = [
-	{'jquery': { root: 'jQuery', commonjs2: 'jquery', commonjs: 'jquery', amd: 'jquery' }},
+	{ 'jquery': { root: 'jQuery', commonjs2: 'jquery', commonjs: 'jquery', amd: 'jquery' } },
 	'jquery-ui'
 ];
 
@@ -76,7 +76,7 @@ MODULES.forEach(function (m) {
 gulp.task('sass', function (callback) {
 	gulp.src(['example/**/*.scss'])
 		.pipe(sass())
-		.pipe(gulp.dest('.'))
+		.pipe(gulp.dest('example'))
 		.on('end', callback);
 });
 

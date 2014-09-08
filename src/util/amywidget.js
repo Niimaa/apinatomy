@@ -1,22 +1,5 @@
 define(['jquery', 'jquery-ui'], function ($) {
 
-	////////////////////////////////////////////////////////////////////////////////////////////////
-
-	$.extend($.fn, {
-		nestedFlexGrow(grow) {
-			this.css('flexGrow', grow);
-			this.data('amyFlexGrowTarget', grow);
-			var growSum = 0;
-			this.parent().children().each(function () {
-				growSum += parseFloat($(this).data('amyFlexGrowTarget'));
-			});
-			this.parent().css('flexGrow', growSum);
-			return this;
-		}
-	});
-
-	////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function signalHandlerMixin() {
 		var _callbacks = {};
 
@@ -45,8 +28,6 @@ define(['jquery', 'jquery-ui'], function ($) {
 		this.once = this.one;
 	}
 
-	////////////////////////////////////////////////////////////////////////////////////////////////
-
 	$.extend({
 		amyWidget(name, options, createFn) {
 			$.widget(`apinatomy.${name}`, {
@@ -73,7 +54,5 @@ define(['jquery', 'jquery-ui'], function ($) {
 			});
 		}
 	});
-
-	////////////////////////////////////////////////////////////////////////////////////////////////
 
 });

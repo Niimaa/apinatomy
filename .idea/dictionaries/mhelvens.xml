@@ -2,11 +2,14 @@
   <dictionary name="mhelvens">
     <words>
       <w>amdclean</w>
+      <w>amywidget</w>
       <w>autoprefixer</w>
       <w>circuitboarddestroy</w>
       <w>concat</w>
       <w>flexbox</w>
       <w>gutil</w>
+      <w>nestedflexgrow</w>
+      <w>putcssrules</w>
       <w>rimraf</w>
       <w>tilecreated</w>
       <w>tilemap</w>

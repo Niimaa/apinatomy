@@ -4,8 +4,8 @@
 requirejs.config({
 	paths: {
 		'domReady': '../bower_components/requirejs-domready/domReady',
-        'jquery': '../bower_components/jquery/dist/jquery',
-        'jquery-ui': '../bower_components/jquery-ui/jquery-ui'
+		'jquery': '../bower_components/jquery/dist/jquery',
+		'jquery-ui': '../bower_components/jquery-ui/jquery-ui'
 	},
 	shim: {
 		'jquery': { exports: '$' },
@@ -36,21 +36,46 @@ require(['jquery', '../dist/amy-skin.min', 'jquery-ui', '../dist/amy-circuitboar
 		}
 		return obj;
 	}
+
 	var model = equipWithAPI({
 		id: 's',
 		children: {
-			a: { css: { backgroundColor: 'red' } },
-			b: { css: { backgroundColor: 'blue' } },
-			c: { css: { backgroundColor: 'gray' } },
-			d: {
-				css: { backgroundColor: 'green' },
+			a: { name: 'Tile A', css: {
+				'&': { backgroundColor: 'red', borderColor: '#ffbbbb', color: 'white' },
+				'& header': { borderColor: '#ffbbbb' }
+			}},
+			b: { name: 'Tile B', css: {
+				'&': { backgroundColor: 'blue', borderColor: 'lightblue', color: 'white' },
+				'& header': { borderColor: 'lightblue' }
+			}},
+			c: { name: 'Tile C', css: {
+				'&': { backgroundColor: 'gray', borderColor: 'lightgray', color: 'white' },
+				'& header': { borderColor: 'lightgray' }
+			}},
+			d: { name: 'Tile D',
+				css: {
+					'&': { backgroundColor: 'green', borderColor: 'lightgreen', color: 'white' },
+					'& header': { borderColor: 'lightgreen' }
+				},
 				children: {
-					d1: { css: { backgroundColor: 'lightgreen' } },
-					d2: { css: { backgroundColor: 'lightgreen' } },
-					d3: { css: { backgroundColor: 'lightgreen' } }
+					d1: { name: 'Tile D1', css: {
+						'&': { backgroundColor: 'lightgreen', borderColor: 'green', color: 'black' },
+						'& header': { borderColor: 'green' }
+					}},
+					d2: { name: 'Tile D2', css: {
+						'&': { backgroundColor: 'lightgreen', borderColor: 'green', color: 'black' },
+						'& header': { borderColor: 'green' }
+					}},
+					d3: { name: 'Tile D3', css: {
+						'&': { backgroundColor: 'lightgreen', borderColor: 'green', color: 'black' },
+						'& header': { borderColor: 'green' }
+					}}
 				}
 			},
-			e: { css: { backgroundColor: 'purple' } }
+			e: { name: 'Tile E', css: {
+				'&': { backgroundColor: 'purple', borderColor: 'orchid', color: 'white' },
+				'& header': { borderColor: 'orchid' }
+			}}
 		}
 	});
 

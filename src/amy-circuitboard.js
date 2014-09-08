@@ -1,4 +1,4 @@
-define(['jquery', './amy-util.js', './amy-tilemap.js'], function ($) {
+define(['jquery', './util/amywidget.js', './amy-tilemap.js'], function ($) {
 
 	$.amyWidget('circuitboard', {
 		cssClass:    "circuitboard",
