@@ -29,10 +29,10 @@ define(['jquery', './amy-util.js'], function ($) {
         //// public access to the HTML element ////
         ///////////////////////////////////////////
 
-        var _html = this.element;
-        Object.defineProperty(this, 'html', {
-            get() { return _html },
-            set(newHtml) { _html = newHtml }
+		var _domContent = this.element;
+        Object.defineProperty(this, 'dom', {
+            get() { return _domContent },
+            set(newDOM) { _domContent = newDOM }
         });
 
         // TODO: public access to D3 layer and three.js layer
@@ -80,7 +80,7 @@ define(['jquery', './amy-util.js'], function ($) {
 
 		var _populateInnerTilemap = ()=>{
 			if (!_tilemap) {
-				_tilemap = this.html.tilemap({
+				_tilemap = this.dom.tilemap({
 					filter:      this.options.filter,
 					model:       this.options.model,
 					tileSpacing: this.options.tileSpacing,
