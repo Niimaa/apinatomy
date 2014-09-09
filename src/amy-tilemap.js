@@ -35,7 +35,7 @@ define(['jquery', './util/amywidget.js', './util/nestedflexgrow.js', './amy-tile
 				//// (re)layout the tiles
 				this.element.children().empty(); // TODO: maintain reference to tile elements
 				this.element.empty();
-				var rowCount = Math.round(Math.sqrt(childrenToDisplay.length));
+				var rowCount = Math.floor(Math.sqrt(childrenToDisplay.length));
 				var colCount = Math.ceil(childrenToDisplay.length / rowCount);
 				while (rowCount--) {
 					var row = $('<div/>').addClass('tilerow').appendTo(this.element);
