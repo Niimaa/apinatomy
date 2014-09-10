@@ -30,5 +30,10 @@
     "sass-loader": "^0.2.0",
     "style-loader": "^0.8.0",
     "traceur": "0.0.58"
+  },
+  "dependencies": {
+    "jquery": "^2.1.1",
+    "jquery-ui": "^1.10.5",
+    "js-graph": "0.1.0-r3"
   }
 }

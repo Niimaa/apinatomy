@@ -12,6 +12,7 @@ var gulp = require('gulp'),
 
 var EXTERNAL_MODULES = [
 	{ 'jquery': { root: 'jQuery', commonjs2: 'jquery', commonjs: 'jquery', amd: 'jquery' } },
+	{ 'js-graph': { root: 'JsGraph', commonjs2: 'js-graph', commonjs: 'js-graph', amd: 'js-graph' } },
 	'jquery-ui'
 ];
 

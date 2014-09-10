@@ -1,10 +1,12 @@
 define(['./util/putcssrules.js', './amy-skin.scss'], function () {
-	return function skin(tile) {
-		var origElement = tile.dom;
+	function skin() {
+		var origElement = this.dom;
 		origElement.addClass('skinned-tile');
-		origElement.append(`<header>${tile.model.name}</header><section/>`);
-		tile.dom = origElement.children('section');
-		tile.dom.css('padding', tile.options.tileSpacing);
-		tile.element.putCssRules(tile.model.css);
+		origElement.append(`<header>${this.model.name}</header><section/>`);
+		this.dom = origElement.children('section');
+		this.dom.css('padding', this.options.tileSpacing);
+		this.element.putCssRules(this.model.css);
 	}
+	skin.name = 'skin';
+	return skin;
 });
