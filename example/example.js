@@ -22,12 +22,11 @@ require(['jquery', '../dist/amy-skin', 'jquery-ui', '../dist/amy-circuitboard', 
 	//
 	// Apply some plugins to ApiNATOMY tiles
 	//
-	$.tile.plugin(skin);
+	$.tile.plugin(['clicker'], skin);
 	$.tile.plugin('clicker', function () {
-		var that = this;
-		that.on('click', function () {
-			that.open = !that.open;
-			that.weight = that.open ? 2 : 1;
+		this.on('click', function () {
+			this.open = !this.open;
+			this.weight = this.open ? 2 : 1;
 		});
 	});
 

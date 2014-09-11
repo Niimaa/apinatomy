@@ -14,7 +14,7 @@ define(['jquery', 'js-graph', 'jquery-ui'], function ($, JsGraph) {
 			on(signal, fn) { _callback(signal).add(fn) },
 			off(signal, fn) { _callback(signal).remove(fn) },
 			one(signal, fn) {
-				var paddedFn = ()=> {
+				var paddedFn = ()=>{
 					fn.apply(null, arguments);
 					this.off(signal, paddedFn);
 				};
@@ -22,7 +22,7 @@ define(['jquery', 'js-graph', 'jquery-ui'], function ($, JsGraph) {
 			},
 			trigger(signal, ...args) {
 				var callbacks = _callbacks[signal];
-				if (callbacks) { callbacks.fire.apply(callbacks, args) }
+				if (callbacks) { callbacks.fireWith(this, args) }
 			}
 		});
 		//noinspection JSUnusedGlobalSymbols
@@ -57,18 +57,17 @@ define(['jquery', 'js-graph', 'jquery-ui'], function ($, JsGraph) {
 
 					//// sanity checks
 					if (typeof name !== 'string' || name === '') {
-						throw Error("The given ApiNATOMY plugin does not have a name.");
+						throw Error("The given ApiNATOMY plugin " +
+							"does not have a name.");
 					}
 					if (!$.isArray(after)) {
-						throw Error("The given ApiNATOMY plugin has an 'after' clause that is not an array.");
+						throw Error("The given ApiNATOMY plugin has an " +
+							"'after' clause that is not an array.");
 					}
 
 					//// register the plugin
 					_plugins.addVertex(name, fn);
-					$.each(after, (i, v) => {
-						_plugins.ensureVertex(v, ()=>{});
-						_plugins.addEdge(v, name);
-					});
+					$.each(after, (i, v) => { _plugins.createEdge(v, name) });
 
 					//// checking for a cycle
 					try {
@@ -82,7 +81,7 @@ define(['jquery', 'js-graph', 'jquery-ui'], function ($, JsGraph) {
 				constructor.call(obj, _pluginResults.core);
 				$.extend(obj, _pluginResults.core);
 				_plugins.topologically((name, fn) => {
-					fn.call(obj, _pluginResults[name], _pluginResults);
+					fn && fn.call(obj, _pluginResults[name], _pluginResults);
 					$.extend(obj, _pluginResults[name]);
 				});
 			}
