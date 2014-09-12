@@ -20,18 +20,32 @@ requirejs.config({
 require(['jquery', '../dist/amy-skin', 'jquery-ui', '../dist/amy-circuitboard', 'domReady!'], function ($, skin) {
 
 	//
-	// Apply some plugins to ApiNATOMY tiles
+	// Apply some plugins
 	//
-	$.tile.plugin(['clicker'], skin);
-	$.tile.plugin('clicker', function () {
-		this.on('click', function () {
-			this.open = !this.open;
-			this.weight = this.open ? 2 : 1;
-		});
+	$.circuitboard.plugin(skin);
+	$.circuitboard.plugin({
+		name: 'clicker',
+		component: 'tile',
+		decorator: function () {
+			this.on('click', function () {
+				this.open = !this.open;
+				this.weight = this.open ? 2 : 1;
+			});
+		}
+	});
+	$.circuitboard.plugin({
+		name: 'big-border',
+		component: 'circuitboard',
+		decorator: function () {
+			this.element.css({
+				border: 'solid 5px black',
+				padding: this.options.tileSpacing
+			});
+		}
 	});
 
 	//
-	// Set up a model offering the required API (which is still under design)
+	// Set up a model that offers the required API (which is still under design)
 	//
 	function equipWithAPI(obj) {
 		obj.getChild = function (id) {

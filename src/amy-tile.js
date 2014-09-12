@@ -1,6 +1,6 @@
 define(['jquery', './util/amywidget.js', './util/nestedflexgrow.js'], function ($) {
 
-	$.amyWidget('tile', {
+	$.amyWidget('tile', 'tile', {
 		cssClass:    'tile',
 		filter:      ()=>true,
 		model:       null,

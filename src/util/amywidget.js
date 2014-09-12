@@ -1,4 +1,4 @@
-define(['jquery', 'js-graph', 'jquery-ui'], function ($, JsGraph) {
+define(['jquery', 'jquery-ui'], function ($) {
 
 	function signalHandlerMixin() {
 		var _callbacks = {};
@@ -30,61 +30,7 @@ define(['jquery', 'js-graph', 'jquery-ui'], function ($, JsGraph) {
 	}
 
 	$.extend({
-		amyWidget(name, options, constructor) {
-
-			////////////////////////////
-			//// supporting plugins ////
-			////////////////////////////
-
-			var _plugins = new JsGraph();
-			var _pluginResults = {};
-			$[name] = {
-				plugin(name, after, fn) {
-					//// allow for missing parameters
-					if (typeof name === 'function') {
-						fn = name;
-						name = fn.name;
-						after = fn.after || [];
-					} else if (typeof after === 'function') {
-						fn = after;
-						if ($.isArray(name)) {
-							after = name;
-							name = fn.name;
-						} else {
-							after = fn.after || [];
-						}
-					}
-
-					//// sanity checks
-					if (typeof name !== 'string' || name === '') {
-						throw Error("The given ApiNATOMY plugin " +
-							"does not have a name.");
-					}
-					if (!$.isArray(after)) {
-						throw Error("The given ApiNATOMY plugin has an " +
-							"'after' clause that is not an array.");
-					}
-
-					//// register the plugin
-					_plugins.addVertex(name, fn);
-					$.each(after, (i, v) => { _plugins.createEdge(v, name) });
-
-					//// checking for a cycle
-					try {
-						_plugins.topologically(()=>{});
-					} catch (cycleError) {
-						throw new Error("The plugin application order has a cycle: " + cycleError.cycle);
-					}
-				}
-			};
-			function applyPlugins(obj) {
-				constructor.call(obj, _pluginResults.core);
-				$.extend(obj, _pluginResults.core);
-				_plugins.topologically((name, fn) => {
-					fn && fn.call(obj, _pluginResults[name], _pluginResults);
-					$.extend(obj, _pluginResults[name]);
-				});
-			}
+		amyWidget(name, componentName, options, constructor) {
 
 			/////////////////////////////
 			//// defining the widget ////
@@ -108,7 +54,7 @@ define(['jquery', 'js-graph', 'jquery-ui'], function ($, JsGraph) {
 					});
 
 					//// call the main constructor and the plugins
-					applyPlugins(this);
+					$.circuitboard._applyPlugins(componentName, this, constructor);
 				},
 				_destroy() { this.trigger("destroy") }
 			});

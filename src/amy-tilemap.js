@@ -1,6 +1,6 @@
 define(['jquery', './util/amywidget.js', './util/nestedflexgrow.js', './amy-tile.js', './amy-tilemap.scss'], function ($) {
 
-	$.amyWidget('tilemap', {
+	$.amyWidget('tilemap', 'tilemap', {
 		cssClass: "tilemap",
 		filter: ()=>true,
 		model: null,
