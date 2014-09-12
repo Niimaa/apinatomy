@@ -64,7 +64,7 @@ define(['jquery', './util/plugger.js', './util/amywidget.js', './amy-tilemap.js'
 				filter: this.options.filter,
 				model: this.options.model,
 				tileSpacing: this.options.tileSpacing,
-				_cb: this
+				_circuitboard: this
 			}).tilemap('instance');
 		this.one('destroy', ()=> { _tilemap.destroy() });
 

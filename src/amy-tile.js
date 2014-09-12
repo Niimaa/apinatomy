@@ -1,54 +1,55 @@
 define(['jquery', './util/amywidget.js', './util/nestedflexgrow.js'], function ($) {
 
 	$.amyWidget('tile', 'tile', {
-		cssClass:    'tile',
-		filter:      ()=>true,
-		model:       null,
+		cssClass: 'tile',
+		filter: ()=>true,
+		model: null,
 		tileSpacing: 0,
-		_cb:         null
+		_circuitboard: null
 	}, function Tile() {
 
+		//
+		// make a reference to the circuitboard available in this tile object
+		//
+		Object.defineProperty(this, 'circuitboard', {
+			get() { return this.options._circuitboard }
+		});
 
-		///////////////////////////////
-		//// supporting DOM-events ////
-		///////////////////////////////
+		//
+		// support certain DOM-event subscriptions from the tile object itself
+		//
+		$.each(['click', 'mouseover', 'mouseout'], (index, signal) => {
+			this.element.on(signal, (event) => {
+				event.stopPropagation();
+				this.trigger(signal, event);
+			});
+		});
+		$.each(['mouseenter', 'mouseleave'], (index, signal) => {
+			this.element.on(signal, (event) => {
+				this.trigger(signal, event);
+			});
+		});
 
-        $.each(['click', 'mouseover', 'mouseout'], (index, signal) => {
-            this.element.on(signal, (event) => {
-                event.stopPropagation();
-                this.trigger(signal, event);
-            });
-        });
-
-        $.each(['mouseenter', 'mouseleave'], (index, signal) => {
-            this.element.on(signal, (event) => {
-                this.trigger(signal, event);
-            });
-        });
-
-        ///////////////////////////////////////////
-        //// public access to the HTML element ////
-        ///////////////////////////////////////////
-
+		//
+		// public access to the HTML element
+		//
 		var _domContent = this.element;
-        Object.defineProperty(this, 'dom', {
-            get() { return _domContent },
-            set(newDOM) { _domContent = newDOM }
-        });
+		Object.defineProperty(this, 'dom', {
+			get() { return _domContent },
+			set(newDOM) { _domContent = newDOM }
+		});
 
-        // TODO: public access to D3 layer and three.js layer
+		// TODO: public access to D3 layer and three.js layer
 
-		///////////////////////////
-		//// 'active' property ////
-		///////////////////////////
-
+		//
+		// the 'active' property
+		//
 		this.element.addClass('active');
 		// TODO: getter, setter
 
-		///////////////////////////
-		//// 'weight' property ////
-		///////////////////////////
-
+		//
+		// the 'weight' property
+		//
 		var _weight = 1;
 		Object.defineProperty(this, 'weight', {
 			get() { return _weight },
@@ -59,10 +60,9 @@ define(['jquery', './util/amywidget.js', './util/nestedflexgrow.js'], function (
 			}
 		});
 
-		/////////////////////////
-		//// 'open' property ////
-		/////////////////////////
-
+		//
+		// the 'open' property
+		//
 		var _open = false;
 		Object.defineProperty(this, 'open', {
 			get() { return _open },
@@ -73,29 +73,26 @@ define(['jquery', './util/amywidget.js', './util/nestedflexgrow.js'], function (
 			}
 		});
 
-		///////////////////////
-		//// inner tilemap ////
-		///////////////////////
-
+		//
+		// the inner tilemap
+		//
 		var _tilemap = null;
-
-		var _populateInnerTilemap = ()=>{
+		var _populateInnerTilemap = ()=> {
 			if (!_tilemap) {
 				_tilemap = this.dom.tilemap({
-					filter:      this.options.filter,
-					model:       this.options.model,
+					filter: this.options.filter,
+					model: this.options.model,
 					tileSpacing: this.options.tileSpacing,
-					_cb:         this.options._cb
+					_circuitboard: this.options._circuitboard
 				}).tilemap('instance');
-				this.one('destroy', ()=>{ _tilemap.destroy() });
+				this.one('destroy', ()=> { _tilemap.destroy() });
 			}
 		};
 
-        /////////////////////////////////////////
-        //// inform circuitboard of new tile ////
-        /////////////////////////////////////////
-
-        this.options._cb._registerTile(this);
+		//
+		// inform circuitboard of new tile
+		//
+		this.circuitboard._registerTile(this);
 
 	});
 

@@ -5,26 +5,41 @@ define(['jquery', './util/amywidget.js', './util/nestedflexgrow.js', './amy-tile
 		filter: ()=>true,
 		model: null,
 		tileSpacing: 0,
-		_cb: null
+		_circuitboard: null
 	}, function Tilemap() {
 
+		//
+		// make a reference to the circuitboard available in this tilemap object
+		//
+		Object.defineProperty(this, 'circuitboard', {
+			get() { return this.options._circuitboard }
+		});
+
+		//
+		// how to refresh the content of this tilemap
+		//
 		$.extend(this, {
 			_refreshTiles() {
-				//// if there's no model, empty out and return
+
+				//
+				// if there's no model, empty out and return
+				//
 				if (!this.model || !this.model.getChildIds || !this.model.getChild) {
 					this.element.empty();
 					return;
 				}
 
-				//// load the models of children that ought be displayed
+				//
+				// load the models of children that ought be displayed
+				//
 				var childrenToDisplay = [];
 				$.each(this.model.getChildIds(), (index, childId) => {
 					var getChild = ()=>{
-						if (!this.options._cb.options.entityCache[childId]) {
-							this.options._cb.options.entityCache[childId] =
+						if (!this.circuitboard.options.entityCache[childId]) {
+							this.circuitboard.options.entityCache[childId] =
 								  this.model.getChild(childId);
 						}
-						return this.options._cb.options.entityCache[childId];
+						return this.circuitboard.options.entityCache[childId];
 					};
 
 					if (this.options.filter(childId, getChild)) {
@@ -32,7 +47,9 @@ define(['jquery', './util/amywidget.js', './util/nestedflexgrow.js', './amy-tile
 					}
 				});
 
-				//// (re)layout the tiles
+				//
+				// (re)layout the tiles
+				//
 				this.element.children().empty(); // TODO: maintain reference to tile elements
 				this.element.empty();
 				var rowCount = Math.floor(Math.sqrt(childrenToDisplay.length));
@@ -44,7 +61,7 @@ define(['jquery', './util/amywidget.js', './util/nestedflexgrow.js', './amy-tile
 							filter: this.options.filter,
 							model: childrenToDisplay.pop(),
 							tileSpacing: this.options.tileSpacing,
-							_cb: this.options._cb
+							_circuitboard: this.options._circuitboard
 						}).appendTo(row).nestedFlexGrow(1).tile('instance');
 						tile.one('destroy', tile.destroy.bind(tile));
 					}
@@ -56,6 +73,9 @@ define(['jquery', './util/amywidget.js', './util/nestedflexgrow.js', './amy-tile
 			}
 		});
 
+		//
+		// refresh this tilemap now
+		//
 		this._refreshTiles();
 		this._refreshTileSpacing();
 
