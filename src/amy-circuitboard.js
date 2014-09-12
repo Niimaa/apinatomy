@@ -1,5 +1,9 @@
-define(['jquery', './util/plugger.js', './util/amywidget.js', './amy-tilemap.js', './amy-circuitboard.scss'], function ($, acceptPlugins) {
+define(['jquery', 'q', './util/plugger.js', './util/amywidget.js', './amy-tilemap.js', './amy-circuitboard.scss'], function ($, Q, acceptPlugins) {
 
+	//
+	// let '$.circuitboard' accept plugins
+	//
+	//
 	$.circuitboard = $.circuitboard || {};
 	$.circuitboard._applyPlugins = acceptPlugins($.circuitboard, {
 		components: {
@@ -9,15 +13,19 @@ define(['jquery', './util/plugger.js', './util/amywidget.js', './amy-tilemap.js'
 		}
 	});
 
+	//
+	// define the circuitboard widget
+	//
 	$.amyWidget('circuitboard', 'circuitboard', {
 		cssClass: "circuitboard",
-		filter: ()=>true,
+		filter: ()=>Q(true),
 		model: null,
-		entityCache: {},
-		tileSpacing: 0
+		entityCache: {}
 	}, function Circuitboard() {
 
-		//// keeping track of tiles
+		//
+		// keeping track of tiles
+		//
 		var _tilesByModelId = {};
 		$.extend(this, {
 			_registerTile(tile) { // used by tiles
@@ -56,14 +64,13 @@ define(['jquery', './util/plugger.js', './util/amywidget.js', './amy-tilemap.js'
 			}
 		});
 
-
-		//// the root tilemap
+		//
+		// the root tilemap
+		//
 		var _tilemap = $('<div/>').appendTo(this.element)
 			.css('flex-grow', 1)
 			.tilemap({
-				filter: this.options.filter,
 				model: this.options.model,
-				tileSpacing: this.options.tileSpacing,
 				_circuitboard: this
 			}).tilemap('instance');
 		this.one('destroy', ()=> { _tilemap.destroy() });

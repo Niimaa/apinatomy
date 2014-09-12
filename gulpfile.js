@@ -10,14 +10,24 @@ var gulp = require('gulp'),
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+function externalModule(modName, varName) {
+	if (!varName) { return modName }
+	var obj = {};
+	obj[modName] = { root: varName, commonjs2: modName, commonjs: modName, amd: modName };
+	return obj;
+}
+
 var EXTERNAL_MODULES = [
-	{ 'jquery': { root: 'jQuery', commonjs2: 'jquery', commonjs: 'jquery', amd: 'jquery' } },
-	'jquery-ui'
+	externalModule('jquery', 'jQuery'),
+	externalModule('q', 'Q'),
+	externalModule('js-graph', 'JsGraph'),
+	externalModule('jquery-ui')
 ];
 
 var MODULES = [
 	{ name: 'core', file: 'amy-circuitboard.js' },
-	{ name: 'skin', file: 'amy-skin.js' }
+	{ name: 'skin', file: 'amy-skin.js' },
+	{ name: 'tilespacing', file: 'amy-tilespacing.js' }
 ];
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -80,7 +90,7 @@ gulp.task('sass', function (callback) {
 		.on('end', callback);
 });
 
-gulp.task('build', ['build:core', 'build:skin']);
+gulp.task('build', ['build:core', 'build:skin', 'build:tilespacing']);
 
 gulp.task('build:example', ['build', 'sass']);
 

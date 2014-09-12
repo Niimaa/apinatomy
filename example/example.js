@@ -3,13 +3,15 @@
 //
 requirejs.config({
 	paths: {
-		'domReady': '../bower_components/requirejs-domready/domReady',
-		'jquery': '../bower_components/jquery/dist/jquery',
+		'domReady':  '../bower_components/requirejs-domready/domReady',
+		'jquery':    '../bower_components/jquery/dist/jquery',
 		'jquery-ui': '../bower_components/jquery-ui/jquery-ui',
-		'js-graph': '../bower_components/js-graph/dist/js-graph'
+		'js-graph':  '../bower_components/js-graph/dist/js-graph',
+		'q':         '../bower_components/q/q'
 	},
-	shim: {
-		'jquery': { exports: '$' },
+	shim:  {
+		'jquery':    { exports: '$' },
+		'q':         { exports: 'Q' },
 		'jquery-ui': ['jquery']
 	}
 });
@@ -17,14 +19,15 @@ requirejs.config({
 //
 // Example application
 //
-require(['jquery', '../dist/amy-skin', 'jquery-ui', '../dist/amy-circuitboard', 'domReady!'], function ($, skin) {
+require(['jquery', 'q', '../dist/amy-skin', '../dist/amy-tilespacing', 'jquery-ui', '../dist/amy-circuitboard', 'domReady!'], function ($, Q, skinPlugin, tilespacingPlugin) {
 
 	//
 	// Apply some plugins
 	//
-	$.circuitboard.plugin(skin);
+	$.circuitboard.plugin(skinPlugin);
+	$.circuitboard.plugin(tilespacingPlugin);
 	$.circuitboard.plugin({
-		name: 'clicker',
+		name:      'click-to-open',
 		component: 'tile',
 		decorator: function () {
 			this.on('click', function () {
@@ -34,11 +37,11 @@ require(['jquery', '../dist/amy-skin', 'jquery-ui', '../dist/amy-circuitboard', 
 		}
 	});
 	$.circuitboard.plugin({
-		name: 'big-border',
+		name:      'big-border',
 		component: 'circuitboard',
 		decorator: function () {
 			this.element.css({
-				border: 'solid 5px black',
+				border:  'solid 5px black',
 				padding: this.options.tileSpacing
 			});
 		}
@@ -48,58 +51,60 @@ require(['jquery', '../dist/amy-skin', 'jquery-ui', '../dist/amy-circuitboard', 
 	// Set up a model that offers the required API (which is still under design)
 	//
 	function equipWithAPI(obj) {
-		obj.getChild = function (id) {
-			return obj.children[id];
+		obj.getChildren = function (ids) {
+			return Q(obj.children && ids.map(function (id) {
+				return Q(obj.children[id]);
+			}));
 		};
 		obj.getChildIds = function () {
-			return obj.children ? Object.keys(obj.children) : 0;
+			return Q(obj.children ? Object.keys(obj.children) : []);
 		};
 		if (obj.children) {
-			$.each(obj.children, function (childId, child) {
-				child.id = childId;
+			$.each(obj.children, function (id, child) {
+				child.id = id;
 				equipWithAPI(child);
 			});
 		}
-		return obj;
+		return Q(obj);
 	}
 
 	var model = equipWithAPI({
-		id: 's',
+		id:       's',
 		children: {
 			a: { name: 'Tile A', css: {
-				'&': { backgroundColor: 'red', borderColor: '#ffbbbb', color: 'white' },
+				'&':        { backgroundColor: 'red', borderColor: '#ffbbbb', color: 'white' },
 				'& header': { borderColor: '#ffbbbb' }
 			}},
 			b: { name: 'Tile B', css: {
-				'&': { backgroundColor: 'blue', borderColor: 'lightblue', color: 'white' },
+				'&':        { backgroundColor: 'blue', borderColor: 'lightblue', color: 'white' },
 				'& header': { borderColor: 'lightblue' }
 			}},
 			c: { name: 'Tile C', css: {
-				'&': { backgroundColor: 'gray', borderColor: 'lightgray', color: 'white' },
+				'&':        { backgroundColor: 'gray', borderColor: 'lightgray', color: 'white' },
 				'& header': { borderColor: 'lightgray' }
 			}},
-			d: { name: 'Tile D',
-				css: {
-					'&': { backgroundColor: 'green', borderColor: 'lightgreen', color: 'white' },
+			d: { name:    'Tile D',
+				css:      {
+					'&':        { backgroundColor: 'green', borderColor: 'lightgreen', color: 'white' },
 					'& header': { borderColor: 'lightgreen' }
 				},
 				children: {
 					d1: { name: 'Tile D1', css: {
-						'&': { backgroundColor: 'lightgreen', borderColor: 'green', color: 'black' },
+						'&':        { backgroundColor: 'lightgreen', borderColor: 'green', color: 'black' },
 						'& header': { borderColor: 'green' }
 					}},
 					d2: { name: 'Tile D2', css: {
-						'&': { backgroundColor: 'lightgreen', borderColor: 'green', color: 'black' },
+						'&':        { backgroundColor: 'lightgreen', borderColor: 'green', color: 'black' },
 						'& header': { borderColor: 'green' }
 					}},
 					d3: { name: 'Tile D3', css: {
-						'&': { backgroundColor: 'lightgreen', borderColor: 'green', color: 'black' },
+						'&':        { backgroundColor: 'lightgreen', borderColor: 'green', color: 'black' },
 						'& header': { borderColor: 'green' }
 					}}
 				}
 			},
 			e: { name: 'Tile E', css: {
-				'&': { backgroundColor: 'purple', borderColor: 'orchid', color: 'white' },
+				'&':        { backgroundColor: 'purple', borderColor: 'orchid', color: 'white' },
 				'& header': { borderColor: 'orchid' }
 			}}
 		}
@@ -109,7 +114,7 @@ require(['jquery', '../dist/amy-skin', 'jquery-ui', '../dist/amy-circuitboard', 
 	// Use the $.fn.circuitboard method to instantiate the circuit-board
 	//
 	$('#circuitboard').circuitboard({
-		model: model,
+		model:       model,
 		tileSpacing: 4
 	});
 

@@ -2,18 +2,9 @@ define(['jquery', './util/amywidget.js', './util/nestedflexgrow.js'], function (
 
 	$.amyWidget('tile', 'tile', {
 		cssClass: 'tile',
-		filter: ()=>true,
 		model: null,
-		tileSpacing: 0,
 		_circuitboard: null
 	}, function Tile() {
-
-		//
-		// make a reference to the circuitboard available in this tile object
-		//
-		Object.defineProperty(this, 'circuitboard', {
-			get() { return this.options._circuitboard }
-		});
 
 		//
 		// support certain DOM-event subscriptions from the tile object itself
@@ -80,9 +71,7 @@ define(['jquery', './util/amywidget.js', './util/nestedflexgrow.js'], function (
 		var _populateInnerTilemap = ()=> {
 			if (!_tilemap) {
 				_tilemap = this.dom.tilemap({
-					filter: this.options.filter,
 					model: this.options.model,
-					tileSpacing: this.options.tileSpacing,
 					_circuitboard: this.options._circuitboard
 				}).tilemap('instance');
 				this.one('destroy', ()=> { _tilemap.destroy() });

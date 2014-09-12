@@ -39,12 +39,19 @@ define(['jquery', 'jquery-ui'], function ($) {
 			$.widget(`apinatomy.${name}`, {
 				options: options,
 				_create() {
-					//// enable signal handling
+					//
+					// enable signal handling
+					//
 					signalHandlerMixin.call(this);
 
-					//// make the model available in the object itself
+					//
+					// make the model and circuitboard references available in the object itself
+					//
 					Object.defineProperty(this, 'model', {
 						get() { return this.options.model }
+					});
+					Object.defineProperty(this, 'circuitboard', {
+						get() { return this.options._circuitboard }
 					});
 
 					//// set the element class

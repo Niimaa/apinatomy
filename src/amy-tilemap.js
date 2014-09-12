@@ -1,83 +1,94 @@
-define(['jquery', './util/amywidget.js', './util/nestedflexgrow.js', './amy-tile.js', './amy-tilemap.scss'], function ($) {
+define(['jquery', 'q', './util/amywidget.js', './util/nestedflexgrow.js', './util/misc.js', './amy-tile.js', './amy-tilemap.scss'], function ($, Q) {
 
 	$.amyWidget('tilemap', 'tilemap', {
-		cssClass: "tilemap",
-		filter: ()=>true,
-		model: null,
-		tileSpacing: 0,
+		cssClass:      "tilemap",
+		model:         null,
 		_circuitboard: null
 	}, function Tilemap() {
-
-		//
-		// make a reference to the circuitboard available in this tilemap object
-		//
-		Object.defineProperty(this, 'circuitboard', {
-			get() { return this.options._circuitboard }
-		});
 
 		//
 		// how to refresh the content of this tilemap
 		//
 		$.extend(this, {
-			_refreshTiles() {
+			refreshTiles() {
 
 				//
-				// if there's no model, empty out and return
+				// if there's no model, empty out and bail out
 				//
-				if (!this.model || !this.model.getChildIds || !this.model.getChild) {
+				if (!this.model) {
 					this.element.empty();
 					return;
 				}
 
 				//
-				// load the models of children that ought be displayed
+				// a (caching) function for getting a child promise
+				// TODO: caching should be done in a different code-layer
 				//
-				var childrenToDisplay = [];
-				$.each(this.model.getChildIds(), (index, childId) => {
-					var getChild = ()=>{
-						if (!this.circuitboard.options.entityCache[childId]) {
-							this.circuitboard.options.entityCache[childId] =
-								  this.model.getChild(childId);
+				var getChildren = (id)=> {
+					var cache = this.circuitboard.options.entityCache; // local shorthand
+					if (!cache[id]) {
+						//// cache the entity
+						cache[id] = this.model.invoke('getChildren', id);
+						//// put the 'id' directly on the promise, for synchronous retrieval
+						cache[id].id = id;
+					}
+					return cache[id];
+				};
+
+
+				//
+				// render the new tilemap (through a promise chain, returning a promise)
+				//
+				return this.model
+					//
+					// get the id's of all child models
+					//
+					.invoke('getChildIds')
+					//
+					// filter out the ids of children that ought not be displayed
+					//
+					.invoke('map', (id) => {
+						return Q(this.circuitboard.options.filter(id, getChildren.bind(this, id)))
+							.then((show) => { return { id: id, show: show } });
+					}).all().invoke('filter', $.field('show')).invoke('map', $.field('id'))
+					//
+					// get promises to all child entities
+					//
+					.then(getChildren)
+					//
+					// create a tile for each child entity
+					//
+					.then((childrenToDisplay) => {
+						// remove all old tiles
+						// TODO: maintain references, so they won't have to be recreated
+						this.element.children().empty();
+						this.element.empty();
+
+						// render the new tiles
+						var rowCount = Math.floor(Math.sqrt(childrenToDisplay.length));
+						var colCount = Math.ceil(childrenToDisplay.length / rowCount);
+						while (rowCount--) {
+							var row = $('<div/>').addClass('tilerow').appendTo(this.element);
+							for (var column = 0; column < colCount && childrenToDisplay.length > 0; column += 1) {
+								var tile = $('<div/>').tile({
+									model:         childrenToDisplay.pop(),
+									_circuitboard: this.options._circuitboard
+								}).appendTo(row).nestedFlexGrow(1).tile('instance');
+								tile.one('destroy', tile.destroy.bind(tile));
+							}
 						}
-						return this.circuitboard.options.entityCache[childId];
-					};
-
-					if (this.options.filter(childId, getChild)) {
-						childrenToDisplay.push(getChild());
-					}
-				});
-
-				//
-				// (re)layout the tiles
-				//
-				this.element.children().empty(); // TODO: maintain reference to tile elements
-				this.element.empty();
-				var rowCount = Math.floor(Math.sqrt(childrenToDisplay.length));
-				var colCount = Math.ceil(childrenToDisplay.length / rowCount);
-				while (rowCount--) {
-					var row = $('<div/>').addClass('tilerow').appendTo(this.element);
-					for (var column = 0; column < colCount && childrenToDisplay.length > 0; column += 1) {
-						var tile = $('<div/>').tile({
-							filter: this.options.filter,
-							model: childrenToDisplay.pop(),
-							tileSpacing: this.options.tileSpacing,
-							_circuitboard: this.options._circuitboard
-						}).appendTo(row).nestedFlexGrow(1).tile('instance');
-						tile.one('destroy', tile.destroy.bind(tile));
-					}
-				}
-			},
-			_refreshTileSpacing() {
-				this.element.children().css('margin-bottom', this.options.tileSpacing);
-				this.element.children().children().css('margin-right', this.options.tileSpacing);
+					})
+					//
+					// signal that the tiles have been (re)rendered
+					//
+					.then(() => { this.trigger('tiles-refreshed') });
 			}
 		});
 
 		//
 		// refresh this tilemap now
 		//
-		this._refreshTiles();
-		this._refreshTileSpacing();
+		this.refreshTiles();
 
 	});
 
