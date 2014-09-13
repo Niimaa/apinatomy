@@ -21,22 +21,6 @@ define(['jquery', 'q', './util/amywidget.js', './util/nestedflexgrow.js', './uti
 				}
 
 				//
-				// a (caching) function for getting a child promise
-				// TODO: caching should be done in a different code-layer
-				//
-				var getChildren = (id)=> {
-					var cache = this.circuitboard.options.entityCache; // local shorthand
-					if (!cache[id]) {
-						//// cache the entity
-						cache[id] = this.model.invoke('getChildren', id);
-						//// put the 'id' directly on the promise, for synchronous retrieval
-						cache[id].id = id;
-					}
-					return cache[id];
-				};
-
-
-				//
 				// render the new tilemap (through a promise chain, returning a promise)
 				//
 				return this.model
@@ -48,13 +32,13 @@ define(['jquery', 'q', './util/amywidget.js', './util/nestedflexgrow.js', './uti
 					// filter out the ids of children that ought not be displayed
 					//
 					.invoke('map', (id) => {
-						return Q(this.circuitboard.options.filter(id, getChildren.bind(this, id)))
+						return Q(this.circuitboard.options.filter(id, $.bind(this.model, 'invoke', 'getChildren', id)))
 							.then((show) => { return { id: id, show: show } });
 					}).all().invoke('filter', $.field('show')).invoke('map', $.field('id'))
 					//
 					// get promises to all child entities
 					//
-					.then(getChildren)
+					.then($.bind(this.model, 'invoke', 'getChildren'))
 					//
 					// create a tile for each child entity
 					//

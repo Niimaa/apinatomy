@@ -19,8 +19,7 @@ define(['jquery', 'q', './util/plugger.js', './util/amywidget.js', './amy-tilema
 	$.amyWidget('circuitboard', 'circuitboard', {
 		cssClass: "circuitboard",
 		filter: ()=>Q(true),
-		model: null,
-		entityCache: {}
+		model: null
 	}, function Circuitboard() {
 
 		//
