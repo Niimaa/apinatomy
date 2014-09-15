@@ -18,6 +18,12 @@ function externalModule(modName, varName) {
 	return obj;
 }
 
+function logAndKeepGoing(stream) {
+	return function (e) { gutil.log(gutil.colors.red(e)); (stream || this).end(); }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 var EXTERNAL_MODULES = [
 	externalModule('jquery', 'jQuery'),
 	externalModule('bluebird', 'P'),
@@ -30,8 +36,6 @@ var MODULES = [
 	{ name: 'skin', file: 'amy-skin.js' },
 	{ name: 'tilespacing', file: 'amy-tilespacing.js' }
 ];
-
-function logAndKeepGoing(stream) { return function (e) { gutil.log(gutil.colors.red(e)); (stream || this).end(); } }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
