@@ -13,12 +13,10 @@ define(['jquery', 'bluebird', './amy-util/amywidget.js', './amy-util/nestedflexg
 			refreshTiles() {
 
 				//
-				// if there's no model, empty out and bail out
+				// sanity check
 				//
-				if (!this.model) {
-					this.element.empty();
-					return;
-				}
+				$.assert($.isDefined(this.model),
+					`An ApiNATOMY tilemap should have a model.`);
 
 				//
 				// render the new tilemap (through a promise chain, returning a promise)
@@ -31,10 +29,10 @@ define(['jquery', 'bluebird', './amy-util/amywidget.js', './amy-util/nestedflexg
 					//
 					// filter out the ids of children that ought not be displayed
 					//
-					.call('map', (id) => {
+					.map((id) => {
 						return P.resolve(this.circuitboard.options.filter(id, $.bind(this.model.value(), 'getChildren', id)))
 							.then((show) => { return { id: id, show: show } });
-					}).all().call('filter', $.field('show')).call('map', $.field('id'))
+					}).filter($.field('show')).map($.field('id'))
 					//
 					// get promises to all child entities
 					//
@@ -65,7 +63,7 @@ define(['jquery', 'bluebird', './amy-util/amywidget.js', './amy-util/nestedflexg
 					//
 					// signal that the tiles have been (re)rendered
 					//
-					.then(() => { this.trigger('tiles-refreshed') });
+					.then(()=>{ this.trigger('tiles-refreshed') });
 			}
 		});
 

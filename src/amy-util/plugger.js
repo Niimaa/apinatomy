@@ -42,15 +42,12 @@ define(['jquery', 'js-graph'], function ($, JsGraph) {
 				//
 				// perform sanity checks
 				//
-				if (typeof config.name !== 'string' || config.name === '') {
-					throw Error("The given ApiNATOMY plugin does not have a name.");
-				}
-				if (!$.isFunction(config.decorator)) {
-					throw Error("The given ApiNATOMY plugin does not have a decorator function.");
-				}
-				if (!components[config.component]) {
-					throw Error("The given ApiNATOMY plugin does not specify a component.");
-				}
+				$.assert(typeof config.name === 'string',
+					`An ApiNATOMY plugin should have a name.`);
+				$.assert($.isFunction(config.decorator),
+					`The ApiNATOMY plugin '${config.name}' should have a decorator function.`);
+				$.assert(components[config.component],
+					`The ApiNATOMY plugin '${config.name}' should specify a component.`);
 
 				//
 				// set the component
@@ -66,7 +63,7 @@ define(['jquery', 'js-graph'], function ($, JsGraph) {
 				//
 				// check for a cycle
 				//
-				try {
+				try { // TODO: write a hasCycle method in the js-graph library
 					c.plugins.topologically(()=>{});
 				} catch (cycleError) {
 					throw new Error("The plugin application order has a cycle: " + cycleError.cycle);
