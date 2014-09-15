@@ -18,7 +18,7 @@
     "jquery": "~2.1.1",
     "jquery-ui": "~1.11.1",
     "js-graph": "~0.1.0",
-    "q": "1.x"
+    "bluebird": "~2.3.2"
   },
   "devDependencies": {
     "requirejs-domready": "~2.0.1",

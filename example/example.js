@@ -52,8 +52,7 @@ require(['jquery', 'bluebird', '../dist/amy-skin', '../dist/amy-tilespacing', 'j
 	//
 	function equipWithAPI(obj) {
 		obj.getChildren = function (ids) {
-			console.log('getChildren:', ids);
-			return P.resolve(obj.children && ids.map(function (id) {
+			return P.resolve(ids.map(function (id) {
 				return P.resolve(obj.children[id]);
 			}));
 		};

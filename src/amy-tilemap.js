@@ -20,12 +20,6 @@ define(['jquery', 'bluebird', './amy-util/amywidget.js', './amy-util/nestedflexg
 					return;
 				}
 
-
-
-				var LOG = (val) => {console.log(val);return val;};
-
-
-
 				//
 				// render the new tilemap (through a promise chain, returning a promise)
 				//
@@ -33,19 +27,18 @@ define(['jquery', 'bluebird', './amy-util/amywidget.js', './amy-util/nestedflexg
 					//
 					// get the id's of all child models
 					//
-					.call('getChildIds').then(LOG)
+					.call('getChildIds')
 					//
 					// filter out the ids of children that ought not be displayed
 					//
 					.call('map', (id) => {
-						return P.resolve(this.circuitboard.options.filter(id, $.bind(this.model, 'call', 'getChildren', id)))
+						return P.resolve(this.circuitboard.options.filter(id, $.bind(this.model.value(), 'getChildren', id)))
 							.then((show) => { return { id: id, show: show } });
-					}).all().call('filter', $.field('show')).call('map', $.field('id')).then(LOG)
+					}).all().call('filter', $.field('show')).call('map', $.field('id'))
 					//
 					// get promises to all child entities
 					//
-					.then((ids) => { return this.model.value().getChildren(ids) }).then(LOG)
-//					.then($.bind(this.model, 'call', 'getChildren')).then(LOG)
+					.then(this.model.value().getChildren)
 					//
 					// create a tile for each child entity
 					//
@@ -68,7 +61,7 @@ define(['jquery', 'bluebird', './amy-util/amywidget.js', './amy-util/nestedflexg
 								tile.one('destroy', tile.destroy.bind(tile));
 							}
 						}
-					}).then(LOG)
+					})
 					//
 					// signal that the tiles have been (re)rendered
 					//
