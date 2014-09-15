@@ -1,5 +1,5 @@
 var gulp = require('gulp'),
-	gutil = require('gulp-util'),
+    gutil = require('gulp-util'),
 	traceur = require('gulp-traceur'),
 	webpack = require('webpack'),
 	uglify = require('gulp-uglify'),
@@ -31,6 +31,8 @@ var MODULES = [
 	{ name: 'tilespacing', file: 'amy-tilespacing.js' }
 ];
 
+function logAndKeepGoing(stream) { return function (e) { gutil.log(gutil.colors.red(e)); (stream || this).end(); } }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 gulp.task('clean-tmp', function (callback) {
@@ -44,6 +46,7 @@ gulp.task('traceur', ['clean-tmp'], function (callback) {
 			script: true,
 			sourceMaps: true
 		}))
+		.on('error', logAndKeepGoing())
 		.pipe(sourcemaps.write())
 		.pipe(gulp.dest('.intermediate-output'))
 		.on('end', callback);
@@ -92,8 +95,8 @@ MODULES.forEach(function (m) {
 });
 
 gulp.task('sass', function (callback) {
-	gulp.src(['example/**/*.scss'])
-		.pipe(sass())
+	var stream = gulp.src(['example/**/*.scss']);
+	stream.pipe(sass({ onError: logAndKeepGoing(stream) }))
 		.pipe(gulp.dest('example'))
 		.on('end', callback);
 });
