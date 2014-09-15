@@ -6,7 +6,8 @@ var gulp = require('gulp'),
 	rename = require('gulp-rename'),
 	sass = require('gulp-sass'),
 	karma = require('gulp-karma'),
-	rimraf = require('rimraf');
+	rimraf = require('rimraf'),
+	sourcemaps = require('gulp-sourcemaps');
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -38,10 +39,12 @@ gulp.task('clean-tmp', function (callback) {
 
 gulp.task('traceur', ['clean-tmp'], function (callback) {
 	gulp.src('src/**/*.js')
+		.pipe(sourcemaps.init())
 		.pipe(traceur({
 			script: true,
 			sourceMaps: true
 		}))
+		.pipe(sourcemaps.write())
 		.pipe(gulp.dest('.intermediate-output'))
 		.on('end', callback);
 });
@@ -55,14 +58,19 @@ gulp.task('copy-styles', ['clean-tmp'], function (callback) {
 MODULES.forEach(function (m) {
 	gulp.task('webpack:' + m.name, ['traceur', 'copy-styles'], function (callback) {
 		webpack({
+			devtool: 'inline-source-map',
 			entry: './.intermediate-output/' + m.file,
 			output: {
 				path: './dist',
 				filename: m.file,
-				libraryTarget: 'umd'
+				libraryTarget: 'umd',
+				sourceMapFilename: m.file+'.map'
 			},
 			externals: EXTERNAL_MODULES,
 			module: {
+				preLoaders: [
+					{ test: /amy-.*\.js$/, loader: "source-map" }
+				],
 				loaders: [
 					{ test: /\.scss$/, loader: "style!css!autoprefixer!sass" }
 				]
