@@ -1,4 +1,4 @@
-define(['jquery', 'q', './util/amywidget.js', './util/nestedflexgrow.js', './util/misc.js', './amy-tile.js', './amy-tilemap.scss'], function ($, Q) {
+define(['jquery', 'bluebird', './util/amywidget.js', './util/nestedflexgrow.js', './util/misc.js', './amy-tile.js', './amy-tilemap.scss'], function ($, P) {
 
 	$.amyWidget('tilemap', 'tilemap', {
 		cssClass:      "tilemap",
@@ -20,6 +20,12 @@ define(['jquery', 'q', './util/amywidget.js', './util/nestedflexgrow.js', './uti
 					return;
 				}
 
+
+
+				var LOG = (val) => {console.log(val);return val;};
+
+
+
 				//
 				// render the new tilemap (through a promise chain, returning a promise)
 				//
@@ -27,18 +33,19 @@ define(['jquery', 'q', './util/amywidget.js', './util/nestedflexgrow.js', './uti
 					//
 					// get the id's of all child models
 					//
-					.invoke('getChildIds')
+					.call('getChildIds').then(LOG)
 					//
 					// filter out the ids of children that ought not be displayed
 					//
-					.invoke('map', (id) => {
-						return Q(this.circuitboard.options.filter(id, $.bind(this.model, 'invoke', 'getChildren', id)))
+					.call('map', (id) => {
+						return P.resolve(this.circuitboard.options.filter(id, $.bind(this.model, 'call', 'getChildren', id)))
 							.then((show) => { return { id: id, show: show } });
-					}).all().invoke('filter', $.field('show')).invoke('map', $.field('id'))
+					}).all().call('filter', $.field('show')).call('map', $.field('id')).then(LOG)
 					//
 					// get promises to all child entities
 					//
-					.then($.bind(this.model, 'invoke', 'getChildren'))
+					.then((ids) => { return this.model.value().getChildren(ids) }).then(LOG)
+//					.then($.bind(this.model, 'call', 'getChildren')).then(LOG)
 					//
 					// create a tile for each child entity
 					//
@@ -61,7 +68,7 @@ define(['jquery', 'q', './util/amywidget.js', './util/nestedflexgrow.js', './uti
 								tile.one('destroy', tile.destroy.bind(tile));
 							}
 						}
-					})
+					}).then(LOG)
 					//
 					// signal that the tiles have been (re)rendered
 					//

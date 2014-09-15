@@ -1,4 +1,4 @@
-define(['jquery', 'q', './util/plugger.js', './util/amywidget.js', './amy-tilemap.js', './amy-circuitboard.scss'], function ($, Q, acceptPlugins) {
+define(['jquery', 'bluebird', './util/plugger.js', './util/amywidget.js', './amy-tilemap.js', './amy-circuitboard.scss'], function ($, P, acceptPlugins) {
 
 	//
 	// let '$.circuitboard' accept plugins
@@ -18,7 +18,7 @@ define(['jquery', 'q', './util/plugger.js', './util/amywidget.js', './amy-tilema
 	//
 	$.amyWidget('circuitboard', 'circuitboard', {
 		cssClass: "circuitboard",
-		filter: ()=>Q(true),
+		filter: ()=>P.resolve(true),
 		model: null
 	}, function Circuitboard() {
 

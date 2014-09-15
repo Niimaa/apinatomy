@@ -7,7 +7,7 @@ requirejs.config({
 		'jquery':    '../bower_components/jquery/dist/jquery',
 		'jquery-ui': '../bower_components/jquery-ui/jquery-ui',
 		'js-graph':  '../bower_components/js-graph/dist/js-graph',
-		'q':         '../bower_components/q/q'
+		'bluebird':  '../bower_components/bluebird/js/browser/bluebird'
 	},
 	shim:  {
 		'jquery':    { exports: '$' },
@@ -19,7 +19,7 @@ requirejs.config({
 //
 // Example application
 //
-require(['jquery', 'q', '../dist/amy-skin', '../dist/amy-tilespacing', 'jquery-ui', '../dist/amy-circuitboard', 'domReady!'], function ($, Q, skinPlugin, tilespacingPlugin) {
+require(['jquery', 'bluebird', '../dist/amy-skin', '../dist/amy-tilespacing', 'jquery-ui', '../dist/amy-circuitboard', 'domReady!'], function ($, P, skinPlugin, tilespacingPlugin) {
 
 	//
 	// Apply some plugins
@@ -52,12 +52,13 @@ require(['jquery', 'q', '../dist/amy-skin', '../dist/amy-tilespacing', 'jquery-u
 	//
 	function equipWithAPI(obj) {
 		obj.getChildren = function (ids) {
-			return Q(obj.children && ids.map(function (id) {
-				return Q(obj.children[id]);
+			console.log('getChildren:', ids);
+			return P.resolve(obj.children && ids.map(function (id) {
+				return P.resolve(obj.children[id]);
 			}));
 		};
 		obj.getChildIds = function () {
-			return Q(obj.children ? Object.keys(obj.children) : []);
+			return P.resolve(obj.children ? Object.keys(obj.children) : []);
 		};
 		if (obj.children) {
 			$.each(obj.children, function (id, child) {
@@ -65,7 +66,7 @@ require(['jquery', 'q', '../dist/amy-skin', '../dist/amy-tilespacing', 'jquery-u
 				equipWithAPI(child);
 			});
 		}
-		return Q(obj);
+		return P.resolve(obj);
 	}
 
 	var model = equipWithAPI({

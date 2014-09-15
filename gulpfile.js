@@ -19,7 +19,7 @@ function externalModule(modName, varName) {
 
 var EXTERNAL_MODULES = [
 	externalModule('jquery', 'jQuery'),
-	externalModule('q', 'Q'),
+	externalModule('bluebird', 'P'),
 	externalModule('js-graph', 'JsGraph'),
 	externalModule('jquery-ui')
 ];
