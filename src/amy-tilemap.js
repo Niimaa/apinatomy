@@ -1,4 +1,4 @@
-define(['jquery', 'bluebird', './util/amywidget.js', './util/nestedflexgrow.js', './util/misc.js', './amy-tile.js', './amy-tilemap.scss'], function ($, P) {
+define(['jquery', 'bluebird', './amy-util/amywidget.js', './amy-util/nestedflexgrow.js', './amy-util/misc.js', './amy-tile.js', './amy-tilemap.scss'], function ($, P) {
 
 	$.amyWidget('tilemap', 'tilemap', {
 		cssClass:      "tilemap",

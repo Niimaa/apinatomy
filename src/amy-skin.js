@@ -1,4 +1,4 @@
-define(['jquery', './util/putcssrules.js', './amy-skin.scss'], function ($) {
+define(['jquery', './amy-util/putcssrules.js', './amy-skin.scss'], function ($) {
 	return {
 		component: 'tile',
 		name: 'skin',

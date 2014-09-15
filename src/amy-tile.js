@@ -1,4 +1,4 @@
-define(['jquery', './util/amywidget.js', './util/nestedflexgrow.js'], function ($) {
+define(['jquery', './amy-util/amywidget.js', './amy-util/nestedflexgrow.js'], function ($) {
 
 	$.amyWidget('tile', 'tile', {
 		cssClass: 'tile',
