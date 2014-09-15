@@ -1,4 +1,4 @@
-define(['jquery', 'bluebird', './amy-util/plugin-handler.js', './amy-util/amywidget.js', './amy-tilemap.js', './amy-circuitboard.scss'], function ($, P, pluginHandler) {
+define(['jquery', 'bluebird', './amy-util/plugin-handler.js', './amy-util/widget.js', './amy-tilemap.js', './amy-circuitboard.scss'], function ($, P, pluginHandler) {
 
 	//
 	// let '$.circuitboard' accept plugins

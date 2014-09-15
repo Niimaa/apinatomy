@@ -115,3 +115,7 @@ gulp.task('watch', function () {
 	gulp.watch(['src/**/*.js'], ['build']);
 	gulp.watch(['example/**/*.scss'], ['sass']);
 });
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+gulp.task('default', ['build:example', 'watch']);
