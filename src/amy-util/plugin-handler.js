@@ -1,87 +1,89 @@
 define(['jquery', 'js-graph'], function ($, JsGraph) {
 
-	return function pluginHandler(options) {
-
-		//
-		// gather the published components
-		//
-		var components = {};
-		$.each(options.components, (key, component) => {
-			components[key] = $.extend({}, component, {
-				plugins: new JsGraph(),
-				pluginResults: {}
+	function processOperations(sourceObj, operation, targetObj, field) {
+		if (!targetObj[field]) {
+			targetObj[field] = {};
+			$.each(sourceObj, (key, value)=> {
+				var k = key.match(/^(\w+)\s+(\w+)$/);
+				if (k && k[1] === operation) {
+					targetObj[field][k[2]] = value;
+				}
 			});
-		});
+		}
+	}
+
+	return function pluginHandler() {
 
 		//
-		// place the 'plugin' method in the object
+		// keep track of plugins and their partial application order
+		//
+		var plugins = new JsGraph();
+
+		//
+		// the 'plugin' function returned from this module;
+		// it is called by plugin-writers, and can take an array
 		//
 		function plugin(config) {
-
-			//
-			// if an array is passed, process each item as a separate plugin configuration
-			//
 			if ($.isArray(config)) {
-				$.each(config, (__, subConfig) => { plugin(subConfig) });
-				return;
+				// process each plugin separately
+				$.each(config, (__, subConfig)=>{ plugin(subConfig) });
+			} else {
+				// register a single plugin
+				registerPlugin(config);
 			}
+		}
+
+		//
+		// register a single plugin
+		//
+		function registerPlugin(plugin) {
+			//
+			// perform sanity checks
+			//
+			$.assert(typeof plugin.name === 'string',
+				"An ApiNATOMY plugin should have a name.");
 
 			//
 			// normalize plugin configuration
 			//
-			if (typeof config.name !== 'string') { config.name = config.decorator.name }
-			if (typeof config.after === 'string') { config.after = [config.after] }
-			if (!$.isArray(config.after)) { config.after = [] }
-
-			//
-			// perform sanity checks
-			//
-			$.assert(typeof config.name === 'string',
-				`An ApiNATOMY plugin should have a name.`);
-			$.assert($.isFunction(config.decorator),
-				`The ApiNATOMY plugin '${config.name}' should have a decorator function.`);
-			$.assert(components[config.component],
-				`The ApiNATOMY plugin '${config.name}' should specify a component.`);
-
-			//
-			// set the component
-			//
-			var c = components[config.component];
+			if (!$.isArray(plugin.after)) { plugin.after = [] }
 
 			//
 			// register the plugin
 			//
-			c.plugins.addVertex(config.name, config.decorator);
-			$.each(config.after, (__, v) => { c.plugins.createEdge(v, config.name) });
-
-			//
-			// check for a cycle
-			//
-			try { // TODO: write a hasCycle method in the js-graph library
-				c.plugins.topologically(()=>{});
-			} catch (cycleError) {
-				throw new Error("The plugin application order has a cycle: " + cycleError.cycle);
+			plugins.addNewVertex(plugin.name, plugin);
+			$.each(plugin.after, (__, v) => { plugins.createEdge(v, plugin.name) });
+			try { plugins.topologically(()=>{}) } catch (cycleError) {
+				throw new Error(`The plugin application order has a cycle: ${cycleError.cycle}`);
 			}
 
+			//
+			// pre-process operations (for now, only 'modify' for the top-level)
+			//
+			processOperations(plugin, 'modify', plugin, '_modifications');
 		}
 
-		plugin._apply = function _apply(component, obj, constructor) {
-			var c = components[component];
+		//
+		// apply all relevant plugins to a given object
+		//
+		plugin._apply = function _apply(component, obj) {
+			plugins.topologically((pluginName, plugin) => {
+				if (!plugin) { return }
 
+				// get changes targeted at this component
+				var changes = plugin._modifications[component];
+				if (!changes) { return }
 
+//				// allow changes to depend on previous changes // TODO
+//				if ($.isFunction(changes)) { changes = changes(prev) }
 
-			function processPlugin(name, fn) {
-				if (fn) {
-					fn.call(obj, c.pluginResults[name], c.pluginResults);
+				// for now, only support 'append constructor' // TODO: support other operations
+				if (changes['append constructor']) {
+					changes['append constructor'].call(obj);
 				}
-				$.extend(obj, c.pluginResults[name]);
-			}
-
-			processPlugin('core', constructor);
-			c.plugins.topologically(processPlugin);
+			});
 		};
 
 		return plugin;
 	};
-
 });

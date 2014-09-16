@@ -26,23 +26,27 @@ require(['jquery', 'bluebird', '../dist/amy-skin', '../dist/amy-tilespacing', 'j
 	$.circuitboard.plugin(skinPlugin);
 	$.circuitboard.plugin(tilespacingPlugin);
 	$.circuitboard.plugin({
-		name:      'click-to-open',
-		component: 'tile',
-		decorator: function () {
-			this.on('click', function () {
-				this.open = !this.open;
-				this.weight = this.open ? 2 : 1;
-			});
+		name: 'click-to-open',
+		after: ['tile-core'],
+		'modify tile': {
+			'append constructor': function () {
+				this.on('click', function () {
+					this.open = !this.open;
+					this.weight = this.open ? 2 : 1;
+				});
+			}
 		}
 	});
 	$.circuitboard.plugin({
-		name:      'big-border',
-		component: 'circuitboard',
-		decorator: function () {
-			this.element.css({
-				border:  'solid 5px black',
-				padding: this.options.tileSpacing
-			});
+		name: 'big-border',
+		after: ['circuitboard-core'],
+		'modify circuitboard': {
+			'append constructor': function () {
+				this.element.css({
+					border:  'solid 5px black',
+					padding: this.options.tileSpacing
+				});
+			}
 		}
 	});
 

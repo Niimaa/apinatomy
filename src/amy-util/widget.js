@@ -30,11 +30,11 @@ define(['jquery', 'jquery-ui'], function ($) {
 	}
 
 	$.extend({
-		amyWidget(name, componentName, options, constructor) {
+		amyWidget(name, componentName, options) {
 
-			/////////////////////////////
-			//// defining the widget ////
-			/////////////////////////////
+			//
+			// defining the widget
+			//
 
 			$.widget(`apinatomy.${name}`, {
 				options: options,
@@ -61,7 +61,7 @@ define(['jquery', 'jquery-ui'], function ($) {
 					});
 
 					//// call the main constructor and the plugins
-					$.circuitboard.plugin._apply(componentName, this, constructor);
+					$.circuitboard.plugin._apply(componentName, this);
 				},
 				_destroy() { this.trigger("destroy") }
 			});
