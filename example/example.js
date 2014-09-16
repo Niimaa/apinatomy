@@ -11,7 +11,6 @@ requirejs.config({
 	},
 	shim:  {
 		'jquery':    { exports: '$' },
-		'q':         { exports: 'Q' },
 		'jquery-ui': ['jquery']
 	}
 });
