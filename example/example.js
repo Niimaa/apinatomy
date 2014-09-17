@@ -19,6 +19,7 @@ requirejs.config({
 // Example application
 //
 require(['jquery', 'bluebird', '../dist/amy-skin', '../dist/amy-tilespacing', 'jquery-ui', '../dist/amy-circuitboard', 'domReady!'], function ($, P, skinPlugin, tilespacingPlugin) {
+	'use strict';
 
 	//
 	// Apply some plugins

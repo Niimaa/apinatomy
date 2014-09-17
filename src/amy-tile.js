@@ -1,4 +1,5 @@
 define(['jquery', './amy-cb-plugins.js', './amy-util/widget.js', './amy-util/jquery-instance.js'], function ($) {
+	'use strict';
 
 	//
 	// declare the tile widget
@@ -14,8 +15,8 @@ define(['jquery', './amy-cb-plugins.js', './amy-util/widget.js', './amy-util/jqu
 	//
 	$.circuitboard.plugin({
 		name: 'tile-core',
-		['modify tile']: {
-			['append constructor']() {
+		'modify tile': {
+			'append constructor': function () {
 
 				//
 				// support certain DOM-event subscriptions from the tile object itself

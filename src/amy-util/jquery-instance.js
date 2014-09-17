@@ -1,4 +1,6 @@
 define(['jquery'], function ($) {
+	'use strict';
+
 	$.fn.extend({
 
 		//

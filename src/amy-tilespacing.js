@@ -1,10 +1,12 @@
 define(['jquery'], function ($) {
+	'use strict';
+
 	return {
 		name: 'tilespacing',
 		after: ['tilemap-core'],
 
 		'modify tilemap': {
-			['append constructor']() {
+			'append constructor': function () {
 
 				//
 				// applying tilespacing inside the tilemap

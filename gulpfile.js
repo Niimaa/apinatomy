@@ -1,5 +1,6 @@
 var gulp = require('gulp'),
     gutil = require('gulp-util'),
+    jshint = require('gulp-jshint'),
 	traceur = require('gulp-traceur'),
 	webpack = require('webpack'),
 	uglify = require('gulp-uglify'),
@@ -7,7 +8,8 @@ var gulp = require('gulp'),
 	sass = require('gulp-sass'),
 	karma = require('gulp-karma'),
 	rimraf = require('rimraf'),
-	sourcemaps = require('gulp-sourcemaps');
+	sourcemaps = require('gulp-sourcemaps'),
+	bump = require('gulp-bump');
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -39,12 +41,19 @@ var MODULES = [
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+gulp.task('lint', function () {
+	return gulp.src('src/**/*.js')
+		.pipe(jshint())
+		.pipe(jshint.reporter('jshint-stylish'))
+		.pipe(jshint.reporter('fail'));
+});
+
 gulp.task('clean-tmp', function (callback) {
 	rimraf('./.intermediate-output', callback);
 });
 
-gulp.task('traceur', ['clean-tmp'], function (callback) {
-	gulp.src('src/**/*.js')
+gulp.task('traceur', ['clean-tmp', 'lint'], function () {
+	return gulp.src('src/**/*.js')
 		.pipe(sourcemaps.init())
 		.pipe(traceur({
 			script: true,
@@ -52,14 +61,12 @@ gulp.task('traceur', ['clean-tmp'], function (callback) {
 		}))
 		.on('error', logAndKeepGoing())
 		.pipe(sourcemaps.write())
-		.pipe(gulp.dest('.intermediate-output'))
-		.on('end', callback);
+		.pipe(gulp.dest('.intermediate-output'));
 });
 
-gulp.task('copy-styles', ['clean-tmp'], function (callback) {
-	gulp.src('src/**/*.scss')
-		.pipe(gulp.dest('.intermediate-output'))
-		.on('end', callback);
+gulp.task('copy-styles', ['clean-tmp'], function () {
+	return gulp.src('src/**/*.scss')
+		.pipe(gulp.dest('.intermediate-output'));
 });
 
 MODULES.forEach(function (m) {
@@ -88,21 +95,19 @@ MODULES.forEach(function (m) {
 			callback();
 		});
 	});
-	gulp.task('uglify:' + m.name, ['webpack:' + m.name], function (callback) {
-		gulp.src('dist/' + m.file)
+	gulp.task('uglify:' + m.name, ['webpack:' + m.name], function () {
+		return gulp.src('dist/' + m.file)
 			.pipe(uglify())
 			.pipe(rename({suffix: '.min'}))
-			.pipe(gulp.dest('dist'))
-			.on('end', callback);
+			.pipe(gulp.dest('dist'));
 	});
 	gulp.task('build:' + m.name, ['webpack:' + m.name, 'uglify:' + m.name]);
 });
 
-gulp.task('sass', function (callback) {
+gulp.task('sass', function () {
 	var stream = gulp.src(['example/**/*.scss']);
-	stream.pipe(sass({ onError: logAndKeepGoing(stream) }))
-		.pipe(gulp.dest('example'))
-		.on('end', callback);
+	return stream.pipe(sass({ onError: logAndKeepGoing(stream) }))
+		.pipe(gulp.dest('example'));
 });
 
 gulp.task('build', ['build:core', 'build:skin', 'build:tilespacing']);
@@ -118,9 +123,21 @@ gulp.task('karma', ['build'], function () {
 	]).pipe(karma({ configFile: 'karma.conf.js' }));
 });
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 gulp.task('watch', function () {
 	gulp.watch(['src/**/*.js'], ['build']);
 	gulp.watch(['example/**/*.scss'], ['sass']);
+});
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+['major', 'minor', 'patch', 'prerelease'].forEach(function (type) {
+	gulp.task('bump:'+type, function () {
+		return gulp.src(['package.json', 'bower.json'])
+			.pipe(bump({ type: type }))
+			.pipe(gulp.dest('./'));
+	});
 });
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

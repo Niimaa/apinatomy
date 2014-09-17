@@ -1,4 +1,5 @@
 describe("circuitboard widget", function () {
+	'use strict';
 
 	var div;
 	beforeEach(function () {

@@ -6,9 +6,12 @@
       <w>autoprefixer</w>
       <w>circuitboarddestroy</w>
       <w>concat</w>
+      <w>devtool</w>
       <w>flexbox</w>
       <w>gutil</w>
+      <w>jshint</w>
       <w>nestedflexgrow</w>
+      <w>prerelease</w>
       <w>putcssrules</w>
       <w>rimraf</w>
       <w>sourcemaps</w>

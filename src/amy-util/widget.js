@@ -1,33 +1,5 @@
 define(['jquery', 'jquery-ui'], function ($) {
-
-	function signalHandlerMixin() {
-		var _callbacks = {};
-
-		function _callback(signal) {
-			if (!_callbacks[signal]) {
-				_callbacks[signal] = $.Callbacks();
-			}
-			return _callbacks[signal];
-		}
-
-		$.extend(this, {
-			on(signal, fn) { _callback(signal).add(fn) },
-			off(signal, fn) { _callback(signal).remove(fn) },
-			one(signal, fn) {
-				var paddedFn = ()=>{
-					fn.apply(null, arguments);
-					this.off(signal, paddedFn);
-				};
-				this.on(signal, paddedFn);
-			},
-			trigger(signal, ...args) {
-				var callbacks = _callbacks[signal];
-				if (callbacks) { callbacks.fireWith(this, args) }
-			}
-		});
-		//noinspection JSUnusedGlobalSymbols
-		this.once = this.one;
-	}
+	'use strict';
 
 	$.extend({
 		amyWidget(name, componentName, options) {
@@ -42,7 +14,29 @@ define(['jquery', 'jquery-ui'], function ($) {
 					//
 					// enable signal handling
 					//
-					signalHandlerMixin.call(this);
+					var _callbacks = {};
+					function _callback(signal) {
+						if (!_callbacks[signal]) {
+							_callbacks[signal] = $.Callbacks();
+						}
+						return _callbacks[signal];
+					}
+					$.extend(this, {
+						on(signal, fn) { _callback(signal).add(fn) },
+						off(signal, fn) { _callback(signal).remove(fn) },
+						one(signal, fn) {
+							var paddedFn = ()=>{
+								fn.apply(null, arguments);
+								this.off(signal, paddedFn);
+							};
+							this.on(signal, paddedFn);
+						},
+						once(signal, fn) { this.one(signal, fn) },
+						trigger(signal, ...args) {
+							var callbacks = _callbacks[signal];
+							if (callbacks) { callbacks.fireWith(this, args) }
+						}
+					});
 
 					//
 					// make the model and circuitboard references available in the object itself

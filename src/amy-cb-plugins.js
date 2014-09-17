@@ -1,4 +1,5 @@
 define(['jquery', './amy-util/plugin-handler.js'], function ($, pluginHandler) {
+	'use strict';
 
 	//
 	// let '$.circuitboard' accept plugins

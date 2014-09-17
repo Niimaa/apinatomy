@@ -1,4 +1,6 @@
 define(['jquery'], function ($) {
+	'use strict';
+
 	$.extend({
 		//
 		// create a function that returns the value of
@@ -10,9 +12,9 @@ define(['jquery'], function ($) {
 		// get the object `obj[name]`; if `obj[name]` is not a (plain)
 		// object, make it an empty object first
 		//
-		obj(obj, name) {
+		object(obj, name) {
 			if (!$.isPlainObject(obj[name])) { obj[name] = {} }
-			return obj[name]
+			return obj[name];
 		},
 
 		//

@@ -1,4 +1,5 @@
 define(['jquery', 'bluebird', './amy-cb-plugins.js', './amy-util/widget.js', './amy-tilemap.js', './amy-circuitboard.scss'], function ($, P) {
+	'use strict';
 
 	//
 	// declare the circuitboard widget
@@ -14,8 +15,8 @@ define(['jquery', 'bluebird', './amy-cb-plugins.js', './amy-util/widget.js', './
 	//
 	$.circuitboard.plugin({
 		name: 'circuitboard-core',
-		['modify circuitboard']: {
-			['append constructor']() {
+		'modify circuitboard': {
+			'append constructor': function () {
 
 				//
 				// keeping track of tiles

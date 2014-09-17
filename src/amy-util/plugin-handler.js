@@ -1,4 +1,5 @@
 define(['jquery', 'js-graph'], function ($, JsGraph) {
+	'use strict';
 
 	function processOperations(obj, targetObj) {
 		$.each(obj, (key, value)=> {

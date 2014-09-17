@@ -1,4 +1,5 @@
 define(['jquery', 'bluebird', './amy-cb-plugins.js', './amy-util/widget.js', './amy-util/jquery-instance.js', './amy-util/jquery-static.js', './amy-tile.js', './amy-tilemap.scss'], function ($, P) {
+	'use strict';
 
 	//
 	// declare the tilemap widget
@@ -14,8 +15,8 @@ define(['jquery', 'bluebird', './amy-cb-plugins.js', './amy-util/widget.js', './
 	//
 	$.circuitboard.plugin({
 		name: 'tilemap-core',
-		['modify tilemap']: {
-			['append constructor']() {
+		'modify tilemap': {
+			'append constructor': function () {
 
 				//
 				// how to refresh the content of this tilemap
