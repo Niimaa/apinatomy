@@ -7,6 +7,15 @@ define(['jquery'], function ($) {
 		field(name) { return (obj) => { return obj[name] } },
 
 		//
+		// get the object `obj[name]`; if `obj[name]` is not a (plain)
+		// object, make it an empty object first
+		//
+		obj(obj, name) {
+			if (!$.isPlainObject(obj[name])) { obj[name] = {} }
+			return obj[name]
+		},
+
+		//
 		// `Function.bind`, but taking an array like `Function.apply` does
 		//
 		bindA(fn, ctx, args) { return fn.bind.apply(fn, [ctx].concat(args)) },

@@ -1,15 +1,15 @@
 define(['jquery', 'js-graph'], function ($, JsGraph) {
 
-	function processOperations(sourceObj, operation, targetObj, field) {
-		if (!targetObj[field]) {
-			targetObj[field] = {};
-			$.each(sourceObj, (key, value)=> {
-				var k = key.match(/^(\w+)\s+(\w+)$/);
-				if (k && k[1] === operation) {
-					targetObj[field][k[2]] = value;
-				}
-			});
-		}
+	function processOperations(obj, targetObj) {
+		$.each(obj, (key, value)=> {
+			var match = key.match(/^(\w+)\s+(\w+)$/);
+			if (match) {
+				targetObj[match[2]] = {
+					operation: match[1],
+					value: value
+				};
+			}
+		});
 	}
 
 	return function pluginHandler() {
@@ -60,7 +60,8 @@ define(['jquery', 'js-graph'], function ($, JsGraph) {
 			//
 			// pre-process operations (for now, only 'modify' for the top-level)
 			//
-			processOperations(plugin, 'modify', plugin, '_modifications');
+			plugin._operations = {};
+			processOperations(plugin, plugin._operations);
 		}
 
 		//
@@ -71,15 +72,41 @@ define(['jquery', 'js-graph'], function ($, JsGraph) {
 				if (!plugin) { return }
 
 				// get changes targeted at this component
-				var changes = plugin._modifications[component];
-				if (!changes) { return }
+				var op = plugin._operations[component];
+				if (!op) { return }
+
+				// we only support 'modify' for the top level for now
+				$.assert(op.operation === 'modify',
+					`Any top-level operation on '${component}' must be 'modify'.`);
 
 //				// allow changes to depend on previous changes // TODO
 //				if ($.isFunction(changes)) { changes = changes(prev) }
 
+				var subOps = {};
+				processOperations(op.value, subOps);
+
+//				$.each(subOps, (field, subOp) => { // TODO: finish
+//					if (field !== 'constructor') { // constructor is handled last
+//						switch (subOp.operation) {
+//							case 'add': {
+//								$.assert($.isUndefined(obj[field]),
+//									`The operation 'add ${field}' expects ${component}.${field} to first be undefined.`);
+//								obj[field] = subOp.value;
+//							} break;
+//							case 'remove': {
+//								$.assert($.isUndefined(obj[field]),
+//									`The operation 'remove ${field}' expects ${component}.${field} to first be defined.`);
+//								delete obj[field];
+//							} break;
+//							case '': {} break;
+//							case '': {} break;
+//						}
+//					}
+//				});
+
 				// for now, only support 'append constructor' // TODO: support other operations
-				if (changes['append constructor']) {
-					changes['append constructor'].call(obj);
+				if (op.value['append constructor']) {
+					op.value['append constructor'].call(obj);
 				}
 			});
 		};
