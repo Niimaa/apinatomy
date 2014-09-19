@@ -6,7 +6,7 @@ define(['jquery', './amy-util/jquery-instance.js', './amy-skin.scss'], function 
 		after: ['tile-core'],
 
 		'modify tile': {
-			'append constructor': function () {
+			'insert constructor': function () {
 				//
 				// create the header and content elements, and reroute the
 				// 'dom' property to the new content element

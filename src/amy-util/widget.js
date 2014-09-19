@@ -56,6 +56,7 @@ define(['jquery', 'jquery-ui'], function ($) {
 
 					//// call the main constructor and the plugins
 					$.circuitboard.plugin._apply(componentName, this);
+					if ($.isFunction(this.constructor)) { this.constructor() }
 				},
 				_destroy() { this.trigger("destroy") }
 			});

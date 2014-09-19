@@ -1,4 +1,4 @@
-define(['jquery', 'js-graph'], function ($, JsGraph) {
+define(['jquery', 'js-graph', 'bluebird'], function ($, JsGraph, P) {
 	'use strict';
 
 	function processOperations(obj, targetObj) {
@@ -14,7 +14,6 @@ define(['jquery', 'js-graph'], function ($, JsGraph) {
 	}
 
 	return function pluginHandler() {
-
 		//
 		// keep track of plugins and their partial application order
 		//
@@ -27,7 +26,7 @@ define(['jquery', 'js-graph'], function ($, JsGraph) {
 		function plugin(config) {
 			if ($.isArray(config)) {
 				// process each plugin separately
-				$.each(config, (__, subConfig)=>{ plugin(subConfig) });
+				$.each(config, (__, subConfig)=> { plugin(subConfig) });
 			} else {
 				// register a single plugin
 				registerPlugin(config);
@@ -54,7 +53,7 @@ define(['jquery', 'js-graph'], function ($, JsGraph) {
 			//
 			plugins.addNewVertex(plugin.name, plugin);
 			$.each(plugin.after, (__, v) => { plugins.createEdge(v, plugin.name) });
-			try { plugins.topologically(()=>{}) } catch (cycleError) {
+			try { plugins.topologically(()=> {}) } catch (cycleError) {
 				throw new Error(`The plugin application order has a cycle: ${cycleError.cycle}`);
 			}
 
@@ -80,35 +79,47 @@ define(['jquery', 'js-graph'], function ($, JsGraph) {
 				$.assert(op.operation === 'modify',
 					`Any top-level operation on '${component}' must be 'modify'.`);
 
-//				// allow changes to depend on previous changes // TODO
-//				if ($.isFunction(changes)) { changes = changes(prev) }
-
 				var subOps = {};
 				processOperations(op.value, subOps);
 
-//				$.each(subOps, (field, subOp) => { // TODO: finish
-//					if (field !== 'constructor') { // constructor is handled last
-//						switch (subOp.operation) {
-//							case 'add': {
-//								$.assert($.isUndefined(obj[field]),
-//									`The operation 'add ${field}' expects ${component}.${field} to first be undefined.`);
-//								obj[field] = subOp.value;
-//							} break;
-//							case 'remove': {
-//								$.assert($.isUndefined(obj[field]),
-//									`The operation 'remove ${field}' expects ${component}.${field} to first be defined.`);
-//								delete obj[field];
-//							} break;
-//							case '': {} break;
-//							case '': {} break;
-//						}
-//					}
-//				});
-
-				// for now, only support 'append constructor' // TODO: support other operations
-				if (op.value['append constructor']) {
-					op.value['append constructor'].call(obj);
-				}
+				$.each(subOps, (field, subOp) => {
+					switch (subOp.operation) {
+						case 'add': {
+							$.assert($.isUndefined(obj[field]),
+								`The operation 'add ${field}' expects ${component}.${field} to first be undefined.`);
+							obj[field] = subOp.value;
+						} break;
+						case 'remove': {
+							$.assert($.isDefined(obj[field]),
+								`The operation 'remove ${field}' expects ${component}.${field} to first be defined.`);
+							delete obj[field];
+						} break;
+						case 'replace': {
+							$.assert($.isDefined(obj[field]),
+								`The operation 'replace ${field}' expects ${component}.${field} to first be defined.`);
+							obj[field] = subOp.value;
+						} break;
+						case 'insert': {
+							$.assert($.isUndefined(obj[field]) || $.isFunction(obj[field]),
+								`The operation 'insert ${field}' expects ${component}.${field} to be undefined or a function.`);
+							var restOfFunction = obj[field];
+							obj[field] = function (...args) {
+								restOfFunction.apply(this, args);
+								return subOp.value.apply(this, args);
+							};
+						} break;
+						case 'after': {
+							$.assert($.isUndefined(obj[field]) || $.isFunction(obj[field]),
+								`The operation 'after ${field}' expects ${component}.${field} to be undefined or a function.`);
+							var beforeFunction = obj[field];
+							obj[field] = function (...args) {
+								return P.resolve(beforeFunction.apply(this, args)).then(function (promiseValue) {
+									return subOp.value.apply(this, [promiseValue].concat(args));
+								}.bind(this));
+							};
+						} break;
+					}
+				});
 			});
 		};
 
