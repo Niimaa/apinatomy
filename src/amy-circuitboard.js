@@ -80,4 +80,10 @@ define(['jquery', 'bluebird', './amy-cb-plugins.js', './amy-util/widget.js', './
 		}
 	});
 
+	//
+	// return the static `$.circuitboard` object,
+	// on which plugins can be applied
+	//
+	return $.circuitboard;
+
 });

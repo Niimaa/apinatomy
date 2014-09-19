@@ -20,7 +20,6 @@ define(['jquery', 'bluebird', './amy-cb-plugins.js', './amy-util/widget.js', './
 			// populate the tilemap by consulting the model
 			//
 			'add refreshTiles': function refreshTiles() {
-
 				//
 				// sanity check
 				//
