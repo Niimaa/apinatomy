@@ -35,14 +35,8 @@ body {
 	cursor: pointer;
 	text-align: center;
 	overflow: hidden;
-	border-width: $amy-tile-border-width;
+	border: solid $amy-tile-border-width;
 }
-	.tile.active {
-		border-style: solid;
-	}
-.tile:not(.active) {
-		border-style: dashed;
-	}
 
 ////////// The Header //////////
 

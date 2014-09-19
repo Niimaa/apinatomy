@@ -17,7 +17,6 @@ define(['jquery', 'bluebird', './amy-cb-plugins.js', './amy-util/widget.js', './
 		name: 'circuitboard-core',
 		'modify circuitboard': {
 			'after constructor': function () {
-
 				//
 				// keeping track of tiles
 				//
@@ -77,7 +76,6 @@ define(['jquery', 'bluebird', './amy-cb-plugins.js', './amy-util/widget.js', './
 						_circuitboard: this
 					}).tilemap('instance');
 				this.one('destroy', ()=> { _tilemap.destroy() });
-
 			}
 		}
 	});

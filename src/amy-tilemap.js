@@ -16,6 +16,9 @@ define(['jquery', 'bluebird', './amy-cb-plugins.js', './amy-util/widget.js', './
 	$.circuitboard.plugin({
 		name: 'tilemap-core',
 		'modify tilemap': {
+			//
+			// populate the tilemap by consulting the model
+			//
 			'add refreshTiles': function refreshTiles() {
 
 				//
@@ -25,7 +28,8 @@ define(['jquery', 'bluebird', './amy-cb-plugins.js', './amy-util/widget.js', './
 					`An ApiNATOMY tilemap should have a model.`);
 
 				//
-				// render the new tilemap (through a promise chain, returning a promise)
+				// render the new tilemap
+				// (through a promise chain, returning the final promise)
 				//
 				return this.model
 					//
@@ -71,6 +75,10 @@ define(['jquery', 'bluebird', './amy-cb-plugins.js', './amy-util/widget.js', './
 					//
 					.then(()=> { this.trigger('tiles-refreshed') });
 			},
+
+			//
+			// refresh the tiles initially
+			//
 			'insert constructor': function () {
 				this.refreshTiles();
 			}

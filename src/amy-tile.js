@@ -42,14 +42,6 @@ define(['jquery', './amy-cb-plugins.js', './amy-util/widget.js', './amy-util/jqu
 					set(newDOM) { _domContent = newDOM }
 				});
 
-				// TODO: public access to D3 layer and three.js layer
-
-				//
-				// the 'active' property
-				//
-				this.element.addClass('active');
-				// TODO: getter, setter
-
 				//
 				// the 'weight' property
 				//
@@ -72,7 +64,7 @@ define(['jquery', './amy-cb-plugins.js', './amy-util/widget.js', './amy-util/jqu
 					set(shouldBeOpen) {
 						_open = shouldBeOpen;
 						this.element.toggleClass("open", _open);
-						if (_open) { _populateInnerTilemap() }
+						this.trigger('open', _open);
 					}
 				});
 
@@ -89,6 +81,10 @@ define(['jquery', './amy-cb-plugins.js', './amy-util/widget.js', './amy-util/jqu
 						this.one('destroy', ()=> { _tilemap.destroy() });
 					}
 				};
+				this.on('open', (open) => {
+					if (!open) { return }
+					_populateInnerTilemap();
+				});
 
 				//
 				// inform circuitboard of new tile

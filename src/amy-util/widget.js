@@ -2,12 +2,10 @@ define(['jquery', 'jquery-ui'], function ($) {
 	'use strict';
 
 	$.extend({
+		//
+		// define a new kind of apinatomy jquery-widget
+		//
 		amyWidget(name, componentName, options) {
-
-			//
-			// defining the widget
-			//
-
 			$.widget(`apinatomy.${name}`, {
 				options: options,
 				_create() {

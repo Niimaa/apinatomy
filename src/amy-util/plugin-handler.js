@@ -71,34 +71,55 @@ define(['jquery', 'js-graph', 'bluebird'], function ($, JsGraph, P) {
 			plugins.topologically((pluginName, plugin) => {
 				if (!plugin) { return }
 
+				//
 				// get changes targeted at this component
+				//
 				var op = plugin._operations[component];
 				if (!op) { return }
 
+				//
 				// we only support 'modify' for the top level for now
+				//
 				$.assert(op.operation === 'modify',
 					`Any top-level operation on '${component}' must be 'modify'.`);
 
+				//
+				// perform the sub-operations
+				//
 				var subOps = {};
 				processOperations(op.value, subOps);
-
 				$.each(subOps, (field, subOp) => {
 					switch (subOp.operation) {
+						//
+						// add a new key/value pair to the object
+						//
 						case 'add': {
 							$.assert($.isUndefined(obj[field]),
 								`The operation 'add ${field}' expects ${component}.${field} to first be undefined.`);
 							obj[field] = subOp.value;
 						} break;
+
+						//
+						// remove an existing key/value pair from the object
+						//
 						case 'remove': {
 							$.assert($.isDefined(obj[field]),
 								`The operation 'remove ${field}' expects ${component}.${field} to first be defined.`);
 							delete obj[field];
 						} break;
+
+						//
+						// replace an existing key/value pair in the object
+						//
 						case 'replace': {
 							$.assert($.isDefined(obj[field]),
 								`The operation 'replace ${field}' expects ${component}.${field} to first be defined.`);
 							obj[field] = subOp.value;
 						} break;
+
+						//
+						// insert a set of statements into an existing method of the object
+						//
 						case 'insert': {
 							$.assert($.isUndefined(obj[field]) || $.isFunction(obj[field]),
 								`The operation 'insert ${field}' expects ${component}.${field} to be undefined or a function.`);
@@ -108,6 +129,11 @@ define(['jquery', 'js-graph', 'bluebird'], function ($, JsGraph, P) {
 								return subOp.value.apply(this, args);
 							};
 						} break;
+
+						//
+						// have a set of statements executed after an existing
+						// (possibly asynchronous) method of the object
+						//
 						case 'after': {
 							$.assert($.isUndefined(obj[field]) || $.isFunction(obj[field]),
 								`The operation 'after ${field}' expects ${component}.${field} to be undefined or a function.`);
