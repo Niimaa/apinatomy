@@ -18,26 +18,15 @@ requirejs.config({
 //
 // Example application
 //
-require(['jquery', 'bluebird', '../dist/amy-skin', '../dist/amy-tilespacing', 'jquery-ui', '../dist/amy-circuitboard', 'domReady!'], function ($, P, skinPlugin, tilespacingPlugin) {
+require(['jquery', 'bluebird', '../dist/amy-skin', '../dist/amy-tilespacing', '../dist/amy-click-to-open', 'jquery-ui', '../dist/amy-circuitboard', 'domReady!'], function ($, P) {
 	'use strict';
 
 	//
 	// Apply some plugins
 	//
-	$.circuitboard.plugin(skinPlugin);
-	$.circuitboard.plugin(tilespacingPlugin);
-	$.circuitboard.plugin({
-		name: 'click-to-open',
-		after: ['tile-core'],
-		'modify tile': {
-			'insert constructor': function () {
-				this.on('click', function () {
-					this.open = !this.open;
-					this.weight = this.open ? 2 : 1;
-				});
-			}
-		}
-	});
+	$.circuitboard.plugin( $.circuitboard.p.skin()              );
+	$.circuitboard.plugin( $.circuitboard.p.tilespacing()                );
+	$.circuitboard.plugin( $.circuitboard.p.clickToOpen({ weightWhenOpen: 3 }) );
 	$.circuitboard.plugin({
 		name: 'big-border',
 		after: ['circuitboard-core'],
