@@ -6,7 +6,7 @@ dynamic through a flexible plugin system.
 
 We will generally call the resulting visualization a *circuitboard*, because the plugin system allows for
 various content to appear on top of the treemap, floating over the treemap, or interconnecting the tiles
-inside the treemap. We will use the term *treemap* when we consider only the (possibly nested) tile-structure.
+inside the treemap. We will use the term *treemap* when we consider only the (nested) tile-structure.
 
 
 ## Installation
