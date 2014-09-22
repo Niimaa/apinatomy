@@ -18,14 +18,14 @@ requirejs.config({
 //
 // Example application
 //
-require(['jquery', 'bluebird', '../dist/amy-skin', '../dist/amy-tilespacing', '../dist/amy-click-to-open', 'jquery-ui', '../dist/amy-circuitboard', 'domReady!'], function ($, P) {
+require(['jquery', 'bluebird', '../dist/amy-p-tileskin', '../dist/amy-p-tilespacing', '../dist/amy-p-click-to-open', 'jquery-ui', '../dist/amy-circuitboard', 'domReady!'], function ($, P) {
 	'use strict';
 
 	//
 	// Apply some plugins
 	//
-	$.circuitboard.plugin( $.circuitboard.p.skin()              );
-	$.circuitboard.plugin( $.circuitboard.p.tilespacing()                );
+	$.circuitboard.plugin( $.circuitboard.p.tileskin()                         );
+	$.circuitboard.plugin( $.circuitboard.p.tilespacing()                      );
 	$.circuitboard.plugin( $.circuitboard.p.clickToOpen({ weightWhenOpen: 3 }) );
 	$.circuitboard.plugin({
 		name: 'big-border',

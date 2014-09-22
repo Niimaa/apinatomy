@@ -35,9 +35,9 @@ var EXTERNAL_MODULES = [
 
 var MODULES = [
 	{ name: 'core', file: 'amy-circuitboard.js' },
-	{ name: 'skin', file: 'amy-skin.js' },
-	{ name: 'tilespacing', file: 'amy-tilespacing.js' },
-	{ name: 'click-to-open', file: 'amy-click-to-open.js' }
+	{ name: 'p-tileskin', file: 'amy-p-tileskin.js' },
+	{ name: 'p-tilespacing', file: 'amy-p-tilespacing.js' },
+	{ name: 'p-click-to-open', file: 'amy-p-click-to-open.js' }
 ];
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -111,7 +111,7 @@ gulp.task('sass', function () {
 		.pipe(gulp.dest('example'));
 });
 
-gulp.task('build', ['build:core', 'build:skin', 'build:tilespacing', 'build:click-to-open']);
+gulp.task('build', ['build:core', 'build:p-tileskin', 'build:p-tilespacing', 'build:p-click-to-open']);
 
 gulp.task('build:example', ['build', 'sass']);
 

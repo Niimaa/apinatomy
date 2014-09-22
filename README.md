@@ -43,12 +43,12 @@ AMD ([RequireJS](http://requirejs.org/)), CommonJS and script-tags.
 
 There are currently three files that may be loaded (with more to follow):
 
-| File                        | Purpose                                                        |
-|:--------------------------- |:-------------------------------------------------------------- |
-| `dist/amy-circuitboard.js`  | the main package, installing the `.circuitboard` jQuery plugin |
-| `dist/amy-skin.js`          | an plugin, which gives individual tiles color and layout       |
-| `dist/amy-click-to-open.js` | an plugin, which reacts to clicks by opening a tile            |
-| `dist/amy-tilespacing`      | an plugin, which offers customizable tile-spacing              |
+| File                          | Purpose                                                        |
+|:----------------------------- |:-------------------------------------------------------------- |
+| `dist/amy-circuitboard.js`    | the main package, installing the `.circuitboard` jQuery plugin |
+| `dist/amy-p-tileskin.js`      | an plugin, which gives individual tiles color and layout       |
+| `dist/amy-p-click-to-open.js` | an plugin, which reacts to clicks by opening a tile            |
+| `dist/amy-p-tilespacing`      | an plugin, which offers customizable tile-spacing              |
 
 Check out the files in the `example` folder to see these files in use.
 
@@ -108,7 +108,7 @@ the same `id`*. In other words, it is expected that the model implementation tak
 of merging identical models into a single JavaScript object. (In the future, a caching
 layer will be made available which can take care of this for you.)
 
-Certain plugins may require other properties of a model. For example, the `skin` plugin
+Certain plugins may require other properties of a model. For example, the `tileskin` plugin
 looks for a `name` property to display in the tile, and a `css` property to apply
 customizable styling. But… what are plugins?
 
@@ -117,13 +117,13 @@ customizable styling. But… what are plugins?
 The bare `amy-circuitboard.js` widget creates some HTML to represent the top level
 tiles, but otherwise does very little—not even load internal tiles. It is a minimal
 core, meant to be extended by plugins before it will do any cool stuff. A number of
-fundamental plugins are supplied with the core, `skin` and `click-to-open` being
+fundamental plugins are supplied with the core, `tileskin` and `click-to-open` being
 particularly useful.
 
 Plugins should be loaded into the circuit-board system before any circuit-board is
 instantiated. For example:
 
-    $.circuitboard.plugin( $.circuitboard.p.skin()                             );
+    $.circuitboard.plugin( $.circuitboard.p.tileskin()                         );
     $.circuitboard.plugin( $.circuitboard.p.clickToOpen({ weightWhenOpen: 3 }) );
     $('$my-circuitboard').circuitboard({
         model: myModel

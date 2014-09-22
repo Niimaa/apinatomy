@@ -1,4 +1,4 @@
-define(['jquery', './amy-util/jquery-instance.js', './amy-skin.scss'], function ($) {
+define(['jquery', './amy-util/jquery-instance.js', './amy-p-tileskin.scss'], function ($) {
 	'use strict';
 
 	//
@@ -6,7 +6,7 @@ define(['jquery', './amy-util/jquery-instance.js', './amy-skin.scss'], function 
 	//
 	function plugin(/*options = {}*/) {
 		return {
-			name: 'skin',
+			name: 'tileskin',
 			after: ['tile-core'],
 
 			'modify tile': {
