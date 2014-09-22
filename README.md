@@ -43,12 +43,12 @@ AMD ([RequireJS](http://requirejs.org/)), CommonJS and script-tags.
 
 There are currently three files that may be loaded (with more to follow):
 
-| File                          | Purpose                                                        |
-|:----------------------------- |:-------------------------------------------------------------- |
-| `dist/amy-circuitboard.js`    | the main package, installing the `.circuitboard` jQuery plugin |
-| `dist/amy-p-tileskin.js`      | an plugin, which gives individual tiles color and layout       |
-| `dist/amy-p-click-to-open.js` | an plugin, which reacts to clicks by opening a tile            |
-| `dist/amy-p-tilespacing`      | an plugin, which offers customizable tile-spacing              |
+| File                          | Purpose                                                  |
+|:----------------------------- |:-------------------------------------------------------- |
+| `dist/amy-circuitboard.js`    | the main package, with the `.circuitboard` jQuery plugin |
+| `dist/amy-p-tileskin.js`      | an plugin, which gives individual tiles color and layout |
+| `dist/amy-p-click-to-open.js` | an plugin, which reacts to clicks by opening a tile      |
+| `dist/amy-p-tilespacing`      | an plugin, which offers customizable tile-spacing        |
 
 Check out the files in the `example` folder to see these files in use.
 
