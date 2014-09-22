@@ -4,9 +4,12 @@
       <w>amdclean</w>
       <w>amywidget</w>
       <w>autoprefixer</w>
+      <w>autoselect</w>
       <w>circuitboarddestroy</w>
       <w>concat</w>
       <w>devtool</w>
+      <w>disjunct</w>
+      <w>disjuncts</w>
       <w>flexbox</w>
       <w>gutil</w>
       <w>jshint</w>

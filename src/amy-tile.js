@@ -15,6 +15,7 @@ define(['jquery', './amy-cb-plugins.js', './amy-util/widget.js', './amy-util/jqu
 	//
 	$.circuitboard.plugin({
 		name: 'tile-core',
+		if: true,
 		'modify tile': {
 			'insert constructor': function () {
 
@@ -56,34 +57,19 @@ define(['jquery', './amy-cb-plugins.js', './amy-util/widget.js', './amy-util/jqu
 				});
 
 				//
-				// the 'open' property
-				//
-				var _open = false;
-				Object.defineProperty(this, 'open', {
-					get() { return _open },
-					set(shouldBeOpen) {
-						_open = shouldBeOpen;
-						this.element.toggleClass("open", _open);
-						this.trigger('open', _open);
-					}
-				});
-
-				//
 				// the inner tilemap
 				//
 				var _tilemap = null;
-				var _populateInnerTilemap = ()=> {
-					if (!_tilemap) {
-						_tilemap = this.dom.tilemap({
-							model: this.options.model,
-							_circuitboard: this.options._circuitboard
-						}).tilemap('instance');
-						this.one('destroy', ()=> { _tilemap.destroy() });
+				$.extend(this, {
+					populateInnerTilemap() {
+						if (!_tilemap) {
+							_tilemap = this.dom.tilemap({
+								model: this.options.model,
+								_circuitboard: this.options._circuitboard
+							}).tilemap('instance');
+							this.one('destroy', ()=> { _tilemap.destroy() });
+						}
 					}
-				};
-				this.on('open', (open) => {
-					if (!open) { return }
-					_populateInnerTilemap();
 				});
 
 				//

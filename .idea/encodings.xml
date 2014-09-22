@@ -8,6 +8,8 @@
     <file url="file://$PROJECT_DIR$/src/amy-cb-plugins.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-p-click-to-open.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-p-tile-active.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/amy-p-tile-open-active.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/amy-p-tile-open.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-p-tileskin.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-p-tilespacing.js" charset="UTF-8" />
   </component>

@@ -37,8 +37,10 @@ var MODULES = [
 	{ name: 'core', file: 'amy-circuitboard.js' },
 	{ name: 'p-tileskin', file: 'amy-p-tileskin.js' },
 	{ name: 'p-tilespacing', file: 'amy-p-tilespacing.js' },
+	{ name: 'p-tile-active', file: 'amy-p-tile-active.js' },
+	{ name: 'p-tile-open', file: 'amy-p-tile-open.js' },
 	{ name: 'p-click-to-open', file: 'amy-p-click-to-open.js' },
-	{ name: 'p-tile-active', file: 'amy-p-tile-active.js' }
+	{ name: 'p-tile-open-active', file: 'amy-p-tile-open-active.js' }
 ];
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -72,6 +74,15 @@ gulp.task('copy-styles', ['clean-tmp'], function () {
 });
 
 MODULES.forEach(function (m) {
+	//
+	// see all MODULES as external to each other
+	//
+	var ownExternals = [];
+	MODULES.forEach(function (mExt) {
+		if (mExt !== m) {
+			ownExternals.push(externalModule('./' + mExt.file));
+		}
+	});
 	gulp.task('webpack:' + m.name, ['traceur', 'copy-styles'], function (callback) {
 		webpack({
 			devtool: 'inline-source-map',
@@ -82,10 +93,10 @@ MODULES.forEach(function (m) {
 				libraryTarget: 'umd',
 				sourceMapFilename: m.file+'.map'
 			},
-			externals: EXTERNAL_MODULES,
+			externals: EXTERNAL_MODULES.concat(ownExternals),
 			module: {
 				preLoaders: [
-					{ test: /amy-.*\.js$/, loader: "source-map" }
+					{ test: /amy\-.*\.js$/, loader: "source-map" }
 				],
 				loaders: [
 					{ test: /\.scss$/, loader: "style!css!autoprefixer!sass" }
@@ -116,8 +127,10 @@ gulp.task('build', [
 	'build:core',
 	'build:p-tileskin',
 	'build:p-tilespacing',
+	'build:p-tile-open',
+	'build:p-tile-active',
 	'build:p-click-to-open',
-	'build:p-tile-active'
+	'build:p-tile-open-active'
 ]);
 
 gulp.task('build:example', ['build', 'sass']);

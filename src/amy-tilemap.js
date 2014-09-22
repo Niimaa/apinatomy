@@ -15,6 +15,7 @@ define(['jquery', 'bluebird', './amy-cb-plugins.js', './amy-util/widget.js', './
 	//
 	$.circuitboard.plugin({
 		name: 'tilemap-core',
+		if: true,
 		'modify tilemap': {
 			//
 			// populate the tilemap by consulting the model

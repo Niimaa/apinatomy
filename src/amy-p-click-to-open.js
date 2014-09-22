@@ -1,33 +1,30 @@
-define(['jquery'], function ($) {
+define(['jquery', './amy-circuitboard.js'], function ($) {
 	'use strict';
 
 	//
-	// define the plugin function
+	// expect $.circuitboard to be defined
 	//
-	function plugin(options = {}) {
-		return {
-			name: 'clickToOpen',
-			after: ['tile-core'],
-			'modify tile': {
-				'insert constructor': function () {
-					this.on('click', function () {
-						this.open = !this.open;
-						this.weight = this.open ? (options.weightWhenOpen || 2) : 1;
-					});
-				}
-			}
-		};
+	if (!$.circuitboard) {
+		throw Error(
+				"Can't access '$.circuitboard'. " +
+				"Please load the core circuitboard module before loading any plugins."
+		);
 	}
 
 	//
-	// make the plugin available in the `$.circuitboard.p` object
+	// define the plugin
 	//
-	if (!$.circuitboard) { $.circuitboard = {} }
-	if (!$.circuitboard.p) { $.circuitboard.p = {} }
-	$.circuitboard.p[plugin().name] = plugin;
+	$.circuitboard.plugin({
+		name: 'click-to-open',
+		after: ['tile-open'],
 
-	//
-	// return the plugin for use by certain package loaders
-	//
-	return plugin;
+		'modify tile': {
+			'insert constructor': function () {
+				this.on('click', function () {
+					this.open = !this.open;
+					this.weight = this.open ? 2 : 1;
+				});
+			}
+		}
+	});
 });

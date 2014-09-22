@@ -27,18 +27,18 @@ require([
 	'../dist/amy-p-tilespacing',
 	'../dist/amy-p-click-to-open',
 	'../dist/amy-p-tile-active',
+	'../dist/amy-p-tile-open',
+	'../dist/amy-p-tile-open-active',
 	'domReady!'
 ], function ($, P) {
 	'use strict';
 
 	//
-	// Apply some plugins
+	// Define a manual plugin
 	//
-	$.circuitboard.plugin( $.circuitboard.p.tileskin()                         );
-	$.circuitboard.plugin( $.circuitboard.p.tilespacing()                      );
-	$.circuitboard.plugin( $.circuitboard.p.clickToOpen({ weightWhenOpen: 3 }) );
 	$.circuitboard.plugin({
 		name: 'big-border',
+		if: true,
 		after: ['circuitboard-core'],
 		'modify circuitboard': {
 			'insert constructor': function () {
@@ -49,6 +49,11 @@ require([
 			}
 		}
 	});
+
+	//
+	// Select predefined plugins
+	//
+	$.circuitboard.plugin(['tileskin', 'click-to-open', 'tilespacing', 'tile-open', 'tile-active']);
 
 	//
 	// How to equip a static model with the required promise-based API

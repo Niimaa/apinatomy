@@ -15,6 +15,7 @@ define(['jquery', 'bluebird', './amy-cb-plugins.js', './amy-util/widget.js', './
 	//
 	$.circuitboard.plugin({
 		name: 'circuitboard-core',
+		if: true,
 		'modify circuitboard': {
 			'after constructor': function () {
 				//
