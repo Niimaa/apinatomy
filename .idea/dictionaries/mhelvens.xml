@@ -12,6 +12,7 @@
       <w>jshint</w>
       <w>lightgray</w>
       <w>nestedflexgrow</w>
+      <w>npmjs</w>
       <w>prerelease</w>
       <w>putcssrules</w>
       <w>rimraf</w>

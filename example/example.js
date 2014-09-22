@@ -18,7 +18,17 @@ requirejs.config({
 //
 // Example application
 //
-require(['jquery', 'bluebird', '../dist/amy-p-tileskin', '../dist/amy-p-tilespacing', '../dist/amy-p-click-to-open', 'jquery-ui', '../dist/amy-circuitboard', 'domReady!'], function ($, P) {
+require([
+	'jquery',
+	'bluebird',
+	'jquery-ui',
+	'../dist/amy-circuitboard',
+	'../dist/amy-p-tileskin',
+	'../dist/amy-p-tilespacing',
+	'../dist/amy-p-click-to-open',
+	'../dist/amy-p-tile-active',
+	'domReady!'
+], function ($, P) {
 	'use strict';
 
 	//

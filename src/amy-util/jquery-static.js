@@ -9,11 +9,20 @@ define(['jquery'], function ($) {
 		field(name) { return (obj) => { return obj[name] } },
 
 		//
-		// get the object `obj[name]`; if `obj[name]` is not a (plain)
-		// object, make it an empty object first
+		// get the object `obj[name]`; if `obj[name]` is not
+		// a (plain) object, make it an empty object first
 		//
 		object(obj, name) {
 			if (!$.isPlainObject(obj[name])) { obj[name] = {} }
+			return obj[name];
+		},
+
+		//
+		// get the array `obj[name]`; if `obj[name]` is not
+		// an array, make it an empty array first
+		//
+		array(obj, name) {
+			if (!$.isArray(obj[name])) { obj[name] = [] }
 			return obj[name];
 		},
 
