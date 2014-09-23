@@ -71,8 +71,9 @@ define([
 							_tilemap = this.dom.tilemap({
 								model: this.options.model,
 								_circuitboard: this.options._circuitboard
-							}).tilemap('instance');
-							this.one('destroy', ()=> { _tilemap.destroy() });
+							}).tilemap('instance').then((tilemap) => {
+								this.one('destroy', ()=> { tilemap.destroy() });
+							});
 						}
 					}
 				});

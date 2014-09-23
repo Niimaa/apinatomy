@@ -71,11 +71,12 @@ define([
 						while (rowCount--) {
 							var row = $('<div/>').addClass('tilerow').appendTo(this.element);
 							for (var column = 0; column < colCount && childrenToDisplay.length > 0; column += 1) {
-								var tile = $('<div/>').tile({
+								$('<div/>').tile({
 									model: childrenToDisplay.pop(),
 									_circuitboard: this.options._circuitboard
-								}).appendTo(row).amyNestedFlexGrow(1).tile('instance');
-								tile.one('destroy', tile.destroy.bind(tile));
+								}).appendTo(row).amyNestedFlexGrow(1).tile('instance').then((tile) => {
+									tile.one('destroy', tile.destroy.bind(tile));
+								});
 							}
 						}
 					})

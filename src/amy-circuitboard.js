@@ -77,13 +77,15 @@ define([
 				//
 				// the root tilemap
 				//
-				var _tilemap = $('<div/>').appendTo(this.element)
+				$('<div/>').appendTo(this.element)
 					.css('flex-grow', 1)
 					.tilemap({
 						model: this.options.model,
 						_circuitboard: this
-					}).tilemap('instance');
-				this.one('destroy', ()=> { _tilemap.destroy() });
+					}).tilemap('instance')
+					.then((tilemap) => {
+						this.one('destroy', ()=> { tilemap.destroy() });
+					});
 			}
 		}
 	});

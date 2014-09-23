@@ -1,19 +1,6 @@
-define(['jquery', './amy-util/jquery-static.js', './amy-circuitboard.js'], function ($, U) {
+define(['jquery', './amy-util/jquery-static.js', './amy-util/handle-premature-plugins.js'], function ($, U) {
 	'use strict';
 
-	//
-	// expect $.circuitboard to be defined
-	//
-	if (!$.circuitboard) {
-		throw Error(
-				"Can't access '$.circuitboard'. " +
-				"Please load the core circuitboard module before loading any plugins."
-		);
-	}
-
-	//
-	// define the plugin
-	//
 	$.circuitboard.plugin({
 		name: 'tile-active',
 		after: ['tile-core'],

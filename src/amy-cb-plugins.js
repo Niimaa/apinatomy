@@ -9,4 +9,10 @@ define(['jquery', './amy-util/plugin-handler.js'], function ($, PluginHandler) {
 	$.circuitboard.plugin = pluginHandler.register.bind(pluginHandler);
 	$.circuitboard.plugin._apply = pluginHandler.apply.bind(pluginHandler);
 
+	//
+	// fetch plugins that were already loaded and register them
+	//
+	($.circuitboard.prematurePlugins || []).forEach($.circuitboard.plugin);
+	delete $.circuitboard.prematurePlugins;
+
 });

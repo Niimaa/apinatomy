@@ -19,14 +19,14 @@ requirejs.config({
 require([
 	'jquery',
 	'bluebird',
-	'../dist/amy-circuitboard',
-	'../dist/amy-p-tileskin',
-	'../dist/amy-p-tilespacing',
-	'../dist/amy-p-tile-click-to-open',
-	'../dist/amy-p-tile-active',
-	'../dist/amy-p-tile-open',
-	'../dist/amy-p-tile-grow-when-open',
-	'../dist/amy-p-tile-open-active',
+	'../dist/amy-circuitboard.js',
+	'../dist/amy-p-tileskin.js',
+	'../dist/amy-p-tilespacing.js',
+	'../dist/amy-p-tile-click-to-open.js',
+	'../dist/amy-p-tile-active.js',
+	'../dist/amy-p-tile-open.js',
+	'../dist/amy-p-tile-grow-when-open.js',
+	'../dist/amy-p-tile-open-active.js',
 	'domReady!'
 ], function ($, P) {
 	'use strict';
