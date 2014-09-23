@@ -1,10 +1,12 @@
-define(['jquery', './amy-util/plugin-handler.js'], function ($, pluginHandler) {
+define(['jquery', './amy-util/plugin-handler.js'], function ($, PluginHandler) {
 	'use strict';
 
 	//
 	// let '$.circuitboard' accept plugins
 	//
+	var pluginHandler = new PluginHandler();
 	if (!$.circuitboard) { $.circuitboard = {} }
-	$.circuitboard.plugin = pluginHandler();
+	$.circuitboard.plugin = pluginHandler.register.bind(pluginHandler);
+	$.circuitboard.plugin._apply = pluginHandler.apply.bind(pluginHandler);
 
 });
