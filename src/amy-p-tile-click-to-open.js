@@ -15,14 +15,13 @@ define(['jquery', './amy-circuitboard.js'], function ($) {
 	// define the plugin
 	//
 	$.circuitboard.plugin({
-		name: 'click-to-open',
+		name: 'tile-click-to-open',
 		after: ['tile-open'],
 
 		'modify tile': {
 			'insert constructor': function () {
 				this.on('click', function () {
 					this.open = !this.open;
-					this.weight = this.open ? 2 : 1;
 				});
 			}
 		}

@@ -20,22 +20,22 @@ define(['jquery', './amy-util/jquery-static.js', './amy-circuitboard.js'], funct
 		after: ['tile-open', 'tile-active'],
 
 		'modify tile': {
-			'after constructor': function () {
+			'insert constructor': function () {
 				// only interesting if the tile has a model
 				if (!this.model) { return; }
 
 				//
 				// when a tile is opened, it becomes active
 				//
-				this.on('open', function () {
-					if (this.open) { this.active = true }
+				this.on('open', function (open) {
+					if (open) { this.active = true }
 				});
 
 				//
 				// when a tile is de-activated, it becomes closed
 				//
-				this.on('active', function () {
-					if (!this.active) { this.open = false }
+				this.on('active', function (active) {
+					if (!active) { this.open = false }
 				});
 			}
 		}

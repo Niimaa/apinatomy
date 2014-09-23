@@ -42,6 +42,6 @@
         "bluebird": "^2.3.2",
         "jquery": "^2.1.1",
         "jquery-ui": "^1.10.5",
-        "js-graph": "0.1.0-r3"
+        "js-graph": "0.2.0"
     }
 }

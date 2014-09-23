@@ -20,8 +20,10 @@ define(['jquery', './amy-util/jquery-static.js', './amy-circuitboard.js'], funct
 
 		'modify tile': {
 			'after constructor': function () {
+				//
 				// only interesting if the tile has a model
-				if (!this.model) { return; }
+				//
+				if (!this.model) { return }
 
 				//
 				// put this tile in the queue of potentially active tiles
@@ -55,7 +57,7 @@ define(['jquery', './amy-util/jquery-static.js', './amy-circuitboard.js'], funct
 				//
 				// automatically (un)set the CSS class 'active'
 				//
-				this.on('active', ()=> { this.element.toggleClass('active', this.active) });
+				this.on('active', () => { this.element.toggleClass('active', this.active) });
 
 				//
 				// initial 'active' signal

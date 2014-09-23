@@ -1,4 +1,4 @@
-define(['jquery', 'jquery-ui'], function ($) {
+define(['jquery', 'bluebird', 'jquery-ui'], function ($, P) {
 	'use strict';
 
 	$.extend({
@@ -13,17 +13,19 @@ define(['jquery', 'jquery-ui'], function ($) {
 					// enable signal handling
 					//
 					var _callbacks = {};
+
 					function _callback(signal) {
 						if (!_callbacks[signal]) {
 							_callbacks[signal] = $.Callbacks();
 						}
 						return _callbacks[signal];
 					}
+
 					$.extend(this, {
 						on(signal, fn) { _callback(signal).add(fn) },
 						off(signal, fn) { _callback(signal).remove(fn) },
 						one(signal, fn) {
-							var paddedFn = ()=>{
+							var paddedFn = ()=> {
 								fn.apply(null, arguments);
 								this.off(signal, paddedFn);
 							};
@@ -52,9 +54,12 @@ define(['jquery', 'jquery-ui'], function ($) {
 						this.element.removeClass(this.options.cssClass);
 					});
 
-					//// call the main constructor and the plugins
-					$.circuitboard.plugin._apply(componentName, this);
-					if ($.isFunction(this.constructor)) { this.constructor() }
+					//
+					// apply the plugins, then call the main constructor
+					//
+					P.all($.circuitboard.plugin._apply(componentName, this)).then(() => {
+						if ($.isFunction(this.constructor)) { this.constructor() }
+					});
 				},
 				_destroy() { this.trigger("destroy") }
 			});

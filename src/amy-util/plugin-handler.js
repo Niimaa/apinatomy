@@ -1,19 +1,32 @@
-define(['jquery', 'js-graph', 'bluebird'], function ($, JsGraph, P) {
+define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js'], function ($, JsGraph, P, traverse) {
 	'use strict';
 
-	function processOperations(obj, targetObj) {
+	//
+	// a utility function to extract operations from a plugin
+	//
+	function processOperations(obj) {
+		var result = {};
 		$.each(obj, (key, value)=> {
 			var match = key.match(/^(\w+)\s+(\w+)$/);
 			if (match) {
-				targetObj[match[2]] = {
+				result[match[2]] = {
 					operation: match[1],
 					value: value
 				};
 			}
 		});
+		return result;
 	}
 
-	return function pluginHandler() {
+	//
+	// define the PluginHandler class
+	//
+	return function PluginHandler() {
+
+		///////////////////////////
+		//// Private Variables ////
+		///////////////////////////
+
 		//
 		// keep track of plugins and their partial application order
 		//
@@ -22,27 +35,14 @@ define(['jquery', 'js-graph', 'bluebird'], function ($, JsGraph, P) {
 		var _featureConfigurationCache = {};
 		var _pluginPredicates = {};
 
-		//
-		// the 'plugin' function returned from this module;
-		// it is called by plugin-writers, and can take an array
-		//
-		function registerPlugin(plugin) {
-			if ($.isArray(plugin)) {
-				// process each plugin separately
-				$.each(plugin, (__, subConfig)=>{ registerPlugin(subConfig) });
-			} else if ($.isPlainObject(plugin)) {
-				// register a single plugin
-				registerSinglePlugin(plugin);
-			} else if (typeof plugin === 'string') {
-				// register a single plugin
-				addPluginConditionDisjunct(plugin, true);
-			}
-		}
+		///////////////////////////
+		//// Private Functions ////
+		///////////////////////////
 
 		//
 		// to process a condition disjunct for a plugin
 		//
-		function addPluginConditionDisjunct(name, condition) {
+		function _addPluginConditionDisjunct(name, condition) {
 			//
 			// to accumulate condition disjuncts into runnable predicates
 			//
@@ -73,7 +73,7 @@ define(['jquery', 'js-graph', 'bluebird'], function ($, JsGraph, P) {
 			}
 		}
 
-		function registerSinglePlugin(plugin) {
+		function _registerSinglePlugin(plugin) {
 			//
 			// perform sanity checks
 			//
@@ -88,7 +88,7 @@ define(['jquery', 'js-graph', 'bluebird'], function ($, JsGraph, P) {
 			//
 			// process the plugin condition
 			//
-			addPluginConditionDisjunct(plugin.name, plugin.if);
+			_addPluginConditionDisjunct(plugin.name, plugin.if);
 			Object.defineProperty(_dynamicFeatureConfiguration, plugin.name, {
 				get() { return _pluginPredicates[plugin.name](_dynamicFeatureConfiguration) }
 			});
@@ -105,19 +105,44 @@ define(['jquery', 'js-graph', 'bluebird'], function ($, JsGraph, P) {
 			//
 			// pre-process operations (for now, only 'modify' for the top-level)
 			//
-			plugin._operations = {};
-			processOperations(plugin, plugin._operations);
+			plugin._operations = processOperations(plugin);
 		}
+
+		////////////////////////
+		//// Public Methods ////
+		////////////////////////
+
+		//
+		// the 'plugin' function ultimately returned from this module;
+		// it is called by plugin-writers with an object, and by plugin
+		// users to 'select' plugins by name, and can take an array
+		//
+		this.register = function register(plugin) {
+			if ($.isArray(plugin)) {
+				// process each plugin separately
+				$.each(plugin, (__, subConfig)=>{ this.register(subConfig) });
+			} else if ($.isPlainObject(plugin)) {
+				// register a single plugin
+				_registerSinglePlugin(plugin);
+			} else if (typeof plugin === 'string') {
+				// register a single plugin
+				_addPluginConditionDisjunct(plugin, true);
+			}
+		};
 
 		//
 		// apply all relevant plugins to a given object
 		//
-		registerPlugin._apply = function _apply(component, obj) {
-			_plugins.topologically((pluginName, plugin) => {
+		this.apply = function apply(component, obj) {
+			return traverse(_plugins, (pluginName, plugin) => {
+				//
 				// if the plugin doesn't exist, return
+				//
 				if (!plugin) { return }
 
+				//
 				// if the plugin is not selected, return
+				//
 				if (!_dynamicFeatureConfiguration[pluginName]) { return }
 
 				//
@@ -135,8 +160,7 @@ define(['jquery', 'js-graph', 'bluebird'], function ($, JsGraph, P) {
 				//
 				// perform the sub-operations
 				//
-				var subOps = {};
-				processOperations(op.value, subOps);
+				var subOps = processOperations(op.value);
 				$.each(subOps, (field, subOp) => {
 					switch (subOp.operation) {
 						//
@@ -198,6 +222,8 @@ define(['jquery', 'js-graph', 'bluebird'], function ($, JsGraph, P) {
 			});
 		};
 
-		return registerPlugin;
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		return this;
 	};
 });

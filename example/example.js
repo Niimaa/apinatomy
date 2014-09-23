@@ -25,9 +25,10 @@ require([
 	'../dist/amy-circuitboard',
 	'../dist/amy-p-tileskin',
 	'../dist/amy-p-tilespacing',
-	'../dist/amy-p-click-to-open',
+	'../dist/amy-p-tile-click-to-open',
 	'../dist/amy-p-tile-active',
 	'../dist/amy-p-tile-open',
+	'../dist/amy-p-tile-grow-when-open',
 	'../dist/amy-p-tile-open-active',
 	'domReady!'
 ], function ($, P) {
@@ -53,87 +54,105 @@ require([
 	//
 	// Select predefined plugins
 	//
-	$.circuitboard.plugin(['tileskin', 'click-to-open', 'tilespacing', 'tile-open', 'tile-active']);
+	$.circuitboard.plugin(['tileskin', 'tile-click-to-open', 'tilespacing', 'tile-open', 'tile-active', 'tile-grow-when-open']);
 
-	//
-	// How to equip a static model with the required promise-based API
-	//
-	function equipWithAPI(obj) {
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	var nodes = {
+		s: {
+			id: 's',
+			children: ['a', 'b', 'c', 'd', 'e']
+		},
+		a: {
+			id: 'a',
+			name: 'Tile A',
+			css: {
+				'&': { backgroundColor: 'red', borderColor: '#ffbbbb', color: 'white' },
+				'& header': { borderColor: '#ffbbbb' }
+			},
+			children: ['d1', 'b', 'd3']
+		},
+		b: {
+			id: 'b',
+			name: 'Tile B',
+			css: {
+				'&': { backgroundColor: 'blue', borderColor: 'lightblue', color: 'white' },
+				'& header': { borderColor: 'lightblue' }
+			}
+		},
+		c: {
+			id: 'c',
+			name: 'Tile C',
+			css: {
+				'&': { backgroundColor: 'gray', borderColor: 'lightgray', color: 'white' },
+				'& header': { borderColor: 'lightgray' }
+			}
+		},
+		d: {
+			id: 'd',
+			name: 'Tile D',
+			css: {
+				'&': { backgroundColor: 'green', borderColor: 'lightgreen', color: 'white' },
+				'& header': { borderColor: 'lightgreen' }
+			},
+			children: ['d1', 'd2', 'd3']
+		},
+		d1: {
+			id: 'd1',
+			name: 'Tile D1',
+			css: {
+				'&': { backgroundColor: 'lightgreen', borderColor: 'green', color: 'black' },
+				'& header': { borderColor: 'green' }
+			}
+		},
+		d2: {
+			id: 'd2',
+			name: 'Tile D2',
+			css: {
+				'&': { backgroundColor: 'lightgreen', borderColor: 'green', color: 'black' },
+				'& header': { borderColor: 'green' }
+			}
+		},
+		d3: {
+			id: 'd3',
+			name: 'Tile D3',
+			css: {
+				'&': { backgroundColor: 'lightgreen', borderColor: 'green', color: 'black' },
+				'& header': { borderColor: 'green' }
+			}
+		},
+		e: {
+			id: 'e',
+			name: 'Tile E',
+			css: {
+				'&': { backgroundColor: 'purple', borderColor: 'orchid', color: 'white' },
+				'& header': { borderColor: 'orchid' }
+			}
+		}
+	};
+
+	var nodePromises = {};
+
+	function modelWithApi(obj) {
 		obj.getChildren = function (ids) {
-			return P.resolve(ids.map(function (id) {
-				return P.resolve(obj.children[id]);
-			}));
+			return ids.map(function (id) {
+				if (!nodePromises[id]) { nodePromises[id] = P.resolve(modelWithApi(nodes[id])) }
+				return nodePromises[id];
+			});
 		};
 		obj.getChildIds = function () {
-			return P.resolve(obj.children ? Object.keys(obj.children) : []);
+			return P.resolve(obj.children || []);
 		};
-		if (obj.children) {
-			$.each(obj.children, function (id, child) {
-				child.id = id;
-				equipWithAPI(child);
-			});
-		}
 		return P.resolve(obj);
 	}
-
-	//
-	// Set up a static model for this example
-	//
-	var model = equipWithAPI({
-		id: 's',
-		children: {
-			a: {name: 'Tile A',
-				css: {
-					'&': { backgroundColor: 'red', borderColor: '#ffbbbb', color: 'white' },
-					'& header': { borderColor: '#ffbbbb' }
-				}},
-			b: {name: 'Tile B',
-				css: {
-					'&': { backgroundColor: 'blue', borderColor: 'lightblue', color: 'white' },
-					'& header': { borderColor: 'lightblue' }
-				}},
-			c: {name: 'Tile C',
-				css: {
-					'&': { backgroundColor: 'gray', borderColor: 'lightgray', color: 'white' },
-					'& header': { borderColor: 'lightgray' }
-				}},
-			d: {name: 'Tile D',
-				css: {
-					'&': { backgroundColor: 'green', borderColor: 'lightgreen', color: 'white' },
-					'& header': { borderColor: 'lightgreen' }
-				},
-				children: {
-					d1: {name: 'Tile D1',
-						css: {
-							'&': { backgroundColor: 'lightgreen', borderColor: 'green', color: 'black' },
-							'& header': { borderColor: 'green' }
-						}},
-					d2: {name: 'Tile D2',
-						css: {
-							'&': { backgroundColor: 'lightgreen', borderColor: 'green', color: 'black' },
-							'& header': { borderColor: 'green' }
-						}},
-					d3: {name: 'Tile D3',
-						css: {
-							'&': { backgroundColor: 'lightgreen', borderColor: 'green', color: 'black' },
-							'& header': { borderColor: 'green' }
-						}}
-				}
-			},
-			e: {name: 'Tile E',
-				css: {
-					'&': { backgroundColor: 'purple', borderColor: 'orchid', color: 'white' },
-					'& header': { borderColor: 'orchid' }
-				}}
-		}
-	});
 
 	//
 	// Use the $.fn.circuitboard method to instantiate the circuit-board
 	//
 	$('#circuitboard').circuitboard({
-		model: model,
+		model: modelWithApi(nodes['s']),
 		tileSpacing: 4
 	});
+
 
 });

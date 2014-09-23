@@ -39,7 +39,8 @@ var MODULES = [
 	{ name: 'p-tilespacing', file: 'amy-p-tilespacing.js' },
 	{ name: 'p-tile-active', file: 'amy-p-tile-active.js' },
 	{ name: 'p-tile-open', file: 'amy-p-tile-open.js' },
-	{ name: 'p-click-to-open', file: 'amy-p-click-to-open.js' },
+	{ name: 'p-tile-grow-when-open', file: 'amy-p-tile-grow-when-open.js' },
+	{ name: 'p-tile-click-to-open', file: 'amy-p-tile-click-to-open.js' },
 	{ name: 'p-tile-open-active', file: 'amy-p-tile-open-active.js' }
 ];
 
@@ -129,7 +130,8 @@ gulp.task('build', [
 	'build:p-tilespacing',
 	'build:p-tile-open',
 	'build:p-tile-active',
-	'build:p-click-to-open',
+	'build:p-tile-click-to-open',
+	'build:p-tile-grow-when-open',
 	'build:p-tile-open-active'
 ]);
 

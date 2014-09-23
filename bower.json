@@ -16,7 +16,7 @@
   "dependencies": {
     "jquery": "~2.1.1",
     "jquery-ui": "~1.11.1",
-    "js-graph": "~0.1.0",
+    "js-graph": "~0.2.0",
     "bluebird": "~2.3.2"
   },
   "devDependencies": {
