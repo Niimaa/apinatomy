@@ -7,7 +7,7 @@ define(['jquery'], function ($) {
 		// takes an object mapping 'selector' → 'property' → 'value' and
 		// applies it as a set of CSS rules to the descendants of the current element
 		//
-		putCssRules: function (rules) {
+		amyPutCssRules: function (rules) {
 			$.each(rules, (selector, css) => {
 				var context;
 				if (selector.trim() === '&') {
@@ -25,7 +25,7 @@ define(['jquery'], function ($) {
 		// sets the css property 'flex-grow' on the current element and
 		// correspondingly increases/decreases that of its direct parent
 		//
-		nestedFlexGrow(grow) {
+		amyNestedFlexGrow(grow) {
 			this.css('flexGrow', grow);
 			this.data('amyFlexGrowTarget', grow);
 			var growSum = 0;

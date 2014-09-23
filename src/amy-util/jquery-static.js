@@ -1,7 +1,7 @@
 define(['jquery'], function ($) {
 	'use strict';
 
-	$.extend({
+	var U = {
 		//
 		// create a function that returns the value of
 		// a specific field from a given object
@@ -34,7 +34,7 @@ define(['jquery'], function ($) {
 		//
 		// `Function.bind`, but only having to specify the context-object once
 		//
-		bind(obj, m, ...args) { return $.bindA(obj[m], obj, args) },
+		bind(obj, m, ...args) { return U.bindA(obj[m], obj, args) },
 
 		//
 		// a simple `assert` function, to express a
@@ -54,5 +54,7 @@ define(['jquery'], function ($) {
 		//
 		isDefined(val) { return typeof val !== 'undefined' }
 
-	});
+	};
+
+	return U;
 });

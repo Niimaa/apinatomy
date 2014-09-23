@@ -1,4 +1,4 @@
-define(['jquery', './amy-util/jquery-static.js', './amy-circuitboard.js'], function ($) {
+define(['jquery', './amy-circuitboard.js'], function ($) {
 	'use strict';
 
 	//
@@ -49,10 +49,6 @@ define(['jquery', './amy-util/jquery-static.js', './amy-circuitboard.js'], funct
 				// initial 'open' signal
 				//
 				this.trigger('open', false);
-
-
-
-
 			}
 		}
 	});

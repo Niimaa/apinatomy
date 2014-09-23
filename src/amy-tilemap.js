@@ -1,10 +1,19 @@
-define(['jquery', 'bluebird', './amy-cb-plugins.js', './amy-util/widget.js', './amy-util/jquery-instance.js', './amy-util/jquery-static.js', './amy-tile.js', './amy-tilemap.scss'], function ($, P) {
+define([
+	'jquery',
+	'bluebird',
+	'./amy-util/jquery-static.js',
+	'./amy-util/widget.js',
+	'./amy-cb-plugins.js',
+	'./amy-util/jquery-instance.js',
+	'./amy-tile.js',
+	'./amy-tilemap.scss'
+], function ($, P, U, amyWidget) {
 	'use strict';
 
 	//
 	// declare the tilemap widget
 	//
-	$.amyWidget('tilemap', 'tilemap', {
+	amyWidget('tilemap', 'tilemap', {
 		cssClass: "tilemap",
 		model: null,
 		_circuitboard: null
@@ -24,7 +33,7 @@ define(['jquery', 'bluebird', './amy-cb-plugins.js', './amy-util/widget.js', './
 				//
 				// sanity check
 				//
-				$.assert($.isDefined(this.model),
+				U.assert(U.isDefined(this.model),
 					`An ApiNATOMY tilemap should have a model.`);
 
 				//
@@ -40,9 +49,9 @@ define(['jquery', 'bluebird', './amy-cb-plugins.js', './amy-util/widget.js', './
 					// filter out the ids of children that ought not be displayed
 					//
 					.map((id) => {
-						return P.resolve(this.circuitboard.options.filter(id, $.bind(this.model.value(), 'getChildren', id)))
+						return P.resolve(this.circuitboard.options.filter(id, U.bind(this.model.value(), 'getChildren', id)))
 							.then((show) => { return { id: id, show: show } });
-					}).filter($.field('show')).map($.field('id'))
+					}).filter(U.field('show')).map(U.field('id'))
 					//
 					// get promises to all child entities
 					//
@@ -65,7 +74,7 @@ define(['jquery', 'bluebird', './amy-cb-plugins.js', './amy-util/widget.js', './
 								var tile = $('<div/>').tile({
 									model: childrenToDisplay.pop(),
 									_circuitboard: this.options._circuitboard
-								}).appendTo(row).nestedFlexGrow(1).tile('instance');
+								}).appendTo(row).amyNestedFlexGrow(1).tile('instance');
 								tile.one('destroy', tile.destroy.bind(tile));
 							}
 						}

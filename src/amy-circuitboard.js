@@ -1,10 +1,17 @@
-define(['jquery', 'bluebird', './amy-cb-plugins.js', './amy-util/widget.js', './amy-tilemap.js', './amy-circuitboard.scss'], function ($, P) {
+define([
+	'jquery',
+	'bluebird',
+	'./amy-util/widget.js',
+	'./amy-cb-plugins.js',
+	'./amy-tilemap.js',
+	'./amy-circuitboard.scss'
+], function ($, P, amyWidget) {
 	'use strict';
 
 	//
 	// declare the circuitboard widget
 	//
-	$.amyWidget('circuitboard', 'circuitboard', {
+	amyWidget('circuitboard', 'circuitboard', {
 		cssClass: "circuitboard",
 		filter: ()=>P.resolve(true),
 		model: null

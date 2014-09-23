@@ -42,7 +42,7 @@ define(['jquery', './amy-util/jquery-instance.js', './amy-circuitboard.js', './a
 				//
 				// take any css rules from the model and apply them to the tile
 				//
-				this.model.get('css').then((css)=> { this.element.putCssRules(css) });
+				this.model.get('css').then((css)=> { this.element.amyPutCssRules(css) });
 			}
 		}
 	});

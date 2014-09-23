@@ -1,4 +1,4 @@
-define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js'], function ($, JsGraph, P, traverse) {
+define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './jquery-static.js'], function ($, JsGraph, P, traverse, U) {
 	'use strict';
 
 	//
@@ -60,7 +60,7 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js'], function ($, JsG
 			//
 			// interpret the given condition by type
 			//
-			if ($.isUndefined(condition)) { // do not load a plugin by default
+			if (U.isUndefined(condition)) { // do not load a plugin by default
 				accumulate(() => false);
 			} else if (typeof condition === 'string') { // a plugin name
 				accumulate(() => _dynamicFeatureConfiguration[condition]);
@@ -77,7 +77,7 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js'], function ($, JsG
 			//
 			// perform sanity checks
 			//
-			$.assert(typeof plugin.name === 'string',
+			U.assert(typeof plugin.name === 'string',
 				"An ApiNATOMY plugin should have a name.");
 
 			//
@@ -154,7 +154,7 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js'], function ($, JsG
 				//
 				// we only support 'modify' for the top level for now
 				//
-				$.assert(op.operation === 'modify',
+				U.assert(op.operation === 'modify',
 					`Any top-level operation on '${component}' must be 'modify'.`);
 
 				//
@@ -167,7 +167,7 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js'], function ($, JsG
 						// add a new key/value pair to the object
 						//
 						case 'add': {
-							$.assert($.isUndefined(obj[field]),
+							U.assert(U.isUndefined(obj[field]),
 								`The operation 'add ${field}' expects ${component}.${field} to first be undefined.`);
 							obj[field] = subOp.value;
 						} break;
@@ -176,7 +176,7 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js'], function ($, JsG
 						// remove an existing key/value pair from the object
 						//
 						case 'remove': {
-							$.assert($.isDefined(obj[field]),
+							U.assert(U.isDefined(obj[field]),
 								`The operation 'remove ${field}' expects ${component}.${field} to first be defined.`);
 							delete obj[field];
 						} break;
@@ -185,7 +185,7 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js'], function ($, JsG
 						// replace an existing key/value pair in the object
 						//
 						case 'replace': {
-							$.assert($.isDefined(obj[field]),
+							U.assert(U.isDefined(obj[field]),
 								`The operation 'replace ${field}' expects ${component}.${field} to first be defined.`);
 							obj[field] = subOp.value;
 						} break;
@@ -194,7 +194,7 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js'], function ($, JsG
 						// insert a set of statements into an existing method of the object
 						//
 						case 'insert': {
-							$.assert($.isUndefined(obj[field]) || $.isFunction(obj[field]),
+							U.assert(U.isUndefined(obj[field]) || $.isFunction(obj[field]),
 								`The operation 'insert ${field}' expects ${component}.${field} to be undefined or a function.`);
 							var restOfFunction = obj[field];
 							obj[field] = function (...args) {
@@ -208,7 +208,7 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js'], function ($, JsG
 						// (possibly asynchronous) method of the object
 						//
 						case 'after': {
-							$.assert($.isUndefined(obj[field]) || $.isFunction(obj[field]),
+							U.assert(U.isUndefined(obj[field]) || $.isFunction(obj[field]),
 								`The operation 'after ${field}' expects ${component}.${field} to be undefined or a function.`);
 							var beforeFunction = obj[field];
 							obj[field] = function (...args) {

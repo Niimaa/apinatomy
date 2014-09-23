@@ -1,4 +1,4 @@
-define(['jquery', './amy-util/jquery-static.js', './amy-circuitboard.js'], function ($) {
+define(['jquery', './amy-util/jquery-static.js', './amy-circuitboard.js'], function ($, U) {
 	'use strict';
 
 	//
@@ -28,7 +28,7 @@ define(['jquery', './amy-util/jquery-static.js', './amy-circuitboard.js'], funct
 				//
 				// put this tile in the queue of potentially active tiles
 				//
-				$.array(this.model, '_amyActiveTileQueue').push(this);
+				U.array(this.model, '_amyActiveTileQueue').push(this);
 				this.on('destroy', ()=> {
 					var index = this.model._amyActiveTileQueue.indexOf(this);
 					this.model._amyActiveTileQueue.splice(index, 1);

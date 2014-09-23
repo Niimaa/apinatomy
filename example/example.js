@@ -51,7 +51,14 @@ require([
 	//
 	// Select predefined plugins
 	//
-	$.circuitboard.plugin(['tileskin', 'tile-click-to-open', 'tilespacing', 'tile-open', 'tile-active', 'tile-grow-when-open']);
+	$.circuitboard.plugin([
+		'tileskin',
+		'tile-click-to-open',
+		'tilespacing',
+		'tile-open',
+		'tile-active',
+		'tile-grow-when-open'
+	]);
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -56,5 +56,4 @@ define(['bluebird'], function (P) {
 		return sinkPromises;
 	};
 
-
 });

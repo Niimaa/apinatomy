@@ -1,10 +1,15 @@
-define(['jquery', './amy-cb-plugins.js', './amy-util/widget.js', './amy-util/jquery-instance.js'], function ($) {
+define([
+	'jquery',
+	'./amy-util/widget.js',
+	'./amy-cb-plugins.js',
+	'./amy-util/jquery-instance.js'
+], function ($, amyWidget) {
 	'use strict';
 
 	//
 	// declare the tile widget
 	//
-	$.amyWidget('tile', 'tile', {
+	amyWidget('tile', 'tile', {
 		cssClass: 'tile',
 		model: null,
 		_circuitboard: null
@@ -52,7 +57,7 @@ define(['jquery', './amy-cb-plugins.js', './amy-util/widget.js', './amy-util/jqu
 					set(newWeight) {
 						// TODO: allow Infinity
 						_weight = newWeight;
-						this.element.nestedFlexGrow(newWeight);
+						this.element.amyNestedFlexGrow(newWeight);
 					}
 				});
 
