@@ -5,13 +5,11 @@ requirejs.config({
 	paths: {
 		'domReady': '../bower_components/requirejs-domready/domReady',
 		'jquery': '../bower_components/jquery/dist/jquery',
-		'jquery-ui': '../bower_components/jquery-ui/jquery-ui',
 		'js-graph': '../bower_components/js-graph/dist/js-graph',
 		'bluebird': '../bower_components/bluebird/js/browser/bluebird'
 	},
 	shim: {
-		'jquery': { exports: '$' },
-		'jquery-ui': ['jquery']
+		'jquery': { exports: 'jQuery' }
 	}
 });
 
@@ -21,7 +19,6 @@ requirejs.config({
 require([
 	'jquery',
 	'bluebird',
-	'jquery-ui',
 	'../dist/amy-circuitboard',
 	'../dist/amy-p-tileskin',
 	'../dist/amy-p-tilespacing',
