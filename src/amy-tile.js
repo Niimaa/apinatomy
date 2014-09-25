@@ -1,9 +1,10 @@
 define([
 	'jquery',
 	'./amy-util/widget.js',
+	'./amy-util/unique-id.js',
 	'./amy-cb-plugins.js',
 	'./amy-util/jquery-instance.js'
-], function ($, amyWidget) {
+], function ($, amyWidget, uniqueID) {
 	'use strict';
 
 	//
@@ -60,6 +61,12 @@ define([
 						this.element.amyNestedFlexGrow(newWeight);
 					}
 				});
+
+				//
+				// an element id for quick lookups
+				//
+				this.id = uniqueID('tile');
+				this.element.attr('id', this.id);
 
 				//
 				// the inner tilemap

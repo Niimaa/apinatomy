@@ -6,7 +6,8 @@ requirejs.config({
 		'domReady': '../bower_components/requirejs-domready/domReady',
 		'jquery': '../bower_components/jquery/dist/jquery',
 		'js-graph': '../bower_components/js-graph/dist/js-graph',
-		'bluebird': '../bower_components/bluebird/js/browser/bluebird'
+		'bluebird': '../bower_components/bluebird/js/browser/bluebird',
+		'chroma-js': '../bower_components/chroma-js/chroma'
 	},
 	shim: {
 		'jquery': { exports: 'jQuery' }
@@ -66,8 +67,8 @@ require([
 	//
 	$('#circuitboard').circuitboard({
 		model: getFmaModels(['24tile:60000000'])[0],
-		tileSpacing: 1
+		tileSpacing: 0,
+		weightWhenOpen: 8
 	});
-
 
 });

@@ -23,11 +23,6 @@ body {
 #circuitboard {
 	height: 90%;
 	width: 90%;
-
-	.tile, .tilerow {
-		transition-property: flex-grow;
-		transition-duration: .2s;
-	}
 }
 
 .tile {

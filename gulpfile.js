@@ -30,6 +30,7 @@ var EXTERNAL_MODULES = [
 	externalModule('jquery', 'jQuery'),
 	externalModule('bluebird', 'P'),
 	externalModule('js-graph', 'JsGraph'),
+	externalModule('chroma-js', 'chroma'),
 	externalModule('jquery-ui')
 ];
 

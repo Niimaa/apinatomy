@@ -3,6 +3,14 @@ define(['jquery'], function ($) {
 
 	var U = {
 		//
+		// test equality with a tolerance of epsilon
+		//
+		approx: function (val1, val2, epsilon) {
+			if (U.isUndefined(epsilon)) { epsilon = 1e-5 }
+			return (Math.abs(val1 - val2) < epsilon);
+		},
+
+		//
 		// create a function that returns the value of
 		// a specific field from a given object
 		//
@@ -35,6 +43,15 @@ define(['jquery'], function ($) {
 		// `Function.bind`, but only having to specify the context-object once
 		//
 		bind(obj, m, ...args) { return U.bindA(obj[m], obj, args) },
+
+		//
+		// allows the Function constructor to be used
+		// with an array of formal parameters
+		//
+		applyConstructor(ConstructorFn, args) {
+			var NewConstructorFn = ConstructorFn.bind.apply(ConstructorFn, [null].concat(args));
+			return new NewConstructorFn();
+		},
 
 		//
 		// a simple `assert` function, to express a
