@@ -6,15 +6,15 @@ define(['jquery', 'bluebird'], function ($, P) {
 	//
 	function enableSignalHandling(obj) {
 		var _callbacks = {};
-		function _callback(signal) {
+		function _signalCallbacks(signal) {
 			if (!_callbacks[signal]) {
 				_callbacks[signal] = $.Callbacks();
 			}
 			return _callbacks[signal];
 		}
 		$.extend(obj, {
-			on(signal, fn) { _callback(signal).add(fn) },
-			off(signal, fn) { _callback(signal).remove(fn) },
+			on(signal, fn) { _signalCallbacks(signal).add(fn) },
+			off(signal, fn) { _signalCallbacks(signal).remove(fn) },
 			one(signal, fn) {
 				var paddedFn = () => {
 					fn.apply(null, arguments);
@@ -68,10 +68,6 @@ define(['jquery', 'bluebird'], function ($, P) {
 					//
 					.return(objPrototype)
 					//
-					// add signal-handling methods to the prototype
-					//
-					.tap(enableSignalHandling)
-					//
 					// define default properties in the prototype
 					//
 					.tap(defineDefaultProperties);
@@ -104,6 +100,11 @@ define(['jquery', 'bluebird'], function ($, P) {
 				});
 
 				//
+				// add signal-handling methods to the object
+				//
+				enableSignalHandling(obj);
+
+				//
 				// set the element class
 				//
 				obj.element.addClass(obj.options.cssClass);
@@ -112,7 +113,7 @@ define(['jquery', 'bluebird'], function ($, P) {
 				//
 				// if present, run the constructor method
 				//
-				if ($.isFunction(obj.constructor)) { obj.constructor(); }
+				if ($.isFunction(obj.constructor)) { obj.constructor.call(obj); }
 
 				//
 				// return the widget object from the promise

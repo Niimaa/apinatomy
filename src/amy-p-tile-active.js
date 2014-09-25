@@ -6,7 +6,7 @@ define(['jquery', './amy-util/jquery-static.js', './amy-util/handle-premature-pl
 		after: ['tile-core'],
 
 		'modify tile': {
-			'after constructor': function () {
+			'insert constructor': function () {
 				//
 				// only interesting if the tile has a model
 				//

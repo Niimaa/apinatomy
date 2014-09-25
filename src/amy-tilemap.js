@@ -40,7 +40,7 @@ define([
 				// render the new tilemap
 				// (through a promise chain, returning the final promise)
 				//
-				return this.model
+				return P.resolve(this.model)
 					//
 					// get the id's of all child models
 					//
@@ -49,13 +49,13 @@ define([
 					// filter out the ids of children that ought not be displayed
 					//
 					.map((id) => {
-						return P.resolve(this.circuitboard.options.filter(id, U.bind(this.model.value(), 'getChildren', id)))
+						return P.resolve(this.circuitboard.options.filter(id, U.bind(P.resolve(this.model).value(), 'getChildren', id)))
 							.then((show) => { return { id: id, show: show } });
 					}).filter(U.field('show')).map(U.field('id'))
 					//
 					// get promises to all child entities
 					//
-					.then(this.model.value().getChildren)
+					.then((ids) => P.resolve(this.model).value().getChildren(ids))
 					//
 					// create a tile for each child entity
 					//

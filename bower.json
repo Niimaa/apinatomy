@@ -21,6 +21,7 @@
   "devDependencies": {
     "requirejs-domready": "~2.0.1",
     "requirejs": "~2.1.14",
-    "traceur": "~0.0.58"
+    "traceur": "~0.0.58",
+    "spin.js": "~2.0.1"
   }
 }

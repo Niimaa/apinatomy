@@ -6,7 +6,7 @@ define(['jquery', './amy-util/handle-premature-plugins.js'], function ($) {
 		after: ['tile-core'],
 
 		'modify tile': {
-			'after constructor': function () {
+			'insert constructor': function () {
 				//
 				// the 'open' property
 				//
@@ -23,8 +23,9 @@ define(['jquery', './amy-util/handle-premature-plugins.js'], function ($) {
 				// when the tile opens, populate the inner tilemap
 				//
 				this.on('open', (open) => {
-					if (!open) { return }
-					this.populateInnerTilemap();
+					if (open) {
+						this.populateInnerTilemap();
+					}
 				});
 
 				//
@@ -35,7 +36,7 @@ define(['jquery', './amy-util/handle-premature-plugins.js'], function ($) {
 				//
 				// initial 'open' signal
 				//
-				this.trigger('open', false);
+				this.trigger('open', _open);
 			}
 		}
 	});

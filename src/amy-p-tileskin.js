@@ -26,10 +26,10 @@ define(['jquery', './amy-util/jquery-instance.js', './amy-p-tileskin.scss', './a
 				//
 				this.model.get('name').then((name)=> { headerElement.text(name) });
 
-				//
-				// take any css rules from the model and apply them to the tile
-				//
-				this.model.get('css').then((css)=> { this.element.amyPutCssRules(css) });
+//				//
+//				// take any css rules from the model and apply them to the tile // TODO: uncomment after debugging
+//				//
+//				this.model.get('css').then((css)=> { this.element.amyPutCssRules(css) });
 			}
 		}
 	});

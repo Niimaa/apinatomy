@@ -41,7 +41,8 @@ var MODULES = [
 	{ name: 'p-tile-open', file: 'amy-p-tile-open.js' },
 	{ name: 'p-tile-grow-when-open', file: 'amy-p-tile-grow-when-open.js' },
 	{ name: 'p-tile-click-to-open', file: 'amy-p-tile-click-to-open.js' },
-	{ name: 'p-tile-open-active', file: 'amy-p-tile-open-active.js' }
+	{ name: 'p-tile-open-active', file: 'amy-p-tile-open-active.js' },
+	{ name: 'fma-model', file: 'amy-fma-model.js' }
 ];
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -132,7 +133,8 @@ gulp.task('build', [
 	'build:p-tile-active',
 	'build:p-tile-click-to-open',
 	'build:p-tile-grow-when-open',
-	'build:p-tile-open-active'
+	'build:p-tile-open-active',
+	'build:fma-model'
 ]);
 
 gulp.task('build:example', ['build', 'sass']);

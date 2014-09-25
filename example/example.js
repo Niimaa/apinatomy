@@ -19,6 +19,7 @@ requirejs.config({
 require([
 	'jquery',
 	'bluebird',
+	'../dist/amy-fma-model.js',
 	'../dist/amy-circuitboard.js',
 	'../dist/amy-p-tileskin.js',
 	'../dist/amy-p-tilespacing.js',
@@ -28,7 +29,7 @@ require([
 	'../dist/amy-p-tile-grow-when-open.js',
 	'../dist/amy-p-tile-open-active.js',
 	'domReady!'
-], function ($, P) {
+], function ($, P, getFmaModels) {
 	'use strict';
 
 	//
@@ -60,102 +61,12 @@ require([
 		'tile-grow-when-open'
 	]);
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	var nodes = {
-		s: {
-			id: 's',
-			children: ['a', 'b', 'c', 'd', 'e']
-		},
-		a: {
-			id: 'a',
-			name: 'Tile A',
-			css: {
-				'&': { backgroundColor: 'red', borderColor: '#ffbbbb', color: 'white' },
-				'& header': { borderColor: '#ffbbbb' }
-			},
-			children: ['d1', 'b', 'd3']
-		},
-		b: {
-			id: 'b',
-			name: 'Tile B',
-			css: {
-				'&': { backgroundColor: 'blue', borderColor: 'lightblue', color: 'white' },
-				'& header': { borderColor: 'lightblue' }
-			}
-		},
-		c: {
-			id: 'c',
-			name: 'Tile C',
-			css: {
-				'&': { backgroundColor: 'gray', borderColor: 'lightgray', color: 'white' },
-				'& header': { borderColor: 'lightgray' }
-			}
-		},
-		d: {
-			id: 'd',
-			name: 'Tile D',
-			css: {
-				'&': { backgroundColor: 'green', borderColor: 'lightgreen', color: 'white' },
-				'& header': { borderColor: 'lightgreen' }
-			},
-			children: ['d1', 'd2', 'd3']
-		},
-		d1: {
-			id: 'd1',
-			name: 'Tile D1',
-			css: {
-				'&': { backgroundColor: 'lightgreen', borderColor: 'green', color: 'black' },
-				'& header': { borderColor: 'green' }
-			}
-		},
-		d2: {
-			id: 'd2',
-			name: 'Tile D2',
-			css: {
-				'&': { backgroundColor: 'lightgreen', borderColor: 'green', color: 'black' },
-				'& header': { borderColor: 'green' }
-			}
-		},
-		d3: {
-			id: 'd3',
-			name: 'Tile D3',
-			css: {
-				'&': { backgroundColor: 'lightgreen', borderColor: 'green', color: 'black' },
-				'& header': { borderColor: 'green' }
-			}
-		},
-		e: {
-			id: 'e',
-			name: 'Tile E',
-			css: {
-				'&': { backgroundColor: 'purple', borderColor: 'orchid', color: 'white' },
-				'& header': { borderColor: 'orchid' }
-			}
-		}
-	};
-
-	var nodePromises = {};
-
-	function modelWithApi(obj) {
-		obj.getChildren = function (ids) {
-			return ids.map(function (id) {
-				if (!nodePromises[id]) { nodePromises[id] = P.resolve(modelWithApi(nodes[id])) }
-				return nodePromises[id];
-			});
-		};
-		obj.getChildIds = function () {
-			return P.resolve(obj.children || []);
-		};
-		return P.resolve(obj);
-	}
-
 	//
 	// Use the $.fn.circuitboard method to instantiate the circuit-board
 	//
 	$('#circuitboard').circuitboard({
-		model: modelWithApi(nodes['s']),
-		tileSpacing: 4
+		model: getFmaModels(['24tile:60000000'])[0],
+		tileSpacing: 1
 	});
 
 

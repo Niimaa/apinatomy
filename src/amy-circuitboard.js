@@ -24,7 +24,7 @@ define([
 		name: 'circuitboard-core',
 		if: true,
 		'modify circuitboard': {
-			'after constructor': function () {
+			'insert constructor': function () {
 				//
 				// keeping track of tiles
 				//

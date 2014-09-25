@@ -9,15 +9,18 @@
     <file url="file://$PROJECT_DIR$/package.json" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-cb-plugins.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-circuitboard.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/amy-fma-model.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-p-tile-active.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-p-tile-click-to-open.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-p-tile-grow-when-open.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-p-tile-open-active.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-p-tile-open.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/amy-p-tile-spinner-while-loading.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-p-tileskin.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-p-tilespacing.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-tile.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-tilemap.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/amy-util/defer.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-util/handle-premature-plugins.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-util/jquery-instance.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-util/jquery-static.js" charset="UTF-8" />
