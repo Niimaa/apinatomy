@@ -72,7 +72,7 @@ define([
 							var row = $('<div/>').addClass('tilerow').appendTo(this.element);
 							for (var column = 0; column < colCount && childrenToDisplay.length > 0; column += 1) {
 								$('<div/>').tile({
-									model: childrenToDisplay.pop(),
+									model: childrenToDisplay.shift(),
 									_circuitboard: this.options._circuitboard
 								}).appendTo(row).amyNestedFlexGrow(1).tile('instance').then((tile) => {
 									tile.one('destroy', tile.destroy.bind(tile));
