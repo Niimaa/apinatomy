@@ -155,14 +155,11 @@ A plugin is a JavaScript object registered through the `$.circuitboard.plugin` m
 
 We'll look at each part of the object in a separate subsection.
 
-`name`  | a unique identifier (a string) by which to refer to the plugin
-`if`    | *(optional)* a condition under which the plugin will be loaded automatically (without explicitly selecting it).
-          Use the value `true` to load the plugin unconditionally. Use an array of plugin names `['p-1', 'p-2']` to
-          auto-load when each of those plugins is loaded too.
-          Use a predicate function `function (others) { /*...*/ }` for full flexibility. It receives an object which
-          maps names of plugins that are being loaded to `true`, and should return `true` to auto-load or `false` not to.
-`after` | *(optional)* an array of plugin names. Each of them is guaranteed to be loaded before this plugin, if they are
-          loaded at all. That way, this new plugin can expand upon their functionality.
+| property | meaning
+| ------- | ---
+| `name`  | a unique identifier (a string) by which to refer to the plugin
+| `if`    | *(optional)* a condition under which the plugin will be loaded automatically (without explicitly selecting it). Use the value `true` to load the plugin unconditionally. Use an array of plugin names `['p-1', 'p-2']` to auto-load when each of those plugins is loaded too. Use a predicate function `function (others) { /*...*/ }` for full flexibility. It receives an object which maps names of plugins that are being loaded to `true`, and should return `true` to auto-load or `false` not to.
+| `after` | *(optional)* an array of plugin names. Each of them is guaranteed to be loaded before this plugin, if they are loaded at all. That way, this new plugin can expand upon their functionality.
 
 The *operations*, which actually implement the plugin, deserve a separate subsection.
 
