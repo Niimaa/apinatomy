@@ -13,16 +13,17 @@ define([
 			'insert constructor': function () {
 				var sectionElement = this.element.children('section');
 				this.on('open', (open) => {
+					sectionElement.css('visible', 'hidden');
+					sectionElement.css('opacity', 0);
 					if (open) {
 						setTimeout(() => {
 							sectionElement.css('visible', 'visible');
 							sectionElement.css('opacity', 1);
-						}, 400);
+						}, 310);
+						this.weight = this.circuitboard.options.weightWhenOpen || 2;
 					} else {
-						sectionElement.css('visible', 'hidden');
-						sectionElement.css('opacity', 0);
+						this.weight = 1;
 					}
-					this.weight = open ? (this.circuitboard.options.weightWhenOpen || 2) : 1;
 				});
 			}
 		}
