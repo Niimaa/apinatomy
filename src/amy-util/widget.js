@@ -1,4 +1,4 @@
-define(['jquery', 'bluebird'], function ($, P) {
+define(['jquery', 'bluebird', './jquery-static.js'], function ($, P, U) {
 	'use strict';
 
 	//
@@ -26,6 +26,44 @@ define(['jquery', 'bluebird'], function ($, P) {
 			trigger(signal, ...args) {
 				var callbacks = _callbacks[signal];
 				if (callbacks) { callbacks.fireWith(this, args) }
+			}
+		});
+	}
+
+	//
+	// a function to implement artefact hierarchy methods
+	//
+	function defineHierarchyMethods(obj) {
+		Object.defineProperty(obj, 'type', {
+			set(type) { this._artefactType = type },
+			get() { return this._artefactType }
+		});
+		Object.defineProperty(obj, 'parent', {
+			set(parent) {
+				this._parent = parent;
+				U.array(parent, '_children').push(this);
+			},
+			get() { return this._parent }
+		});
+		Object.defineProperty(obj, 'children', {
+			get() { return this._children }
+		});
+		$.extend(obj, {
+			closestAncestorByType(type) {
+				var result = this;
+				do { result = result.parent } while (result && result.type && result.type !== type);
+				return result;
+			},
+			closestDescendantsByType(type) {
+				var result = [];
+				(this.children || []).forEach((child) => {
+					if (child.type === type) {
+						result.push(child);
+					} else {
+						result = result.concat(child.closestDescendantsByType(type));
+					}
+				});
+				return result;
 			}
 		});
 	}
@@ -70,7 +108,11 @@ define(['jquery', 'bluebird'], function ($, P) {
 					//
 					// define default properties in the prototype
 					//
-					.tap(defineDefaultProperties);
+					.tap(defineDefaultProperties)
+					//
+					// define methods to manage artefact hierarchy
+					//
+					.tap(defineHierarchyMethods);
 			}
 			return _prototypeP;
 		}
@@ -98,6 +140,11 @@ define(['jquery', 'bluebird'], function ($, P) {
 					element: this,
 					destroy() { obj.trigger('destroy') }
 				});
+
+				//
+				// register type
+				//
+				obj.type = name;
 
 				//
 				// add signal-handling methods to the object

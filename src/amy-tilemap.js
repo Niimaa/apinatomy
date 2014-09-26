@@ -75,6 +75,7 @@ define([
 									model: childrenToDisplay.shift(),
 									_circuitboard: this.options._circuitboard
 								}).appendTo(row).amyNestedFlexGrow(1).tile('instance').then((tile) => {
+									tile.parent = this;
 									tile.one('destroy', tile.destroy.bind(tile));
 								});
 							}

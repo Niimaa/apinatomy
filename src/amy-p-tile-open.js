@@ -14,8 +14,11 @@ define(['jquery', './amy-util/handle-premature-plugins.js'], function ($) {
 				Object.defineProperty(this, 'open', {
 					get() { return _open },
 					set(shouldBeOpen) {
-						_open = shouldBeOpen;
-						this.trigger('open', _open);
+						shouldBeOpen = !!shouldBeOpen;
+						if (_open !== shouldBeOpen) {
+							_open = shouldBeOpen;
+							this.trigger('open', _open);
+						}
 					}
 				});
 
@@ -31,7 +34,17 @@ define(['jquery', './amy-util/handle-premature-plugins.js'], function ($) {
 				//
 				// automatically (un)set the CSS class 'open'
 				//
-				this.on('open', ()=>{ this.element.toggleClass("open", this.open) });
+				this.on('open', (open)=>{ this.element.toggleClass("open", open) });
+
+				//
+				// if you close, all your children close
+				//
+				this.on('open', (open) => {
+					if (!open) {
+						this.closestDescendantsByType('tile')
+							.forEach((tile) => { tile.open = false });
+					}
+				});
 
 				//
 				// initial 'open' signal

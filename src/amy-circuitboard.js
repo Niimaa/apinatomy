@@ -84,6 +84,7 @@ define([
 						_circuitboard: this
 					}).tilemap('instance')
 					.then((tilemap) => {
+						tilemap.parent = this;
 						this.one('destroy', ()=> { tilemap.destroy() });
 					});
 			}
