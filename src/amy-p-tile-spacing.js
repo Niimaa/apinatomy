@@ -2,7 +2,7 @@ define(['jquery', './amy-util/handle-premature-plugins.js'], function ($) {
 	'use strict';
 
 	$.circuitboard.plugin({
-		name: 'tilespacing',
+		name: 'tile-spacing',
 		after: ['tilemap-core'],
 
 		'modify tilemap': {

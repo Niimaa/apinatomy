@@ -36,8 +36,8 @@ var EXTERNAL_MODULES = [
 
 var MODULES = [
 	{ name: 'core', file: 'amy-circuitboard.js' },
-	{ name: 'p-tileskin', file: 'amy-p-tileskin.js' },
-	{ name: 'p-tilespacing', file: 'amy-p-tilespacing.js' },
+	{ name: 'p-tileskin', file: 'amy-p-tile-skin.js' },
+	{ name: 'p-tilespacing', file: 'amy-p-tile-spacing.js' },
 	{ name: 'p-tile-active', file: 'amy-p-tile-active.js' },
 	{ name: 'p-tile-open', file: 'amy-p-tile-open.js' },
 	{ name: 'p-tile-grow-when-open', file: 'amy-p-tile-grow-when-open.js' },

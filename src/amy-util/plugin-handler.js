@@ -136,9 +136,9 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './jquery-static.
 		this.apply = function apply(component, obj) {
 			return traverse(_plugins, (pluginName, plugin) => {
 				//
-				// if the plugin doesn't exist, return
+				// if the plugin doesn't exist, throw an error
 				//
-				if (!plugin) { return }
+				if (!plugin) { throw new Error(`I don't know the '${pluginName}' plugin.`) }
 
 				//
 				// if the plugin is not selected, return
@@ -163,60 +163,80 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './jquery-static.
 				var subOps = processOperations(op.value);
 				$.each(subOps, (field, subOp) => {
 					switch (subOp.operation) {
+
 						//
 						// add a new key/value pair to the object
 						//
-						case 'add': {
+						case 'add': {///////////////////////////////////////////////////////////////////////////////////
+
 							U.assert(U.isUndefined(obj[field]),
 								`The operation 'add ${field}' expects ${component}.${field} to first be undefined.`);
+
 							obj[field] = subOp.value;
-						} break;
+
+						} break;////////////////////////////////////////////////////////////////////////////////////////
+
 
 						//
 						// remove an existing key/value pair from the object
 						//
-						case 'remove': {
+						case 'remove': {////////////////////////////////////////////////////////////////////////////////
+
 							U.assert(U.isDefined(obj[field]),
 								`The operation 'remove ${field}' expects ${component}.${field} to first be defined.`);
+
 							delete obj[field];
-						} break;
+
+						} break;////////////////////////////////////////////////////////////////////////////////////////
+
 
 						//
 						// replace an existing key/value pair in the object
 						//
-						case 'replace': {
+						case 'replace': {///////////////////////////////////////////////////////////////////////////////
+
 							U.assert(U.isDefined(obj[field]),
 								`The operation 'replace ${field}' expects ${component}.${field} to first be defined.`);
+
 							obj[field] = subOp.value;
-						} break;
+
+						} break;////////////////////////////////////////////////////////////////////////////////////////
+
 
 						//
 						// insert a set of statements into an existing method of the object
 						//
-						case 'insert': {
+						case 'insert': {////////////////////////////////////////////////////////////////////////////////
+
 							U.assert(U.isUndefined(obj[field]) || $.isFunction(obj[field]),
 								`The operation 'insert ${field}' expects ${component}.${field} to be undefined or a function.`);
+
 							var restOfFunction = obj[field];
 							obj[field] = function (...args) {
 								restOfFunction.apply(this, args);
 								return subOp.value.apply(this, args);
 							};
-						} break;
+
+						} break;////////////////////////////////////////////////////////////////////////////////////////
+
 
 						//
 						// have a set of statements executed after an existing
 						// (possibly asynchronous) method of the object
 						//
-						case 'after': {
+						case 'after': {/////////////////////////////////////////////////////////////////////////////////
+
 							U.assert(U.isUndefined(obj[field]) || $.isFunction(obj[field]),
 								`The operation 'after ${field}' expects ${component}.${field} to be undefined or a function.`);
+
 							var beforeFunction = obj[field];
 							obj[field] = function (...args) {
 								return P.resolve(beforeFunction.apply(this, args)).then(function (promiseValue) {
 									return subOp.value.apply(this, [promiseValue].concat(args));
 								}.bind(this));
 							};
-						} break;
+
+						} break;////////////////////////////////////////////////////////////////////////////////////////
 					}
 				});
 			});

@@ -1,7 +1,6 @@
 {
 	"trailing":  true,
 	"freeze":    true,
-	"strict":    true,
 	"latedef":   "nofunc",
 	"camelcase": true,
 	"node":      true,

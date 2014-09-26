@@ -4,7 +4,7 @@ define([
 	'./amy-util/jquery-static.js',
 	'./amy-util/defaults.js',
 	'./amy-util/jquery-instance.js',
-	'./amy-p-tileskin.scss',
+	'./amy-p-tile-skin.scss',
 	'./amy-util/handle-premature-plugins.js'
 ], function ($, color, U, defaults) {
 	'use strict';
@@ -30,7 +30,7 @@ define([
 	// the plugin
 	//
 	$.circuitboard.plugin({
-		name: 'tileskin',
+		name: 'tile-skin',
 		after: ['tile-core'],
 
 		'modify tile': {

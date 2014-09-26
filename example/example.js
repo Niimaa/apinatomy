@@ -10,7 +10,8 @@ requirejs.config({
 		'chroma-js': '../bower_components/chroma-js/chroma'
 	},
 	shim: {
-		'jquery': { exports: 'jQuery' }
+		'jquery': { exports: 'jQuery' },
+		'bluebird': { init: function () { this.longStackTraces() } }
 	}
 });
 
@@ -22,8 +23,8 @@ require([
 	'bluebird',
 	'../dist/amy-fma-model.js',
 	'../dist/amy-circuitboard.js',
-	'../dist/amy-p-tileskin.js',
-	'../dist/amy-p-tilespacing.js',
+	'../dist/amy-p-tile-skin.js',
+	'../dist/amy-p-tile-spacing.js',
 	'../dist/amy-p-tile-click-to-open.js',
 	'../dist/amy-p-tile-active.js',
 	'../dist/amy-p-tile-open.js',
@@ -34,29 +35,12 @@ require([
 	'use strict';
 
 	//
-	// Define a manual plugin
-	//
-	$.circuitboard.plugin({
-		name: 'big-border',
-		if: true,
-		after: ['circuitboard-core'],
-		'modify circuitboard': {
-			'insert constructor': function () {
-				this.element.css({
-					border: 'solid 5px black',
-					padding: this.options.tileSpacing
-				});
-			}
-		}
-	});
-
-	//
 	// Select predefined plugins
 	//
 	$.circuitboard.plugin([
-		'tileskin',
+		'tile-skin',
 		'tile-click-to-open',
-		'tilespacing',
+		'tile-spacing',
 		'tile-open',
 		'tile-active',
 		'tile-grow-when-open'
