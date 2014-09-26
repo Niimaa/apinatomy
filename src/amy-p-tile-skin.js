@@ -10,7 +10,7 @@ define([
 	'use strict';
 
 	//
-	// tile styling default generator
+	// tile styling defaults generator
 	//
 	var applyStyleDefaults = defaults({
 		'&':            {
@@ -45,11 +45,6 @@ define([
 				this.dom = $(`<section/>`).appendTo(origElement);
 
 				//
-				// apply the 'tileSpacing' option as padding in the content element
-				//
-				this.dom.css('padding', this.circuitboard.options.tileSpacing);
-
-				//
 				// put the name of the model in the header element
 				//
 				this.model.get('name').then((name)=> { headerElement.text(name) });
@@ -66,10 +61,13 @@ define([
 						width: 0
 					};
 					var setHeaderFontSize = () => {
+						//
+						// formula gotten experimentally
+						//
 						headerElement.css('fontSize',
 							Math.min(
-									0.2 * Math.pow(headerSize.height, 1.01) * 0.95,
-									0.13 * Math.pow(headerSize.width, 1.01) * 0.95
+									0.2 * Math.pow(headerSize.height, 1.01),
+									0.13 * Math.pow(headerSize.width, 1.01)
 							)
 						);
 					};
