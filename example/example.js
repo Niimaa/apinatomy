@@ -51,7 +51,8 @@ require([
 	//
 	$('#circuitboard').circuitboard({
 		model: getFmaModels(['24tile:60000000'])[0],
-		tileSpacing: 0,
+		tileSpacing: 1,
+		tilemapMargin: 3,
 		weightWhenOpen: 8
 	});
 
