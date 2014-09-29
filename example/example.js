@@ -38,7 +38,8 @@ require([
 	'use strict';
 
 	//
-	// Select predefined plugins
+	// Select plugins to activate them;
+	// Note that these must already be *loaded* at this point
 	//
 	$.circuitboard.plugin([
 		'tile-skin',
