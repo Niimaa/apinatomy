@@ -6,16 +6,18 @@ define(['jquery', './amy-util/handle-premature-plugins.js'], function ($) {
 		after: ['tile-core'],
 
 		'modify tile': {
+
+			'add _p_tileWeight_weight': 1,
+
 			'insert constructor': function () {
 				//
 				// the 'weight' property
 				//
-				var _weight = 1;
 				Object.defineProperty(this, 'weight', {
-					get() { return _weight },
+					get() { return this._p_tileWeight_weight },
 					set(newWeight) {
 						// TODO: allow Infinity
-						_weight = newWeight;
+						this._p_tileWeight_weight = newWeight;
 						this.element.amyNestedFlexGrow(newWeight);
 					}
 				});

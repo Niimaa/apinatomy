@@ -11,11 +11,11 @@ define([
 		if: true,
 		'modify tile': {
 
-			'add _tilemap': null,
+			'add _p_tileCore_tilemap': null,
 
 			'add populateInnerTilemap': function populateInnerTilemap() {
-				if (!this._tilemap) {
-					this._tilemap = this.dom.tilemap({
+				if (!this._p_tileCore_tilemap) {
+					this._p_tileCore_tilemap = this.dom.tilemap({
 						model: this.options.model,
 						parent: this
 					}).tilemap('instance').then((tilemap) => {

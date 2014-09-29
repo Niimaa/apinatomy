@@ -2,7 +2,6 @@
 	"trailing":  true,
 	"freeze":    true,
 	"latedef":   "nofunc",
-	"camelcase": true,
 	"node":      true,
 	"noarg":     true,
 	"smarttabs": true,

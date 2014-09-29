@@ -6,18 +6,20 @@ define(['jquery', './amy-util/handle-premature-plugins.js'], function ($) {
 		after: ['tile-core'],
 
 		'modify tile': {
+
+			'add _p_tileOpen_open': false,
+
 			'insert constructor': function () {
 				//
 				// the 'open' property
 				//
-				var _open = false;
 				Object.defineProperty(this, 'open', {
-					get() { return _open },
+					get() { return this._p_tileOpen_open },
 					set(shouldBeOpen) {
 						shouldBeOpen = !!shouldBeOpen;
-						if (_open !== shouldBeOpen) {
-							_open = shouldBeOpen;
-							this.trigger('open', _open);
+						if (this._p_tileOpen_open !== shouldBeOpen) {
+							this._p_tileOpen_open = shouldBeOpen;
+							this.trigger('open', this._p_tileOpen_open);
 						}
 					}
 				});
@@ -49,7 +51,7 @@ define(['jquery', './amy-util/handle-premature-plugins.js'], function ($) {
 				//
 				// initial 'open' signal
 				//
-				this.trigger('open', _open);
+				this.trigger('open', this._p_tileOpen_open);
 			}
 		}
 	});

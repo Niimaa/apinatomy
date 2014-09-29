@@ -15,25 +15,25 @@ define(['jquery', './amy-util/jquery-static.js', './amy-util/handle-premature-pl
 				//
 				// put this tile in the queue of potentially active tiles
 				//
-				U.array(this.model, '_amyActiveTileQueue').push(this);
+				U.array(this.model, '_p_tileActive_amyActiveTileQueue').push(this);
 				this.on('destroy', ()=> {
-					var index = this.model._amyActiveTileQueue.indexOf(this);
-					this.model._amyActiveTileQueue.splice(index, 1);
+					var index = this.model._p_tileActive_amyActiveTileQueue.indexOf(this);
+					this.model._p_tileActive_amyActiveTileQueue.splice(index, 1);
 				});
 
 				//
 				// make the 'active' property available
 				//
 				Object.defineProperty(this, 'active', {
-					get() { return this.model._amyActiveTileQueue[0] === this },
+					get() { return this.model._p_tileActive_amyActiveTileQueue[0] === this },
 					set(shouldBeActive) {
 						if (shouldBeActive) {
-							var index = this.model._amyActiveTileQueue.indexOf(this);
+							var index = this.model._p_tileActive_amyActiveTileQueue.indexOf(this);
 							if (index !== 0) {
-								this.model._amyActiveTileQueue.splice(index, 1);
-								this.model._amyActiveTileQueue.unshift(this);
-								this.model._amyActiveTileQueue[1].trigger('active', false);
-								this.model._amyActiveTileQueue[0].trigger('active', true);
+								this.model._p_tileActive_amyActiveTileQueue.splice(index, 1);
+								this.model._p_tileActive_amyActiveTileQueue.unshift(this);
+								this.model._p_tileActive_amyActiveTileQueue[1].trigger('active', false);
+								this.model._p_tileActive_amyActiveTileQueue[0].trigger('active', true);
 							}
 						} else {
 							throw new Error("You can't directly set tile activeness to false.");

@@ -11,13 +11,13 @@ define([
 		if: true,
 		'modify circuitboard': {
 
-			'add _tilesByModelId': {},
+			'add _p_circuitboardCore_tilesByModelId': {},
 
 			'add _registerTile': function _registerTile(tile) { // used by tiles
-				if (!this._tilesByModelId[tile.model.id]) {
-					this._tilesByModelId[tile.model.id] = [];
+				if (!this._p_circuitboardCore_tilesByModelId[tile.model.id]) {
+					this._p_circuitboardCore_tilesByModelId[tile.model.id] = [];
 				}
-				this._tilesByModelId[tile.model.id].push(tile);
+				this._p_circuitboardCore_tilesByModelId[tile.model.id].push(tile);
 				this.trigger('tilecreated', tile);
 			},
 
@@ -43,7 +43,7 @@ define([
 				//
 				// apply the callback for existing tiles
 				//
-				$.each(this._tilesByModelId, (modelId, tiles) => {
+				$.each(this._p_circuitboardCore_tilesByModelId, (modelId, tiles) => {
 					$.each(tiles, (index, tile) => {
 						if (filter(tile)) { fn(tile) }
 					});
