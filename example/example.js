@@ -34,6 +34,7 @@ require([
 	'../dist/amy-p-tile-open.js',
 	'../dist/amy-p-tile-grow-when-open.js',
 	'../dist/amy-p-tile-open-active.js',
+	'../dist/amy-p-tile-skin-grow-when-open.js',
 	'domReady!'
 ], function ($, P, getFmaModels) {
 	'use strict';

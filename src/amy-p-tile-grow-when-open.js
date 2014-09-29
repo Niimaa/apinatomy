@@ -7,30 +7,25 @@ define([
 
 	$.circuitboard.plugin({
 		name: 'tile-grow-when-open',
-		after: ['tile-open', 'tile-skin', 'tile-weight'],
+		after: ['tile-open', 'tile-weight'],
 
 		'modify tile': {
+
+			'add weightWhenOpen': function () {
+				return this.circuitboard.options.weightWhenOpen || 2;
+			},
+
+			'add weightWhenClosed': function () {
+				return 1;
+			},
+
 			'insert constructor': function () {
 				//
-				// cache some references
-				//
-				var sectionElement = this.element.children('section');
-
-				//
 				// react to a tile opening or closing
+				// by changing its weight accordingly
 				//
 				this.on('open', (open) => {
-					sectionElement.css('visible', 'hidden');
-					sectionElement.css('opacity', 0);
-					if (open) {
-						setTimeout(() => {
-							sectionElement.css('visible', 'visible');
-							sectionElement.css('opacity', 1);
-						}, 310);
-						this.weight = this.circuitboard.options.weightWhenOpen || 2;
-					} else {
-						this.weight = 1;
-					}
+					this.weight = (open ? this.weightWhenOpen() : this.weightWhenClosed());
 				});
 			}
 		}
