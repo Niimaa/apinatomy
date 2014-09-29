@@ -1,3 +1,4 @@
+var fs = require('fs');
 var gulp = require('gulp'),
     gutil = require('gulp-util'),
     jshint = require('gulp-jshint'),
@@ -26,25 +27,19 @@ function logAndKeepGoing(stream) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-var EXTERNAL_MODULES = [
-	externalModule('jquery', 'jQuery'),
-	externalModule('bluebird', 'P'),
-	externalModule('js-graph', 'JsGraph'),
-	externalModule('chroma-js', 'chroma'),
-	externalModule('jquery-ui')
-];
+var MODULES = [];
+var EXTERNAL_MODULES = [];
 
-var MODULES = [
-	{ name: 'core', file: 'amy-circuitboard.js' },
-	{ name: 'p-tileskin', file: 'amy-p-tile-skin.js' },
-	{ name: 'p-tilespacing', file: 'amy-p-tile-spacing.js' },
-	{ name: 'p-tile-active', file: 'amy-p-tile-active.js' },
-	{ name: 'p-tile-open', file: 'amy-p-tile-open.js' },
-	{ name: 'p-tile-grow-when-open', file: 'amy-p-tile-grow-when-open.js' },
-	{ name: 'p-tile-click-to-open', file: 'amy-p-tile-click-to-open.js' },
-	{ name: 'p-tile-open-active', file: 'amy-p-tile-open-active.js' },
-	{ name: 'fma-model', file: 'amy-fma-model.js' }
-];
+fs.readdirSync('./modules')
+	.map(function (filename) { return fs.readFileSync('./modules/'+filename) })
+	.map(JSON.parse)
+	.forEach(function (mod) {
+		if (mod.external) {
+			EXTERNAL_MODULES.push(externalModule(mod.name, mod.var));
+		} else {
+			MODULES.push(mod);
+		}
+	});
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -126,17 +121,7 @@ gulp.task('sass', function () {
 		.pipe(gulp.dest('example'));
 });
 
-gulp.task('build', [
-	'build:core',
-	'build:p-tileskin',
-	'build:p-tilespacing',
-	'build:p-tile-open',
-	'build:p-tile-active',
-	'build:p-tile-click-to-open',
-	'build:p-tile-grow-when-open',
-	'build:p-tile-open-active',
-	'build:fma-model'
-]);
+gulp.task('build', MODULES.map(function (mod) { return 'build:'+mod.name }));
 
 gulp.task('build:example', ['build', 'sass']);
 
