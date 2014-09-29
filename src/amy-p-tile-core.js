@@ -10,6 +10,21 @@ define([
 		name: 'tile-core',
 		if: true,
 		'modify tile': {
+
+			'add _tilemap': null,
+
+			'add populateInnerTilemap': function populateInnerTilemap() {
+				if (!this._tilemap) {
+					this._tilemap = this.dom.tilemap({
+						model: this.options.model,
+						_circuitboard: this.options._circuitboard
+					}).tilemap('instance').then((tilemap) => {
+						tilemap.parent = this;
+						this.one('destroy', ()=> { tilemap.destroy() });
+					});
+				}
+			},
+
 			'insert constructor': function () {
 				//
 				// support certain DOM-event subscriptions from the tile object itself
@@ -53,24 +68,6 @@ define([
 				//
 				this.id = uniqueID('tile');
 				this.element.attr('id', this.id);
-
-				//
-				// the inner tilemap
-				//
-				var _tilemap = null;
-				$.extend(this, {
-					populateInnerTilemap() {
-						if (!_tilemap) {
-							_tilemap = this.dom.tilemap({
-								model: this.options.model,
-								_circuitboard: this.options._circuitboard
-							}).tilemap('instance').then((tilemap) => {
-								tilemap.parent = this;
-								this.one('destroy', ()=> { tilemap.destroy() });
-							});
-						}
-					}
-				});
 
 				//
 				// inform circuitboard of new tile

@@ -10,58 +10,56 @@ define([
 		name: 'circuitboard-core',
 		if: true,
 		'modify circuitboard': {
-			'insert constructor': function () {
+
+			'add _tilesByModelId': {},
+
+			'add _registerTile': function _registerTile(tile) { // used by tiles
+				if (!this._tilesByModelId[tile.model.id]) {
+					this._tilesByModelId[tile.model.id] = [];
+				}
+				this._tilesByModelId[tile.model.id].push(tile);
+				this.trigger('tilecreated', tile);
+			},
+
+			'add onTileCreated': function onTileCreated(tileSelector, fn) {
 				//
-				// keeping track of tiles
+				// `tileSelector` is optional, i.e., a single argument is `fn`
 				//
-				var _tilesByModelId = {};
-				$.extend(this, {
-					_registerTile(tile) { // used by tiles
-						if (!_tilesByModelId[tile.model.id]) {
-							_tilesByModelId[tile.model.id] = [];
-						}
-						_tilesByModelId[tile.model.id].push(tile);
-						this.trigger('tilecreated', tile);
-					},
-					onTileCreated(tileSelector, fn) {
-						//
-						// `tileSelector` is optional, i.e., a single argument is `fn`
-						//
-						if ($.isUndefined(arguments[1])) {
-							fn = arguments[0];
-							tileSelector = null;
-						}
+				if ($.isUndefined(arguments[1])) {
+					fn = arguments[0];
+					tileSelector = null;
+				}
 
-						//
-						// build the filter based on the selector
-						//
-						var filter = null;
-						if (!tileSelector) { // no tile selector = all tiles
-							filter = ()=>P.resolve(true);
-						} else if (typeof tileSelector === 'string') { // model.id
-							filter = (tile) => (tile.model.id === tileSelector);
-						}
+				//
+				// build the filter based on the selector
+				//
+				var filter = null;
+				if (!tileSelector) { // no tile selector = all tiles
+					filter = ()=>P.resolve(true);
+				} else if (typeof tileSelector === 'string') { // model.id
+					filter = (tile) => (tile.model.id === tileSelector);
+				}
 
-						//
-						// apply the callback for existing tiles
-						//
-						$.each(_tilesByModelId, (modelId, tiles) => {
-							$.each(tiles, (index, tile) => {
-								if (filter(tile)) { fn(tile) }
-							});
-						});
-
-						//
-						// set up the callbacks for future tiles
-						//
-						this.on('tilecreated', (tile) => {
-							if (filter(tile)) { fn(tile) }
-						});
-					}
+				//
+				// apply the callback for existing tiles
+				//
+				$.each(this._tilesByModelId, (modelId, tiles) => {
+					$.each(tiles, (index, tile) => {
+						if (filter(tile)) { fn(tile) }
+					});
 				});
 
 				//
-				// the root tilemap
+				// set up the callbacks for future tiles
+				//
+				this.on('tilecreated', (tile) => {
+					if (filter(tile)) { fn(tile) }
+				});
+			},
+
+			'insert constructor': function () {
+				//
+				// create the root tilemap
 				//
 				$('<div/>').appendTo(this.element)
 					.css('flex-grow', 1)
