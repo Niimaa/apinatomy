@@ -1,7 +1,8 @@
 define([
 	'jquery',
 	'./amy-util/unique-id.js',
-	'./amy-util/jquery-instance.js'
+	'./amy-util/jquery-instance.js',
+	'./amy-util/handle-premature-plugins.js'
 ], function ($, uniqueID) {
 	'use strict';
 
