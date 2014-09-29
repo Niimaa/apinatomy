@@ -50,19 +50,6 @@ define([
 				});
 
 				//
-				// the 'weight' property
-				//
-				var _weight = 1;
-				Object.defineProperty(this, 'weight', {
-					get() { return _weight },
-					set(newWeight) {
-						// TODO: allow Infinity
-						_weight = newWeight;
-						this.element.amyNestedFlexGrow(newWeight);
-					}
-				});
-
-				//
 				// an element id for quick lookups
 				//
 				this.id = uniqueID('tile');

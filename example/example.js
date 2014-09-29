@@ -29,6 +29,7 @@ require([
 	'../dist/amy-p-tile-skin.js',
 	'../dist/amy-p-tile-spacing.js',
 	'../dist/amy-p-tile-click-to-open.js',
+	'../dist/amy-p-tile-weight.js',
 	'../dist/amy-p-tile-active.js',
 	'../dist/amy-p-tile-open.js',
 	'../dist/amy-p-tile-grow-when-open.js',
@@ -47,6 +48,7 @@ require([
 		'tile-spacing',
 		'tile-open',
 		'tile-active',
+		'tile-weight',
 		'tile-grow-when-open'
 	]);
 

@@ -7,7 +7,7 @@ define([
 
 	$.circuitboard.plugin({
 		name: 'tile-grow-when-open',
-		after: ['tile-open', 'tile-skin'],
+		after: ['tile-open', 'tile-skin', 'tile-weight'],
 
 		'modify tile': {
 			'insert constructor': function () {
