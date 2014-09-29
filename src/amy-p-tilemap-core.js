@@ -2,26 +2,11 @@ define([
 	'jquery',
 	'bluebird',
 	'./amy-util/jquery-static.js',
-	'./amy-util/widget.js',
-	'./amy-cb-plugins.js',
 	'./amy-util/jquery-instance.js',
-	'./amy-tile.js',
 	'./amy-tilemap.scss'
-], function ($, P, U, amyWidget) {
+], function ($, P, U) {
 	'use strict';
 
-	//
-	// declare the tilemap widget
-	//
-	amyWidget('tilemap', 'tilemap', {
-		cssClass: "tilemap",
-		model: null,
-		_circuitboard: null
-	});
-
-	//
-	// define the tilemap constructor as the 'core' plugin
-	//
 	$.circuitboard.plugin({
 		name: 'tilemap-core',
 		if: true,

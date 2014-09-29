@@ -1,30 +1,15 @@
 define([
 	'jquery',
-	'./amy-util/widget.js',
 	'./amy-util/unique-id.js',
-	'./amy-cb-plugins.js',
 	'./amy-util/jquery-instance.js'
-], function ($, amyWidget, uniqueID) {
+], function ($, uniqueID) {
 	'use strict';
 
-	//
-	// declare the tile widget
-	//
-	amyWidget('tile', 'tile', {
-		cssClass: 'tile',
-		model: null,
-		_circuitboard: null
-	});
-
-	//
-	// define the tile constructor as the 'core' plugin
-	//
 	$.circuitboard.plugin({
 		name: 'tile-core',
 		if: true,
 		'modify tile': {
 			'insert constructor': function () {
-
 				//
 				// support certain DOM-event subscriptions from the tile object itself
 				//
@@ -90,7 +75,6 @@ define([
 				// inform circuitboard of new tile
 				//
 				this.circuitboard._registerTile(this);
-
 			}
 		}
 	});
