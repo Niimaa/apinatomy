@@ -7,6 +7,7 @@
       <w>autoselect</w>
       <w>circuitboarddestroy</w>
       <w>concat</w>
+      <w>deferreds</w>
       <w>devtool</w>
       <w>disjunct</w>
       <w>disjuncts</w>
