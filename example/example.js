@@ -35,6 +35,7 @@ require([
 	'../dist/amy-p-tile-grow-when-open.js',
 	'../dist/amy-p-tile-open-active.js',
 	'../dist/amy-p-tile-skin-grow-when-open.js',
+	'../dist/amy-p-positioning.js',
 	'domReady!'
 ], function ($, P, getFmaModels) {
 	'use strict';
@@ -50,7 +51,8 @@ require([
 		'tile-open',
 		'tile-active',
 		'tile-weight',
-		'tile-grow-when-open'
+		'tile-grow-when-open',
+		'positioning'
 	]);
 
 	//
@@ -61,6 +63,11 @@ require([
 		tileSpacing: 1,
 		tilemapMargin: 3,
 		weightWhenOpen: 8
+	}).circuitboard('instance').then(function (circuitboard) {
+		circuitboard.on('size', function () {
+			console.log('resize!');
+		});
 	});
+
 
 });

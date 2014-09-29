@@ -62,14 +62,92 @@ define(['jquery'], function ($) {
 		},
 
 		//
-		// test if a value is undefined
+		// test if a value is `undefined`
 		//
 		isUndefined(val) { return typeof val === 'undefined' },
 
 		//
-		// test if a value is defined
+		// test if a value is defined (not `undefined`)
 		//
-		isDefined(val) { return typeof val !== 'undefined' }
+		isDefined(val) { return typeof val !== 'undefined' },
+
+		//
+		// return the first parameter that is not 'undefined'
+		//
+		definedOr(...values) {
+			for (var i = 0; i < values.length; i += 1) {
+				if (U.isDefined(values[i])) { return values[i] }
+			}
+		},
+
+		//
+		// Returns a function, that, as long as it continues to be invoked, will not
+		// be triggered. The function will be called after it stops being called for
+		// N milliseconds.
+		//
+		debounce(func, wait) {
+			var timeout;
+			var resultFn = function (...args) {
+				var laterFn = () => {
+					timeout = null;
+					func.apply(this, args);
+				};
+				clearTimeout(timeout);
+				timeout = setTimeout(laterFn, wait);
+			};
+			resultFn.name = `debounce(${func.name})`;
+			return resultFn;
+		},
+
+		//
+		// Create a new cache to manage a specific value that is costly to compute or retrieve.
+		// It ensures that the retrieval function is not called too often, and uses a cache
+		// to return a known value in between. It is also able to notify you when the value
+		// has actually changed. It does so using === comparison, but you can provide your own
+		// comparison function.
+		//
+		cached(options) {
+			//
+			// normalize parameters
+			//
+			var retrieve = options.retrieve,
+				debounceWait = U.definedOr(options.debounce, 16),
+				isEqual = options.isEqual || ((a, b) => (a === b));
+
+			//
+			// keep a cache and give it an initial value
+			//
+			var cache = retrieve();
+
+			//
+			// retrieve a value at most every `debounceWait` ms and
+			// invoke the callback whenever the value is new
+			//
+			var debouncedRetrieval = U.debounce(() => {
+				var oldValue = cache;
+				var newValue = retrieve();
+				cache = newValue;
+				if (onChange && isEqual(newValue, oldValue)) { onChange(newValue, oldValue) }
+			}, debounceWait);
+
+			//
+			// the resulting function possibly performs retrieval,
+			// and always returns the cache (which may contain the new value)
+			//
+			var resultFn = () => {
+				debouncedRetrieval();
+				return cache;
+			};
+
+			//
+			// allow the onChange callback to be set after creation;
+			// NOTE: only one callback is stored!
+			//
+			var onChange;
+			resultFn.onChange = (cb) => { onChange = cb; return resultFn; };
+
+			return resultFn;
+		}
 
 	};
 

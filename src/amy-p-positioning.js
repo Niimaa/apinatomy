@@ -1,0 +1,132 @@
+define([
+	'jquery',
+	'./amy-util/misc.js',
+	'./amy-util/handle-premature-plugins.js'
+], function ($, U) {
+	'use strict';
+
+	var DEBOUNCE_TIMEOUT = 50;
+
+	function posSubtract(posA, posB) {
+		return {
+			top: posA.top - posB.top,
+			left: posA.left - posB.left
+		};
+	}
+
+	function posEqual(posA, posB) {
+		return posA && posB && posA.top === posB.top && posA.left === posB.left;
+	}
+
+	function sizeEqual(sizeA, sizeB) {
+		return sizeA && sizeB && sizeA.width === sizeB.width && sizeA.height === sizeB.height;
+	}
+
+	$.circuitboard.plugin({
+		name: 'tile-position',
+		after: ['tile-core'],
+
+		'modify circuitboard': {
+			'add _p_tilePosition_offset': null,
+			'insert constructor': function () {
+				this._p_tilePosition_offset = U.cached({
+					retrieve: () => this.element.offset(),
+					debounce: DEBOUNCE_TIMEOUT
+				});
+				var _size = U.cached({
+					retrieve: () => ({ width: this.element.width(), height: this.element.height() }),
+					debounce: DEBOUNCE_TIMEOUT,
+					isEqual: sizeEqual
+				});
+
+				//
+				// define 'size' property
+				//
+				Object.defineProperty(this, 'size', {
+					get() { return _size() }
+				});
+
+				//
+				// trigger events
+				//
+				$(window).resize(() => { console.log('DEBUG: window resized!'); });
+				$(window).resize(_size);
+				_size.onChange((newSize) => { this.trigger('size', newSize) });
+			}
+		},
+
+		'modify tilemap': {
+			'insert constructor': function () {
+				var _offset = U.cached({
+					retrieve: () => this.element.offset(),
+					debounce: DEBOUNCE_TIMEOUT,
+					isEqual: posEqual
+				});
+				var _size = U.cached({
+					retrieve: () => ({ width: this.element.width(), height: this.element.height() }),
+					debounce: DEBOUNCE_TIMEOUT,
+					isEqual: sizeEqual
+				});
+
+				//
+				// define properties
+				//
+				Object.defineProperty(this, 'position', {
+					get() { return posSubtract(_offset(), this.circuitboard._p_tilePosition_offset()) }
+				});
+				Object.defineProperty(this, 'size', {
+					get() { return _size() }
+				});
+
+				//
+				// trigger events
+				//
+				this.parent.on('position', _offset);
+				this.parent.on('size', () => { _offset(); _size(); });
+				_offset.onChange(() => { this.trigger('position', this.position) });
+				_size.onChange((newSize) => { this.trigger('size', newSize) });
+
+			}
+		},
+
+		'modify tile': {
+			'insert constructor': function () {
+				var _offset = U.cached({
+					retrieve: () => this.element.offset(),
+					debounce: DEBOUNCE_TIMEOUT,
+					isEqual: posEqual
+				});
+				var _size = U.cached({
+					retrieve: () => ({ width: this.element.width(), height: this.element.height() }),
+					debounce: DEBOUNCE_TIMEOUT,
+					isEqual: sizeEqual
+				});
+
+				//
+				// define properties
+				//
+				Object.defineProperty(this, 'position', {
+					get() { return posSubtract(_offset(), this.circuitboard._p_tilePosition_offset()) }
+				});
+				Object.defineProperty(this, 'size', {
+					get() { return _size() }
+				});
+
+				//
+				// trigger events
+				//
+				this.parent.on('position', _offset);
+				this.parent.on('size', () => { _offset(); _size(); });
+				this.parent.on('reorganize', () => { _offset(); _size(); });
+				_offset.onChange(() => { this.trigger('position', this.position) });
+				_size.onChange((newSize) => { this.trigger('size', newSize) });
+
+				//
+				// if the size of any tile changes, trigger the `reorganize`
+				// event on the parent tilemap, so that sibling tiles can react
+				//
+				this.on('size', () => { this.parent.trigger('reorganize') });
+			}
+		}
+	});
+});
