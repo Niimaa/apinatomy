@@ -11,13 +11,9 @@ define([
 
 		'modify tile': {
 
-			'add weightWhenOpen': function () {
-				return this.circuitboard.options.weightWhenOpen || 2;
-			},
+			'add weightWhenOpen': function () { return this.circuitboard.options.weightWhenOpen || 2 },
 
-			'add weightWhenClosed': function () {
-				return 1;
-			},
+			'add weightWhenClosed': () => 1,
 
 			'insert constructor': function () {
 				//
