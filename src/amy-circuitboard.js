@@ -2,7 +2,7 @@ define([
 	'jquery',
 	'bluebird',
 	'./amy-util/widget.js',
-	'./amy-cb-plugins.js'
+	'./amy-util/amy-cb-plugins.js'
 ], function ($, P, amyWidget) {
 	'use strict';
 

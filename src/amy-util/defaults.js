@@ -1,4 +1,4 @@
-define(['jquery', './jquery-static.js'], function ($, U) {
+define(['jquery', './misc.js'], function ($, U) {
 	'use strict';
 
 	function deepTransform(val, fn) {

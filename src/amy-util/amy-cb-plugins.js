@@ -1,4 +1,4 @@
-define(['jquery', './amy-util/plugin-handler.js'], function ($, PluginHandler) {
+define(['jquery', './plugin-handler.js'], function ($, PluginHandler) {
 	'use strict';
 
 	//

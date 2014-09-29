@@ -1,8 +1,8 @@
 define([
 	'jquery',
 	'bluebird',
-	'./amy-util/jquery-static.js',
-	'./amy-util/jquery-instance.js',
+	'./amy-util/misc.js',
+	'./amy-util/nested-flex-grow.js',
 	'./amy-p-tilemap-core.scss',
 	'./amy-util/handle-premature-plugins.js'
 ], function ($, P, U) {

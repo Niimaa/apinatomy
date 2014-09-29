@@ -1,4 +1,4 @@
-define(['jquery', './amy-util/jquery-static.js', './amy-util/handle-premature-plugins.js'], function ($, U) {
+define(['jquery', './amy-util/misc.js', './amy-util/handle-premature-plugins.js'], function ($, U) {
 	'use strict';
 
 	$.circuitboard.plugin({

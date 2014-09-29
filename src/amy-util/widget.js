@@ -1,4 +1,4 @@
-define(['jquery', 'bluebird', './jquery-static.js'], function ($, P, U) {
+define(['jquery', 'bluebird', './misc.js'], function ($, P, U) {
 	'use strict';
 
 	//

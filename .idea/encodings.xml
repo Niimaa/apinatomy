@@ -10,7 +10,6 @@
     <file url="file://$PROJECT_DIR$/example/example.scss" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/gulpfile.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/package.json" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/amy-cb-plugins.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-circuitboard.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-fma-model.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-p-tile-active.js" charset="UTF-8" />
@@ -27,12 +26,14 @@
     <file url="file://$PROJECT_DIR$/src/amy-p-tile-weight.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-p-tilemap-core.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-tilemap.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/amy-util/amy-cb-plugins.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-util/defaults.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-util/defer.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-util/handle-premature-plugins.js" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/amy-util/jquery-instance.js" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/amy-util/jquery-static.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/amy-util/misc.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/amy-util/nested-flex-grow.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-util/plugin-handler.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/amy-util/put-css-rules.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-util/traverse-dag.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-util/unique-id.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-util/widget.js" charset="UTF-8" />

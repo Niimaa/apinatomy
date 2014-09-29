@@ -1,4 +1,4 @@
-define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './jquery-static.js'], function ($, JsGraph, P, traverse, U) {
+define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js'], function ($, JsGraph, P, traverse, U) {
 	'use strict';
 
 	//

@@ -1,9 +1,9 @@
 define([
 	'jquery',
 	'chroma-js',
-	'./amy-util/jquery-static.js',
+	'./amy-util/misc.js',
 	'./amy-util/defaults.js',
-	'./amy-util/jquery-instance.js',
+	'./amy-util/put-css-rules.js',
 	'./amy-p-tile-skin.scss',
 	'./amy-util/handle-premature-plugins.js'
 ], function ($, color, U, defaults) {
