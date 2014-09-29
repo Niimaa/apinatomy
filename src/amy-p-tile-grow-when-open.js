@@ -11,7 +11,14 @@ define([
 
 		'modify tile': {
 			'insert constructor': function () {
+				//
+				// cache some references
+				//
 				var sectionElement = this.element.children('section');
+
+				//
+				// react to a tile opening or closing
+				//
 				this.on('open', (open) => {
 					sectionElement.css('visible', 'hidden');
 					sectionElement.css('opacity', 0);

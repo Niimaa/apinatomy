@@ -59,10 +59,9 @@ define([
 							for (var column = 0; column < colCount && childrenToDisplay.length > 0; column += 1) {
 								$('<div/>').tile({
 									model: childrenToDisplay.shift(),
-									_circuitboard: this.options._circuitboard
+									parent: this
 								}).appendTo(row).amyNestedFlexGrow(1).tile('instance').then((tile) => {
-									tile.parent = this;
-									tile.one('destroy', tile.destroy.bind(tile));
+									this.one('destroy', () => { tile.destroy() });
 								});
 							}
 						}

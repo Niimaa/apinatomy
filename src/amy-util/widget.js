@@ -76,9 +76,6 @@ define(['jquery', 'bluebird', './jquery-static.js'], function ($, P, U) {
 		Object.defineProperty(obj, 'model', {
 			get() { return this.options.model }
 		});
-		Object.defineProperty(obj, 'circuitboard', {
-			get() { return this.options._circuitboard }
-		});
 	}
 
 	//
@@ -112,7 +109,11 @@ define(['jquery', 'bluebird', './jquery-static.js'], function ($, P, U) {
 					//
 					// define methods to manage artefact hierarchy
 					//
-					.tap(defineHierarchyMethods);
+					.tap(defineHierarchyMethods)
+					//
+					// register the type
+					//
+					.tap((obj) => { obj.type = name });
 			}
 			return _prototypeP;
 		}
@@ -142,11 +143,6 @@ define(['jquery', 'bluebird', './jquery-static.js'], function ($, P, U) {
 				});
 
 				//
-				// register type
-				//
-				obj.type = name;
-
-				//
 				// add signal-handling methods to the object
 				//
 				enableSignalHandling(obj);
@@ -156,6 +152,18 @@ define(['jquery', 'bluebird', './jquery-static.js'], function ($, P, U) {
 				//
 				obj.element.addClass(obj.options.cssClass);
 				obj.element.one('remove', () => { obj.destroy() });
+
+				//
+				// connect to the parent artefact
+				//
+				if (obj.options.parent) {
+					obj.parent = obj.options.parent;
+				}
+
+				//
+				// cache a reference to the circuitboard (it is used often)
+				//
+				obj.circuitboard = obj.closestAncestorByType('circuitboard');
 
 				//
 				// if present, run the constructor method

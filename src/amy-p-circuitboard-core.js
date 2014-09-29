@@ -65,10 +65,9 @@ define([
 					.css('flex-grow', 1)
 					.tilemap({
 						model: this.options.model,
-						_circuitboard: this
+						parent: this
 					}).tilemap('instance')
 					.then((tilemap) => {
-						tilemap.parent = this;
 						this.one('destroy', ()=> { tilemap.destroy() });
 					});
 			}

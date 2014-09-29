@@ -17,9 +17,8 @@ define([
 				if (!this._tilemap) {
 					this._tilemap = this.dom.tilemap({
 						model: this.options.model,
-						_circuitboard: this.options._circuitboard
+						parent: this
 					}).tilemap('instance').then((tilemap) => {
-						tilemap.parent = this;
 						this.one('destroy', ()=> { tilemap.destroy() });
 					});
 				}
