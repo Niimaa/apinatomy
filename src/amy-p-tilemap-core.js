@@ -3,7 +3,7 @@ define([
 	'bluebird',
 	'./amy-util/jquery-static.js',
 	'./amy-util/jquery-instance.js',
-	'./amy-tilemap.scss',
+	'./amy-p-tilemap-core.scss',
 	'./amy-util/handle-premature-plugins.js'
 ], function ($, P, U) {
 	'use strict';

@@ -1,7 +1,7 @@
 define([
 	'jquery',
 	'bluebird',
-	'./amy-circuitboard.scss',
+	'./amy-p-circuitboard-core.scss',
 	'./amy-util/handle-premature-plugins.js'
 ], function ($, P) {
 	'use strict';
