@@ -35,6 +35,21 @@ define(['jquery'], function ($) {
 		},
 
 		//
+		// pull a value from an array
+		//
+		pull(arr, val) {
+			var i = arr.indexOf(val);
+			if (i !== -1) { arr.splice(i) }
+		},
+
+		//
+		// empty out an array
+		//
+		makeEmpty(arr) {
+			while (arr.length > 0) { arr.pop() }
+		},
+
+		//
 		// `Function.bind`, but taking an array like `Function.apply` does
 		//
 		bindA(fn, ctx, args) { return fn.bind.apply(fn, [ctx].concat(args)) },
@@ -72,9 +87,23 @@ define(['jquery'], function ($) {
 		isDefined(val) { return typeof val !== 'undefined' },
 
 		//
+		// extract an array of values from an object
+		//
+		objValues(obj) { return Object.keys(obj).map(key => obj[key]) },
+
+		//
+		// enable an HTML element to serve as anchor for absolutely positioned children
+		//
+		makePositioned(element) {
+			if (element.css('position') === 'static') {
+				element.css('position', 'relative');
+			}
+		},
+
+		//
 		// return the first parameter that is not 'undefined'
 		//
-		definedOr(...values) {
+		defOr(...values) {
 			for (var i = 0; i < values.length; i += 1) {
 				if (U.isDefined(values[i])) { return values[i] }
 			}

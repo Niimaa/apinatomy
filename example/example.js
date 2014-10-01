@@ -7,7 +7,8 @@ requirejs.config({
 		'jquery': '../bower_components/jquery/dist/jquery',
 		'js-graph': '../bower_components/js-graph/dist/js-graph',
 		'bluebird': '../bower_components/bluebird/js/browser/bluebird',
-		'chroma-js': '../bower_components/chroma-js/chroma'
+		'chroma-js': '../bower_components/chroma-js/chroma',
+		'd3': '../bower_components/d3/d3'
 	},
 	shim: {
 		'jquery': { exports: 'jQuery' },
@@ -37,6 +38,7 @@ require([
 	'../dist/amy-p-tile-skin-grow-when-open.js',
 	'../dist/amy-p-position-tracking.js',
 	'../dist/amy-p-transition-position-tracking.js',
+	'../dist/amy-p-d3.js',
 	'domReady!'
 ], function ($, P, getFmaModels) {
 	'use strict';
@@ -53,7 +55,8 @@ require([
 		'tile-active',
 		'tile-weight',
 		'tile-grow-when-open',
-		'position-tracking'
+		'position-tracking',
+		'd3'
 	]);
 
 	//
@@ -64,8 +67,8 @@ require([
 		tileSpacing: 1,
 		tilemapMargin: 3,
 		weightWhenOpen: 8
-	}).circuitboard('instance').then(function (circuitboard) {
-
+	}).circuitboard('instance').then(function (/*circuitboard*/) {
+		console.info('circuitboard loaded');
 	});
 
 
