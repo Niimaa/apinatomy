@@ -1,7 +1,7 @@
 .tilemap {
   .tile, .tilerow {
 	transition-property: flex-grow;
-	transition-duration: 0.3s;
+	transition-duration: .3s;
   }
   .tile > section {
 	transition-property: opacity;

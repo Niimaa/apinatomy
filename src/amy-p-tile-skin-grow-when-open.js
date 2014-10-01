@@ -1,8 +1,11 @@
 define([
 	'jquery',
-	'./amy-util/handle-premature-plugins.js'
+	'./amy-util/handle-premature-plugins.js',
+	'./amy-p-tile-skin-grow-when-open.scss'
 ], function ($) {
 	'use strict';
+
+	$.circuitboard.tileTransitionDelay = 300;
 
 	$.circuitboard.plugin({
 		name: 'tile-skin-grow-when-open',
@@ -18,13 +21,16 @@ define([
 				//
 				var sectionElement = this.element.children('section');
 				this.on('open', (open) => {
-					sectionElement.css('visible', 'hidden');
-					sectionElement.css('opacity', 0);
 					if (open) {
 						setTimeout(() => {
-							sectionElement.css('visible', 'visible');
-							sectionElement.css('opacity', 1);
-						}, 310);
+							this.element.on('transitionend webkitTransitionEnd', () => {
+								sectionElement.css('visibility', 'visible');
+								sectionElement.css('opacity', 1);
+							});
+						}, 10);
+					} else {
+						sectionElement.css('visibility', 'hidden');
+						sectionElement.css('opacity', 0);
 					}
 				});
 			}

@@ -5,7 +5,7 @@ define([
 ], function ($, U) {
 	'use strict';
 
-	var DEBOUNCE_TIMEOUT = 50;
+	var DEBOUNCE_TIMEOUT = 16;
 
 	function posSubtract(posA, posB) {
 		return {
@@ -23,8 +23,8 @@ define([
 	}
 
 	$.circuitboard.plugin({
-		name: 'tile-position',
-		after: ['tile-core'],
+		name: 'position-tracking',
+		after: ['circuitboard-core', 'tilemap-core', 'tile-core'],
 
 		'modify circuitboard': {
 			'add _p_tilePosition_offset': null,
@@ -49,8 +49,7 @@ define([
 				//
 				// trigger events
 				//
-				$(window).resize(() => { console.log('DEBUG: window resized!'); });
-				$(window).resize(_size);
+				$(window).resize(() => { setTimeout(_size, 0) });
 				_size.onChange((newSize) => { this.trigger('size', newSize) });
 			}
 		},
@@ -81,7 +80,6 @@ define([
 				//
 				// trigger events
 				//
-				this.parent.on('position', _offset);
 				this.parent.on('size', () => { _offset(); _size(); });
 				_offset.onChange(() => { this.trigger('position', this.position) });
 				_size.onChange((newSize) => { this.trigger('size', newSize) });
@@ -90,13 +88,19 @@ define([
 		},
 
 		'modify tile': {
+			'add _p_positionTracking_offset': null,
+			'add _p_positionTracking_size': null,
+			'add resetPositioning': function () {
+				this._p_positionTracking_offset();
+				this._p_positionTracking_size();
+			},
 			'insert constructor': function () {
-				var _offset = U.cached({
+				var _offset = this._p_positionTracking_offset = U.cached({
 					retrieve: () => this.element.offset(),
 					debounce: DEBOUNCE_TIMEOUT,
 					isEqual: posEqual
 				});
-				var _size = U.cached({
+				var _size = this._p_positionTracking_size = U.cached({
 					retrieve: () => ({ width: this.element.width(), height: this.element.height() }),
 					debounce: DEBOUNCE_TIMEOUT,
 					isEqual: sizeEqual
@@ -118,6 +122,7 @@ define([
 				this.parent.on('position', _offset);
 				this.parent.on('size', () => { _offset(); _size(); });
 				this.parent.on('reorganize', () => { _offset(); _size(); });
+				this.on('weight', () => { _offset(); _size(); });
 				_offset.onChange(() => { this.trigger('position', this.position) });
 				_size.onChange((newSize) => { this.trigger('size', newSize) });
 

@@ -85,25 +85,37 @@ define(['jquery'], function ($) {
 		// be triggered. The function will be called after it stops being called for
 		// N milliseconds.
 		//
-		debounce(func, wait) {
+		debounce(func, wait, context) {
 			var timeout;
-			var resultFn = function (...args) {
+			return function (...args) {
 				var laterFn = () => {
 					timeout = null;
-					func.apply(this, args);
+					func.apply(context, args);
 				};
 				clearTimeout(timeout);
 				timeout = setTimeout(laterFn, wait);
 			};
-			resultFn.name = `debounce(${func.name})`;
-			return resultFn;
+		},
+
+		//
+		// Returns a function, that will only be triggered once per synchronous 'stack'.
+		//
+		oncePerStack(func, context) {
+			var notRunYet = true;
+			return function (...args) {
+				if (notRunYet) {
+					notRunYet = false;
+					setTimeout(() => { notRunYet = true }, 0);
+					func.apply(context, args);
+				}
+			};
 		},
 
 		//
 		// Create a new cache to manage a specific value that is costly to compute or retrieve.
-		// It ensures that the retrieval function is not called too often, and uses a cache
+		// It ensures that the retrieval function is not called only once per stack, and uses a cache
 		// to return a known value in between. It is also able to notify you when the value
-		// has actually changed. It does so using === comparison, but you can provide your own
+		// has actually changed. It does so using `===` comparison, but you can provide your own
 		// comparison function.
 		//
 		cached(options) {
@@ -111,31 +123,33 @@ define(['jquery'], function ($) {
 			// normalize parameters
 			//
 			var retrieve = options.retrieve,
-				debounceWait = U.definedOr(options.debounce, 16),
 				isEqual = options.isEqual || ((a, b) => (a === b));
 
 			//
 			// keep a cache and give it an initial value
 			//
-			var cache = retrieve();
+			var cache;
+			function setValue() {
+				var oldValue = cache;
+				cache = retrieve();
+				if (onChange && !isEqual(cache, oldValue)) {
+					onChange(cache, oldValue);
+				}
+			}
+			setTimeout(setValue, 0);
 
 			//
-			// retrieve a value at most every `debounceWait` ms and
+			// retrieve a value at most once per stack and
 			// invoke the callback whenever the value is new
 			//
-			var debouncedRetrieval = U.debounce(() => {
-				var oldValue = cache;
-				var newValue = retrieve();
-				cache = newValue;
-				if (onChange && isEqual(newValue, oldValue)) { onChange(newValue, oldValue) }
-			}, debounceWait);
+			var oncePerStackSetValue = U.oncePerStack(setValue);
 
 			//
 			// the resulting function possibly performs retrieval,
 			// and always returns the cache (which may contain the new value)
 			//
 			var resultFn = () => {
-				debouncedRetrieval();
+				oncePerStackSetValue();
 				return cache;
 			};
 
