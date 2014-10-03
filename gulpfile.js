@@ -138,6 +138,7 @@ gulp.task('karma', ['build'], function () {
 
 gulp.task('watch', function () {
 	gulp.watch(['src/**/*.js'], ['build']);
+	gulp.watch(['src/**/*.scss'], ['build']);
 	gulp.watch(['example/**/*.scss'], ['sass']);
 });
 

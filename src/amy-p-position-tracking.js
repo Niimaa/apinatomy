@@ -5,8 +5,6 @@ define([
 ], function ($, U) {
 	'use strict';
 
-	var DEBOUNCE_TIMEOUT = 16;
-
 	function posSubtract(posA, posB) {
 		return {
 			top: posA.top - posB.top,
@@ -30,12 +28,10 @@ define([
 			'add _p_tilePosition_offset': null,
 			'insert constructor': function () {
 				this._p_tilePosition_offset = U.cached({
-					retrieve: () => this.element.offset(),
-					debounce: DEBOUNCE_TIMEOUT
+					retrieve: () => this.element.offset()
 				});
 				var _size = U.cached({
 					retrieve: () => ({ width: this.element.width(), height: this.element.height() }),
-					debounce: DEBOUNCE_TIMEOUT,
 					isEqual: sizeEqual
 				});
 
@@ -58,12 +54,10 @@ define([
 			'insert constructor': function () {
 				var _offset = U.cached({
 					retrieve: () => this.element.offset(),
-					debounce: DEBOUNCE_TIMEOUT,
 					isEqual: posEqual
 				});
 				var _size = U.cached({
 					retrieve: () => ({ width: this.element.width(), height: this.element.height() }),
-					debounce: DEBOUNCE_TIMEOUT,
 					isEqual: sizeEqual
 				});
 
@@ -97,12 +91,10 @@ define([
 			'insert constructor': function () {
 				var _offset = this._p_positionTracking_offset = U.cached({
 					retrieve: () => this.element.offset(),
-					debounce: DEBOUNCE_TIMEOUT,
 					isEqual: posEqual
 				});
 				var _size = this._p_positionTracking_size = U.cached({
 					retrieve: () => ({ width: this.element.width(), height: this.element.height() }),
-					debounce: DEBOUNCE_TIMEOUT,
 					isEqual: sizeEqual
 				});
 

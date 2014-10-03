@@ -14,6 +14,9 @@
     <file url="file://$PROJECT_DIR$/package.json" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-circuitboard.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-fma-model.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/amy-p-d3.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/amy-p-d3.scss" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/amy-p-position-tracking.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-p-tile-active.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-p-tile-click-to-open.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-p-tile-core.js" charset="UTF-8" />

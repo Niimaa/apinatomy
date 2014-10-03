@@ -21,8 +21,11 @@ define([
 			'insert constructor': function () {
 				//
 				// superimpose an `svg` canvas on top of the circuitboard
+				// the inner `svg` translates everything one pixel down and to the right,
+				// to correspond with tile positioning
 				//
-				var svgElement = $('<svg class="d3">').appendTo(this.element);
+				var svgElement = $('<svg class="d3">').appendTo(this.element)
+					.append('<svg x="1" y="1">').children();
 
 				//
 				// enable the circuitboard element to serve as anchor
@@ -118,28 +121,19 @@ define([
 					var k = 0.1 * e.alpha;
 
 					visibleVertices.forEach(function (d) {
-						if (d.group.regionType === 'rectangular') {
-							//
-							// gravitate towards the center of the region
-							//
-							d.x += d.group.gravityFactor * (d.group.region.left + 0.5 * d.group.region.width - d.x) * k;
-							d.y += d.group.gravityFactor * (d.group.region.top + 0.5 * d.group.region.height - d.y) * k;
+						//
+						// gravitate towards the center of the region
+						//
+						d.x += d.group.gravityFactor * (d.group.region.left + 0.5 * d.group.region.width - d.x) * k;
+						d.y += d.group.gravityFactor * (d.group.region.top + 0.5 * d.group.region.height - d.y) * k;
 
-							//
-							// and always stay within the region
-							//
-							d.x = Math.max(d.x, d.group.region.left);
-							d.x = Math.min(d.x, d.group.region.left + d.group.region.width);
-							d.y = Math.max(d.y, d.group.region.top);
-							d.y = Math.min(d.y, d.group.region.top + d.group.region.height);
-						} else { // linear region
-							//
-							// position at the proper place on the line segment
-							//
-							var pos = (d.groupVertexIndex + 1) / (d.group.vertices.length + 1);
-							d.x = pos * d.group.region.source.x + (1 - pos) * d.group.region.target.x;
-							d.y = pos * d.group.region.source.y + (1 - pos) * d.group.region.target.y;
-						}
+						//
+						// and always stay within the region
+						//
+						d.x = Math.max(d.x, d.group.region.left);
+						d.x = Math.min(d.x, d.group.region.left + d.group.region.width);
+						d.y = Math.max(d.y, d.group.region.top);
+						d.y = Math.min(d.y, d.group.region.top + d.group.region.height);
 					});
 
 					vertices
@@ -152,29 +146,27 @@ define([
 						.attr("y2", (d) => d.target.y);
 				});
 
-				//
-				// Give the circuitboard a function for creating new interfaces,
-				// used to create vertices and edges and such:
-				//
 				$.extend(this, {
-					newGraphGroup() {
-						var tile = this;
+					//
+					// a function for creating new interfaces,
+					// used to create vertices and edges and such:
+					//
+					newGraphGroup(options) {
+						options = options || {};
+						var circuitboard = this;
 						var group = {
 							id: uniqueId('group'),
 							vertices: [],
 							edges: [],
-							gravityFactor: 1,
-							chargeFactor: 1,
-							linkDistanceFactor: 1,
-							region: { // by default, the whole canvas with a small padding
+							gravityFactor: U.defOr(options.gravityFactor, 1),
+							chargeFactor: U.defOr(options.chargeFactor, 1),
+							linkDistanceFactor: U.defOr(options.linkDistanceFactor, 1),
+							region: U.defOr(options.region, { // by default, the whole canvas with a small padding
 								top: 10,
 								left: 10,
-								get width() { return tile.width - 20 },
-								get height() { return tile.height - 20 }
-							},
-							get regionType() {
-								return (U.isDefined(group.region.source) ? 'linear' : 'rectangular');
-							}
+								get width() { return circuitboard.size.width - 20 },
+								get height() { return circuitboard.size.height - 20 }
+							})
 						};
 						return {
 							remove() {
@@ -192,50 +184,50 @@ define([
 							},
 							setRegion(region) {
 								group.region = region;
-								tile.updateGraph();
+								circuitboard.updateGraph();
 							},
 							addVertex(vertex) {
 								vertex.group = group;
 								vertex.groupVertexIndex = group.vertices.length;
 								group.vertices.push(vertex);
 								vertex.graphId = vertex.id;
-								tile._p_d3_vertices[vertex.graphId] = vertex;
-								tile.updateGraph();
+								circuitboard._p_d3_vertices[vertex.graphId] = vertex;
+								circuitboard.updateGraph();
 							},
 							removeVertex(vertex) {
 								if (vertex) {
-									delete tile._p_d3_vertices[vertex.graphId];
+									delete circuitboard._p_d3_vertices[vertex.graphId];
 									U.pull(group.vertices, vertex);
 									group.vertices.forEach(function (vertex, i) {
 										vertex.groupVertexIndex = i;
 									});
-									tile.updateGraph();
+									circuitboard.updateGraph();
 								}
 							},
 							addEdge(edge) {
 								edge.group = group;
 								group.edges.push(edge);
 								edge.graphId = group.id + ':' + edge.id;
-								tile._p_d3_edges[edge.graphId] = edge;
-								tile.updateGraph();
+								circuitboard._p_d3_edges[edge.graphId] = edge;
+								circuitboard.updateGraph();
 							},
 							removeEdge(edge) {
 								if (edge) {
-									delete tile._p_d3_edges[edge.graphId];
+									delete circuitboard._p_d3_edges[edge.graphId];
 									U.pull(group.edges, edge);
-									tile.updateGraph();
+									circuitboard.updateGraph();
 								}
 							},
 							removeAllEdgesAndVertices() {
 								group.edges.forEach((edge) => {
-									if (edge) { delete tile._p_d3_edges[edge.graphId]; }
+									if (edge) { delete circuitboard._p_d3_edges[edge.graphId]; }
 								});
 								group.vertices.forEach((vertex) => {
-									if (vertex) { delete tile._p_d3_vertices[vertex.graphId]; }
+									if (vertex) { delete circuitboard._p_d3_vertices[vertex.graphId]; }
 								});
 								U.makeEmpty(group.edges);
 								U.makeEmpty(group.vertices);
-								tile.updateGraph();
+								circuitboard.updateGraph();
 							},
 							vertexCount() { return group.vertices.length },
 							vertices() { return group.vertices.slice() },
@@ -262,7 +254,13 @@ define([
 				this.on('destroy', () => { graphGroup.remove() });
 
 				var setGraphGroupRegion = () => {
-					graphGroup.setRegion($.extend({}, this.position, this.size));
+					var AREA_MARGIN = 5;
+					graphGroup.setRegion({
+						top: this.position.top + AREA_MARGIN,
+						left: this.position.left + AREA_MARGIN,
+						height: this.size.height - 2 * AREA_MARGIN,
+						width: this.size.width - 2 * AREA_MARGIN
+					});
 				};
 
 				graphGroup.setGravityFactor(1);
