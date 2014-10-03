@@ -38,6 +38,8 @@ require([
 	'../dist/amy-p-tile-skin-grow-when-open.js',
 	'../dist/amy-p-position-tracking.js',
 	'../dist/amy-p-transition-position-tracking.js',
+	'../dist/amy-p-tile-hidden.js',
+	'../dist/amy-p-tile-maximized.js',
 	'../dist/amy-p-d3.js',
 	'domReady!'
 ], function ($, P, getFmaModels) {
@@ -50,6 +52,8 @@ require([
 	$.circuitboard.plugin([
 		'tile-skin',
 		'tile-click-to-open',
+		'tile-maximized',
+		'tile-hidden',
 		'tile-spacing',
 		'tile-open',
 		'tile-active',
@@ -65,7 +69,7 @@ require([
 	$('#circuitboard').circuitboard({
 		model: getFmaModels(['24tile:60000000'])[0],
 		tileSpacing: 1,
-		tilemapMargin: 3,
+		tilemapMargin: 4,
 		weightWhenOpen: 8
 	}).circuitboard('instance').then(function (/*circuitboard*/) {
 		console.info('circuitboard loaded');

@@ -12,6 +12,9 @@ define([
 		name: 'tilemap-core',
 		if: true,
 		'modify tilemap': {
+
+			'add _p_tilemapCore_tiles': null,
+
 			//
 			// populate the tilemap by consulting the model
 			//
@@ -46,12 +49,17 @@ define([
 					// create a tile for each child entity
 					//
 					.then((childrenToDisplay) => {
+						//
 						// remove all old tiles
 						// TODO: maintain references, so they won't have to be recreated
+						//
 						this.element.children().empty();
 						this.element.empty();
 
-						// render the new tiles
+						//
+						// render and store references to the new tiles
+						//
+						this._p_tilemapCore_tiles = [];
 						var rowCount = Math.floor(Math.sqrt(childrenToDisplay.length));
 						var colCount = Math.ceil(childrenToDisplay.length / rowCount);
 						while (rowCount--) {
@@ -61,6 +69,7 @@ define([
 									model: childrenToDisplay.shift(),
 									parent: this
 								}).appendTo(row).amyNestedFlexGrow(1).tile('instance').then((tile) => {
+									this._p_tilemapCore_tiles.push(tile);
 									this.one('destroy', () => { tile.destroy() });
 								});
 							}
@@ -76,6 +85,11 @@ define([
 			// refresh the tiles initially
 			//
 			'insert constructor': function () {
+
+				Object.defineProperty(this, 'tiles', {
+					get() { return this._p_tilemapCore_tiles }
+				});
+
 				this.refreshTiles();
 			}
 		}

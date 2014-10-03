@@ -23,7 +23,7 @@ define([
 				this.on('open', (open) => {
 					if (open) {
 						setTimeout(() => {
-							this.element.on('transitionend webkitTransitionEnd', () => {
+							this.element.one('transitionend webkitTransitionEnd', () => {
 								sectionElement.css('visibility', 'visible');
 								sectionElement.css('opacity', 1);
 							});

@@ -16,13 +16,10 @@ define(['jquery', './amy-util/handle-premature-plugins.js'], function ($) {
 				Object.defineProperty(this, 'weight', {
 					get() { return this._p_tileWeight_weight },
 					set(newWeight) {
-						// TODO: allow Infinity
-						var oldWeight = this._p_tileWeight_weight;
+						if (newWeight === this._p_tileWeight_weight) { return }
 						this._p_tileWeight_weight = newWeight;
 						this.element.amyNestedFlexGrow(newWeight);
-						if (newWeight !== oldWeight) {
-							this.trigger('weight', newWeight);
-						}
+						this.trigger('weight', newWeight);
 					}
 				});
 			}
