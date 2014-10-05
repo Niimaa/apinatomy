@@ -9,6 +9,7 @@
     <file url="file://$PROJECT_DIR$/example/example.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/example/example.scss" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/gulpfile.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/modules/amy-p-ppi.json" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/modules/amy-p-tile-hidden.json" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/modules/amy-p-tile-maximized.json" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/package.json" charset="UTF-8" />
@@ -17,6 +18,8 @@
     <file url="file://$PROJECT_DIR$/src/amy-p-d3.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-p-d3.scss" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-p-position-tracking.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/amy-p-ppi.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/amy-p-ppi.scss" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-p-tile-active.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-p-tile-click-to-open.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/amy-p-tile-core.js" charset="UTF-8" />

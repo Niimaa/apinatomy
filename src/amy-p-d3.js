@@ -3,7 +3,6 @@ define([
 	'd3',
 	'./amy-util/misc.js',
 	'./amy-util/unique-id.js',
-	'./amy-util/watch-multiple.js',
 	'./amy-util/handle-premature-plugins.js',
 	'./amy-p-d3.scss'
 ], function ($, d3, U, uniqueId) {
@@ -241,66 +240,7 @@ define([
 
 			'add updateGraph': null, // to set in the constructor
 			'add newGraphGroup': null  // to set in the constructor
-		},
-
-
-		//
-		// TODO : remove this operation; it is just for testing purposes
-		//
-		'modify tile': {
-			'insert constructor': function () {
-
-				var graphGroup = this.circuitboard.newGraphGroup();
-				this.on('destroy', () => { graphGroup.remove() });
-
-				var setGraphGroupRegion = () => {
-					var AREA_MARGIN = 5;
-					graphGroup.setRegion({
-						top: this.position.top + AREA_MARGIN,
-						left: this.position.left + AREA_MARGIN,
-						height: this.size.height - 2 * AREA_MARGIN,
-						width: this.size.width - 2 * AREA_MARGIN
-					});
-				};
-
-				graphGroup.setGravityFactor(1);
-				graphGroup.setChargeFactor(0.1);
-				this.on('size', setGraphGroupRegion);
-				this.on('position', setGraphGroupRegion);
-
-
-				var protein1 = {
-					id: this.id + ':' + 'protein1',
-					showVertex: true,
-					graphZIndex: 200,
-					get element() {
-						return $('<svg x="10" y="10"><circle class="example core" r="5"></circle></svg>')[0];
-					}
-				};
-				var protein2 = {
-					id: this.id + ':' + 'protein2',
-					showVertex: true,
-					graphZIndex: 200,
-					get element() {
-						return $('<svg x="10" y="10"><circle class="example core" r="5"></circle></svg>')[0];
-					}
-				};
-
-				graphGroup.addVertex(protein1);
-				graphGroup.addVertex(protein2);
-				graphGroup.addEdge({
-					get element() {
-						return $('<svg><line class="example edge"></line></svg>')
-							.children()[0]; // adding and discarding the 'svg' element prevents a bug where the line would not appear
-					},
-					source: protein1,
-					target: protein2,
-					graphZIndex: 100
-				});
-
-			}
 		}
-
 
 	});
 });

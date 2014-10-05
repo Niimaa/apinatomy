@@ -41,6 +41,7 @@ require([
 	'../dist/amy-p-tile-hidden.js',
 	'../dist/amy-p-tile-maximized.js',
 	'../dist/amy-p-d3.js',
+	'../dist/amy-p-ppi.js',
 	'domReady!'
 ], function ($, P, getFmaModels) {
 	'use strict';
@@ -60,7 +61,8 @@ require([
 		'tile-weight',
 		'tile-grow-when-open',
 		'position-tracking',
-		'd3'
+		'd3',
+		'ppi'
 	]);
 
 	//
