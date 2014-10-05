@@ -43,10 +43,10 @@ AMD ([RequireJS](http://requirejs.org/)), CommonJS and script-tags.
 
 There are currently two types of files that may be loaded:
 
-| File                          | Purpose                                                  |
-|:----------------------------- |:-------------------------------------------------------- |
-| `dist/amy-circuitboard.js`    | the main package, with the `.circuitboard` jQuery method |
-| `dist/amy-p-<name>.js`        | one of many *plugins*, which enables new features        |
+| File                      | Purpose                                                  |
+|:------------------------- |:-------------------------------------------------------- |
+| `dist/circuitboard.js`    | the main package, with the `.circuitboard` jQuery method |
+| `dist/p-<name>.js`        | one of many *plugins*, which enables new features        |
 
 Check out the files in the `example` folder to see these files in use.
 
@@ -56,7 +56,7 @@ This is how to use the HTML `<script>` tag to import the library:
 
     <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
-    <script src="lib/apinatomy-core/dist/amy-circuitboard.min.js"></script>
+    <script src="lib/apinatomy-core/dist/circuitboard.min.js"></script>
 
 ### Instantiating a circuit-board
 
@@ -112,7 +112,7 @@ customizable styling. But… what are plugins?
 
 ## Using Plugins
 
-The bare `amy-circuitboard.js` widget creates some HTML to represent the top level
+The bare `circuitboard.js` widget creates some HTML to represent the top level
 tiles, but otherwise does very little—not even load internal tiles. It is a minimal
 core, meant to be extended by plugins before it will do any cool stuff. A number of
 fundamental plugins are supplied with the core, `tile-skin` and `tile-click-to-open`
@@ -209,7 +209,7 @@ can safely use `after` without having to know about promises.
                 /* run some code in the constructor */
             },
             'add refreshTileSpacing': function () {
-                /* see 'amy-p-tile-spacing.js' for a full implementation */
+                /* see 'p-tile-spacing.js' for a full implementation */
             },
             'after refreshTiles': function () {
                 this.refreshTileSpacing();
@@ -221,7 +221,7 @@ The 'constructor' method is always present in a component, and is guaranteed to 
 component instance immediately after all plugins have been loaded.
 
 To get a better intuition behind plugins, you are encouraged to look at the files in `src/`.
-All the ones that start with `amy-p-` are plugins.
+All the ones that start with `p-` are plugins.
 
 Plugins continue to be refined (see, for example, #7 and #8). As plugins change, I hope to
 keep this documentation somewhat up to date. But things are still moving rather quickly.

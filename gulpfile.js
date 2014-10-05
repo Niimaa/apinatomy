@@ -94,7 +94,7 @@ MODULES.forEach(function (m) {
 			externals: EXTERNAL_MODULES.concat(ownExternals),
 			module: {
 				preLoaders: [
-					{ test: /amy\-.*\.js$/, loader: "source-map" }
+					{ test: /\/(?!addStyles)[^\/]+\.js$/, loader: "source-map" }
 				],
 				loaders: [
 					{ test: /\.scss$/, loader: "style!css!autoprefixer!sass" }
