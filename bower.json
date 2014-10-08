@@ -18,7 +18,8 @@
     "js-graph": "~0.2.0",
     "bluebird": "~2.3.2",
     "chroma-js": "~0.5.8",
-    "d3": "~3.4.11"
+    "d3": "~3.4.11",
+    "three.js": "*"
   },
   "devDependencies": {
     "requirejs-domready": "~2.0.1",

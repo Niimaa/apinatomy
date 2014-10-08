@@ -15,8 +15,11 @@
       <w>gutil</w>
       <w>jshint</w>
       <w>jsonp</w>
+      <w>keydown</w>
+      <w>keyup</w>
       <w>lightgray</w>
       <w>lookups</w>
+      <w>mousewheel</w>
       <w>nestedflexgrow</w>
       <w>npmjs</w>
       <w>prerelease</w>
@@ -28,8 +31,12 @@
       <w>tilerow</w>
       <w>tileskin</w>
       <w>tilespacing</w>
+      <w>touchend</w>
+      <w>touchmove</w>
+      <w>touchstart</w>
       <w>traceur</w>
       <w>uglify</w>
+      <w>webgl</w>
     </words>
   </dictionary>
 </component>
