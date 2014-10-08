@@ -13,7 +13,6 @@ inside the treemap. We will use the term *treemap* when we consider only the (ne
 
 This library depends on
 [jQuery](https://github.com/jquery/jquery),
-[jQuery UI](https://github.com/jquery/jquery-ui),
 [bluebird](https://github.com/petkaantonov/bluebird) and
 [js-graph](https://github.com/mhelvens/js-graph).
 
