@@ -18,10 +18,8 @@ define([
 			'insert constructor': function () {
 
 				this.on('weight', () => {
-					console.log('starting');
 					var stopUpdatingPosition = U.eachAnimationFrame(() => { this.resetPositioning() });
 					this.element.one('transitionend', () => {
-						console.log('stopping');
 						stopUpdatingPosition();
 					});
 				});
