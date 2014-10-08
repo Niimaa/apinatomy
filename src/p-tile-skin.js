@@ -31,48 +31,28 @@ define([
 	//
 	$.circuitboard.plugin({
 		name: 'tile-skin',
-		after: ['tile-core', 'tile-weight', 'tile-open'],
+		after: ['tile-core', 'tile-weight', 'tile-open', 'position-tracking'],
 
 		'modify tile': {
 
 			'add enableDynamicFontSizing': function () {
-				var headerSize = {
-					height: 0,
-					width: 0
-				};
-				var setHeaderFontSize = () => {
-					//
+				var setHeaderFontSize = (size) => {
 					// formula gotten experimentally
-					//
 					this._p_tileSkin_headerElement.css('fontSize',
 						Math.min(
-								0.2 * Math.pow(headerSize.height, 1.01),
-								0.13 * Math.pow(headerSize.width, 1.01)
+								0.2 * Math.pow(size.height, 1.01),
+								0.13 * Math.pow(size.width, 1.01)
 						)
 					);
 				};
-				var testResize = () => {
-					if (!this.open) {
-						var newHeaderSize = {
-							width : this._p_tileSkin_headerElement.width(),
-							height: this._p_tileSkin_headerElement.height()
-						};
-						if (!U.approx(headerSize.width, newHeaderSize.width) ||
-							!U.approx(headerSize.height, newHeaderSize.height)) {
-							$.extend(headerSize, newHeaderSize);
-							setHeaderFontSize();
-						}
-					}
-				};
-				var stopResizeLoop = U.eachAnimationFrame(testResize);
 				this.on('open', (open) => {
 					if (open) {
-						stopResizeLoop();
-						stopResizeLoop = null;
-					} else if (!stopResizeLoop) {
-						stopResizeLoop = U.eachAnimationFrame(testResize);
+						this.off('size', setHeaderFontSize);
+					} else {
+						this.on('size', setHeaderFontSize);
 					}
 				});
+				if (!this.open) { this.on('size', setHeaderFontSize) }
 			},
 
 			'insert constructor': function () {
