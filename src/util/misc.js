@@ -127,6 +127,23 @@ define(['jquery'], function ($) {
 		},
 
 		//
+		// runs a function every animation frame
+		// returns a function that can be called to stop the loop
+		//
+		eachAnimationFrame(fn, context) {
+			var stop = false;
+			function iterationFn() {
+				fn.apply(context);
+				if (stop) { return }
+				requestAnimationFrame(iterationFn);
+			}
+			iterationFn();
+			return function stopEachAnimationFrame() {
+				stop = true;
+			};
+		},
+
+		//
 		// Returns a function, that will only be triggered once per synchronous 'stack'.
 		//
 		oncePerStack(func, context) {

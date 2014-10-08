@@ -36,9 +36,6 @@ define([
 		'modify tile': {
 
 			'add enableDynamicFontSizing': function () {
-				this.on('open', (open) => {
-					if (!open) { requestAnimationFrame(testResize) }
-				});
 				var headerSize = {
 					height: 0,
 					width: 0
@@ -65,10 +62,17 @@ define([
 							$.extend(headerSize, newHeaderSize);
 							setHeaderFontSize();
 						}
-						requestAnimationFrame(testResize);
 					}
 				};
-				testResize();
+				var stopResizeLoop = U.eachAnimationFrame(testResize);
+				this.on('open', (open) => {
+					if (open) {
+						stopResizeLoop();
+						stopResizeLoop = null;
+					} else if (!stopResizeLoop) {
+						stopResizeLoop = U.eachAnimationFrame(testResize);
+					}
+				});
 			},
 
 			'insert constructor': function () {

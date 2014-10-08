@@ -1,7 +1,8 @@
 define([
 	'jquery',
+	'./util/misc.js',
 	'./util/handle-premature-plugins.js'
-], function ($) {
+], function ($, U) {
 	'use strict';
 
 	//
@@ -17,14 +18,12 @@ define([
 			'insert constructor': function () {
 
 				this.on('weight', () => {
-					var insideTransition = true;
-					this.element.on('transitionend webkitTransitionEnd',
-						() => { insideTransition = false });
-					var resetPositioning = () => {
-						this.resetPositioning();
-						if (insideTransition) { requestAnimationFrame(resetPositioning) }
-					};
-					resetPositioning();
+					console.log('starting');
+					var stopUpdatingPosition = U.eachAnimationFrame(() => { this.resetPositioning() });
+					this.element.one('transitionend', () => {
+						console.log('stopping');
+						stopUpdatingPosition();
+					});
 				});
 
 			}
