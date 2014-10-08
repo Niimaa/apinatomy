@@ -25,7 +25,6 @@
     <orderEntry type="library" name="bower_components" level="project" />
     <orderEntry type="library" name="node_modules" level="project" />
     <orderEntry type="library" name="jQuery-2.0.0" level="application" />
-    <orderEntry type="library" name="bluebird-DefinitelyTyped" level="application" />
     <orderEntry type="library" name="requirejs-DefinitelyTyped" level="application" />
     <orderEntry type="library" name="Node.js v0.10.31 Core Modules" level="application" />
   </component>
