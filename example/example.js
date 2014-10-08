@@ -40,6 +40,7 @@ require([
 	'../dist/p-transition-position-tracking.js',
 	'../dist/p-tile-hidden.js',
 	'../dist/p-tile-maximized.js',
+	'../dist/p-tile-middleclick-to-maximize.js',
 	'../dist/p-d3.js',
 	'../dist/p-ppi.js',
 	'domReady!'
@@ -54,6 +55,7 @@ require([
 		'tile-skin',
 		'tile-click-to-open',
 		'tile-maximized',
+		'tile-middleclick-to-maximize',
 		'tile-hidden',
 		'tile-spacing',
 		'tile-open',
