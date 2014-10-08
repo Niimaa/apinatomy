@@ -33,34 +33,46 @@ define([
 				this.on('size', setGraphGroupRegion);
 				this.on('position', setGraphGroupRegion);
 
-				var protein1 = {
-					id: this.id + ':' + 'protein1',
-					showVertex: true,
-					graphZIndex: 200,
-					get element() {
-						return $('<svg x="10" y="10"><circle class="example core" r="5"></circle></svg>')[0];
-					}
-				};
-				var protein2 = {
-					id: this.id + ':' + 'protein2',
-					showVertex: true,
-					graphZIndex: 200,
-					get element() {
-						return $('<svg x="10" y="10"><circle class="example core" r="5"></circle></svg>')[0];
-					}
+				var constructExampleProteins = () => {
+					var protein1 = {
+						id: this.id + ':' + 'protein1',
+						showVertex: true,
+						graphZIndex: 200,
+						get element() {
+							return $('<svg x="10" y="10"><circle class="example core" r="5"></circle></svg>')[0];
+						}
+					};
+					var protein2 = {
+						id: this.id + ':' + 'protein2',
+						showVertex: true,
+						graphZIndex: 200,
+						get element() {
+							return $('<svg x="10" y="10"><circle class="example core" r="5"></circle></svg>')[0];
+						}
+					};
+
+					graphGroup.addVertex(protein1);
+					graphGroup.addVertex(protein2);
+					graphGroup.addEdge({
+						get element() {
+							return $('<svg><line class="example edge"></line></svg>')
+								.children()[0]; // adding and discarding the 'svg' element prevents a bug where the line would not appear
+						},
+						source: protein1,
+						target: protein2,
+						graphZIndex: 100
+					});
 				};
 
-				graphGroup.addVertex(protein1);
-				graphGroup.addVertex(protein2);
-				graphGroup.addEdge({
-					get element() {
-						return $('<svg><line class="example edge"></line></svg>')
-							.children()[0]; // adding and discarding the 'svg' element prevents a bug where the line would not appear
-					},
-					source: protein1,
-					target: protein2,
-					graphZIndex: 100
+				this.on('open', (open) => {
+					if (!open) {
+						constructExampleProteins();
+					} else {
+						graphGroup.removeAllEdgesAndVertices();
+					}
 				});
+
+				constructExampleProteins();
 
 			}
 		}
