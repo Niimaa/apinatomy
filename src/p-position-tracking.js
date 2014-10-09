@@ -43,6 +43,13 @@ define([
 				});
 
 				//
+				// define 'position' property
+				//
+				Object.defineProperty(this, 'position', {
+					get() { return { left: 0, right: 0 } }
+				});
+
+				//
 				// trigger events
 				//
 				$(window).resize(() => { setTimeout(_size, 0) });
