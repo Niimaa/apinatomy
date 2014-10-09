@@ -288,6 +288,16 @@ define(['three-js'], function (THREE) {
 
 		}());
 
+
+		/////////////////////////
+		// Added for ApiNATOMY
+		//
+		this.setCameraDistance = function (distance) {
+			_this.object.position.normalize().multiplyScalar(distance);
+		};
+		//////
+
+
 		this.checkDistances = function () {
 
 			if (!_this.noZoom || !_this.noPan) {
@@ -596,6 +606,7 @@ define(['three-js'], function (THREE) {
 
 		}
 
+
 		this.domElement.addEventListener('contextmenu', function (event) { event.preventDefault(); }, false);
 
 		this.domElement.addEventListener('mousedown', mousedown, false);
@@ -614,6 +625,7 @@ define(['three-js'], function (THREE) {
 
 		// force an update at start
 		this.update();
+
 
 	};
 

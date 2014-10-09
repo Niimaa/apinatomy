@@ -158,6 +158,26 @@ define(['jquery'], function ($) {
 		},
 
 		//
+		// creates a new observable property to the given object;
+		// this object is assumed to have a `trigger` method
+		//
+		// options.name (mandatory) - the name of the property
+		//
+		observable(obj, options) {
+			var value;
+			Object.defineProperty(obj, options.name, {
+				get() { return value },
+				set(newValue) {
+					if (newValue !== value) {
+						var oldValue = value;
+						value = newValue;
+						this.trigger(options.name, newValue, oldValue);
+					}
+				}
+			});
+		},
+
+		//
 		// Create a new cache to manage a specific value that is costly to compute or retrieve.
 		// It ensures that the retrieval function is not called only once per stack, and uses a cache
 		// to return a known value in between. It is also able to notify you when the value

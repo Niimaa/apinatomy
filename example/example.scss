@@ -15,14 +15,28 @@ html, body {
 }
 
 body {
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	position: absolute;
+	overflow: hidden;
 }
 
 #circuitboard {
-	height: 90%;
-	width: 90%;
+	position: absolute;
+	top: 20px;
+	left: 20px;
+	right: 20px;
+	bottom: 20px;
+	z-index: 1;
+}
+
+#three-d-canvas {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: 0;
+	padding: 0;
+	z-index: 0;
 }
 
 .tile {

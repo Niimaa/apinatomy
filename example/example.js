@@ -8,11 +8,13 @@ requirejs.config({
 		'js-graph': '../bower_components/js-graph/dist/js-graph',
 		'bluebird': '../bower_components/bluebird/js/browser/bluebird',
 		'chroma-js': '../bower_components/chroma-js/chroma',
-		'd3': '../bower_components/d3/d3'
+		'd3': '../bower_components/d3/d3',
+		'three-js': '../bower_components/three.js/three'
 	},
 	shim: {
 		'jquery': { exports: 'jQuery' },
-		'bluebird': { init: function () { this.longStackTraces() } }
+		'bluebird': { init: function () { this.longStackTraces() } },
+		'three-js': { exports: 'THREE' }
 	}
 });
 
@@ -43,6 +45,7 @@ require([
 	'../dist/p-tile-middleclick-to-maximize.js',
 	'../dist/p-d3.js',
 	'../dist/p-ppi.js',
+	'../dist/p-three-d.js',
 	'domReady!'
 ], function ($, P, getFmaModels) {
 	'use strict';
@@ -64,7 +67,8 @@ require([
 		'tile-grow-when-open',
 		'position-tracking',
 		'd3',
-		'ppi'
+		'ppi',
+		'three-d'
 	]);
 
 	//
@@ -74,7 +78,8 @@ require([
 		model: getFmaModels(['24tile:60000000'])[0],
 		tileSpacing: 1,
 		tilemapMargin: 4,
-		weightWhenOpen: 8
+		weightWhenOpen: 8,
+		threeDCanvasElement: $('#three-d-canvas')
 	}).circuitboard('instance').then(function (/*circuitboard*/) {
 		console.info('circuitboard loaded');
 	});
