@@ -46,7 +46,7 @@ define([
 				// define 'position' property
 				//
 				Object.defineProperty(this, 'position', {
-					get() { return { left: 0, right: 0 } }
+					get() { return { left: 0, top: 0 } }
 				});
 
 				//
