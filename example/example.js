@@ -77,11 +77,24 @@ require([
 	$('#circuitboard').circuitboard({
 		model: getFmaModels(['24tile:60000000'])[0],
 		tileSpacing: 1,
-		tilemapMargin: 4,
+		tilemapMargin: 0,
 		weightWhenOpen: 8,
 		threeDCanvasElement: $('#three-d-canvas')
-	}).circuitboard('instance').then(function (/*circuitboard*/) {
+	}).circuitboard('instance').then(function (circuitboard) {
 		console.info('circuitboard loaded');
+
+		$('body').mousemove(function (event) {
+			var pos = {
+				left: event.pageX,
+				top: event.pageY
+			};
+			var tPos = circuitboard.translatePositionFromCanvasToCircuitboard(pos);
+			var str = JSON.stringify(pos);
+			str += (new Array(30-str.length)).join(' ');
+			str += JSON.stringify(tPos);
+			console.log(str);
+		});
+
 	});
 
 

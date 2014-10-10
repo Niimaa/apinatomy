@@ -28,7 +28,7 @@ define([
 			'add _p_tilePosition_offset': null,
 			'insert constructor': function () {
 				this._p_tilePosition_offset = U.cached({
-					retrieve: () => this.element.offset()
+					retrieve: () => this.translatePositionFromCanvasToCircuitboard(this.element.offset())
 				});
 				var _size = U.cached({
 					retrieve: () => ({ width: this.element.width(), height: this.element.height() }),
@@ -60,7 +60,7 @@ define([
 		'modify tilemap': {
 			'insert constructor': function () {
 				var _offset = U.cached({
-					retrieve: () => this.element.offset(),
+					retrieve: () => this.circuitboard.translatePositionFromCanvasToCircuitboard(this.element.offset()),
 					isEqual: posEqual
 				});
 				var _size = U.cached({
@@ -97,7 +97,10 @@ define([
 			},
 			'insert constructor': function () {
 				var _offset = this._p_positionTracking_offset = U.cached({
-					retrieve: () => this.element.offset(),
+					retrieve: () => {
+						var trans = this.circuitboard.translatePositionFromCanvasToCircuitboard(this.element.offset());
+						return trans;
+					},
 					isEqual: posEqual
 				});
 				var _size = this._p_positionTracking_size = U.cached({

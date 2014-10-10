@@ -8,10 +8,22 @@ define([
 ], function ($, THREE, U) {
 	'use strict';
 
+	//
+	// convenience function for testing equality of size objects
+	//
 	function sizeEqual(sizeA, sizeB) {
 		return sizeA && sizeB && sizeA.width === sizeB.width && sizeA.height === sizeB.height;
 	}
 
+	//
+	// some useful constants for making intersection checks
+	//
+	var PLANE = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+	var PROJECTOR = new THREE.Projector();
+
+	//
+	// the plugin
+	//
 	$.circuitboard.plugin({
 		name: 'three-d',
 		after: ['circuitboard-core', 'tilemap-core', 'position-tracking'],
@@ -103,11 +115,11 @@ define([
 				////////////////////////////////////////////////////////////////
 				// Determine initial circuitboard positioning inside the canvas
 				//
-				var initialMargin = {};
-				initialMargin.left = this.element.offset().left - this.threeDCanvasElement.offset().left;
-				initialMargin.top = this.element.offset().top - this.threeDCanvasElement.offset().top;
-				initialMargin.right = this.threeDCanvasSize.width - this.size.width - initialMargin.left;
-				initialMargin.bottom = this.threeDCanvasSize.height - this.size.height - initialMargin.top;
+				this._p_threeD_initialMargin = {};
+				this._p_threeD_initialMargin.left = this.element.offset().left - this.threeDCanvasElement.offset().left;
+				this._p_threeD_initialMargin.top = this.element.offset().top - this.threeDCanvasElement.offset().top;
+				this._p_threeD_initialMargin.right = this.threeDCanvasSize.width - this.size.width - this._p_threeD_initialMargin.left;
+				this._p_threeD_initialMargin.bottom = this.threeDCanvasSize.height - this.size.height - this._p_threeD_initialMargin.top;
 
 
 				////////////////////////////////////////////////////////////////
@@ -198,6 +210,7 @@ define([
 				//
 				var flatCircuitBoardElement = this.element;
 				this._p_threeD_circuitboard = new THREE.CSS3DObject(flatCircuitBoardElement[0]);
+				flatCircuitBoardElement.css({ left: 0, top: 0, bottom: 0, right: 0 }); // TODO: save and restore later
 				flatCircuitBoardElement.css('backfaceVisibility', 'hidden');
 				this._p_threeD_scene.add(this._p_threeD_circuitboard);
 				//
@@ -219,15 +232,13 @@ define([
 					// sizing and positioning of the circuit-board and backface
 					//
 					var size = {
-						width : this.threeDCanvasSize.width  - (initialMargin.left + initialMargin.right),
-						height: this.threeDCanvasSize.height - (initialMargin.top + initialMargin.bottom)
+						width : this.threeDCanvasSize.width  - this._p_threeD_initialMargin.left - this._p_threeD_initialMargin.right,
+						height: this.threeDCanvasSize.height - this._p_threeD_initialMargin.top - this._p_threeD_initialMargin.bottom
 					};
 					flatCircuitBoardElement.css(size);
-					this._p_threeD_circuitboard.position.x = -0.5 * (initialMargin.left + initialMargin.right);
-					this._p_threeD_circuitboard.position.y = -0.5 * (initialMargin.top + initialMargin.bottom);
 					backfaceElement.css(size);
-					backface.position.x = 0.5 * (initialMargin.left - initialMargin.right);
-					backface.position.y = 0.5 * (initialMargin.top - initialMargin.bottom);
+					backface.position.x = this._p_threeD_circuitboard.position.x = 0.5 * (this._p_threeD_initialMargin.left - this._p_threeD_initialMargin.right);
+					backface.position.y = this._p_threeD_circuitboard.position.y = 0.5 * (this._p_threeD_initialMargin.bottom - this._p_threeD_initialMargin.top);
 					//
 					// set the camera distance to correspond
 					//
@@ -238,6 +249,31 @@ define([
 				};
 				this.on('threeDCanvasSize', onCanvasResize);
 				onCanvasResize();
+
+			},
+
+			'add translatePositionFromCanvasToCircuitboard': function (positionOnCanvas) {
+
+				this._p_threeD_camera.updateMatrixWorld();
+				this._p_threeD_camera.updateProjectionMatrix();
+
+				var mouse3D = new THREE.Vector3();
+				mouse3D.x = positionOnCanvas.left / this.threeDCanvasSize.width * 2 - 1;
+				mouse3D.y = -positionOnCanvas.top / this.threeDCanvasSize.height * 2 + 1;
+				mouse3D.z = 0.5;
+				PROJECTOR.unprojectVector(mouse3D, this._p_threeD_camera);
+				var ray = new THREE.Ray(this._p_threeD_camera.position, mouse3D.sub(this._p_threeD_camera.position).normalize());
+				var intersects = ray.intersectPlane(PLANE);
+
+				//
+				// if the tested intersection is out of range, return undefined
+				//
+				if (!intersects) { return }
+
+				return {
+					left: intersects.x + this.threeDCanvasSize.width / 2 - this._p_threeD_initialMargin.left,
+					top: -intersects.y + this.threeDCanvasSize.height / 2 - this._p_threeD_initialMargin.top
+				};
 
 			}
 
