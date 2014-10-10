@@ -46,6 +46,7 @@ require([
 	'../dist/p-d3.js',
 	'../dist/p-ppi.js',
 	'../dist/p-three-d.js',
+	'../dist/p-d3-three-d.js',
 	'domReady!'
 ], function ($, P, getFmaModels) {
 	'use strict';

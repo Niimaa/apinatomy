@@ -11,9 +11,10 @@
 
   svg.vertex {
     overflow: visible;
+	  cursor: pointer;
   }
 
-  &.dragging {
+  &.dragging-vertex {
     pointer-events: all;
     cursor: grabbing;
   }

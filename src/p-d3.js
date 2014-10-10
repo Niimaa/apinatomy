@@ -12,6 +12,8 @@ define([
 		name: 'd3',
 		after: ['circuitboard-core', 'tilemap-core', 'tile-core'],
 
+		'add d3Force': null,
+
 		'modify circuitboard': {
 
 			'add _p_d3_vertices': {},
@@ -35,7 +37,7 @@ define([
 				//
 				// create the force layout
 				//
-				var force = d3.layout.force()
+				this.d3Force = d3.layout.force()
 					.nodes(U.objValues(this._p_d3_vertices))
 					.links(U.objValues(this._p_d3_edges))
 					.size([this.width, this.height])
@@ -61,7 +63,7 @@ define([
 				//
 				// auto-resize the force-layout canvas
 				//
-				this.on('size', (size) => { force.size([size.width, size.height]) });
+				this.on('size', (size) => { this.d3Force.size([size.width, size.height]) });
 
 				//
 				// create corresponding svg elements
@@ -88,14 +90,14 @@ define([
 
 					//// restart the force
 					//
-					force.nodes(visibleVertices).links(visibleEdges).start();
+					this.d3Force.nodes(visibleVertices).links(visibleEdges).start();
 
 					//// vertices
 					//
 					vertices = svg.selectAll('.vertex').data(visibleVertices, U.field('graphId'));
 					vertices.enter().append((d) => d.element)
 						.classed('vertex', true).classed('edge', false)
-						.call(force.drag); // all vertices can be dragged around
+						.call(this.d3Force.drag); // all vertices can be dragged around
 					vertices.exit().remove();
 
 					//// edges
@@ -114,9 +116,18 @@ define([
 				}, 200);
 
 				//
+				// while dragging a vertex, set the 'dragging-vertex' class on the circuitboard
+				//
+				this.d3Force.drag().on('dragstart', () => {
+					svgElement.addClass('dragging-vertex');
+				}).on('dragend', () => {
+					svgElement.removeClass('dragging-vertex');
+				});
+
+				//
 				// on d3 animation tick
 				//
-				force.on("tick", (e) => {
+				this.d3Force.on("tick", (e) => {
 					var k = 0.1 * e.alpha;
 
 					visibleVertices.forEach(function (d) {

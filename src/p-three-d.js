@@ -33,6 +33,7 @@ define([
 			'add threeDCanvasElement': null,
 			'add threeDMode': null,
 			'add threeDCanvasSize': null,
+			'add threeDControlsEnabled': true,
 
 			'add _p_threeD_scene': null,
 			'add _p_threeD_camera': null,
@@ -93,6 +94,10 @@ define([
 				//
 				$(window).resize(_canvasSize);
 
+				////////////////////////////////////////////////////////////////
+				// the 'threeDControlsEnabled' property
+				//
+				U.observable(this, { name: 'threeDControlsEnabled' });
 
 				////////////////////////////////////////////////////////////////
 				// Initialize when 3D mode is turned on
@@ -203,6 +208,7 @@ define([
 				this._p_threeD_controls.addEventListener('change', () => { this.trigger('3d-render') });
 				this.on('size', () => { this._p_threeD_controls.handleResize() });
 				this.on('3d-render', () => { this._p_threeD_controls.update() });
+				this.on('threeDControlsEnabled', (enabled) => { this._p_threeD_controls.enabled = enabled });
 
 
 				////////////////////////////////////////////////////////////////
