@@ -98,9 +98,7 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js'], fun
 			//
 			_plugins.addVertex(plugin.name, plugin);
 			$.each(plugin.after, (__, v) => { _plugins.createEdge(v, plugin.name) });
-			try { _plugins.topologically(()=> {}) } catch (cycleError) {
-				throw new Error(`The plugin application order has a cycle: ${cycleError.cycle}`);
-			}
+			if (_plugins.hasCycle()) { throw new Error(`The plugin application order has a cycle.`) }
 
 			//
 			// pre-process operations (for now, only 'modify' for the top-level)
