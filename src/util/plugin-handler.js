@@ -237,6 +237,10 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js'], fun
 							};
 
 						} break;////////////////////////////////////////////////////////////////////////////////////////
+
+						default: {
+							throw new Error(`The ${subOp.operation} operation is not known.`);
+						} break;
 					}
 				});
 			});
