@@ -378,50 +378,82 @@ define(['three-js'], function (THREE) {
 
 		// listeners
 
-		function keydown(event) {
+//  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-			if (_this.enabled === false) return;
+		// added from http://threejs.org/examples/js/controls/PointerLockControls.js for ApiNATOMY
+		var _amy_velocity = new THREE.Vector3();
 
-			window.removeEventListener('keydown', keydown);
+		var KEYBOARD_VELOCITY = 5;
 
-			_prevState = _state;
+		// added from http://threejs.org/examples/js/controls/PointerLockControls.js
+		function keydown( event ) {
 
-			if (_state !== STATE.NONE) {
+			//noinspection CoffeeScriptSwitchStatementWithNoDefaultBranch
+			switch ( event.keyCode ) {
 
-				return;
+				case 38: // up
+				case 87: // w
+					_amy_velocity.y = KEYBOARD_VELOCITY;
+					break;
 
-			} else if (event.keyCode === _this.keys[ STATE.ROTATE ] && !_this.noRotate) {
+				case 37: // left
+				case 65: // a
+					_amy_velocity.x = -KEYBOARD_VELOCITY;
+					break;
 
-				_state = STATE.ROTATE;
+				case 40: // down
+				case 83: // s
+					_amy_velocity.y = -KEYBOARD_VELOCITY;
+					break;
 
-			} else if (event.keyCode === _this.keys[ STATE.ZOOM ] && !_this.noZoom) {
-
-				_state = STATE.ZOOM;
-
-			} else if (event.keyCode === _this.keys[ STATE.PAN ] && !_this.noPan) {
-
-				_state = STATE.PAN;
+				case 39: // right
+				case 68: // d
+					_amy_velocity.x = KEYBOARD_VELOCITY;
+					break;
 
 			}
 
 		}
 
-		function keyup(/*event*/) {
+		// added from http://threejs.org/examples/js/controls/PointerLockControls.js
+		function keyup( event ) {
 
-			if (_this.enabled === false) return;
+			//noinspection CoffeeScriptSwitchStatementWithNoDefaultBranch
+			switch( event.keyCode ) {
 
-			_state = _prevState;
+				case 38: // up
+				case 87: // w
+					_amy_velocity.y = 0;
+					break;
 
-			window.addEventListener('keydown', keydown, false);
+				case 37: // left
+				case 65: // a
+					_amy_velocity.x = 0;
+					break;
+
+				case 40: // down
+				case 83: // s
+					_amy_velocity.y = 0;
+					break;
+
+				case 39: // right
+				case 68: // d
+					_amy_velocity.x = 0;
+					break;
+
+			}
 
 		}
+
+	//  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 		function mousedown(event) {
 
 			if (_this.enabled === false) return;
 
-			event.preventDefault();
-			event.stopPropagation();
+			//event.preventDefault();
+			//event.stopPropagation();
 
 			if (_state === STATE.NONE) {
 
@@ -457,8 +489,8 @@ define(['three-js'], function (THREE) {
 
 			if (_this.enabled === false) return;
 
-			event.preventDefault();
-			event.stopPropagation();
+			//event.preventDefault();
+			//event.stopPropagation();
 
 			if (_state === STATE.ROTATE && !_this.noRotate) {
 
@@ -480,8 +512,8 @@ define(['three-js'], function (THREE) {
 
 			if (_this.enabled === false) return;
 
-			event.preventDefault();
-			event.stopPropagation();
+			//event.preventDefault();
+			//event.stopPropagation();
 
 			_state = STATE.NONE;
 
@@ -518,7 +550,7 @@ define(['three-js'], function (THREE) {
 
 		function touchstart(event) {
 
-			if (_this.enabled === false) return;
+			if (_this.enabled === false) { return }
 
 			switch (event.touches.length) {
 
@@ -553,8 +585,8 @@ define(['three-js'], function (THREE) {
 
 			if (_this.enabled === false) return;
 
-			event.preventDefault();
-			event.stopPropagation();
+			//event.preventDefault();
+			//event.stopPropagation();
 
 			switch (event.touches.length) {
 
@@ -583,6 +615,7 @@ define(['three-js'], function (THREE) {
 
 			if (_this.enabled === false) return;
 
+			//noinspection CoffeeScriptSwitchStatementWithNoDefaultBranch
 			switch (event.touches.length) {
 
 				case 1:

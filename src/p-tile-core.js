@@ -39,6 +39,9 @@ define([
 						this.trigger(signal, event);
 					});
 				});
+				this.element.clickNotDrop((event) => {
+					this.trigger('click-not-drop', event);
+				});
 
 				//
 				// public access to the HTML element

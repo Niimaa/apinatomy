@@ -83,17 +83,17 @@ require([
 	}).circuitboard('instance').then(function (circuitboard) {
 		console.info('circuitboard loaded');
 
-		$('body').mousemove(function (event) {
-			var pos = {
-				left: event.pageX,
-				top: event.pageY
-			};
-			var tPos = circuitboard.translatePositionFromCanvasToCircuitboard(pos);
-			var str = JSON.stringify(pos);
-			str += (new Array(30-str.length)).join(' ');
-			str += JSON.stringify(tPos);
-			console.log(str);
-		});
+		//$('body').mousemove(function (event) {
+		//	var pos = {
+		//		left: event.pageX,
+		//		top: event.pageY
+		//	};
+		//	var tPos = circuitboard.translatePositionFromCanvasToCircuitboard(pos);
+		//	var str = JSON.stringify(pos);
+		//	str += (new Array(30-str.length)).join(' ');
+		//	str += JSON.stringify(tPos);
+		//	console.log(str);
+		//});
 
 	});
 

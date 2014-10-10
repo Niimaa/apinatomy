@@ -2,6 +2,7 @@ define([
 	'jquery',
 	'bluebird',
 	'./p-circuitboard-core.scss',
+	'./util/clickVsDrag.js',
 	'./util/handle-premature-plugins.js'
 ], function ($, P) {
 	'use strict';
