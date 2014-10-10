@@ -58,16 +58,10 @@ require([
 	$.circuitboard.plugin([
 		'tile-skin',
 		'tile-click-to-open',
-		'tile-maximized',
-		'tile-middleclick-to-maximize',
-		'tile-hidden',
-		'tile-spacing',
-		'tile-open',
-		'tile-active',
-		'tile-weight',
 		'tile-grow-when-open',
-		'position-tracking',
-		'd3',
+		'tile-middleclick-to-maximize',
+		'tile-spacing',
+		'tile-active',
 		'ppi',
 		'three-d'
 	]);

@@ -8,6 +8,7 @@ define([
 	$.circuitboard.plugin({
 		name: 'ppi',
 		after: ['d3'],
+		require: ['d3'],
 
 		//
 		// TODO: implement this properly; this is just for testing purposes

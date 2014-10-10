@@ -51,8 +51,8 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js'], fun
 				_pluginPredicates[name] = (context) => {
 					if (_featureConfigurationCache[name]) { return true }
 					_featureConfigurationCache[name] =
-						(oldPredicate && oldPredicate(context)) ||
-						lazyCondition(context);
+							(oldPredicate && oldPredicate(context)) ||
+							lazyCondition(context);
 					return _featureConfigurationCache[name];
 				};
 			}
@@ -71,6 +71,26 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js'], fun
 			} else { // a literal Boolean value
 				accumulate(() => !!condition);
 			}
+		}
+
+		//
+		// to process a condition disjunct for a plugin
+		//
+		function _addPluginRequirements(pluginName, otherPlugins) {
+			if (U.isUndefined(otherPlugins)) { return }
+
+			//
+			// perform sanity checks
+			//
+			U.assert($.isArray(otherPlugins),
+					"The 'requires' clause of a plugin should be an array of plugin names.");
+
+			//
+			// add this plugin as a loading condition for the other specified plugins
+			//
+			otherPlugins.forEach((otherPlugin) => {
+				_addPluginConditionDisjunct(otherPlugin, pluginName);
+			});
 		}
 
 		function _registerSinglePlugin(plugin) {
@@ -92,6 +112,11 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js'], fun
 			Object.defineProperty(_dynamicFeatureConfiguration, plugin.name, {
 				get() { return _pluginPredicates[plugin.name](_dynamicFeatureConfiguration) }
 			});
+
+			//
+			// process the plugin requirements
+			//
+			_addPluginRequirements(plugin.name, plugin.require);
 
 			//
 			// register the plugin

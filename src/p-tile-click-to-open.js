@@ -3,6 +3,7 @@ define(['jquery', './util/handle-premature-plugins.js'], function ($) {
 
 	$.circuitboard.plugin({
 		name: 'tile-click-to-open',
+		require: ['tile-open'],
 		after: ['tile-open'],
 
 		'modify tile': {

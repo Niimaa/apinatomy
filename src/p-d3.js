@@ -10,7 +10,8 @@ define([
 
 	$.circuitboard.plugin({
 		name: 'd3',
-		after: ['circuitboard-core', 'tilemap-core', 'tile-core'],
+		require: ['position-tracking'],
+		after: ['circuitboard-core', 'tilemap-core', 'tile-core', 'position-tracking'],
 
 		'add d3Force': null,
 

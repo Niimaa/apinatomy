@@ -3,6 +3,7 @@ define(['jquery'], function ($) {
 
 	$.circuitboard.plugin({
 		name: 'tile-middleclick-to-maximize',
+		require: ['tile-maximized'],
 		after: ['tile-maximized'],
 
 		'modify tile': {

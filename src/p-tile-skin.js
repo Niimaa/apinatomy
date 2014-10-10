@@ -31,7 +31,8 @@ define([
 	//
 	$.circuitboard.plugin({
 		name: 'tile-skin',
-		after: ['tile-core', 'tile-weight', 'tile-open', 'position-tracking'],
+		require: ['tile-weight', 'tile-open', 'position-tracking'],
+		after: ['tile-weight', 'tile-open', 'position-tracking'],
 
 		'modify tile': {
 

@@ -3,6 +3,7 @@ define(['jquery', './p-tile-hidden.scss'], function ($) {
 
 	$.circuitboard.plugin({
 		name: 'tile-hidden',
+		require: ['tile-open', 'tile-weight'],
 		after: ['tile-open', 'tile-weight'],
 
 		'modify tile': {

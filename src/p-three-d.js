@@ -26,7 +26,8 @@ define([
 	//
 	$.circuitboard.plugin({
 		name: 'three-d',
-		after: ['circuitboard-core', 'tilemap-core', 'position-tracking'],
+		require: ['position-tracking'],
+		after: ['position-tracking'],
 
 		'modify circuitboard': {
 

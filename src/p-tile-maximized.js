@@ -3,6 +3,7 @@ define(['jquery', './p-tile-maximized.scss'], function ($) {
 
 	$.circuitboard.plugin({
 		name: 'tile-maximized',
+		require: ['tile-hidden'],
 		after: ['tile-hidden'],
 
 		'modify tile': {
