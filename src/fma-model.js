@@ -8,8 +8,8 @@ define(['jquery', 'bluebird', './util/defer.js'], function ($, P, defer) {
 	}
 
 	var _modelPrototype = {
-		getChildIds()    { return this.sub.map((sub) => sub.entity._id) },
-		getChildren(ids) { return getFmaModels(ids) },
+		getChildIds()  { return this.sub.map((sub) => sub.entity._id) },
+		getModels(ids) { return getFmaModels(ids) },
 		get id() { return this._id }
 	};
 
