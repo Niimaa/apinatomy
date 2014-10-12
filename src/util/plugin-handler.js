@@ -93,12 +93,22 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js'], fun
 			});
 		}
 
-		function _registerSinglePlugin(plugin) {
+		////////////////////////
+		//// Public Methods ////
+		////////////////////////
+
+		//
+		// the function to be called by plugin writers,
+		// containing (part of) a new plugin to be registered
+		//
+		this.register = function register(plugin) {
 			//
 			// perform sanity checks
 			//
+			U.assert($.isPlainObject(plugin),
+					`An ApiNATOMY plugin should be a plain object.`);
 			U.assert(typeof plugin.name === 'string',
-				"An ApiNATOMY plugin should have a name.");
+					`An ApiNATOMY plugin should have a name.`);
 
 			//
 			// normalize plugin configuration
@@ -129,28 +139,21 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js'], fun
 			// pre-process operations (for now, only 'modify' for the top-level)
 			//
 			plugin._operations = processOperations(plugin);
-		}
-
-		////////////////////////
-		//// Public Methods ////
-		////////////////////////
+		};
 
 		//
-		// the 'plugin' function ultimately returned from this module;
-		// it is called by plugin-writers with an object, and by plugin
-		// users to 'select' plugins by name, and can take an array
+		// register (part of) a new plugin
 		//
-		this.register = function register(plugin) {
-			if ($.isArray(plugin)) {
-				// process each plugin separately
-				$.each(plugin, (__, subConfig)=>{ this.register(subConfig) });
-			} else if ($.isPlainObject(plugin)) {
-				// register a single plugin
-				_registerSinglePlugin(plugin);
-			} else if (typeof plugin === 'string') {
-				// register a single plugin
-				_addPluginConditionDisjunct(plugin, true);
-			}
+		this.select = function select(pluginNames) {
+			//
+			// accept an array of plugin names, rather than just one name
+			//
+			if ($.isArray(pluginNames)) { pluginNames.forEach(select) }
+
+			//
+			// process single plugin name by making its condition 'true'
+			//
+			_addPluginConditionDisjunct(pluginNames, true);
 		};
 
 		//
@@ -161,7 +164,7 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js'], fun
 				//
 				// if the plugin doesn't exist, throw an error
 				//
-				if (!plugin) { throw new Error(`I don't know the '${pluginName}' plugin.`) }
+				U.assert(plugin, `I don't know the '${pluginName}' plugin.`);
 
 				//
 				// if the plugin is not selected, return

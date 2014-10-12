@@ -1,4 +1,4 @@
-define(['jquery', './plugin-handler.js'], function ($, PluginHandler) {
+define(['jquery', './plugin-handler.js', './misc.js'], function ($, PluginHandler) {
 	'use strict';
 
 	//
@@ -6,7 +6,13 @@ define(['jquery', './plugin-handler.js'], function ($, PluginHandler) {
 	//
 	var pluginHandler = new PluginHandler();
 	if (!$.circuitboard) { $.circuitboard = {} }
-	$.circuitboard.plugin = pluginHandler.register.bind(pluginHandler);
+	$.circuitboard.plugin = function plugin(plugins) {
+		if ($.isPlainObject(plugins)) {
+			return pluginHandler.register(plugins);
+		} else {
+			return pluginHandler.select(plugins);
+		}
+	};
 	$.circuitboard.plugin._apply = pluginHandler.apply.bind(pluginHandler);
 
 	//
