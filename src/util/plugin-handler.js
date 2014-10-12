@@ -4,7 +4,7 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js'], fun
 	//
 	// a utility function to extract operations from a plugin
 	//
-	function processOperations(obj) {
+	function _processInObjectOperations(obj) {
 		var result = {};
 		$.each(obj, (key, value)=> {
 			var match = key.match(/^(\w+)\s+(\w+)$/);
@@ -15,8 +15,194 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js'], fun
 				};
 			}
 		});
+
 		return result;
 	}
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//
+	// methods for the available operation-types in a ModifyDelta
+	//
+	var OPERATION_METHODS = {
+		modify(property, deltaDescription) {
+			return this.operations[property] = composedDelta(
+					this.operations[property],
+					new ModifyDelta({}, deltaDescription)
+			);
+		},
+		add(property, value) {
+			this._addOperation(property, new AddDelta(value));
+			return this;
+		},
+		remove(property, __) {
+			this._addOperation(property, new RemoveDelta());
+			return this;
+		},
+		replace(property, value) {
+			this._addOperation(property, new ReplaceDelta(value));
+			return this;
+		},
+		forbid(property, __) {
+			this._addOperation(property, new ForbidDelta());
+			return this;
+		}
+	};
+
+	//
+	// the delta classes
+	//
+	function AddDelta(value) { this.value = value }
+	function RemoveDelta() {}
+	function ReplaceDelta(value) { this.value = value }
+	function ForbidDelta() {}
+	function ModifyDelta(operations, deltaDescription) {
+		this.operations = operations;
+
+		//
+		// how to add an operation to this delta
+		//
+		this._addOperation = function _addOperation(property, leafDelta) {
+			this.operations[property] = composedDelta(this.operations[property], leafDelta);
+		};
+
+		//
+		// process possible delta description
+		//
+		deltaDescription = deltaDescription || {};
+		$.each(deltaDescription, (key, value)=> {
+			var match = key.match(/^(\w+)\s+(\w+)$/);
+			if (match) {
+				var operation = match[1];
+				var property = match[2];
+				U.assert(operation in OPERATION_METHODS,
+						`I don't know the '${operation}' operation.`);
+				this[operation](property, value);
+			}
+		});
+	}
+	$.extend(ModifyDelta.prototype, OPERATION_METHODS);
+
+
+	//
+	// how to compose deltas
+	//
+	function composedDelta(d1, d2) {
+
+		if (U.isUndefined(d1)) { return d2 }
+		if (U.isUndefined(d2)) { return d1 }
+
+		function error(op1, op2) {
+			var err = new Error(`Cannot follow a '${op1}' operation with a '${op2}' operation on the same property.`);
+			err.op1 = op1;
+			err.op2 = op2;
+			return err;
+		}
+
+		function composeOpMaps(map1, map2) {
+			var result = $.extend({}, map1);
+			Object.keys(map2).forEach((prop) => {
+				result = composedDelta(map1[prop], map2[prop]);
+			});
+			return result;
+		}
+
+		if (d1 instanceof AddDelta) {
+			if (d2 instanceof AddDelta)     { throw error('modify', 'add') }
+			if (d2 instanceof ReplaceDelta) { return new AddDelta(d2.value) }
+			if (d2 instanceof ModifyDelta)  { return new AddDelta(appliedDelta(d2, d1.value)) }
+			if (d2 instanceof RemoveDelta)  { return new ForbidDelta() }
+			if (d2 instanceof ForbidDelta)  { throw error('modify', 'forbid') }
+		}
+		if (d1 instanceof ReplaceDelta) {
+			if (d2 instanceof AddDelta)     { throw error('replace', 'add') }
+			if (d2 instanceof ReplaceDelta) { return new ReplaceDelta(d2.value) }
+			if (d2 instanceof ModifyDelta)  { return new ReplaceDelta(appliedDelta(d2, d1.value)) }
+			if (d2 instanceof RemoveDelta)  { return new RemoveDelta() }
+			if (d2 instanceof ForbidDelta)  { throw error('replace', 'forbid') }
+		}
+		if (d1 instanceof ModifyDelta) {
+			if (d2 instanceof AddDelta)     { throw error('modify', 'add') }
+			if (d2 instanceof ReplaceDelta) { return new ReplaceDelta(d2.value) }
+			if (d2 instanceof ModifyDelta)  { return new ModifyDelta(composeOpMaps(d1.operations, d2.operations)) }
+			if (d2 instanceof RemoveDelta)  { return new RemoveDelta() }
+			if (d2 instanceof ForbidDelta)  { throw error('modify', 'forbid') }
+		}
+		if (d1 instanceof RemoveDelta) {
+			if (d2 instanceof AddDelta)     { return new ReplaceDelta(d2.value) }
+			if (d2 instanceof ReplaceDelta) { throw error('remove', 'replace') }
+			if (d2 instanceof ModifyDelta)  { throw error('remove', 'modify') }
+			if (d2 instanceof RemoveDelta)  { throw error('remove', 'remove') }
+			if (d2 instanceof ForbidDelta)  { return new RemoveDelta() }
+		}
+		if (d1 instanceof ForbidDelta) {
+			if (d2 instanceof AddDelta)     { return new AddDelta(d2.value) }
+			if (d2 instanceof ReplaceDelta) { throw error('forbid', 'replace') }
+			if (d2 instanceof ModifyDelta)  { throw error('forbid', 'modify') }
+			if (d2 instanceof RemoveDelta)  { throw error('forbid', 'remove') }
+			if (d2 instanceof ForbidDelta)  { return new ForbidDelta() }
+		}
+
+		throw new Error('This point in the code should not be reachable.');
+
+	}
+
+
+	//
+	// how to apply deltas
+	//
+	function appliedDelta(d, value) {
+
+		if (U.isUndefined(d)) { return value }
+
+		if (d instanceof AddDelta) {
+			U.assert(U.isUndefined(value),
+					`The 'add' operation expects the property to first be undefined.`);
+			return d.value;
+		}
+		if (d instanceof ReplaceDelta) {
+			U.assert(U.isDefined(value),
+					`The 'replace' operation expects the property to be already defined.`);
+			return d.value;
+		}
+		if (d instanceof ModifyDelta) {
+			U.assert(U.isDefined(value),
+					`The 'modify' operation expects the property to be already defined.`);
+			U.assert($.isPlainObject(value),
+					`The 'modify' operation expects the property have a plain object value.`);
+			var newObj = $.extend({}, value);
+			Object.keys(d.operations).forEach((property) => {
+				newObj[property] = appliedDelta(d.operations[property], newObj[property]);
+			});
+			return newObj;
+		}
+		if (d instanceof RemoveDelta) {
+			U.assert(U.isDefined(value),
+					`The 'remove' operation expects the property to first be defined.`);
+			return undefined;
+		}
+		if (d instanceof ForbidDelta) {
+			U.assert(U.isUndefined(value),
+					`The 'forbid' operation requires the property to be undefined.`);
+			return undefined;
+		}
+
+		throw new Error('This point in the code should not be reachable.');
+
+	}
+
+
+	//
+	// create an object that can be used to add new operations to a plugin
+	//
+	function _objectToRegisterOperations(plugin) {
+		// TODO
+	}
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 	//
 	// define the PluginHandler class
@@ -83,7 +269,7 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js'], fun
 			// perform sanity checks
 			//
 			U.assert($.isArray(otherPlugins),
-					"The 'requires' clause of a plugin should be an array of plugin names.");
+					`The 'requires' clause of a plugin should be an array of plugin names.`);
 
 			//
 			// add this plugin as a loading condition for the other specified plugins
@@ -138,7 +324,12 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js'], fun
 			//
 			// pre-process operations (for now, only 'modify' for the top-level)
 			//
-			plugin._operations = processOperations(plugin);
+			plugin._operations = _processInObjectOperations(plugin);
+
+			//
+			// return an object that can be used to add additional operations
+			//
+			return _objectToRegisterOperations(plugin);
 		};
 
 		//
@@ -181,61 +372,68 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js'], fun
 				// we only support 'modify' for the top level for now
 				//
 				U.assert(op.operation === 'modify',
-					`Any top-level operation on '${component}' must be 'modify'.`);
+						`Any top-level operation on '${component}' must be 'modify'.`);
 
 				//
 				// perform the sub-operations
 				//
-				var subOps = processOperations(op.value);
+				var subOps = _processInObjectOperations(op.value);
 				$.each(subOps, (field, subOp) => {
 					switch (subOp.operation) {
 
 						//
 						// add a new key/value pair to the object
 						//
-						case 'add': {///////////////////////////////////////////////////////////////////////////////////
+						case 'add':
+						{///////////////////////////////////////////////////////////////////////////////////
 
 							U.assert(U.isUndefined(obj[field]),
-								`The operation 'add ${field}' expects ${component}.${field} to first be undefined.`);
+									`The operation 'add ${field}' expects ${component}.${field} to first be undefined.`);
 
 							obj[field] = subOp.value;
 
-						} break;////////////////////////////////////////////////////////////////////////////////////////
+						}
+							break;////////////////////////////////////////////////////////////////////////////////////////
 
 
 						//
 						// remove an existing key/value pair from the object
 						//
-						case 'remove': {////////////////////////////////////////////////////////////////////////////////
+						case 'remove':
+						{////////////////////////////////////////////////////////////////////////////////
 
 							U.assert(U.isDefined(obj[field]),
-								`The operation 'remove ${field}' expects ${component}.${field} to first be defined.`);
+									`The operation 'remove ${field}' expects ${component}.${field} to first be defined.`);
 
 							delete obj[field];
 
-						} break;////////////////////////////////////////////////////////////////////////////////////////
+						}
+							break;////////////////////////////////////////////////////////////////////////////////////////
 
 
 						//
 						// replace an existing key/value pair in the object
 						//
-						case 'replace': {///////////////////////////////////////////////////////////////////////////////
+						case 'replace':
+						{///////////////////////////////////////////////////////////////////////////////
 
 							U.assert(U.isDefined(obj[field]),
-								`The operation 'replace ${field}' expects ${component}.${field} to first be defined.`);
+									`The operation 'replace ${field}' expects ${component}.${field} to first be defined.`);
 
 							obj[field] = subOp.value;
 
-						} break;////////////////////////////////////////////////////////////////////////////////////////
+						}
+							break;////////////////////////////////////////////////////////////////////////////////////////
 
 
 						//
 						// insert a set of statements into an existing method of the object
 						//
-						case 'insert': {////////////////////////////////////////////////////////////////////////////////
+						case 'insert':
+						{////////////////////////////////////////////////////////////////////////////////
 
 							U.assert(U.isUndefined(obj[field]) || $.isFunction(obj[field]),
-								`The operation 'insert ${field}' expects ${component}.${field} to be undefined or a function.`);
+									`The operation 'insert ${field}' expects ${component}.${field} to be undefined or a function.`);
 
 							var restOfFunction = obj[field];
 							obj[field] = function (...args) {
@@ -243,17 +441,19 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js'], fun
 								return subOp.value.apply(this, args);
 							};
 
-						} break;////////////////////////////////////////////////////////////////////////////////////////
+						}
+							break;////////////////////////////////////////////////////////////////////////////////////////
 
 
 						//
 						// have a set of statements executed after an existing
 						// (possibly asynchronous) method of the object
 						//
-						case 'after': {/////////////////////////////////////////////////////////////////////////////////
+						case 'after':
+						{/////////////////////////////////////////////////////////////////////////////////
 
 							U.assert(U.isUndefined(obj[field]) || $.isFunction(obj[field]),
-								`The operation 'after ${field}' expects ${component}.${field} to be undefined or a function.`);
+									`The operation 'after ${field}' expects ${component}.${field} to be undefined or a function.`);
 
 							var beforeFunction = obj[field];
 							obj[field] = function (...args) {
@@ -262,11 +462,14 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js'], fun
 								}.bind(this));
 							};
 
-						} break;////////////////////////////////////////////////////////////////////////////////////////
+						}
+							break;////////////////////////////////////////////////////////////////////////////////////////
 
-						default: {
+						default:
+						{
 							throw new Error(`The ${subOp.operation} operation is not known.`);
-						} break;
+						}
+							break;
 					}
 				});
 			});
