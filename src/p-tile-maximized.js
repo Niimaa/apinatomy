@@ -10,7 +10,7 @@ define(['jquery', './p-tile-maximized.scss'], function ($) {
 
 			'add _p_tileMaximized': false,
 
-			'insert constructor': function () {
+			'insert construct': function () {
 
 				Object.defineProperty(this, 'maximized', {
 					get() {

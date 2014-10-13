@@ -9,7 +9,7 @@ define(['jquery'], function ($) {
 
 		'modify circuitboard': {
 
-			'after constructor': function () {
+			'after construct': function () {
 
 				//
 				// while dragging a vertex, lock the 3D camera

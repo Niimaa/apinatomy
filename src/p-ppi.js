@@ -14,7 +14,7 @@ define([
 		// TODO: implement this properly; this is just for testing purposes
 		//
 		'modify tile': {
-			'insert constructor': function () {
+			'insert construct': function () {
 
 				var graphGroup = this.circuitboard.newGraphGroup();
 				this.on('destroy', () => { graphGroup.remove() });

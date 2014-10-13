@@ -43,7 +43,7 @@ define([
 			'add _p_threeD_controls': null,
 			'add _p_threeD_circuitboard': null,
 
-			'insert constructor': function () {
+			'insert construct': function () {
 
 
 				////////////////////////////////////////////////////////////////

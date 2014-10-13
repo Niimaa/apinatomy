@@ -26,7 +26,7 @@ define([
 
 		'modify circuitboard': {
 			'add _p_tilePosition_offset': null,
-			'insert constructor': function () {
+			'insert construct': function () {
 				this._p_tilePosition_offset = U.cached({
 					retrieve: () => this.element.offset()
 				});
@@ -58,7 +58,7 @@ define([
 		},
 
 		'modify tilemap': {
-			'insert constructor': function () {
+			'insert construct': function () {
 				var _offset = U.cached({
 					retrieve: () => this.element.offset(),
 					isEqual: posEqual
@@ -95,7 +95,7 @@ define([
 				this._p_positionTracking_offset();
 				this._p_positionTracking_size();
 			},
-			'insert constructor': function () {
+			'insert construct': function () {
 				var _offset = this._p_positionTracking_offset = U.cached({
 					retrieve: () => this.element.offset(),
 					isEqual: posEqual

@@ -16,7 +16,7 @@ define([
 
 			'add weightWhenClosed': () => 1,
 
-			'insert constructor': function () {
+			'insert construct': function () {
 				//
 				// react to a tile opening or closing
 				// by changing its weight accordingly

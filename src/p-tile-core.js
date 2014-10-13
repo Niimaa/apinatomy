@@ -24,7 +24,7 @@ define([
 				}
 			},
 
-			'insert constructor': function () {
+			'insert construct': function () {
 				//
 				// support certain DOM-event subscriptions from the tile object itself
 				//

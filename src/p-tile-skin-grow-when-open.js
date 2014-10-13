@@ -13,7 +13,7 @@ define([
 		after: ['tile-skin', 'tile-grow-when-open'],
 
 		'modify tile': {
-			'insert constructor': function () {
+			'insert construct': function () {
 				//
 				// react to a tile opening or closing by
 				// timely showing/hiding the content section

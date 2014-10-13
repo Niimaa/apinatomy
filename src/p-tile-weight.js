@@ -9,7 +9,7 @@ define(['jquery', './util/handle-premature-plugins.js'], function ($) {
 
 			'add _p_tileWeight_weight': 1,
 
-			'insert constructor': function () {
+			'insert construct': function () {
 				//
 				// the 'weight' property
 				//

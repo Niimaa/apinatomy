@@ -10,15 +10,22 @@ define(['jquery', './plugin-handler.js', './misc.js'], function ($, PluginHandle
 		if ($.isPlainObject(plugins)) {
 			return pluginHandler.register(plugins);
 		} else {
-			return pluginHandler.select(plugins);
+			pluginHandler.select(plugins);
 		}
 	};
-	$.circuitboard.plugin._apply = pluginHandler.apply.bind(pluginHandler);
 
 	//
 	// fetch plugins that were already loaded and register them
 	//
 	($.circuitboard.prematurePlugins || []).forEach($.circuitboard.plugin);
 	delete $.circuitboard.prematurePlugins;
+
+	//
+	// return a function which can be used to apply the plugins
+	// and get a promise to wait for that to finish
+	//
+	return function applyCbPlugins(widgetArtefacts) {
+		return pluginHandler.apply(widgetArtefacts);
+	};
 
 });

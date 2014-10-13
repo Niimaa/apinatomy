@@ -20,7 +20,7 @@ define([
 			'add _p_d3_vertices': {},
 			'add _p_d3_edges': {},
 
-			'insert constructor': function () {
+			'insert construct': function () {
 				//
 				// superimpose an `svg` canvas on top of the circuitboard
 				// the inner `svg` translates everything one pixel down and to the right,

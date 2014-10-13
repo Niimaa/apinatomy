@@ -6,7 +6,7 @@ define(['jquery', './util/misc.js', './util/handle-premature-plugins.js'], funct
 		after: ['tile-core'],
 
 		'modify tile': {
-			'insert constructor': function () {
+			'insert construct': function () {
 				//
 				// only interesting if the tile has a model
 				//

@@ -6,12 +6,14 @@ define(['jquery', 'bluebird', './misc.js'], function ($, P, U) {
 	//
 	function enableSignalHandling(obj) {
 		var _callbacks = {};
+
 		function _signalCallbacks(signal) {
 			if (!_callbacks[signal]) {
 				_callbacks[signal] = $.Callbacks();
 			}
 			return _callbacks[signal];
 		}
+
 		$.extend(obj, {
 			on(signal, fn) { _signalCallbacks(signal).add(fn) },
 			off(signal, fn) { _signalCallbacks(signal).remove(fn) },
@@ -82,102 +84,63 @@ define(['jquery', 'bluebird', './misc.js'], function ($, P, U) {
 	// a function to create an apinatomy component (widget)
 	// as a jQuery element plugin; this is returned from the module
 	//
-	return function amyWidget(name, pluginHandle, optionDefaults) {
+	function amyWidget(name, optionDefaults) {
+		//
+		// the specific widget class
+		//
+		function Widget({options, element}) {
+			$.extend(this, {
+				options: options,
+				element: element,
+				destroy() { this.trigger('destroy') }
+			});
+			enableSignalHandling(this);
 
-		//
-		// a way to lazily apply the plugins to an empty prototype (ONCE),
-		// apply some standard utility properties to it (ONCE),
-		// and get the promise of the prototype object back
-		//
-		var _prototypeP = null;
-		function prototypeP() {
-			if (!_prototypeP) {
-				var objPrototype = {};
-				_prototypeP = P
-					//
-					// await the application of all selected plugins to the prototype
-					//
-					.all($.circuitboard.plugin._apply(pluginHandle, objPrototype))
-					//
-					// return the prototype from the promise
-					//
-					.return(objPrototype)
-					//
-					// define default properties in the prototype
-					//
-					.tap(defineDefaultProperties)
-					//
-					// define methods to manage artefact hierarchy
-					//
-					.tap(defineHierarchyMethods)
-					//
-					// register the type
-					//
-					.tap((obj) => { obj.type = name });
-			}
-			return _prototypeP;
+			//// set the element class
+			this.element.addClass(this.options.cssClass);
+			this.element.one('remove', () => { this.destroy() });
+
+			//// connect to the parent artefact
+			if (this.options.parent) { this.parent = this.options.parent }
+
+			//// cache a reference to the circuitboard (it is used often)
+			this.circuitboard = this.closestAncestorByType('circuitboard');
+
+			//// if present, run the construct method
+			if ($.isFunction(this.construct)) { this.construct.call(this); }
 		}
+		defineDefaultProperties(Widget.prototype);
+		defineHierarchyMethods(Widget.prototype);
+		Widget.prototype.type = name;
 
 		//
 		// now define the widget creation & retrieval function as a jQuery plugin
 		//
 		$.fn[name] = function (options) {
-			//
-			// if the word 'instance' is passed, return the (already created) widget
-			//
+			//// if the word 'instance' is passed, return the (already created) widget
 			if (options === 'instance') { return this.data(`-amy-${name}`) }
 
-			//
-			// else, create a new widget based on the prototype
-			// and return a promise to it
-			//
-			this.data(`-amy-${name}`, prototypeP().then((prototype) => {
-				//
-				// create object representing the tile
-				//
-				var obj = Object.create(prototype);
-				$.extend(obj, {
-					options: $.extend({}, optionDefaults, options),
-					element: this,
-					destroy() { obj.trigger('destroy') }
-				});
+			//// else, create a new widget based on the prototype
+			//// and return a promise to it
+			this.data(`-amy-${name}`, promisesToWaitFor
+					.return(new Widget({
+						options: $.extend({}, optionDefaults, options),
+						element: this
+					})));
 
-				//
-				// add signal-handling methods to the object
-				//
-				enableSignalHandling(obj);
-
-				//
-				// set the element class
-				//
-				obj.element.addClass(obj.options.cssClass);
-				obj.element.one('remove', () => { obj.destroy() });
-
-				//
-				// connect to the parent artefact
-				//
-				if (obj.options.parent) {
-					obj.parent = obj.options.parent;
-				}
-
-				//
-				// cache a reference to the circuitboard (it is used often)
-				//
-				obj.circuitboard = obj.closestAncestorByType('circuitboard');
-
-				//
-				// if present, run the constructor method
-				//
-				if ($.isFunction(obj.constructor)) { obj.constructor.call(obj); }
-
-				//
-				// return the widget object from the promise
-				//
-				return obj;
-			}));
-
+			//// return the jQuery element instance, by jQuery convention
 			return this;
 		};
+
+		//// return the widget artefact class
+		return Widget;
+	}
+
+	var promisesToWaitFor = P.resolve();
+	amyWidget.waitFor = function waitFor(p) {
+		promisesToWaitFor = promisesToWaitFor.return(p);
 	};
+
+	return amyWidget;
 
 });

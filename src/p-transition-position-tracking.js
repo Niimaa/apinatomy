@@ -15,7 +15,7 @@ define([
 		after: ['position-tracking', 'tile-grow-when-open'],
 
 		'modify tile': {
-			'insert constructor': function () {
+			'insert construct': function () {
 
 				this.on('weight', () => {
 					var stopUpdatingPosition = U.eachAnimationFrame(() => { this.resetPositioning() });

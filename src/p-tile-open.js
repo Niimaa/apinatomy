@@ -9,7 +9,7 @@ define(['jquery', './util/handle-premature-plugins.js'], function ($) {
 
 			'add _p_tileOpen_open': false,
 
-			'insert constructor': function () {
+			'insert construct': function () {
 				//
 				// the 'open' property
 				//

@@ -7,7 +7,7 @@ define(['jquery'], function ($) {
 		after: ['tile-maximized'],
 
 		'modify tile': {
-			'insert constructor': function () {
+			'insert construct': function () {
 				this.on('click', function (event) {
 					if (event.which !== 2) { return }
 					this.maximized = !this.maximized;

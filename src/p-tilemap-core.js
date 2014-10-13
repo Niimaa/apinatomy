@@ -84,7 +84,7 @@ define([
 			//
 			// refresh the tiles initially
 			//
-			'insert constructor': function () {
+			'insert construct': function () {
 
 				Object.defineProperty(this, 'tiles', {
 					get() { return this._p_tilemapCore_tiles }

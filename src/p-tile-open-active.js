@@ -7,7 +7,7 @@ define(['jquery', './util/handle-premature-plugins.js'], function ($) {
 		after: ['tile-open', 'tile-active'],
 
 		'modify tile': {
-			'insert constructor': function () {
+			'insert construct': function () {
 				// only interesting if the tile has a model
 				if (!this.model) { return; }
 

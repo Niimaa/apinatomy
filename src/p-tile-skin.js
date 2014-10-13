@@ -56,7 +56,7 @@ define([
 				if (!this.open) { this.on('size', setHeaderFontSize) }
 			},
 
-			'insert constructor': function () {
+			'insert construct': function () {
 				//
 				// create the header and content elements, and reroute the
 				// 'dom' property to the new content element

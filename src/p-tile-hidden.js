@@ -10,7 +10,7 @@ define(['jquery', './p-tile-hidden.scss'], function ($) {
 
 			'add _p_tileHidden': false,
 
-			'insert constructor': function () {
+			'insert construct': function () {
 
 				Object.defineProperty(this, 'hidden', {
 					get() {

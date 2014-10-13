@@ -58,7 +58,7 @@ define([
 				});
 			},
 
-			'insert constructor': function () {
+			'insert construct': function () {
 				//
 				// create the root tilemap
 				//
