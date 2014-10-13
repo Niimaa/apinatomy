@@ -1,11 +1,9 @@
 node_modules
 bower_components
 .sass-cache
-tmp
 dist
-*.d.ts
 *.css
-*.log
 SpecRunner.html
 .idea/workspace.xml
+.idea/tasks.xml
 .intermediate-output
