@@ -11,21 +11,16 @@ define([
 	//
 	// test for browser 3D support
 	//
-	var _browserSupport;
-
 	function browserSupport() {
-		if (U.isUndefined(_browserSupport)) {
-			var canvas;
-			try {
-				canvas = $('<canvas>');
-				_browserSupport = !!(canvas[0].getContext('webgl') || canvas[0].getContext('experimental-webgl'));
-			} catch (__) {
-				_browserSupport = false;
-			} finally {
-				canvas = undefined;
-			}
+		var canvas;
+		try {
+			canvas = $('<canvas>');
+			return !!(canvas[0].getContext('webgl') || canvas[0].getContext('experimental-webgl'));
+		} catch (__) {
+			return false;
+		} finally {
+			canvas = undefined;
 		}
-		return _browserSupport;
 	}
 
 	//
