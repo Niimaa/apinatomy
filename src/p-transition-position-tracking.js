@@ -14,7 +14,7 @@ define([
 		if: ['position-tracking', 'tile-grow-when-open'],
 		after: ['position-tracking', 'tile-grow-when-open'],
 
-		'modify tile': {
+		'modify tile.prototype': {
 			'insert construct': function () {
 
 				this.on('weight', () => {

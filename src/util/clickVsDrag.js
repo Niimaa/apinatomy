@@ -8,15 +8,15 @@ define(['jquery'], function ($) {
 	$.fn.extend({
 		clickNotDrop: function clickNotDrop(fn) {
 			return this.each(function () {
-				var that = this;
-				$(that).on('mousedown', function (/*event*/) {
-					function onMouseMove() {
+				$(this).on('mousedown', (/*mouseDownEvent*/) => {
+					var onMouseMove = () => {
 						$(window).off('mouseup', onMouseUp);
-					}
-					function onMouseUp(mouseUpEvent) {
+					};
+					var onMouseUp = (mouseUpEvent) => {
 						$(window).off('mousemove', onMouseMove);
-						fn.call(that, mouseUpEvent);
-					}
+						mouseUpEvent.stopImmediatePropagation();
+						fn.call(this, mouseUpEvent);
+					};
 					$(window).one('mousemove', onMouseMove);
 					$(window).one('mouseup', onMouseUp);
 				});
@@ -24,22 +24,21 @@ define(['jquery'], function ($) {
 		},
 		mouseDragDrop: function mouseDragDrop(dragFn, dropFn) {
 			return this.each(function () {
-				var that = this;
-				$(that).on('mousedown', function (e) {
-					e.stopPropagation();
+				$(this).on('mousedown', (mouseDownEvent) => {
+					var onMouseMove = (moveEvent) => {
+						$(this).data('mouseDragDrop-dragging', true);
+						dragFn.call(this, moveEvent);
+					};
+					var onMouseUp = (dropEvent) => {
+						$(window).off('mousemove', onMouseMove);
+						if ($(this).data('mouseDragDrop-dragging')) {
+							dropFn.call(this, dropEvent);
+						}
+					};
+					mouseDownEvent.stopPropagation();
 					$(window).one('mousemove', onMouseMove);
 					$(window).one('mouseup', onMouseUp);
-					$(that).data('mouseDragDrop-dragging', false);
-					function onMouseMove(moveEvent) {
-						$(that).data('mouseDragDrop-dragging', true);
-						dragFn.call(that, moveEvent);
-					}
-					function onMouseUp(dropEvent) {
-						$(window).off('mousemove', onMouseMove);
-						if ($(that).data('mouseDragDrop-dragging')) {
-							dropFn.call(that, dropEvent);
-						}
-					}
+					$(this).data('mouseDragDrop-dragging', false);
 				});
 			});
 		},

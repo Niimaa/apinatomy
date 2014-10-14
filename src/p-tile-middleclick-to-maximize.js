@@ -6,7 +6,7 @@ define(['jquery'], function ($) {
 		require: ['tile-maximized'],
 		after: ['tile-maximized'],
 
-		'modify tile': {
+		'modify tile.prototype': {
 			'insert construct': function () {
 				this.on('click', function (event) {
 					if (event.which !== 2) { return }

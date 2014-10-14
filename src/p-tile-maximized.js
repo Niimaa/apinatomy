@@ -6,7 +6,7 @@ define(['jquery', './p-tile-maximized.scss'], function ($) {
 		require: ['tile-hidden'],
 		after: ['tile-hidden'],
 
-		'modify tile': {
+		'modify tile.prototype': {
 
 			'add _p_tileMaximized': false,
 

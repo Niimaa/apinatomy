@@ -90,7 +90,9 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js', './d
 			U.assert(typeof plugin.name === 'string',
 					`An ApiNATOMY plugin should have a name.`);
 
-			//// normalize plugin configuration
+			//
+			// normalize plugin configuration
+			//
 			if (!$.isArray(plugin.after)) { plugin.after = [] }
 
 			//
@@ -101,7 +103,9 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js', './d
 				get() { return _pluginPredicates[plugin.name](_dynamicFeatureConfiguration) }
 			});
 
-			//// process the plugin requirements
+			//
+			// process the plugin requirements
+			//
 			_addPluginRequirements(plugin.name, plugin.require);
 
 			//
@@ -111,15 +115,19 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js', './d
 			$.each(plugin.after, (__, v) => { _plugins.createEdge(v, plugin.name) });
 			if (_plugins.hasCycle()) { throw new Error(`The plugin application order has a cycle.`) }
 
-			//// pre-process operations (for now, only 'modify' for the top-level)
-			plugin.delta = new Delta.Modify(plugin);
+			//
+			// create the delta that embodies the plugin
+			//
+			plugin.delta = new Delta(plugin);
 
-			//// return an object that can be used to add additional operations
+			//
+			// return an object that can be used to add additional operations
+			//
 			return plugin.delta;
 		};
 
 		//
-		// register (part of) a new plugin
+		// select the plugins to be enabled
 		//
 		this.select = function select(pluginNames) {
 
@@ -135,7 +143,7 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js', './d
 		// apply all relevant plugins to a given object
 		//
 		this.apply = function apply(obj) {
-			return traverse(_plugins, (pluginName, plugin) => {
+			return P.all(traverse(_plugins, (pluginName, plugin) => {
 
 				//// if the plugin is not selected, return
 				if (!_dynamicFeatureConfiguration[pluginName]) { return }
@@ -143,10 +151,10 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js', './d
 				//// if the plugin doesn't exist, throw an error
 				U.assert(plugin, `I don't know the '${pluginName}' plugin.`);
 
-				//// apply the delta
-				$.extend(obj, plugin.delta.apply(obj));
+				//// apply the delta, and return a promise for it to be done
+				return P.resolve(plugin.delta.apply(obj));
 
-			});
+			}));
 		};
 	};
 });

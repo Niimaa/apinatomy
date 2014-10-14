@@ -12,7 +12,7 @@ define([
 		if: ['tile-skin', 'tile-grow-when-open'],
 		after: ['tile-skin', 'tile-grow-when-open'],
 
-		'modify tile': {
+		'modify tile.prototype': {
 			'insert construct': function () {
 				//
 				// react to a tile opening or closing by

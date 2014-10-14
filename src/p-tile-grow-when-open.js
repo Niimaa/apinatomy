@@ -10,7 +10,7 @@ define([
 		require: ['tile-open', 'tile-weight'],
 		after: ['tile-open', 'tile-weight'],
 
-		'modify tile': {
+		'modify tile.prototype': {
 
 			'add weightWhenOpen': function () { return this.circuitboard.options.weightWhenOpen || 2 },
 

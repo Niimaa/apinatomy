@@ -35,10 +35,9 @@ define(['jquery', 'bluebird', './misc.js'], function ($, P, U) {
 	//
 	// a function to implement artefact hierarchy methods
 	//
-	function defineHierarchyMethods(obj) {
+	function defineHierarchyMethods(obj, type) {
 		Object.defineProperty(obj, 'type', {
-			set(type) { this._artefactType = type },
-			get() { return this._artefactType }
+			get() { return type }
 		});
 		Object.defineProperty(obj, 'parent', {
 			set(parent) {
@@ -90,7 +89,7 @@ define(['jquery', 'bluebird', './misc.js'], function ($, P, U) {
 		//
 		function Widget({options, element}) {
 			$.extend(this, {
-				options: options,
+				options: $.extend({}, optionDefaults, options),
 				element: element,
 				destroy() { this.trigger('destroy') }
 			});
@@ -104,29 +103,43 @@ define(['jquery', 'bluebird', './misc.js'], function ($, P, U) {
 			if (this.options.parent) { this.parent = this.options.parent }
 
 			//// cache a reference to the circuitboard (it is used often)
-			this.circuitboard = this.closestAncestorByType('circuitboard');
+			Object.defineProperty(this, 'circuitboard', {
+				get() { return this.closestAncestorByType('circuitboard') }
+			});
 
-			//// if present, run the construct method
-			if ($.isFunction(this.construct)) { this.construct.call(this); }
+			//// wait for something before construction (like plugins)?
+			this.constructed = P.resolve();
+			this.beforeConstruction(this.options.beforeConstruction);
+
+			//// if present, run the construct method after
+			//// `this.options.beforeConstruction` is finished
+			//// and then wait on it
+			this.constructed.then(() => {
+				if ($.isFunction(this.construct)) {
+					this.beforeConstruction(this.construct());
+				}
+			});
 		}
+
+		Widget.prototype.beforeConstruction = function beforeConstruction(possiblePromise) {
+			this.constructed = this.constructed
+					.return(P.resolve(possiblePromise))
+					.return(this);
+		};
+
 		defineDefaultProperties(Widget.prototype);
-		defineHierarchyMethods(Widget.prototype);
-		Widget.prototype.type = name;
+		defineHierarchyMethods(Widget.prototype, name);
 
 		//
 		// now define the widget creation & retrieval function as a jQuery plugin
 		//
 		$.fn[name] = function (options) {
-			//// if the word 'instance' is passed, return the (already created) widget
+			//// if the word 'instance' is passed, return the (already created) widget promise
 			if (options === 'instance') { return this.data(`-amy-${name}`) }
 
-			//// else, create a new widget based on the prototype
-			//// and return a promise to it
-			this.data(`-amy-${name}`, promisesToWaitFor
-					.return(new Widget({
-						options: $.extend({}, optionDefaults, options),
-						element: this
-					})));
+			//// else, create a new widget and set a promise to it
+			var newWidget = new Widget({ options: options, element: this });
+			this.data(`-amy-${name}`, newWidget.constructed);
 
 			//// return the jQuery element instance, by jQuery convention
 			return this;
@@ -135,11 +148,6 @@ define(['jquery', 'bluebird', './misc.js'], function ($, P, U) {
 		//// return the widget artefact class
 		return Widget;
 	}
-
-	var promisesToWaitFor = P.resolve();
-	amyWidget.waitFor = function waitFor(p) {
-		promisesToWaitFor = promisesToWaitFor.return(p);
-	};
 
 	return amyWidget;
 

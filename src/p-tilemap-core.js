@@ -11,7 +11,7 @@ define([
 	$.circuitboard.plugin({
 		name: 'tilemap-core',
 		if: true,
-		'modify tilemap': {
+		'modify tilemap.prototype': {
 
 			'add _p_tilemapCore_tiles': null,
 

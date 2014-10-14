@@ -13,7 +13,7 @@ define([
 		//
 		// TODO: implement this properly; this is just for testing purposes
 		//
-		'modify tile': {
+		'modify tile.prototype': {
 			'insert construct': function () {
 
 				var graphGroup = this.circuitboard.newGraphGroup();

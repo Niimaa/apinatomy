@@ -3,24 +3,44 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js'], fun
 
 	//
 	// Accumulated data for the available delta operation types
-	// TODO: put this in a single object (which is nicer)
 	//
-	var Delta = {};            // Delta constructors; one for each operation
-	var operationMethods = {}; // methods for the available operation-types in a Delta.Modify
-	var composeFns = [];       // the accumulated case distinctions of delta composition
+	var opTypes = {};    // the name and delta classes
+	var composeFns = []; // the case distinctions of delta composition
 
 	//
 	// a function to fully define a new delta operation type
 	//
-	function addOperationType({name, className, constructor, apply, prototype, method}) {
+	function addOperationType({name, constructor: constructorFn, apply: applyFn, prototype, method}) {
+
+		//
+		// define the method for adding the new operation to a Modify delta
+		//
+		var objectWithMethod = {};
+		if (U.isDefined(method)) {
+			Object.defineProperty(objectWithMethod, name, {
+				value: method
+			});
+		} else {
+			Object.defineProperty(objectWithMethod, name, {
+				value(property, ...values) {
+					this._addOperation(opTypes[name], property, values);
+					return this;
+				}
+			});
+		}
+
 		//
 		// define the Delta class
 		//
-		Delta[className] = constructor;
-		Delta[className].constructor = constructor;
-		$.extend(Delta[className].prototype, prototype, {
+		opTypes[name] = {
+			name: name,
+			Delta: constructorFn,
+			method: objectWithMethod[name]
+		};
+		$.extend(opTypes[name].Delta.prototype, prototype, {
+			constructor: constructorFn,
 			type: name,
-			apply: apply,
+			apply: applyFn,
 			compose(op2) {
 				if (U.isUndefined(op2)) { return this }
 				composeFns.forEach(({op1Type, op2Type, composeFn}) => {
@@ -37,21 +57,11 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js'], fun
 				throw err;
 			}
 		});
+
 		//
-		// define the method for adding the new operation to a Modify delta
+		// make the operation method available on the 'modify' delta (assumes that 'modify' is defined first)
 		//
-		if (U.isDefined(method)) {
-			Object.defineProperty(operationMethods, name, {
-				value: method
-			});
-		} else {
-			Object.defineProperty(operationMethods, name, {
-				value(property, ...values) {
-					this._addOperation(property, U.applyConstructor(Delta[className], values));
-				}
-			});
-		}
-		Delta.Modify.prototype[name] = operationMethods[name];
+		opTypes['modify'].Delta.prototype[name] = opTypes[name].method;
 	}
 
 	//
@@ -62,7 +72,7 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js'], fun
 	}
 
 	//
-	// the modify operation
+	// the modify operation (MUST BE DEFINED FIRST)
 	//
 	addOperationType({
 		name: 'modify',
@@ -74,37 +84,64 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js'], fun
 			// process possible delta description
 			//
 			$.each(deltaDescription, (key, value) => {
-				var match = key.match(/^(\w+)\s+(\w+)$/);
+				var match = key.match(/^(\w+)\s+([\w\.]+)$/);
 				if (match) {
 					var operation = match[1];
 					var property = match[2];
-					U.assert(operation in operationMethods,
+					U.assert(operation in opTypes,
 							`I don't know the '${operation}' operation.`);
 					this[operation](property, value);
 				}
 			});
 		},
-		apply(value) {
-			U.assert(U.isDefined(value),
-					`The 'modify' operation expects the property to be already defined.`);
-			var newObj = $.extend({}, value);
-			Object.keys(this.operations).forEach((property) => {
-				newObj[property] = this.operations[property].apply(newObj[property]);
-			});
-			return newObj;
+		apply(obj, property) {
+			if (U.isDefined(property)) {
+				//
+				// if the property is passed, apply this delta to `obj[property]`
+				//
+				U.assert(U.isDefined(obj[property]),
+						`The 'modify' operation expects the property to be already defined.`);
+				Object.keys(this.operations).forEach((subProperty) => {
+					this.operations[subProperty].apply(obj[property], subProperty);
+				});
+			} else {
+				//
+				// if the property is not passed, apply this delta to `obj`
+				//
+				U.assert(U.isDefined(obj),
+						`The 'modify' operation expects the property to be already defined.`);
+				Object.keys(this.operations).forEach((subProperty) => {
+					this.operations[subProperty].apply(obj, subProperty);
+				});
+			}
 		},
-		prototype: $.extend({
-			_addOperation(property, leafDelta) {
-				if (this.operations.hasOwnProperty(property)) {
-					this.operations[property] = this.operations[property].compose(leafDelta);
+		prototype: {
+			_addOperation(opType, property, values) {
+				var dotIndex = property.indexOf('.');
+				if (dotIndex !== -1) {
+					//
+					// the property is a dot-separated path; recursively create a modify-chain
+					//
+					var actualProperty = property.slice(0, dotIndex);
+					var restOfProperty = property.slice(dotIndex+1);
+					var newModifyDelta = this._addOperation(opTypes['modify'], actualProperty);
+					return newModifyDelta[opType.name].apply(newModifyDelta, [restOfProperty].concat(values));
 				} else {
-					this.operations[property] = leafDelta;
+					//
+					// the property is a single name; add the new delta directly
+					//
+					var newDelta = U.applyConstructor(opType.Delta, values);
+					if (this.operations.hasOwnProperty(property) && U.isDefined(this.operations[property])) {
+						this.operations[property] = this.operations[property].compose(newDelta);
+					} else {
+						this.operations[property] = newDelta;
+					}
+					return this.operations[property];
 				}
 			}
-		}, operationMethods),
+		},
 		method(property, deltaDescription) {
-			this._addOperation(property, new Delta.Modify(deltaDescription));
-			return this.operations[property];
+			return this._addOperation(opTypes['modify'], property, [deltaDescription]);
 		}
 	});
 
@@ -115,65 +152,64 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js'], fun
 		name: 'add',
 		className: 'Add',
 		constructor: function Add(value) { this.value = value },
-		apply(value) {
-			U.assert(U.isUndefined(value),
+		apply(obj, property) {
+			U.assert(U.isUndefined(obj[property]),
 					`The 'add' operation expects the property to first be undefined.`);
-			return this.value;
+			obj[property] = this.value;
 		}
 	});
 	addOperationType({
 		name: 'replace',
 		className: 'Replace',
 		constructor: function Replace(value) { this.value = value },
-		apply(value) {
-			U.assert(U.isDefined(value),
+		apply(obj, property) {
+			U.assert(U.isDefined(obj[property]),
 					`The 'replace' operation expects the property to be already defined.`);
-			return this.value;
+			obj[property] = this.value;
 		}
 	});
 	addOperationType({
 		name: 'remove',
 		className: 'Remove',
 		constructor: function Remove() {},
-		apply(value) {
-			U.assert(U.isDefined(value),
+		apply(obj, property) {
+			U.assert(U.isDefined(obj[property]),
 					`The 'remove' operation expects the property to first be defined.`);
-			return undefined;
+			delete obj[property];
 		}
 	});
 	addOperationType({
 		name: 'forbid',
 		className: 'Forbid',
 		constructor: function Forbid() {},
-		apply(value) {
-			U.assert(U.isUndefined(value),
+		apply(obj, property) {
+			U.assert(U.isUndefined(obj[property]),
 					`The 'forbid' operation requires the property to be undefined.`);
-			return value;
 		}
 	});
 
 	//
 	// composition of the standard operation types
 	//
-	addCompositionRule('add', 'replace',     (d1, d2) => new Delta.Add(d2.value));
-	addCompositionRule('add', 'modify',      (d1, d2) => new Delta.Add(d2.apply(d1.value)));
-	addCompositionRule('add', 'remove',      (d1, d2) => new Delta.Forbid());
-	addCompositionRule('replace', 'replace', (d1, d2) => new Delta.Replace(d2.value));
-	addCompositionRule('replace', 'modify',  (d1, d2) => new Delta.Replace(d2.apply(d1.value)));
-	addCompositionRule('replace', 'remove',  (d1, d2) => new Delta.Remove());
-	addCompositionRule('modify', 'replace',  (d1, d2) => new Delta.Replace(d2.value));
+	addCompositionRule('add', 'replace',     (d1, d2) => new opTypes['add'].Delta(d2.value));
+	addCompositionRule('add', 'modify',      (d1, d2) => new opTypes['add'].Delta(d2.apply(d1.value)));
+	addCompositionRule('add', 'remove',      (d1, d2) => new opTypes['forbid'].Delta());
+	addCompositionRule('replace', 'replace', (d1, d2) => new opTypes['replace'].Delta(d2.value));
+	addCompositionRule('replace', 'modify',  (d1, d2) => new opTypes['replace'].Delta(d2.apply(d1.value)));
+	addCompositionRule('replace', 'remove',  (d1, d2) => new opTypes['remove'].Delta());
+	addCompositionRule('modify', 'replace',  (d1, d2) => new opTypes['replace'].Delta(d2.value));
 	addCompositionRule('modify', 'modify', (d1, d2) => {
 		var composedOpMaps = $.extend({}, d1.operations);
 		Object.keys(d2.operations).forEach((prop) => {
 			composedOpMaps = d1.operations[prop].compose(d2.operations[prop]);
 		});
-		return new Delta.Modify({}, composedOpMaps);
+		return new opTypes['modify'].Delta({}, composedOpMaps);
 	});
-	addCompositionRule('modify', 'remove', (d1, d2) => new Delta.Remove());
-	addCompositionRule('remove', 'add',    (d1, d2) => new Delta.Replace(d2.value));
-	addCompositionRule('remove', 'forbid', (d1, d2) => new Delta.Remove());
-	addCompositionRule('forbid', 'add',    (d1, d2) => new Delta.Add(d2.value));
-	addCompositionRule('forbid', 'forbid', (d1, d2) => new Delta.Forbid());
+	addCompositionRule('modify', 'remove', (d1, d2) => new opTypes['remove'].Delta());
+	addCompositionRule('remove', 'add',    (d1, d2) => new opTypes['replace'].Delta(d2.value));
+	addCompositionRule('remove', 'forbid', (d1, d2) => new opTypes['remove'].Delta());
+	addCompositionRule('forbid', 'add',    (d1, d2) => new opTypes['add'].Delta(d2.value));
+	addCompositionRule('forbid', 'forbid', (d1, d2) => new opTypes['forbid'].Delta());
 
 
 	//
@@ -183,30 +219,31 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js'], fun
 		name: 'insert',
 		className: 'Insert',
 		constructor: function Insert(value) { this.value = value },
-		apply(value) {
-			U.assert(U.isUndefined(value) || $.isFunction(value),
+		apply(obj, property) {
+			U.assert(U.isUndefined(obj[property]) || $.isFunction(obj[property]),
 					`The operation 'insert' expects the property to be undefined or a function.`);
-			var that = this;
-			return function (...args) {
-				value.apply(this, args);
-				that.value.apply(this, args);
+			var partOne = obj[property] || (() => {});
+			var partTwo = this.value;
+			obj[property] = function (...args) {
+				partOne.apply(this, args);
+				partTwo.apply(this, args);
 			};
 		}
 	});
-	addCompositionRule('insert', 'replace', (d1, d2) => new Delta.Replace(d2.value));
-	addCompositionRule('insert', 'remove', (d1, d2) => new Delta.Forbid());
+	addCompositionRule('insert', 'replace', (d1, d2) => new opTypes['replace'].Delta(d2.value));
+	addCompositionRule('insert', 'remove', (d1, d2) => new opTypes['forbid'].Delta());
 	addCompositionRule('add', 'insert', (d1, d2) => {
 		U.assert($.isUndefined(d1.value) || $.isFunction(d1.value),
 				`The operation 'insert' expects the property it acts on to be undefined or a function.`);
-		return new Delta.add(d2.apply(d1.value));
+		return new opTypes['add'].Delta(d2.apply(d1.value));
 	});
-	addCompositionRule('remove', 'insert', (d1, d2) => new Delta.Replace(d2.value));
+	addCompositionRule('remove', 'insert', (d1, d2) => new opTypes['replace'].Delta(d2.value));
 	addCompositionRule('replace', 'insert', (d1, d2) => {
 		U.assert($.isUndefined(d1.value) || $.isFunction(d1.value),
 				`The operation 'insert' expects the property it acts on to be undefined or a function.`);
-		return new Delta.replace(d2.apply(d1.value));
+		return new opTypes['replace'].Delta(d2.apply(d1.value));
 	});
-	addCompositionRule('forbid', 'insert', (d1, d2) => new Delta.Insert(d2.value));
+	addCompositionRule('forbid', 'insert', (d1, d2) => new opTypes['insert'].Delta(d2.value));
 
 
 	//
@@ -216,41 +253,42 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js'], fun
 		name: 'after',
 		className: 'After',
 		constructor: function After(value) { this.value = value },
-		apply(value) {
-			U.assert(U.isUndefined(value) || $.isFunction(value),
+		apply(obj, property) {
+			U.assert(U.isUndefined(obj[property]) || $.isFunction(obj[property]),
 					`The operation 'after' expects the property to be undefined or a function.`);
-			var that = this;
-			return function (...args) {
-				return P.resolve(value.apply(this, args)).then(function (promiseValue) {
-					return that.value.apply(this, [promiseValue].concat(args));
+			var partOne = obj[property] || (() => {});
+			var partTwo = this.value;
+			obj[property] = function (...args) {
+				return P.resolve(partOne.apply(this, args)).then(function (promiseValue) {
+					return partTwo.apply(this, [promiseValue].concat(args));
 				}.bind(this));
 			};
 		}
 	});
-	addCompositionRule('after', 'replace', (d1, d2) => new Delta.Replace(d2.value));
-	addCompositionRule('after', 'remove', (d1, d2) => new Delta.Forbid());
+	addCompositionRule('after', 'replace', (d1, d2) => new opTypes['replace'].Delta(d2.value));
+	addCompositionRule('after', 'remove', (d1, d2) => new opTypes['forbid'].Delta());
 	addCompositionRule('add', 'after', (d1, d2) => {
 		U.assert($.isUndefined(d1.value) || $.isFunction(d1.value),
 				`The operation 'after' expects the property it acts on to be undefined or a function.`);
-		return new Delta.add(d2.apply(d1.value));
+		return new opTypes['add'].Delta(d2.apply(d1.value));
 	});
-	addCompositionRule('remove', 'after', (d1, d2) => new Delta.Replace(d2.value));
+	addCompositionRule('remove', 'after', (d1, d2) => new opTypes['replace'].Delta(d2.value));
 	addCompositionRule('replace', 'after', (d1, d2) => {
 		U.assert($.isUndefined(d1.value) || $.isFunction(d1.value),
 				`The operation 'after' expects the property it acts on to be undefined or a function.`);
-		return new Delta.replace(d2.apply(d1.value));
+		return new opTypes['replace'].Delta(d2.apply(d1.value));
 	});
-	addCompositionRule('forbid', 'after', (d1, d2) => new Delta.After(d2.value));
-	addCompositionRule('insert', 'after', (d1, d2) => new Delta.Insert(d2.value));
-	addCompositionRule('after', 'insert', (d1, d2) => new Delta.After(d2.value));
+	addCompositionRule('forbid', 'after', (d1, d2) => new opTypes['after'].Delta(d2.value));
+	addCompositionRule('insert', 'after', (d1, d2) => new opTypes['insert'].Delta(d2.value));
+	addCompositionRule('after', 'insert', (d1, d2) => new opTypes['after'].Delta(d2.value));
 
 	// TODO: the above compositions of 'insert' and 'after' are not actually
 	//     : correct; not associative, in fact. Rather than collapsing them
 	//     : at this stage, a list of operations should be kept.
 
 	//
-	// return the delta classes
+	// return the modify delta class
 	//
-	return Delta;
+	return opTypes['modify'].Delta;
 
 });

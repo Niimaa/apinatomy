@@ -7,7 +7,7 @@ define(['jquery'], function ($) {
 		if: ['d3', 'three-d'],
 		after: ['d3', 'three-d'],
 
-		'modify circuitboard': {
+		'modify circuitboard.prototype': {
 
 			'after construct': function () {
 

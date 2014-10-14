@@ -24,7 +24,7 @@ define([
 		name: 'position-tracking',
 		after: ['circuitboard-core', 'tilemap-core', 'tile-core'],
 
-		'modify circuitboard': {
+		'modify circuitboard.prototype': {
 			'add _p_tilePosition_offset': null,
 			'insert construct': function () {
 				this._p_tilePosition_offset = U.cached({
@@ -57,7 +57,7 @@ define([
 			}
 		},
 
-		'modify tilemap': {
+		'modify tilemap.prototype': {
 			'insert construct': function () {
 				var _offset = U.cached({
 					retrieve: () => this.element.offset(),
@@ -88,7 +88,7 @@ define([
 			}
 		},
 
-		'modify tile': {
+		'modify tile.prototype': {
 			'add _p_positionTracking_offset': null,
 			'add _p_positionTracking_size': null,
 			'add resetPositioning': function () {

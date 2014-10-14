@@ -6,7 +6,7 @@ define(['jquery', './p-tile-hidden.scss'], function ($) {
 		require: ['tile-open', 'tile-weight'],
 		after: ['tile-open', 'tile-weight'],
 
-		'modify tile': {
+		'modify tile.prototype': {
 
 			'add _p_tileHidden': false,
 

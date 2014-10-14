@@ -13,9 +13,9 @@ define([
 		require: ['position-tracking'],
 		after: ['circuitboard-core', 'tilemap-core', 'tile-core', 'position-tracking'],
 
-		'add d3Force': null,
+		'modify circuitboard.prototype': {
 
-		'modify circuitboard': {
+			'add d3Force': null,
 
 			'add _p_d3_vertices': {},
 			'add _p_d3_edges': {},

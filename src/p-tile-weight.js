@@ -5,7 +5,7 @@ define(['jquery', './util/handle-premature-plugins.js'], function ($) {
 		name: 'tile-weight',
 		after: ['tile-core'],
 
-		'modify tile': {
+		'modify tile.prototype': {
 
 			'add _p_tileWeight_weight': 1,
 

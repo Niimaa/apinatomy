@@ -34,7 +34,7 @@ define([
 		require: ['tile-weight', 'tile-open', 'position-tracking'],
 		after: ['tile-weight', 'tile-open', 'position-tracking'],
 
-		'modify tile': {
+		'modify tile.prototype': {
 
 			'add enableDynamicFontSizing': function () {
 				var setHeaderFontSize = (size) => {

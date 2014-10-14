@@ -10,8 +10,7 @@ define([
 	$.circuitboard.plugin({
 		name: 'circuitboard-core',
 		if: true,
-		'modify circuitboard': {
-
+		'modify circuitboard.prototype': {
 			'add _p_circuitboardCore_tilesByModelId': {},
 
 			'add _registerTile': function _registerTile(tile) { // used by tiles

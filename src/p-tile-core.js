@@ -9,7 +9,7 @@ define([
 	$.circuitboard.plugin({
 		name: 'tile-core',
 		if: true,
-		'modify tile': {
+		'modify tile.prototype': {
 
 			'add _p_tileCore_tilemap': null,
 
@@ -40,6 +40,7 @@ define([
 					});
 				});
 				this.element.clickNotDrop((event) => {
+					event.stopPropagation();
 					this.trigger('click-not-drop', event);
 				});
 

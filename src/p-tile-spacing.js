@@ -5,7 +5,7 @@ define(['jquery', './util/handle-premature-plugins.js'], function ($) {
 		name: 'tile-spacing',
 		after: ['tilemap-core'],
 
-		'modify tilemap': {
+		'modify tilemap.prototype': {
 			//
 			// reset the tile-spacing in the DOM
 			//
