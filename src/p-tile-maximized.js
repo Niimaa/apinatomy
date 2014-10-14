@@ -1,45 +1,45 @@
 define(['jquery', './p-tile-maximized.scss'], function ($) {
 	'use strict';
 
-	$.circuitboard.plugin({
+	var plugin = $.circuitboard.plugin({
 		name: 'tile-maximized',
 		require: ['tile-hidden'],
-		after: ['tile-hidden'],
+		after: ['tile-hidden']
+	}).modify('tile.prototype');
 
-		'modify tile.prototype': {
+	//
+	// allows a tile to be `maximized` (by hiding all other tiles)
+	//
+	plugin.insert('construct', function () {
+		this._p_tileMaximized = false;
 
-			'add _p_tileMaximized': false,
+		Object.defineProperty(this, 'maximized', {
+			get() {
+				return this._p_tileMaximized;
+			},
+			set(newMaximized) {
+				if (newMaximized === this._p_tileMaximized) { return }
 
-			'insert construct': function () {
+				this._p_tileMaximized = newMaximized;
 
-				Object.defineProperty(this, 'maximized', {
-					get() {
-						return this._p_tileMaximized;
-					},
-					set(newMaximized) {
-						if (newMaximized === this._p_tileMaximized) { return }
-
-						this._p_tileMaximized = newMaximized;
-
-						if (newMaximized) {
-							this.element.addClass('maximized')
-								.parent().addClass('maximized');
-							this.closestAncestorByType('tilemap').tiles.forEach((sibling) => {
-								if (sibling === this) { return }
-								sibling.hidden = true;
-							});
-						} else if (!newMaximized) {
-							this.element.removeClass('maximized')
-								.parent().removeClass('maximized');
-							this.closestAncestorByType('tilemap').tiles.forEach((sibling) => {
-								if (sibling === this) { return }
-								sibling.hidden = false;
-							});
-						}
-					}
-				});
-
+				if (newMaximized) {
+					this.element.addClass('maximized')
+							.parent().addClass('maximized');
+					this.closestAncestorByType('tilemap').tiles.forEach((sibling) => {
+						if (sibling === this) { return }
+						sibling.hidden = true;
+					});
+				} else if (!newMaximized) {
+					this.element.removeClass('maximized')
+							.parent().removeClass('maximized');
+					this.closestAncestorByType('tilemap').tiles.forEach((sibling) => {
+						if (sibling === this) { return }
+						sibling.hidden = false;
+					});
+				}
 			}
-		}
+		});
+
 	});
+
 });

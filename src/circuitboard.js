@@ -59,12 +59,6 @@ define([
 	};
 
 	//
-	// fetch plugins that were already loaded and register them
-	//
-	($.circuitboard.prematurePlugins || []).forEach($.circuitboard.plugin);
-	delete $.circuitboard.prematurePlugins;
-
-	//
 	// return the static `$.circuitboard` object,
 	// through which plugins can be applied and selected
 	//

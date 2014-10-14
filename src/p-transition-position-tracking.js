@@ -1,31 +1,26 @@
 define([
 	'jquery',
-	'./util/misc.js',
-	'./util/handle-premature-plugins.js'
+	'./util/misc.js'
 ], function ($, U) {
 	'use strict';
 
-	//
-	// this plugin makes sure that positioning is updated during
-	// CSS3 transition animations
-	//
-	$.circuitboard.plugin({
+	var plugin = $.circuitboard.plugin({
 		name: 'transition-position-tracking',
 		if: ['position-tracking', 'tile-grow-when-open'],
-		after: ['position-tracking', 'tile-grow-when-open'],
+		after: ['position-tracking', 'tile-grow-when-open']
+	}).modify('tile.prototype');
 
-		'modify tile.prototype': {
-			'insert construct': function () {
-
-				this.on('weight', () => {
-					var stopUpdatingPosition = U.eachAnimationFrame(() => { this.resetPositioning() });
-					this.element.one('transitionend', () => {
-						stopUpdatingPosition();
-					});
-				});
-
-			}
-		}
+	//
+	// make sure that positioning is updated during
+	// CSS3 transition animations
+	//
+	plugin.insert('construct', function () {
+		this.on('weight', () => {
+			setTimeout(() => {
+				var stopUpdatingPosition = U.eachAnimationFrame(() => { this.resetPositioning() });
+				this.element.one('transitionend', () => { stopUpdatingPosition() });
+			});
+		});
 	});
 
 });

@@ -1,28 +1,27 @@
-define(['jquery', './util/handle-premature-plugins.js'], function ($) {
+define(['jquery'], function ($) {
 	'use strict';
 
-	$.circuitboard.plugin({
+	var plugin = $.circuitboard.plugin({
 		name: 'tile-weight',
-		after: ['tile-core'],
+		after: ['tile-core']
+	}).modify('tile.prototype');
 
-		'modify tile.prototype': {
+	//
+	// gives tiles a `weight` which reflects the screen area they take up
+	// in relation to other tiles in the same tilemap
+	//
+	plugin.insert('construct', function () {
+		this._p_tileWeight_weight = 1;
 
-			'add _p_tileWeight_weight': 1,
-
-			'insert construct': function () {
-				//
-				// the 'weight' property
-				//
-				Object.defineProperty(this, 'weight', {
-					get() { return this._p_tileWeight_weight },
-					set(newWeight) {
-						if (newWeight === this._p_tileWeight_weight) { return }
-						this._p_tileWeight_weight = newWeight;
-						this.element.amyNestedFlexGrow(newWeight);
-						this.trigger('weight', newWeight);
-					}
-				});
+		// the 'weight' property
+		Object.defineProperty(this, 'weight', {
+			get() { return this._p_tileWeight_weight },
+			set(newWeight) {
+				if (newWeight === this._p_tileWeight_weight) { return }
+				this._p_tileWeight_weight = newWeight;
+				this.element.amyNestedFlexGrow(newWeight);
+				this.trigger('weight', newWeight);
 			}
-		}
+		});
 	});
 });

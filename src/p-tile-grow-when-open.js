@@ -1,30 +1,28 @@
 define([
 	'jquery',
-	'./util/handle-premature-plugins.js',
 	'./p-tile-grow-when-open.scss'
 ], function ($) {
 	'use strict';
 
-	$.circuitboard.plugin({
+	var plugin = $.circuitboard.plugin({
 		name: 'tile-grow-when-open',
 		require: ['tile-open', 'tile-weight'],
-		after: ['tile-open', 'tile-weight'],
+		after: ['tile-open', 'tile-weight']
+	}).modify('tile.prototype');
 
-		'modify tile.prototype': {
+	//
+	// default weights for open / closed tiles
+	//
+	plugin.add('weightWhenOpen', function () { return this.circuitboard.options.weightWhenOpen || 2 });
+	plugin.add('weightWhenClosed', () => 1);
 
-			'add weightWhenOpen': function () { return this.circuitboard.options.weightWhenOpen || 2 },
-
-			'add weightWhenClosed': () => 1,
-
-			'insert construct': function () {
-				//
-				// react to a tile opening or closing
-				// by changing its weight accordingly
-				//
-				this.on('open', (open) => {
-					this.weight = (open ? this.weightWhenOpen() : this.weightWhenClosed());
-				});
-			}
-		}
+	//
+	// react to a tile opening or closing
+	// by changing its weight accordingly
+	//
+	plugin.insert('construct', function () {
+		this.on('open', (open) => {
+			this.weight = (open ? this.weightWhenOpen() : this.weightWhenClosed());
+		});
 	});
 });

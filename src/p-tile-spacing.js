@@ -1,26 +1,24 @@
-define(['jquery', './util/handle-premature-plugins.js'], function ($) {
+define(['jquery'], function ($) {
 	'use strict';
 
-	$.circuitboard.plugin({
+	var plugin = $.circuitboard.plugin({
 		name: 'tile-spacing',
-		after: ['tilemap-core'],
+		after: ['tilemap-core']
+	}).modify('tilemap.prototype');
 
-		'modify tilemap.prototype': {
-			//
-			// reset the tile-spacing in the DOM
-			//
-			'add refreshTileSpacing': function () {
-				this.element.css('margin', this.circuitboard.options.tilemapMargin);
-				this.element.children().css('margin-bottom', this.circuitboard.options.tileSpacing);
-				this.element.children().children().css('margin-right', this.circuitboard.options.tileSpacing);
-			},
+	//
+	// reset the tile-spacing in the DOM
+	//
+	plugin.add('refreshTileSpacing', function () {
+		this.element.css('margin', this.circuitboard.options.tilemapMargin);
+		this.element.children().css('margin-bottom', this.circuitboard.options.tileSpacing);
+		this.element.children().children().css('margin-right', this.circuitboard.options.tileSpacing);
+	});
 
-			//
-			// refresh tile-spacing after tiles are refreshed
-			//
-			'after refreshTiles': function () {
-				this.refreshTileSpacing();
-			}
-		}
+	//
+	// refresh tile-spacing after tiles are refreshed
+	//
+	plugin.after('refreshTiles', function () {
+		this.refreshTileSpacing();
 	});
 });

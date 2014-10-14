@@ -1,18 +1,20 @@
-define(['jquery', './util/handle-premature-plugins.js'], function ($) {
+define(['jquery'], function ($) {
 	'use strict';
 
-	$.circuitboard.plugin({
+	var plugin = $.circuitboard.plugin({
 		name: 'tile-click-to-open',
 		require: ['tile-open'],
-		after: ['tile-open'],
-
-		'modify tile.prototype': {
-			'insert construct': function () {
-				this.on('click-not-drop', function (event) {
-					if (event.which !== 1) { return }
-					this.open = !this.open;
-				});
-			}
-		}
+		after: ['tile-open']
 	});
+
+	//
+	// When a tile is clicked, it is opened/closed.
+	//
+	plugin.insert('tile.prototype.construct', function () {
+		this.on('click-not-drop', function (event) {
+			if (event.which !== 1) { return }
+			this.open = !this.open;
+		});
+	});
+
 });
