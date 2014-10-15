@@ -20,7 +20,9 @@ This library depends on
 
 `apinatomy-core` is available as a [Bower](http://bower.io/) package, installed as follows:
 
-    bower install apinatomy-core
+```shell
+bower install apinatomy-core
+```
 
 *Warning: At this very moment, the package is not yet available on Bower or NPM.
  If you happen to read this message, check back tomorrow.*
@@ -29,7 +31,9 @@ This library depends on
 
 `apinatomy-core` is available as an [NPM](https://www.npmjs.org) package, installed as follows:
 
-    npm install apinatomy-core
+```shell
+npm install apinatomy-core
+```
 
 *Warning: At this very moment, the package is not yet available on Bower or NPM.
  If you happen to read this message, check back tomorrow.*
@@ -53,21 +57,25 @@ Check out the files in the `example` folder to see these files in use.
 
 This is how to use the HTML `<script>` tag to import the library:
 
-    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
-    <script src="lib/apinatomy-core/dist/circuitboard.min.js"></script>
+```html
+<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
+<script src="lib/apinatomy-core/dist/circuitboard.min.js"></script>
+```
 
 ### Instantiating a circuit-board
 
 Then, an existing element can be turned into a circuit-board as follows:
 
-    <div id="my-circuitboard"></div>
+```html
+<div id="my-circuitboard"></div>
 
-    <script>
-        $('#my-circuitboard').circuitboard({
-            // options
-        });
-    </script>
+<script>
+    $('#my-circuitboard').circuitboard({
+        // options
+    });
+</script>
+```
 
 **However, before you get something useful from this, two extra ingredients are needed:
   a *model* and a set of *plugins*.**
@@ -93,9 +101,11 @@ send a server request, or attempt to load the data from disk.
 
 A model is loaded into the circuit-board by use of an option:
 
-    $('#my-circuitboard').circuitboard({
-        model: myModel
-    });
+```javascript
+$('#my-circuitboard').circuitboard({
+    model: myModel
+});
+```
 
 Each model may be represented by zero or more tiles in the treemap. I'll repeat that:
 *zero or more tiles*. A model may never end up being displayed—by plugging in a filter
@@ -125,20 +135,24 @@ A plugin can be in one of three states:
 A plugin is *registered* when its `p-*.js` file is loaded. This can be as simple as
 loading it with a script-tag:
 
-    ...
-    <script src="lib/apinatomy-core/dist/circuitboard.min.js"></script>
-    <script src="lib/apinatomy-core/dist/p-tile-skin.min.js"></script>
-    <script src="lib/apinatomy-core/dist/p-tile-click-to-open.min.js"></script>
+```html
+...
+<script src="lib/apinatomy-core/dist/circuitboard.min.js"></script>
+<script src="lib/apinatomy-core/dist/p-tile-skin.min.js"></script>
+<script src="lib/apinatomy-core/dist/p-tile-click-to-open.min.js"></script>
+```
 
 Though more advanced module loaders such as RequireJS may also be used.
 Note that the plugin files must be loaded *after* `circuitboard.js`.
 
 Plugins can be explicitly *selected* by using the `$.circuitboard.plugin` function. For example:
 
-    $.circuitboard.plugin('tile-skin', 'tile-click-to-open');
-    $('$my-circuitboard').circuitboard({
-        model: myModel
-    });
+```javascript
+$.circuitboard.plugin('tile-skin', 'tile-click-to-open');
+$('$my-circuitboard').circuitboard({
+    model: myModel
+});
+```
 
 Note that plugins must be selected *before* any circuit-board artefact is instantiated.
 It should be one of the first things you do in your application.
@@ -161,12 +175,14 @@ so future versions will offer a way to simplify and/or automate loading the basi
 A plugin is a JavaScript object registered through the `$.circuitboard.plugin` function
 (this overloads the function that *selects* a plugin):
 
-    var plugin = $.circuitboard.plugin({
-        name:  'my-plugin',
-        if:    autoLoadingCondition,
-        requires: ['other-plugin-1', 'other-plugin-3']
-        after: ['other-plugin-1', 'other-plugin-2'],
-    });
+```javascript
+var plugin = $.circuitboard.plugin({
+    name:  'my-plugin',
+    if:    autoLoadingCondition,
+    requires: ['other-plugin-1', 'other-plugin-3']
+    after: ['other-plugin-1', 'other-plugin-2'],
+});
+```
 
 The meta-data properties shown above have the following meaning:
 
@@ -188,12 +204,14 @@ are internally instantiated with `new`. A plugin can modify these artefact class
 and to a granularity of any depth. For example, to add a new `refresh` method to `Circuitboard` instances,
 you could do the following:
 
-    var plugin = $.circuitboard.plugin({ /* meta-data (see above) */ });
+```javascript
+var plugin = $.circuitboard.plugin({ /* meta-data (see above) */ });
 
-    plugin.modify('Circuitboard').modify('prototype').add('refresh', function () {
-        this.doSomeRefreshingThing();
-        /* ... */
-    });
+plugin.modify('Circuitboard').modify('prototype').add('refresh', function () {
+    this.doSomeRefreshingThing();
+    /* ... */
+});
+```
 
 Note the method-chaining syntax being used here. `plugin`, here, is
 an object (called a 'delta') that can be used to specify modifications on any artefact and at
@@ -204,7 +222,9 @@ any level. `plugin.modify('Circuitboard')` is an object that can be used to modi
 
 The syntax above has a convenient shorthand:
 
-    plugin.add('Circuitboard.prototype.refresh', function () { /* ... */ });
+```javascript
+plugin.add('Circuitboard.prototype.refresh', function () { /* ... */ });
+```
 
 > The dot-notation is a shorthand for inserting a number of chained `modify` operations.
 
@@ -221,21 +241,23 @@ In those regards, `modify` is special. But there are a number of other available
 
 Here is a short example, which also shows an alternative syntax for specifying operations:
 
-    $.circuitboard.plugin({
-        name: 'click-to-maximize',
-        after: ['tile-maximize'],
-
-        'modify Tile.prototype': {
-            'add ensureMaximization': function () {
-                this.maximized = true;
-            },
-            'after construct': function () {
-                this.on('click', function () {
-                    this.ensureMaximization();
-                });
-            }
+```javascript
+$.circuitboard.plugin({
+    name: 'click-to-maximize',
+    after: ['tile-maximize'],
+    
+    'modify Tile.prototype': {
+        'add ensureMaximization': function () {
+            this.maximized = true;
+        },
+        'after construct': function () {
+            this.on('click', function () {
+                this.ensureMaximization();
+            });
         }
-    });
+    }
+});
+```
 
 > Inside a 'modify context' (including the main plugin object configuration object),
 > nested objects with `<operation> <propertyName>` may be used to specify operations
