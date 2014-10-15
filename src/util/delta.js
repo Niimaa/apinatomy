@@ -256,8 +256,8 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js'], fun
 			var partOne = obj[property];
 			var partTwo = this.value;
 			obj[property] = function (...args) {
-				return P.resolve(partOne.apply(this, args)).then(function (promiseValue) {
-					return partTwo.apply(this, [promiseValue].concat(args));
+				return P.resolve(partOne.apply(this, args)).then(function () {
+					return partTwo.apply(this, args);
 				}.bind(this));
 			};
 		}
