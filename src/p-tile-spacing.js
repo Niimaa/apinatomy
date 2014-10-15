@@ -4,7 +4,7 @@ define(['jquery'], function ($) {
 	var plugin = $.circuitboard.plugin({
 		name: 'tile-spacing',
 		after: ['tilemap-core']
-	}).modify('tilemap.prototype');
+	}).modify('Tilemap.prototype');
 
 	//
 	// reset the tile-spacing in the DOM

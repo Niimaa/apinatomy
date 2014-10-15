@@ -10,7 +10,7 @@ define([
 	var plugin = $.circuitboard.plugin({
 		name: 'tilemap-core',
 		if: true
-	}).modify('tilemap.prototype');
+	}).modify('Tilemap.prototype');
 
 	//
 	// populate the tilemap by consulting the model

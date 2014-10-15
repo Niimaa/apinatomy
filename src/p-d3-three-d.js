@@ -5,7 +5,7 @@ define(['jquery'], function ($) {
 		name: 'd3-three-d',
 		if: ['d3', 'three-d'],
 		after: ['d3', 'three-d']
-	}).modify('circuitboard.prototype');
+	}).modify('Circuitboard.prototype');
 
 	//
 	// while dragging a vertex, lock the 3D camera

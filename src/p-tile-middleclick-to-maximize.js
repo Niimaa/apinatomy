@@ -5,7 +5,7 @@ define(['jquery'], function ($) {
 		name: 'tile-middleclick-to-maximize',
 		require: ['tile-maximized'],
 		after: ['tile-maximized']
-	}).modify('tile.prototype');
+	}).modify('Tile.prototype');
 
 	//
 	// allows a tile to be maximized by middle-clicking on it

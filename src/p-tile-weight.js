@@ -4,7 +4,7 @@ define(['jquery'], function ($) {
 	var plugin = $.circuitboard.plugin({
 		name: 'tile-weight',
 		after: ['tile-core']
-	}).modify('tile.prototype');
+	}).modify('Tile.prototype');
 
 	//
 	// gives tiles a `weight` which reflects the screen area they take up

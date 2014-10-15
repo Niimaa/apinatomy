@@ -8,7 +8,7 @@ define([
 		name: 'ppi',
 		after: ['d3'],
 		require: ['d3']
-	}).modify('tile.prototype');
+	}).modify('Tile.prototype');
 
 	//
 	// TODO: implement this properly; this is just for testing purposes

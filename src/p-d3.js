@@ -11,7 +11,7 @@ define([
 		name: 'd3',
 		require: ['position-tracking'],
 		after: ['circuitboard-core', 'tilemap-core', 'tile-core', 'position-tracking']
-	}).modify('circuitboard.prototype');
+	}).modify('Circuitboard.prototype');
 
 	plugin.insert('construct', function () {
 		this._p_d3_vertices = {};

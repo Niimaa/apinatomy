@@ -4,13 +4,13 @@ define(['jquery', './util/misc.js'], function ($, U) {
 	var plugin = $.circuitboard.plugin({
 		name: 'tile-active',
 		after: ['tile-core']
-	});
+	}).modify('Tile.prototype');
 
 	//
 	// For all tiles that share the same model, only one can be `active`.
 	// If one of them is visible, one of them is active.
 	//
-	plugin.insert('tile.prototype.construct', function () {
+	plugin.insert('construct', function () {
 
 		// only interesting if the tile has a model
 		if (!this.model) { return }

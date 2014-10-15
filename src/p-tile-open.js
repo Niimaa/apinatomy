@@ -4,7 +4,7 @@ define(['jquery'], function ($) {
 	var plugin = $.circuitboard.plugin({
 		name: 'tile-open',
 		after: ['tile-core']
-	}).modify('tile.prototype');
+	}).modify('Tile.prototype');
 
 	//
 	// allow a tile to be `open` (or closed)

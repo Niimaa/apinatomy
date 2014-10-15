@@ -12,7 +12,7 @@ define([
 		name: 'tile-skin',
 		require: ['tile-weight', 'tile-open', 'position-tracking'],
 		after: ['tile-weight', 'tile-open', 'position-tracking']
-	}).modify('tile.prototype');
+	}).modify('Tile.prototype');
 
 	//
 	// tile styling defaults generator

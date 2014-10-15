@@ -8,7 +8,7 @@ define([
 		name: 'tile-grow-when-open',
 		require: ['tile-open', 'tile-weight'],
 		after: ['tile-open', 'tile-weight']
-	}).modify('tile.prototype');
+	}).modify('Tile.prototype');
 
 	//
 	// default weights for open / closed tiles

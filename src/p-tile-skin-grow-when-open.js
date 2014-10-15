@@ -8,7 +8,7 @@ define([
 		name: 'tile-skin-grow-when-open',
 		if: ['tile-skin', 'tile-grow-when-open'],
 		after: ['tile-skin', 'tile-grow-when-open']
-	}).modify('tile.prototype');
+	}).modify('Tile.prototype');
 
 	//
 	// react to a tile opening or closing by

@@ -83,7 +83,7 @@ define(['jquery', 'bluebird', './misc.js'], function ($, P, U) {
 	// a function to create an apinatomy component (widget)
 	// as a jQuery element plugin; this is returned from the module
 	//
-	function amyWidget(name, optionDefaults) {
+	function amyWidget(typeName, optionDefaults) {
 		//
 		// the specific widget class
 		//
@@ -104,7 +104,7 @@ define(['jquery', 'bluebird', './misc.js'], function ($, P, U) {
 
 			//// cache a reference to the circuitboard (it is used often)
 			Object.defineProperty(this, 'circuitboard', {
-				get() { return this.closestAncestorByType('circuitboard') }
+				get() { return this.closestAncestorByType('Circuitboard') }
 			});
 
 			//// wait for something before construction (like plugins)?
@@ -128,18 +128,19 @@ define(['jquery', 'bluebird', './misc.js'], function ($, P, U) {
 		};
 
 		defineDefaultProperties(Widget.prototype);
-		defineHierarchyMethods(Widget.prototype, name);
+		defineHierarchyMethods(Widget.prototype, typeName);
 
 		//
 		// now define the widget creation & retrieval function as a jQuery plugin
 		//
-		$.fn[name] = function (options) {
+		var lowercaseName = typeName[0].toLowerCase() + typeName.slice(1);
+		$.fn[lowercaseName] = function (options) {
 			//// if the word 'instance' is passed, return the (already created) widget promise
-			if (options === 'instance') { return this.data(`-amy-${name}`) }
+			if (options === 'instance') { return this.data(`-amy-${lowercaseName}`) }
 
 			//// else, create a new widget and set a promise to it
 			var newWidget = new Widget({ options: options, element: this });
-			this.data(`-amy-${name}`, newWidget.constructed);
+			this.data(`-amy-${lowercaseName}`, newWidget.constructed);
 
 			//// return the jQuery element instance, by jQuery convention
 			return this;

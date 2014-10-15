@@ -5,7 +5,7 @@ define(['jquery', './p-tile-maximized.scss'], function ($) {
 		name: 'tile-maximized',
 		require: ['tile-hidden'],
 		after: ['tile-hidden']
-	}).modify('tile.prototype');
+	}).modify('Tile.prototype');
 
 	//
 	// allows a tile to be `maximized` (by hiding all other tiles)
@@ -25,14 +25,14 @@ define(['jquery', './p-tile-maximized.scss'], function ($) {
 				if (newMaximized) {
 					this.element.addClass('maximized')
 							.parent().addClass('maximized');
-					this.closestAncestorByType('tilemap').tiles.forEach((sibling) => {
+					this.closestAncestorByType('Tilemap').tiles.forEach((sibling) => {
 						if (sibling === this) { return }
 						sibling.hidden = true;
 					});
 				} else if (!newMaximized) {
 					this.element.removeClass('maximized')
 							.parent().removeClass('maximized');
-					this.closestAncestorByType('tilemap').tiles.forEach((sibling) => {
+					this.closestAncestorByType('Tilemap').tiles.forEach((sibling) => {
 						if (sibling === this) { return }
 						sibling.hidden = false;
 					});

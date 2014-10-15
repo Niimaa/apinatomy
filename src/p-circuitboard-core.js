@@ -9,7 +9,7 @@ define([
 	var plugin = $.circuitboard.plugin({
 		name: 'circuitboard-core',
 		if: true
-	}).modify('circuitboard.prototype');
+	}).modify('Circuitboard.prototype');
 
 	plugin.add('_registerTile', function _registerTile(tile) { // used by tiles
 		if (!this._p_circuitboardCore_tilesByModelId[tile.model.id]) {

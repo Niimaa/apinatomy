@@ -5,7 +5,7 @@ define(['jquery'], function ($) {
 		name: 'tile-open-active',
 		if: ['tile-open', 'tile-active'],
 		after: ['tile-open', 'tile-active']
-	}).modify('tile.prototype');
+	}).modify('Tile.prototype');
 
 	//
 	// makes a tile active when it is open,

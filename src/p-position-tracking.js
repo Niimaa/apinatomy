@@ -24,7 +24,7 @@ define([
 		after: ['circuitboard-core', 'tilemap-core', 'tile-core']
 	});
 
-	plugin.insert('circuitboard.prototype.construct', function () {
+	plugin.insert('Circuitboard.prototype.construct', function () {
 		this._p_tilePosition_offset = U.cached({
 			retrieve: () => this.element.offset()
 		});
@@ -54,7 +54,7 @@ define([
 		_size.onChange((newSize) => { this.trigger('size', newSize) });
 	});
 
-	plugin.insert('tilemap.prototype.construct', function () {
+	plugin.insert('Tilemap.prototype.construct', function () {
 		var _offset = U.cached({
 			retrieve: () => this.element.offset(),
 			isEqual: posEqual
@@ -82,7 +82,7 @@ define([
 		_size.onChange((newSize) => { this.trigger('size', newSize) });
 	});
 
-	plugin.modify('tile.prototype')
+	plugin.modify('Tile.prototype')
 	.add('resetPositioning', function () {
 		this._p_positionTracking_offset();
 		this._p_positionTracking_size();

@@ -8,7 +8,7 @@ define([
 		name: 'transition-position-tracking',
 		if: ['position-tracking', 'tile-grow-when-open'],
 		after: ['position-tracking', 'tile-grow-when-open']
-	}).modify('tile.prototype');
+	}).modify('Tile.prototype');
 
 	//
 	// make sure that positioning is updated during

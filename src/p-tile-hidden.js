@@ -5,7 +5,7 @@ define(['jquery', './p-tile-hidden.scss'], function ($) {
 		name: 'tile-hidden',
 		require: ['tile-open', 'tile-weight'],
 		after: ['tile-open', 'tile-weight']
-	}).modify('tile.prototype');
+	}).modify('Tile.prototype');
 
 	//
 	// allows a tile to be `hidden`

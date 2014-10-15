@@ -43,7 +43,7 @@ define([
 		name: 'three-d',
 		require: ['position-tracking'],
 		after: ['position-tracking']
-	}).modify('circuitboard.prototype');
+	}).modify('Circuitboard.prototype');
 
 	//
 	// the constructor is run once to initialize potential 3D-ness

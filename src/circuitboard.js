@@ -15,22 +15,22 @@ define([
 
 	//
 	// create and register the three types of widget:
-	// circuitboard, tilemap and tile
+	// Circuitboard, tilemap and tile
 	//
 	var widgetArtefacts = {
-		circuitboard: amyWidget('circuitboard', {
+		Circuitboard: amyWidget('Circuitboard', {
 			beforeConstruction: beforeConstruction.promise,
 			cssClass: "circuitboard",
 			filter: ()=>P.resolve(true),
 			model: null
 		}),
-		tilemap: amyWidget('tilemap', {
+		Tilemap: amyWidget('Tilemap', {
 			beforeConstruction: beforeConstruction.promise,
 			cssClass: "tilemap",
 			model: null,
 			_circuitboard: null
 		}),
-		tile: amyWidget('tile', {
+		Tile: amyWidget('Tile', {
 			beforeConstruction: beforeConstruction.promise,
 			cssClass: 'tile',
 			model: null,

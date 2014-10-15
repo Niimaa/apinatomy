@@ -8,7 +8,7 @@ define([
 	var plugin = $.circuitboard.plugin({
 		name: 'tile-core',
 		if: true
-	}).modify('tile.prototype');
+	}).modify('Tile.prototype');
 
 	plugin.add('populateInnerTilemap', function populateInnerTilemap() {
 		if (!this._p_tileCore_tilemap) {
