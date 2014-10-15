@@ -83,9 +83,9 @@ a JavaScript object with the following members:
 *  A method `getChildIds()` which returns
    (a [promise](https://github.com/petkaantonov/bluebird#what-are-promises-and-why-should-i-use-them) of)
    an array of identifiers, representing the direct children of this model.
-*  A method `getChildren(ids)` which takes an array of identifiers, and returns
-   (a promise of) an array filled with (promises of) the corresponding child models.
-   Each child model again needs to satisfy these three properties.
+*  A method `getModels(ids)` which takes an array of identifiers, and returns
+   (a promise of) an array filled with (promises of) the corresponding models.
+   Each model again needs to satisfy these three properties.
 
 ApiNATOMY allows these methods to return promises (rather than immediate data) because
 the process of retrieving such data is likely to be asynchronous. For example, it may
@@ -105,119 +105,149 @@ the same `id`*. In other words, it is expected that the model implementation tak
 of merging identical models into a single JavaScript object. (In the future, a caching
 layer will be made available which can take care of this for you.)
 
-Certain plugins may require other properties of a model. For example, the `tileskin` plugin
+Certain plugins may require other properties of a model. For example, the `tile-skin` plugin
 looks for a `name` property to display in the tile, and a `css` property to apply
 customizable styling. But… what are plugins?
 
 ## Using Plugins
 
-The bare `circuitboard.js` widget creates some HTML to represent the top level
-tiles, but otherwise does very little—not even load internal tiles. It is a minimal
-core, meant to be extended by plugins before it will do any cool stuff. A number of
-fundamental plugins are supplied with the core, `tile-skin` and `tile-click-to-open`
-being basic examples.
+The bare `circuitboard.js` widget does almost nothing, except create some
+variation points where plugins can hook in. In ApiNATOMY, everything is plugins.
+A number of fundamental plugins are supplied with the core, `tile-skin` and
+`tile-click-to-open` being basic examples.
 
-Plugins should be selected before any circuit-board is instantiated. For example:
+A plugin can be in one of three states:
+
+1. *registered*, which means that the plugin system is aware of the plugin, but not that it will necessarily be applied,
+2. *selected*, which means that it is chosen by the developer (either directly or indirectly) to be applied, and
+3. *applied*, which means that it is done loading, and the artefacts of ApiNATOMY now exhibit its features.
+
+A plugin is *registered* when its `p-*.js` file is loaded. This can be as simple as
+loading it with a script-tag:
+
+    ...
+    <script src="lib/apinatomy-core/dist/circuitboard.min.js"></script>
+    <script src="lib/apinatomy-core/dist/p-tile-skin.min.js"></script>
+    <script src="lib/apinatomy-core/dist/p-tile-click-to-open.min.js"></script>
+
+Though more advanced module loaders such as RequireJS may also be used.
+Note that the plugin files must be loaded *after* `circuitboard.js`.
+
+Plugins can be explicitly *selected* by using the `$.circuitboard.plugin` function. For example:
 
     $.circuitboard.plugin('tile-skin', 'tile-click-to-open');
     $('$my-circuitboard').circuitboard({
         model: myModel
     });
 
-At this point, it is assumed that those plugins are already registered by loading their
-respective JavaScript files. This is explained in the next section.
+Note that plugins must be selected *before* any circuit-board artefact is instantiated.
+It should be one of the first things you do in your application.
 
 The `tile-skin` plugin gives the tiles a more comfortable look and feel, and differentiates
-between the style of an open tile and a closed tile. `tile-click-to-open` actually allows
-you to open tiles by clicking on them.
+between the style of an open tile and a closed tile. `tile-click-to-open` allows
+you to open tiles by clicking on them. Comprehensive descriptions of the other standard
+plugins are forthcoming.
 
 The plugin system allows ApiNATOMY to be only as big and complicated as you need, and
 avoids mixing up concerns inside the code-base. As a result, it will be a lot easier
 to extend ApiNATOMY to support new features.
 
 There will be many more plugins for basic functionality, as it has become the main way
-of implementing new features. Future versions will see a way to simplify and/or
-automate loading the basic stuff.
+of implementing new features. It can become tedious to load all of these manually,
+so future versions will offer a way to simplify and/or automate loading the basic stuff.
 
 ## Developing Plugins
 
-A plugin is a JavaScript object registered through the `$.circuitboard.plugin` method
-(overloading the method that *selects* a plugin):
+A plugin is a JavaScript object registered through the `$.circuitboard.plugin` function
+(this overloads the function that *selects* a plugin):
 
-    $.circuitboard.plugin({
+    var plugin = $.circuitboard.plugin({
         name:  'my-plugin',
         if:    autoLoadingCondition,
+        requires: ['other-plugin-1', 'other-plugin-3']
         after: ['other-plugin-1', 'other-plugin-2'],
-
-        /* operations */
     });
 
-We'll look at each part of the object in a separate subsection.
+The meta-data properties shown above have the following meaning:
 
-| property | meaning
-| ------- | ---
-| `name`  | a unique identifier (a string) by which to refer to the plugin
-| `if`    | *(optional)* a condition under which the plugin will be loaded automatically (without explicitly selecting it). Use the value `true` to load the plugin unconditionally. Use an array of plugin names `['p-1', 'p-2']` to auto-load when each of those plugins is loaded too. Use a predicate function `function (others) { /*...*/ }` for full flexibility. It receives an object which maps names of plugins that are being loaded to `true`, and should return `true` to auto-load or `false` not to.
-| `after` | *(optional)* an array of plugin names. Each of them is guaranteed to be loaded before this plugin, if they are loaded at all. That way, this new plugin can expand upon their functionality.
+| property   | meaning
+| -------    | ---
+| `name`     | an identifier (a string) by which to refer to the plugin. No two plugins may have the same name.
+| `if`       | *(optional)* a condition under which the plugin will be automatically selected . Use the value `true` to load the plugin unconditionally. Use an array of plugin names `['p-1', 'p-2']` to auto-load when each of those plugins is also selected. Use a predicate function `function (others) { /*...*/ }` for full flexibility. It receives an object which maps names of plugins that are being loaded to `true`, and should return `true` to auto-load or `false` not to.
+| `requires` | *(optional)* an array of plugin names. Each of them is automatically selected when this plugin is selected.
+| `after`    | *(optional)* an array of plugin names. Each of them, if loaded at all, is guaranteed to be loaded *before* this plugin. That way, this plugin can depend and extend upon their functionality.
 
 The *operations*, which actually implement the plugin, deserve a separate subsection.
 
 ### Plugin Operations
 
-Plugins modify the main ApiNATOMY components on a code level, by what is called *invasive composition*.
-At the top level, a plugin specifies one or more main components to modify. There are currently three
-components: `circuitboard`, `tilemap` and `tile`. To modify both tiles and tilemaps, the top level
-will look something like this:
+Plugins modify the main ApiNATOMY artefacts on a code level (by something called *invasive composition*).
+At the top level, a plugin specifies one or more artefacts to modify. There are currently three
+types of artefact: `Circuitboard`, `Tilemap` and `Tile`. These can be seen as 'JavaScript classes', and
+are internally instantiated with `new`. A plugin can modify these artefact classes in any number of ways,
+and to a granularity of any depth. For example, to add a new `refresh` method to `Circuitboard` instances,
+you could do the following:
 
-    $.circuitboard.plugin({
-        /* mata information (see above) */
+    var plugin = $.circuitboard.plugin({ /* meta-data (see above) */ });
 
-        'modify tile':    { /* details */ },
-        'modify tilemap': { /* details */ }
+    plugin.modify('Circuitboard').modify('prototype').add('refresh', function () {
+        this.doSomeRefreshingThing();
+        /* ... */
     });
 
-On the second level, a plugin can then `add`, `remove` and `replace` the properties of the component.
-For example:
+Note the method-chaining syntax being used here. `plugin`, here, is
+an object (called a 'delta') that can be used to specify modifications on any artefact and at
+any level. `plugin.modify('Circuitboard')` is an object that can be used to modify the
+`Circuitboard` class at that level, or any below. So:
+
+> The `modify` operation descends one level in the artefact hierarchy to specify more fine-grained modifications.
+
+The syntax above has a convenient shorthand:
+
+    plugin.add('Circuitboard.prototype.refresh', function () { /* ... */ });
+
+> The dot-notation is a shorthand for inserting a number of chained `modify` operations.
+
+In those regards, `modify` is special. But there are a number of other available operations:
+
+| operation | meaning
+| -------   | ---
+| `add`     | add a new key/value pair to an object. This assumes it is not already there.
+| `remove`  | remove a key/value pair from an object. This assumes it is there to be removed.
+| `replace` | the same as a `remove` followed by an `add`. So this assumes the key is present.
+| `forbid`  | the same as an `add` followed by a `remove`. So this is only an assertion that the given key is not present.
+| `insert`  | insert a a function to be run inside an existing method. This assumes the given key already has a function value. It keeps its function scope, so you can use plugin-local variables, and it receives the same arguments as the original function. It is guaranteed *not* to go 'inside' of another `insert`ed code-block, but no guarantees are made as to the order between such code-blocks.
+| `after`   | like `insert`, except that the inserted function is guaranteed to be run *after* the original function. It is aware of asynchronous operations by use of *promises*. If the original function returns a promise, the inserted function waits until that promise has been fulfilled.
+
+Here is a short example, which also shows an alternative syntax for specifying operations:
 
     $.circuitboard.plugin({
-        /* mata information (see above) */
+        name: 'click-to-maximize',
+        after: ['tile-maximize'],
 
-        'modify tile': {
-            'add     newField':  "value of newField",
-            'replace oldField1': "new value of oldField",
-            'remove  oldField2': true /* value unimportant */
-        }
-    });
-
-If a property happens to be a function, the `insert` and `after` operations are also available.
-
-`insert` adds additional code to be run by an existing function property, or creates that
-function property with the given code. This operation offers no guarantees as to the order
-in which such blocks of code are run.
-
-`after` actually runs the given code *after* the code already in the function is finished.
-It is aware of asynchronous operations by use of *promises*. If the old function returns a
-promise, the 'after' code actually waits to run until that promise is fulfilled. But you
-can safely use `after` without having to know about promises.
-
-    $.circuitboard.plugin({
-        /* mata information (see above) */
-
-        'modify tilemap': {
-            'insert constructor': function () {
-                /* run some code in the constructor */
+        'modify Tile.prototype': {
+            'add ensureMaximization': function () {
+                this.maximized = true;
             },
-            'add refreshTileSpacing': function () {
-                /* see 'p-tile-spacing.js' for a full implementation */
-            },
-            'after refreshTiles': function () {
-                this.refreshTileSpacing();
+            'after construct': function () {
+                this.on('click', function () {
+                    this.ensureMaximization();
+                });
             }
         }
     });
 
-The 'constructor' method is always present in a component, and is guaranteed to run for each
-component instance immediately after all plugins have been loaded.
+> Inside a 'modify context' (including the main plugin object configuration object),
+> nested objects with `<operation> <propertyName>` may be used to specify operations
+> instead of method-chaining. This is a matter of personal preference.
+
+The `after` operation can be very useful for asynchronous code, but as you can see,
+you can safely use `after` without having to know about promises.
+Have a look at `p-tile-spacing.js` for another good example of this.
+
+Every artefact prototype has a `construct` method, which is guaranteed to run for each
+artefact instance. It is common practice
+to `insert` or `after` initialization code directly into this method.
 
 To get a better intuition behind plugins, you are encouraged to look at the files in `src/`.
 All the ones that start with `p-` are plugins.
