@@ -1,5 +1,5 @@
 {
-	"external": true,
+	"type": "external-library",
 	"name": "jquery",
 	"var": "jQuery"
 }

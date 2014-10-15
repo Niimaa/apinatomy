@@ -1,16 +1,16 @@
 var fs = require('fs');
 var gulp = require('gulp'),
-    gutil = require('gulp-util'),
-    jshint = require('gulp-jshint'),
-	traceur = require('gulp-traceur'),
-	webpack = require('webpack'),
-	uglify = require('gulp-uglify'),
-	rename = require('gulp-rename'),
-	sass = require('gulp-sass'),
-	karma = require('gulp-karma'),
-	rimraf = require('rimraf'),
-	sourcemaps = require('gulp-sourcemaps'),
-	bump = require('gulp-bump');
+		gutil = require('gulp-util'),
+		jshint = require('gulp-jshint'),
+		traceur = require('gulp-traceur'),
+		webpack = require('webpack'),
+		uglify = require('gulp-uglify'),
+		rename = require('gulp-rename'),
+		sass = require('gulp-sass'),
+		karma = require('gulp-karma'),
+		rimraf = require('rimraf'),
+		sourcemaps = require('gulp-sourcemaps'),
+		bump = require('gulp-bump');
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -31,23 +31,23 @@ var MODULES = [];
 var EXTERNAL_MODULES = [];
 
 fs.readdirSync('./modules')
-	.map(function (filename) { return fs.readFileSync('./modules/'+filename) })
-	.map(JSON.parse)
-	.forEach(function (mod) {
-		if (mod.external) {
-			EXTERNAL_MODULES.push(externalModule(mod.name, mod.var));
-		} else {
-			MODULES.push(mod);
-		}
-	});
+		.map(function (filename) { return fs.readFileSync('./modules/'+filename) })
+		.map(JSON.parse)
+		.forEach(function (mod) {
+			if (mod.external || mod.type === 'external-library') {
+				EXTERNAL_MODULES.push(externalModule(mod.name, mod.var));
+			} else {
+				MODULES.push(mod);
+			}
+		});
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 gulp.task('lint', function () {
 	return gulp.src('src/**/*.js')
-		.pipe(jshint())
-		.pipe(jshint.reporter('jshint-stylish'))
-		.pipe(jshint.reporter('fail'));
+			.pipe(jshint())
+			.pipe(jshint.reporter('jshint-stylish'))
+			.pipe(jshint.reporter('fail'));
 });
 
 gulp.task('clean-tmp', function (callback) {
@@ -56,19 +56,19 @@ gulp.task('clean-tmp', function (callback) {
 
 gulp.task('traceur', ['clean-tmp', 'lint'], function () {
 	return gulp.src('src/**/*.js')
-		.pipe(sourcemaps.init())
-		.pipe(traceur({
-			script: true,
-			sourceMaps: true
-		}))
-		.on('error', logAndKeepGoing())
-		.pipe(sourcemaps.write())
-		.pipe(gulp.dest('.intermediate-output'));
+			.pipe(sourcemaps.init())
+			.pipe(traceur({
+				script: true,
+				sourceMaps: true
+			}))
+			.on('error', logAndKeepGoing())
+			.pipe(sourcemaps.write())
+			.pipe(gulp.dest('.intermediate-output'));
 });
 
-gulp.task('copy-styles', ['clean-tmp'], function () {
-	return gulp.src('src/**/*.scss')
-		.pipe(gulp.dest('.intermediate-output'));
+gulp.task('copy-non-js-files', ['clean-tmp'], function () {
+	return gulp.src(['src/**/*.scss', 'src/**/*.html'])
+			.pipe(gulp.dest('.intermediate-output'));
 });
 
 MODULES.forEach(function (m) {
@@ -81,49 +81,73 @@ MODULES.forEach(function (m) {
 			ownExternals.push(externalModule('./' + mExt.file));
 		}
 	});
-	gulp.task('webpack:' + m.name, ['traceur', 'copy-styles'], function (callback) {
-		webpack({
-			devtool: 'inline-source-map',
-			entry: './.intermediate-output/' + m.file,
-			output: {
-				path: './dist',
-				filename: m.file,
-				libraryTarget: 'umd',
-				sourceMapFilename: m.file+'.map'
-			},
-			externals: EXTERNAL_MODULES.concat(ownExternals),
-			module: {
-				preLoaders: [
-					{ test: /\/(?!addStyles)[^\/]+\.js$/, loader: "source-map" }
-				],
-				loaders: [
-					{ test: /\.scss$/, loader: "style!css!autoprefixer!sass" }
-				]
-			}
-		}, function webpackCallback(err, stats) {
+	gulp.task('webpack:' + m.name, ['traceur', 'copy-non-js-files'], function (callback) {
+		// output after Webpack does its thing
+		function webpackCallback(err, stats) {
 			if (err) { throw new gutil.PluginError('webpack', err) }
 			gutil.log(stats.toString({ colors: true }));
 			callback();
-		});
-	});
-	gulp.task('uglify:' + m.name, ['webpack:' + m.name], function () {
-		return gulp.src('dist/' + m.file)
-			.pipe(uglify())
-			.pipe(rename({suffix: '.min'}))
-			.pipe(gulp.dest('dist'));
-	});
-	gulp.task('build:' + m.name, ['webpack:' + m.name, 'uglify:' + m.name]);
-});
+		}
 
-gulp.task('sass', function () {
-	var stream = gulp.src(['example/**/*.scss']);
-	return stream.pipe(sass({ onError: logAndKeepGoing(stream) }))
-		.pipe(gulp.dest('example'));
+		if (m.type === 'internal-library') {
+			webpack({
+				devtool: 'inline-source-map',
+				entry: './.intermediate-output/' + m.file,
+				output: {
+					path: './dist',
+					filename: m.file,
+					libraryTarget: 'umd',
+					sourceMapFilename: m.file+'.map'
+				},
+				externals: EXTERNAL_MODULES.concat(ownExternals),
+				module: {
+					preLoaders: [
+						{ test: /\/(?!addStyles)[^\/]+\.js$/, loader: "source-map" }
+					],
+					loaders: [
+						{ test: /\.scss$/, loader: "style!css!autoprefixer!sass" }
+					]
+				}
+			}, webpackCallback);
+		} else if (m.type === 'application') {
+			webpack({
+				devtool: 'inline-source-map',
+				entry: './.intermediate-output/' + m.dir + '/' + m.file,
+				output: {
+					path: './dist/' + m.dir,
+					filename: m.file,
+					sourceMapFilename: m.file+'.map'
+				},
+				externals: EXTERNAL_MODULES.concat(ownExternals),
+				module: {
+					preLoaders: [
+						{ test: /\/(?!addStyles)[^\/]+\.js$/, loader: "source-map" }
+					],
+					loaders: [
+						{ test: /\.scss$/, loader: "style!css!autoprefixer!sass" }
+					]
+				}
+			}, webpackCallback);
+		}
+	});
+	if (m.type === 'application') {
+		gulp.task('copy-html:' + m.name, function () {
+			return gulp.src(['src/' + m.dir + '/*.html'])
+					.pipe(gulp.dest('dist/' + m.dir));
+		});
+		gulp.task('build:' + m.name, ['webpack:' + m.name, 'copy-html:' + m.name]);
+	} else {
+		gulp.task('uglify:' + m.name, ['webpack:' + m.name], function () {
+			return gulp.src('dist/**/' + m.file)
+					.pipe(uglify())
+					.pipe(rename({suffix: '.min'}))
+					.pipe(gulp.dest('dist'));
+		});
+		gulp.task('build:' + m.name, ['webpack:' + m.name, 'uglify:' + m.name]);
+	}
 });
 
 gulp.task('build', MODULES.map(function (mod) { return 'build:'+mod.name }));
-
-gulp.task('build:example', ['build', 'sass']);
 
 gulp.task('karma', ['build'], function () {
 	return gulp.src([
@@ -137,9 +161,7 @@ gulp.task('karma', ['build'], function () {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 gulp.task('watch', function () {
-	gulp.watch(['src/**/*.js'], ['build']);
-	gulp.watch(['src/**/*.scss'], ['build']);
-	gulp.watch(['example/**/*.scss'], ['sass']);
+	gulp.watch(['src/**/*.js', 'src/**/*.scss', 'src/**/*.html'], ['build']);
 });
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -147,11 +169,11 @@ gulp.task('watch', function () {
 ['major', 'minor', 'patch', 'prerelease'].forEach(function (type) {
 	gulp.task('bump:'+type, function () {
 		return gulp.src(['package.json', 'bower.json'])
-			.pipe(bump({ type: type }))
-			.pipe(gulp.dest('./'));
+				.pipe(bump({ type: type }))
+				.pipe(gulp.dest('./'));
 	});
 });
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-gulp.task('default', ['build:example', 'watch']);
+gulp.task('default', ['build', 'watch']);

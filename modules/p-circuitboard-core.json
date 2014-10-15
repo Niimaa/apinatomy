@@ -1,4 +1,5 @@
 {
+	"type": "internal-library",
 	"name": "p-circuitboard-core",
 	"file": "p-circuitboard-core.js"
 }

@@ -1,4 +1,5 @@
 {
+	"type": "internal-library",
 	"name": "p-tilemap-core",
 	"file": "p-tilemap-core.js"
 }
