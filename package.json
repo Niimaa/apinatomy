@@ -1,6 +1,6 @@
 {
 	"name": "apinatomy-core",
-	"version": "0.3.0",
+	"version": "0.4.0",
 	"description": "the core component (widget) of the ApiNATOMY circuit-board",
 	"main": "apinatomy.js",
 	"repository": "https://github.com/mhelvens/apinatomy-core.git",
@@ -39,6 +39,5 @@
 		"traceur": "^0.0.66",
 		"webpack": "^1.4.0-beta8"
 	},
-	"dependencies": {
-	}
+	"dependencies": {}
 }
