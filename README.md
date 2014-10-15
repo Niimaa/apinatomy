@@ -118,9 +118,9 @@ A number of fundamental plugins are supplied with the core, `tile-skin` and
 
 A plugin can be in one of three states:
 
-1. *registered*, which means that the plugin system is aware of the plugin, but not that it will necessarily be applied,
-2. *selected*, which means that it is chosen by the developer (either directly or indirectly) to be applied, and
-3. *applied*, which means that it is done loading, and the artefacts of ApiNATOMY now exhibit its features.
+1. *registered*, meaning the plugin system is aware of the plugin, but not that it will necessarily be applied,
+2. *selected*, meaning it is chosen by the developer (either directly or indirectly) to be applied, and
+3. *applied*, meaning it is done loading, and the artefacts of ApiNATOMY now exhibit its features.
 
 A plugin is *registered* when its `p-*.js` file is loaded. This can be as simple as
 loading it with a script-tag:
