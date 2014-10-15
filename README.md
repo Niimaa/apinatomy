@@ -24,9 +24,6 @@ This library depends on
 bower install apinatomy-core
 ```
 
-*Warning: At this very moment, the package is not yet available on Bower or NPM.
- If you happen to read this message, check back tomorrow.*
-
 ### Install using NPM
 
 `apinatomy-core` is available as an [NPM](https://www.npmjs.org) package, installed as follows:
@@ -34,10 +31,6 @@ bower install apinatomy-core
 ```shell
 npm install apinatomy-core
 ```
-
-*Warning: At this very moment, the package is not yet available on Bower or NPM.
- If you happen to read this message, check back tomorrow.*
-
 
 ## Usage
 
