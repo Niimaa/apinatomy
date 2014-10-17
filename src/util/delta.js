@@ -11,10 +11,7 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js'], fun
 	// a function to fully define a new delta operation type
 	//
 	function addOperationType({name, constructor: constructorFn, apply: applyFn, prototype, method}) {
-
-		//
 		// define the method for adding the new operation to a Modify delta
-		//
 		var objectWithMethod = {};
 		if (U.isDefined(method)) {
 			Object.defineProperty(objectWithMethod, name, {
@@ -29,14 +26,14 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js'], fun
 			});
 		}
 
-		//
-		// define the Delta class
-		//
+		// define the operation type
 		opTypes[name] = {
 			name: name,
 			Delta: constructorFn,
 			method: objectWithMethod[name]
 		};
+
+		// define the Delta class
 		$.extend(opTypes[name].Delta.prototype, prototype, {
 			constructor: constructorFn,
 			type: name,
@@ -64,9 +61,27 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js'], fun
 			}
 		});
 
-		//
 		// make the operation method available on the 'modify' delta (assumes that 'modify' is defined first)
-		//
+		opTypes['modify'].Delta.prototype[name] = opTypes[name].method;
+	}
+	function addOperationAlias({name, target, transform}) {
+
+		// define the method for adding the new operation to a Modify delta
+		var objectWithMethod = {};
+		Object.defineProperty(objectWithMethod, name, {
+			value(property, ...values) {
+				this._addOperation(opTypes[target], property, transform(values));
+				return this;
+			}
+		});
+
+		// define the operation type
+		opTypes[name] = {
+			name: name,
+			method: objectWithMethod[name]
+		};
+
+		// make the operation method available on the 'modify' delta (assumes that 'modify' is defined first)
 		opTypes['modify'].Delta.prototype[name] = opTypes[name].method;
 	}
 
@@ -214,38 +229,62 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js'], fun
 
 
 	//
-	// insert operation type
+	// 'alter' operation type
 	//
 	addOperationType({
-		name: 'insert',
-		constructor: function Insert(value) { this.value = value },
+		name: 'alter',
+		constructor: function Alter(value) { this.value = value || [] },
 		apply(obj, property) {
 			U.assert($.isFunction(obj[property]),
-					`The operation 'insert' expects the property to be a function.`);
-			var partOne = obj[property];
-			var partTwo = this.value;
-			obj[property] = function (...args) {
-				partOne.apply(this, args);
-				partTwo.apply(this, args);
-			};
+					`The operation 'alter' expects the property to be a function.`);
+			this.value.forEach((subOp) => {
+				var partOne = obj[property];
+				var partTwo = subOp.value;
+				if (subOp.type === 'prepend') {
+					obj[property] = function (...args) {
+						partTwo.apply(this, args);
+						partOne.apply(this, args);
+					};
+				} else { // 'append' or 'insert'
+					obj[property] = function (...args) {
+						partOne.apply(this, args);
+						partTwo.apply(this, args);
+					};
+				}
+			});
 		}
 	});
-	addCompositionRule('insert', 'replace', keepSecond);
-	addCompositionRule('insert', 'remove', (d1, p) => { d1[p] = new opTypes['forbid'].Delta() });
-	addCompositionRule('add', 'insert', (d1, p, d2) => {
+	addCompositionRule('alter', 'alter', (d1, p, d2) => {
+		[].push.apply(d1[p].value, this.value);
+	});
+	addCompositionRule('alter', 'replace', keepSecond);
+	addCompositionRule('alter', 'remove', (d1, p) => { d1[p] = new opTypes['forbid'].Delta() });
+	addCompositionRule('add', 'alter', (d1, p, d2) => {
 		U.assert($.isFunction(d1[p].value),
-				`The operation 'insert' expects the property it acts on to be a function.`);
+				`The operation 'alter' expects the property it acts on to be a function.`);
 		d2.apply(d1[p], 'value');
 	});
-	addCompositionRule('replace', 'insert', (d1, p, d2) => {
+	addCompositionRule('replace', 'alter', (d1, p, d2) => {
 		U.assert($.isFunction(d1[p].value),
-				`The operation 'insert' expects the property it acts on to be a function.`);
+				`The operation 'alter' expects the property it acts on to be a function.`);
 		d2.apply(d1[p], 'value');
 	});
 
 
 	//
-	// insert operation type
+	// the 'prepend', 'insert' and 'append' operation types
+	//
+	['prepend', 'insert', 'append'].forEach((opType) => {
+		addOperationAlias({
+			name: opType,
+			target: 'alter',
+			transform: (args) => [[{ type: opType, value: args[0] }]]
+		});
+	});
+
+
+	//
+	// 'after' operation type
 	//
 	addOperationType({
 		name: 'after',

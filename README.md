@@ -230,7 +230,9 @@ In those regards, `modify` is special. But there are a number of other available
 | `replace` | the same as a `remove` followed by an `add`. So this assumes the key is present.
 | `forbid`  | the same as an `add` followed by a `remove`. So this is only an assertion that the given key is not present.
 | `insert`  | insert a a function to be run inside an existing method. This assumes the given key already has a function value. It keeps its function scope, so you can use plugin-local variables, and it receives the same arguments as the original function. It is guaranteed *not* to go 'inside' of another `insert`ed code-block, but no guarantees are made as to the order between such code-blocks.
-| `after`   | like `insert`, except that the inserted function is guaranteed to be run *after* the original function. It is aware of asynchronous operations by use of *promises*. If the original function returns a promise, the inserted function waits until that promise has been fulfilled.
+| `prepend` | like `insert`, but it always inserts the new code at the beginning of the target function
+| `append`  | like `insert`, but it always inserts the new code at the end of the target function
+| `after`   | like `append`, except that it is aware of asynchronous operations by use of *promises*. If the original function returns a promise, the inserted code runs only after that promise has been fulfilled.
 
 Here is a short example, which also shows an alternative syntax for specifying operations:
 

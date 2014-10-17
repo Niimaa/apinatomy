@@ -110,6 +110,14 @@ define(['jquery'], function ($) {
 		},
 
 		//
+		// `A.forEach`, except it iterates from right to left
+		//
+		forEachReverse(A, fn) {
+			var i = A.length;
+			while (i--) { fn(A[i], i, A) }
+		},
+
+		//
 		// Returns a function, that, as long as it continues to be invoked, will not
 		// be triggered. The function will be called after it stops being called for
 		// N milliseconds.
@@ -162,16 +170,23 @@ define(['jquery'], function ($) {
 		// this object is assumed to have a `trigger` method
 		//
 		// options.name (mandatory) - the name of the property
+		// options.validation - if specified, this function is run before a new value is actually set.
+		//                      It is passed the new value and the old value, and should return the actual
+		//                      value that should be set. This could be the new or old value directly,
+		//                      or any transformation. It can also throw an exception, which will just be
+		//                      allowed to pass through. Returning the old value prevents a signal from
+		//                      being triggered.
 		//
-		observable(obj, options) {
-			var value;
-			Object.defineProperty(obj, options.name, {
+		observable(obj, {name, initial, validation}) {
+			var value = initial;
+			Object.defineProperty(obj, name, {
 				get() { return value },
 				set(newValue) {
-					if (newValue !== value) {
-						var oldValue = value;
+					var oldValue = value;
+					if (validation) { newValue = validation(newValue, oldValue) }
+					if (newValue !== oldValue) {
 						value = newValue;
-						this.trigger(options.name, newValue, oldValue);
+						this.trigger(name, newValue, oldValue);
 					}
 				}
 			});
