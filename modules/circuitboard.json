@@ -1,5 +1,5 @@
 {
-	"type": "external-library",
+	"type": "internal-library",
 	"name": "circuitboard",
 	"file": "circuitboard.js"
 }
