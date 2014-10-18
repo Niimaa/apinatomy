@@ -1,8 +1,6 @@
 //
 // RequireJS Configuration
-// (using an extra variable to stop webpack from messing with it)
 //
-//var requireJs = requirejs;
 requirejs.config({
 	paths: {
 		'domReady': '../../bower_components/requirejs-domready/domReady',
@@ -25,7 +23,6 @@ requirejs.config({
 
 //
 // the application itself
-// using 'requirejs' rather than 'require', to stop webpack from messing with it
 //
 require([
 	'jquery',
