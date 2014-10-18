@@ -15,7 +15,7 @@
   ],
   "dependencies": {
     "jquery": "~2.1.1",
-    "js-graph": "~0.3.0",
+    "js-graph": "~0.4.0",
     "bluebird": "~2.3.2",
     "chroma-js": "~0.5.8",
     "d3": "~3.4.11",
@@ -25,6 +25,7 @@
     "requirejs-domready": "~2.0.1",
     "requirejs": "~2.1.14",
     "traceur": "~0.0.58",
-    "spin.js": "~2.0.1"
+    "spin.js": "~2.0.1",
+    "d3": "~3.4.12"
   }
 }

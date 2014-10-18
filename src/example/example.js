@@ -80,8 +80,8 @@ requirejs(['../circuitboard.js'], function (circuitboard) { // circuitboard.js h
 			model: getFmaModels(['24tile:60000000'])[0],
 			tileSpacing: 1,
 			tilemapMargin: 0,
-			weightWhenOpen: 8
-			//threeDCanvasElement: $('#three-d-canvas')
+			weightWhenOpen: 8,
+			threeDCanvasElement: $('#three-d-canvas')
 		}).circuitboard('instance').then(function (circuitboard) {
 			console.info('circuitboard loaded');
 

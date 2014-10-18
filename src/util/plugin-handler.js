@@ -78,6 +78,13 @@ define(['jquery', 'js-graph', 'bluebird', './traverse-dag.js', './misc.js', './d
 		////////////////////////
 
 		//
+		// retrieve the graph of all registered plugins
+		//
+		this.graph = function () {
+			return _plugins;
+		};
+
+		//
 		// the function to be called by plugin writers,
 		// containing (part of) a new plugin to be registered
 		//

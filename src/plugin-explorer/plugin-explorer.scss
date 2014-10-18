@@ -1,0 +1,35 @@
+svg {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+
+	text-rendering: geometricPrecision;
+
+	.application-order {
+		stroke         : black;
+		stroke-width   : 1.5px;
+		stroke-linecap : round;
+		marker-end     : url(#arrow-tip);
+	}
+
+	.delta {
+		overflow: visible;
+		cursor: pointer;
+
+		& > rect {
+			fill             : white;
+			stroke           : black;
+			stroke-dasharray : 5, 5;
+			stroke-width     : 1.5px;
+		}
+
+		&.always > rect {
+			fill: lightgreen;
+		}
+	}
+
+}

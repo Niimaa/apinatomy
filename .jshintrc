@@ -21,7 +21,5 @@
 	"forin":     true,
 	"evil":      true,
 
-	"jquery": true,
-
 	"predef": [ "requirejs", "define", "describe", "beforeEach", "it", "expect" ]
 }

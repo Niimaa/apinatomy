@@ -10,8 +10,8 @@ define([
 
 	var plugin = $.circuitboard.plugin({
 		name: 'tile-skin',
-		require: ['tile-weight', 'tile-open', 'position-tracking'],
-		after: ['tile-weight', 'tile-open', 'position-tracking']
+		require: ['tile-open', 'position-tracking'],
+		after: ['tile-open', 'position-tracking']
 	}).modify('Tile.prototype');
 
 	//

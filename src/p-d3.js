@@ -10,7 +10,7 @@ define([
 	var plugin = $.circuitboard.plugin({
 		name: 'd3',
 		require: ['position-tracking'],
-		after: ['circuitboard-core', 'tilemap-core', 'tile-core', 'position-tracking']
+		after: ['circuitboard-core', 'position-tracking']
 	}).modify('Circuitboard.prototype');
 
 	plugin.insert('construct', function () {

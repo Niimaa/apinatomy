@@ -58,6 +58,9 @@ define([
 		}
 	};
 
+	// for getting the plugin graph
+	$.circuitboard.plugin.graph = () => pluginHandler.graph();
+
 	//
 	// return the static `$.circuitboard` object,
 	// through which plugins can be applied and selected
