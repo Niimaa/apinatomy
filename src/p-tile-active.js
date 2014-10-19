@@ -2,8 +2,8 @@ define(['jquery', './util/misc.js'], function ($, U) {
 	'use strict';
 
 	var plugin = $.circuitboard.plugin({
-		name: 'tile-active',
-		after: ['tile-core']
+		id: 'tile-active',
+		requires: ['tile-core']
 	}).modify('Tile.prototype');
 
 	//

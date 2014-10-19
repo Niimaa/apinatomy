@@ -15,7 +15,6 @@ define(['jquery', 'd3', '../util/misc.js', './intersects.js'], function ($, d3, 
 			var val = graph.vertexValue(key);
 			//val.show = (U.isUndefined(val.if) || val.if === true);
 			val.show = true;
-			val.id = key;
 			val.width = val.height = 0; // some initial value to avoid NaNs
 			deltas.push(val);
 		});
@@ -208,10 +207,10 @@ define(['jquery', 'd3', '../util/misc.js', './intersects.js'], function ($, d3, 
 
 			function makeNode(d) {
 				var element = $(
-						`<svg class="delta">        ` +
-						`    <rect />               ` +
-						`    <text >${d.name}</text>` +
-						`</svg>                     `
+						`<svg class="delta">      ` +
+						`    <rect />             ` +
+						`    <text >${d.id}</text>` +
+						`</svg>                   `
 				);
 				d.element = element;
 				return element[0];

@@ -2,9 +2,8 @@ define(['jquery'], function ($) {
 	'use strict';
 
 	var plugin = $.circuitboard.plugin({
-		name: 'tile-open-active',
-		if: ['tile-open', 'tile-active'],
-		after: ['tile-open', 'tile-active']
+		id: 'tile-open-active',
+		resolves: ['tile-open', 'tile-active']
 	}).modify('Tile.prototype');
 
 	//

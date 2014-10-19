@@ -2,8 +2,8 @@ define(['jquery'], function ($) {
 	'use strict';
 
 	var plugin = $.circuitboard.plugin({
-		name: 'tile-weight',
-		after: ['tile-core']
+		id: 'tile-weight',
+		requires: ['tile-core']
 	}).modify('Tile.prototype');
 
 	//

@@ -7,7 +7,7 @@ define([
 	'use strict';
 
 	var plugin = $.circuitboard.plugin({
-		name: 'circuitboard-core',
+		id: 'circuitboard-core',
 		if: true
 	}).modify('Circuitboard.prototype');
 

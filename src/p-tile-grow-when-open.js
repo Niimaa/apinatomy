@@ -5,9 +5,8 @@ define([
 	'use strict';
 
 	var plugin = $.circuitboard.plugin({
-		name: 'tile-grow-when-open',
-		require: ['tile-open', 'tile-weight'],
-		after: ['tile-open', 'tile-weight']
+		id: 'tile-grow-when-open',
+		requires: ['tile-open', 'tile-weight']
 	}).modify('Tile.prototype');
 
 	//

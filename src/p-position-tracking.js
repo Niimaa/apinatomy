@@ -20,8 +20,8 @@ define([
 	}
 
 	var plugin = $.circuitboard.plugin({
-		name: 'position-tracking',
-		after: ['circuitboard-core', 'tilemap-core', 'tile-core']
+		id: 'position-tracking',
+		expects: ['circuitboard-core', 'tilemap-core', 'tile-core']
 	});
 
 	plugin.insert('Circuitboard.prototype.construct', function () {

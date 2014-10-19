@@ -2,9 +2,8 @@ define(['jquery'], function ($) {
 	'use strict';
 
 	var plugin = $.circuitboard.plugin({
-		name: 'd3-three-d',
-		if: ['d3', 'three-d'],
-		after: ['d3', 'three-d']
+		id: 'd3-three-d',
+		resolves: ['d3', 'three-d']
 	}).modify('Circuitboard.prototype');
 
 	//

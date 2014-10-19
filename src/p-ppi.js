@@ -5,9 +5,8 @@ define([
 	'use strict';
 
 	var plugin = $.circuitboard.plugin({
-		name: 'ppi',
-		after: ['d3'],
-		require: ['d3']
+		id: 'ppi',
+		requires: ['d3']
 	}).modify('Tile.prototype');
 
 	//
