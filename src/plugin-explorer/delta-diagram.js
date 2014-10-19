@@ -13,7 +13,8 @@ define(['jquery', 'd3', '../util/misc.js', './intersects.js'], function ($, d3, 
 
 		transReductGraph.topologically((key) => {
 			var val = graph.vertexValue(key);
-			val.show = (U.isUndefined(val.if) || val.if === true);
+			//val.show = (U.isUndefined(val.if) || val.if === true);
+			val.show = true;
 			val.id = key;
 			val.width = val.height = 0; // some initial value to avoid NaNs
 			deltas.push(val);
@@ -145,9 +146,11 @@ define(['jquery', 'd3', '../util/misc.js', './intersects.js'], function ($, d3, 
 				d.y2 = to.y;
 			});
 
+			// position deltas below their subordinates
 			var k = 0.3 * (e ? e.alpha : 0);
 			shownOrder.forEach((order) => {
-				var dist = order.source.y - order.target.y - 1.5 * (order.source.height + order.target.height + 4 * NODE_MARGIN);
+				var dist = order.source.y - order.target.y -
+						1.25 * (order.source.height + order.target.height + 4 * NODE_MARGIN);
 				if (dist < 0) {
 					if (!order.source.dragging) {
 						order.source.y -= k * dist;
@@ -175,7 +178,6 @@ define(['jquery', 'd3', '../util/misc.js', './intersects.js'], function ($, d3, 
 		var shownOrder;
 
 		function updateDiagram() {
-
 			shownDeltas = deltas.filter((d) => d.show);
 			shownOrder = applicationOrder.filter((d) => d.source.show && d.target.show);
 
@@ -237,28 +239,30 @@ define(['jquery', 'd3', '../util/misc.js', './intersects.js'], function ($, d3, 
 			deltaNodes.enter()
 					.append(makeNode)
 					.classed('always', (d) => (d.if === true))
+					.classed('resolution', (d) => (U.isDefined(d.if) && d.if !== true))
 					.call(force.drag);
 			deltaNodes.exit().remove();
-
-
-			// orderArrows
-			orderArrows = svgCanvas.selectAll('.application-order')
-					.data(shownOrder, (d) => `${d.source.id} - ${d.target.id}`);
-			orderArrows.enter().append("line").attr('class', 'application-order');
-			orderArrows.exit().remove();
 
 
 			// set widths and heights
 			shownDeltas.forEach(setNodeSizing);
 
 
+			// orderArrows
+			orderArrows = svgCanvas.selectAll('.application-order')
+					.data(shownOrder, (d) => `${d.source.id} - ${d.target.id}`);
+			orderArrows.enter()
+					.append("line")
+					.classed('application-order', true)
+					.classed('resolution', (d) => (U.isDefined(d.source.if) && d.source.if !== true));
+			orderArrows.exit().remove();
+
+
 			// define a nice visual z-order for the svg elements
 			svgCanvas.selectAll('.delta, .application-order').sort((a, b) =>
-				(U.isDefined(a.x1) && U.isUndefined(b.x1)) ?
-						(-1) : ((U.isUndefined(a.x1) === U.isUndefined(b.x1)) ? 0 : 1)
+				(U.isDefined(a.source) && U.isUndefined(b.source)) ?
+						(-1) : (U.isUndefined(a.source) === U.isUndefined(b.source) ? 0 : 1)
 			);
-
-			//tick();
 		}
 
 

@@ -9,26 +9,46 @@ svg {
 
 	text-rendering: geometricPrecision;
 
-	.application-order {
-		stroke         : black;
-		stroke-width   : 1.5px;
-		stroke-linecap : round;
-		marker-end     : url(#arrow-tip);
-	}
-
 	.delta {
 		overflow: visible;
 		cursor: pointer;
 
 		& > rect {
-			fill             : white;
-			stroke           : black;
-			stroke-dasharray : 5, 5;
-			stroke-width     : 1.5px;
+			fill: transparentize(white, .3);
+			stroke: black;
+			stroke-dasharray: 5, 5;
+			stroke-width: 1.5px;
 		}
 
-		&.always > rect {
-			fill: lightgreen;
+		&.always {
+			& > rect {
+				fill: transparentize(lightgreen, .3);
+			}
+			& > text {
+				font-weight: bold;
+			}
+		}
+
+		&.resolution {
+			& > rect {
+				stroke: lightgray;
+			}
+			& > text {
+				stroke: lightgray;
+				font-style: italic;
+			}
+		}
+	}
+
+	.application-order {
+		stroke: black;
+		stroke-width: 1.5px;
+		stroke-linecap: round;
+		marker-end: url(#arrow-tip);
+
+		&.resolution {
+			stroke: lightgray;
+			marker-end: url(#gray-arrow-tip);
 		}
 	}
 
