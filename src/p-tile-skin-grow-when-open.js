@@ -5,7 +5,7 @@ define([
 	'use strict';
 
 	var plugin = $.circuitboard.plugin({
-		id: 'tile-skin-grow-when-open',
+		name: 'tile-skin-grow-when-open',
 		resolves: ['tile-skin', 'tile-grow-when-open']
 	}).modify('Tile.prototype');
 

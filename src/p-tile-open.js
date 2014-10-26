@@ -2,7 +2,7 @@ define(['jquery'], function ($) {
 	'use strict';
 
 	var plugin = $.circuitboard.plugin({
-		id: 'tile-open',
+		name: 'tile-open',
 		requires: ['tile-core']
 	}).modify('Tile.prototype');
 

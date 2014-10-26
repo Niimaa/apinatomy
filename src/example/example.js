@@ -1,36 +1,31 @@
-//
 // things to be loaded by webpack
-//
 require('./example.scss');
 
-//
 // RequireJS Configuration
 // Using an extra variable to stop webpack from messing with it
-//
 var requireJs = requirejs;
 requireJs.config({
 	paths: {
-		'domReady': '../../bower_components/requirejs-domready/domReady',
-		'jquery': '../../bower_components/jquery/dist/jquery',
-		'js-graph': '../../bower_components/js-graph/dist/js-graph',
-		'delta-js': '../../bower_components/delta-js/dist/delta',
-		'bluebird': '../../bower_components/bluebird/js/browser/bluebird',
+		'domReady':  '../../bower_components/requirejs-domready/domReady',
+		'jquery':    '../../bower_components/jquery/dist/jquery',
+		'js-graph':  '../../bower_components/js-graph/dist/js-graph',
+		'delta-js':  '../../bower_components/delta.js/dist/delta',
+		'bluebird':  '../../bower_components/bluebird/js/browser/bluebird',
 		'chroma-js': '../../bower_components/chroma-js/chroma',
-		'd3': '../../bower_components/d3/d3',
-		'three-js': '../../bower_components/three.js/three'
+		'd3':        '../../bower_components/d3/d3',
+		'three-js':  '../../bower_components/three.js/three'
 	},
 	shim: {
-		'jquery': { exports: 'jQuery' },
+		'jquery':   { exports: 'jQuery' },
 		'bluebird': { init: function () { this.longStackTraces() } },
 		'three-js': { exports: 'THREE' }
 	}
 });
 
 
-//
 // Example application
-//
-requirejs(['../circuitboard.js'], function (circuitboard) { // circuitboard.js has to be loaded first
+// circuitboard.js has to be loaded first
+requirejs(['../circuitboard.js'], function (circuitboard) {
 	requirejs([
 		'jquery',
 		'../fma-model.js',

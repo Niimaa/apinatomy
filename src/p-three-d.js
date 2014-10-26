@@ -40,7 +40,7 @@ define([
 	// the plugin
 	//
 	var plugin = $.circuitboard.plugin({
-		id: 'three-d',
+		name: 'three-d',
 		requires: ['position-tracking']
 	}).modify('Circuitboard.prototype');
 

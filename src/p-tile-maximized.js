@@ -2,7 +2,7 @@ define(['jquery', './p-tile-maximized.scss'], function ($) {
 	'use strict';
 
 	var plugin = $.circuitboard.plugin({
-		id: 'tile-maximized',
+		name: 'tile-maximized',
 		requires: ['tile-hidden']
 	}).modify('Tile.prototype');
 

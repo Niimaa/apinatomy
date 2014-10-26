@@ -2,7 +2,7 @@ define(['jquery'], function ($) {
 	'use strict';
 
 	var plugin = $.circuitboard.plugin({
-		id: 'tile-middleclick-to-maximize',
+		name: 'tile-middleclick-to-maximize',
 		requires: ['tile-maximized']
 	}).modify('Tile.prototype');
 

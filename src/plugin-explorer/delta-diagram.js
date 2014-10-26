@@ -209,7 +209,7 @@ define(['jquery', 'd3', '../util/misc.js', './intersects.js'], function ($, d3, 
 				var element = $(
 						`<svg class="delta">      ` +
 						`    <rect />             ` +
-						`    <text >${d.id}</text>` +
+						`    <text >${d.name}</text>` +
 						`</svg>                   `
 				);
 				d.element = element;
@@ -234,11 +234,11 @@ define(['jquery', 'd3', '../util/misc.js', './intersects.js'], function ($, d3, 
 			}
 
 			// deltaNodes
-			deltaNodes = svgCanvas.selectAll('.delta').data(shownDeltas.filter((d) => d.show), (d) => d.id);
+			deltaNodes = svgCanvas.selectAll('.delta').data(shownDeltas.filter((d) => d.show), (d) => d.name);
 			deltaNodes.enter()
 					.append(makeNode)
 					.classed('always', (d) => (d.if === true))
-					.classed('resolution', (d) => (U.isDefined(d.if) && d.if !== true))
+					.classed('resolution', (d) => (!d.manuallySelectable))
 					.call(force.drag);
 			deltaNodes.exit().remove();
 
@@ -249,11 +249,11 @@ define(['jquery', 'd3', '../util/misc.js', './intersects.js'], function ($, d3, 
 
 			// orderArrows
 			orderArrows = svgCanvas.selectAll('.application-order')
-					.data(shownOrder, (d) => `${d.source.id} - ${d.target.id}`);
+					.data(shownOrder, (d) => `${d.source.name} - ${d.target.name}`);
 			orderArrows.enter()
 					.append("line")
 					.classed('application-order', true)
-					.classed('resolution', (d) => (U.isDefined(d.source.if) && d.source.if !== true));
+					.classed('resolution', (d) => (!d.manuallySelectable));
 			orderArrows.exit().remove();
 
 

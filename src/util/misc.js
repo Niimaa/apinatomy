@@ -3,6 +3,28 @@ define(() => {
 
 	var U = {
 
+		// create a new class, given a constructor and possible prototype
+		newClass(constructor, prototype) {
+			prototype = prototype || {};
+			var cls = function (...args) {
+				constructor.apply(this, args);
+			};
+			cls.prototype = prototype;
+			cls.prototype.constructor = cls;
+			return cls;
+		},
+
+		// create a new subclass, given a superclass, constructor and possible prototype
+		newSubclass(superClass, constructor, prototype) {
+			prototype = prototype || {};
+			var cls = function (...args) {
+				constructor.apply(this, [superClass.prototype.constructor].concat(args));
+			};
+			cls.prototype = Object.create(superClass.prototype, prototype);
+			cls.prototype.constructor = cls;
+			return cls;
+		},
+
 		// extend the first passed object with the properties
 		// of the other objects, from left to right, and returns
 		// the first passed object

@@ -8,7 +8,7 @@ define([
 	'use strict';
 
 	var plugin = $.circuitboard.plugin({
-		id: 'tilemap-core',
+		name: 'tilemap-core',
 		if: true
 	}).modify('Tilemap.prototype');
 

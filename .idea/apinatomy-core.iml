@@ -27,5 +27,6 @@
     <orderEntry type="library" name="jQuery-2.0.0" level="application" />
     <orderEntry type="library" name="requirejs-DefinitelyTyped" level="application" />
     <orderEntry type="library" name="lodash-DefinitelyTyped" level="application" />
+    <orderEntry type="library" name="Common Library Directories" level="application" />
   </component>
 </module>

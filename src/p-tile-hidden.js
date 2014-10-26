@@ -2,7 +2,7 @@ define(['jquery', './p-tile-hidden.scss'], function ($) {
 	'use strict';
 
 	var plugin = $.circuitboard.plugin({
-		id: 'tile-hidden',
+		name: 'tile-hidden',
 		requires: ['tile-open', 'tile-weight']
 	}).modify('Tile.prototype');
 

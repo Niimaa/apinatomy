@@ -8,7 +8,7 @@ define([
 	'use strict';
 
 	var plugin = $.circuitboard.plugin({
-		id: 'd3',
+		name: 'd3',
 		requires: ['circuitboard-core', 'position-tracking']
 	}).modify('Circuitboard.prototype');
 

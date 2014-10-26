@@ -1,29 +1,25 @@
-//
 // RequireJS Configuration
-//
 requirejs.config({
 	paths: {
-		'domReady': '../../bower_components/requirejs-domready/domReady',
-		'jquery': '../../bower_components/jquery/dist/jquery',
-		'js-graph': '../../bower_components/js-graph/dist/js-graph',
-		'bluebird': '../../bower_components/bluebird/js/browser/bluebird',
+		'domReady':  '../../bower_components/requirejs-domready/domReady',
+		'jquery':    '../../bower_components/jquery/dist/jquery',
+		'js-graph':  '../../bower_components/js-graph/dist/js-graph',
+		'bluebird':  '../../bower_components/bluebird/js/browser/bluebird',
 		'chroma-js': '../../bower_components/chroma-js/chroma',
-		'd3': '../../bower_components/d3/d3',
-		'three-js': '../../bower_components/three.js/three',
-		'lodash': '../../bower_components/lodash/dist/lodash.min'
+		'd3':        '../../bower_components/d3/d3',
+		'three-js':  '../../bower_components/three.js/three',
+		'lodash':    '../../bower_components/lodash/dist/lodash.min'
 	},
 	shim: {
-		'jquery': { exports: 'jQuery' },
+		'jquery':   { exports: 'jQuery' },
 		'bluebird': { init: function () { this.longStackTraces() } },
 		'three-js': { exports: 'THREE' },
-		'lodash': { exports: '_' }
+		'lodash':   { exports: '_' }
 	}
 });
 
 
-//
 // the application itself
-//
 require([
 	'jquery',
 	'js-graph',

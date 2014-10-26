@@ -6,7 +6,7 @@ define([
 	'use strict';
 
 	var plugin = $.circuitboard.plugin({
-		id: 'tile-core',
+		name: 'tile-core',
 		if: true
 	}).modify('Tile.prototype');
 

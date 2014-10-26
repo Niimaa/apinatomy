@@ -20,7 +20,7 @@ define([
 	}
 
 	var plugin = $.circuitboard.plugin({
-		id: 'position-tracking',
+		name: 'position-tracking',
 		expects: ['circuitboard-core', 'tilemap-core', 'tile-core']
 	});
 

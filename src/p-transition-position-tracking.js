@@ -5,7 +5,7 @@ define([
 	'use strict';
 
 	var plugin = $.circuitboard.plugin({
-		id: 'transition-position-tracking',
+		name: 'transition-position-tracking',
 		resolves: ['position-tracking', 'tile-grow-when-open']
 	}).modify('Tile.prototype');
 

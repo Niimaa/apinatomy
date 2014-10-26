@@ -2,7 +2,7 @@ define(['jquery'], function ($) {
 	'use strict';
 
 	var plugin = $.circuitboard.plugin({
-		id: 'tile-spacing',
+		name: 'tile-spacing',
 		requires: ['tilemap-core']
 	}).modify('Tilemap.prototype');
 

@@ -9,7 +9,7 @@ define([
 	'use strict';
 
 	var plugin = $.circuitboard.plugin({
-		id: 'tile-skin',
+		name: 'tile-skin',
 		requires: ['tile-open', 'position-tracking']
 	}).modify('Tile.prototype');
 
