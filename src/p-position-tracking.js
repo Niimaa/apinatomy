@@ -33,24 +33,18 @@ define([
 			isEqual: sizeEqual
 		});
 
-		//
 		// define 'size' property
-		//
 		Object.defineProperty(this, 'size', {
 			get() { return _size() }
 		});
 
-		//
 		// define 'position' property
-		//
 		Object.defineProperty(this, 'position', {
 			get() { return { left: 0, top: 0 } }
 		});
 
-		//
 		// trigger events
-		//
-		$(window).resize(() => { setTimeout(_size, 0) });
+		(this.options.resizeEvent || $(window).resize)(() => { setTimeout(_size, 0) });
 		_size.onChange((newSize) => { this.trigger('size', newSize) });
 	});
 
@@ -64,9 +58,7 @@ define([
 			isEqual: sizeEqual
 		});
 
-		//
 		// define properties
-		//
 		Object.defineProperty(this, 'position', {
 			get() { return posSubtract(_offset(), this.circuitboard._p_tilePosition_offset()) }
 		});
@@ -74,9 +66,7 @@ define([
 			get() { return _size() }
 		});
 
-		//
 		// trigger events
-		//
 		this.parent.on('size', () => { _offset(); _size(); });
 		_offset.onChange(() => { this.trigger('position', this.position) });
 		_size.onChange((newSize) => { this.trigger('size', newSize) });
@@ -97,9 +87,7 @@ define([
 			isEqual: sizeEqual
 		});
 
-		//
 		// define properties
-		//
 		Object.defineProperty(this, 'position', {
 			get() { return posSubtract(_offset(), this.circuitboard._p_tilePosition_offset()) }
 		});
@@ -107,9 +95,7 @@ define([
 			get() { return _size() }
 		});
 
-		//
 		// trigger events
-		//
 		this.parent.on('position', _offset);
 		this.parent.on('size', () => { _offset(); _size(); });
 		this.parent.on('reorganize', () => { _offset(); _size(); });

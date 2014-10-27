@@ -101,10 +101,9 @@ define([
 			get() { return _canvasSize() }
 		});
 		_canvasSize.onChange((newSize) => { this.trigger('threeDCanvasSize', newSize) });
-		//
-		// for now, using window resize to trigger canvas resize
-		//
-		$(window).resize(_canvasSize);
+
+		// react to canvas resize
+		(this.options.canvasResizeEvent || this.options.resizeEvent || $(window).resize)(_canvasSize);
 
 		////////////////////////////////////////////////////////////////
 		// the 'threeDControlsEnabled' property
