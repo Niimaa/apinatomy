@@ -183,15 +183,11 @@ define(() => {
 		// has actually changed. It does so using `===` comparison, but you can provide your own
 		// comparison function.
 		cached(options) {
-			//
 			// normalize parameters
-			//
 			var retrieve = options.retrieve,
 					isEqual = options.isEqual || ((a, b) => (a === b));
 
-			//
 			// keep a cache and give it an initial value
-			//
 			var cache;
 			function setValue() {
 				var oldValue = cache;
@@ -202,25 +198,19 @@ define(() => {
 			}
 			setTimeout(setValue, 0);
 
-			//
 			// retrieve a value at most once per stack and
 			// invoke the callback whenever the value is new
-			//
 			var oncePerStackSetValue = U.oncePerStack(setValue);
 
-			//
 			// the resulting function possibly performs retrieval,
 			// and always returns the cache (which may contain the new value)
-			//
 			var resultFn = () => {
 				oncePerStackSetValue();
 				return cache;
 			};
 
-			//
 			// allow the onChange callback to be set after creation;
 			// NOTE: only one callback is stored!
-			//
 			var onChange;
 			resultFn.onChange = (cb) => { onChange = cb; return resultFn; };
 
@@ -228,6 +218,30 @@ define(() => {
 		}
 
 	};
+
+
+	// HTML element position
+	U.Position = U.newClass(function (top, left) {
+		this.top = top;
+		this.left = left;
+	});
+	U.Position.subtract = (a, b) => {
+		return new U.Position(a.top - b.top, a.left - b.left);
+	};
+	U.Position.equals = (a, b) => {
+		return a && b && a.top === b.top && a.left === b.left;
+	};
+
+
+	// HTML element size
+	U.Size = U.newClass(function (height, width) {
+		this.height = height;
+		this.width = width;
+	});
+	U.Position.equals = (a, b) => {
+		return a && b && a.height === b.height && a.width === b.width;
+	};
+
 
 	return U;
 });

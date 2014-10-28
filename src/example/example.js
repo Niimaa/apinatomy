@@ -32,6 +32,7 @@ requirejs(['../circuitboard.js'], function (circuitboard) {
 		'../p-circuitboard-core.js',
 		'../p-tilemap-core.js',
 		'../p-tile-core.js',
+		'../p-refresh.js',
 		'../p-tile-skin.js',
 		'../p-tile-spacing.js',
 		'../p-tile-click-to-open.js',
@@ -76,6 +77,10 @@ requirejs(['../circuitboard.js'], function (circuitboard) {
 			threeDCanvasElement: $('#three-d-canvas')
 		}).circuitboard('instance').then(function (circuitboard) {
 			console.info('circuitboard loaded');
+
+			window.setThreeDMode = function (mode) {
+				circuitboard.threeDMode = mode;
+			};
 
 
 		});

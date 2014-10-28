@@ -15,6 +15,7 @@
 
 			& > .circuitboard {
 				pointer-events: visible;
+				backface-visibility: hidden;
 			}
 		}
 

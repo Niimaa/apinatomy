@@ -4,21 +4,6 @@ define([
 ], function ($, U) {
 	'use strict';
 
-	function posSubtract(posA, posB) {
-		return {
-			top: posA.top - posB.top,
-			left: posA.left - posB.left
-		};
-	}
-
-	function posEqual(posA, posB) {
-		return posA && posB && posA.top === posB.top && posA.left === posB.left;
-	}
-
-	function sizeEqual(sizeA, sizeB) {
-		return sizeA && sizeB && sizeA.width === sizeB.width && sizeA.height === sizeB.height;
-	}
-
 	var plugin = $.circuitboard.plugin({
 		name: 'position-tracking',
 		expects: ['circuitboard-core', 'tilemap-core', 'tile-core']
@@ -29,8 +14,8 @@ define([
 			retrieve: () => this.element.offset()
 		});
 		var _size = U.cached({
-			retrieve: () => ({ width: this.element.width(), height: this.element.height() }),
-			isEqual: sizeEqual
+			retrieve: () => new U.Size(this.element.height(), this.element.width()),
+			isEqual: U.Size.equals
 		});
 
 		// define 'size' property
@@ -40,27 +25,27 @@ define([
 
 		// define 'position' property
 		Object.defineProperty(this, 'position', {
-			get() { return { left: 0, top: 0 } }
+			get() { return new U.Position(0, 0) }
 		});
 
 		// trigger events
-		(this.options.resizeEvent || $(window).resize)(() => { setTimeout(_size, 0) });
+		( this.options.resizeEvent || $(window).resize.bind($(window)) )(() => { setTimeout(_size) });
 		_size.onChange((newSize) => { this.trigger('size', newSize) });
 	});
 
 	plugin.insert('Tilemap.prototype.construct', function () {
 		var _offset = U.cached({
 			retrieve: () => this.element.offset(),
-			isEqual: posEqual
+			isEqual: U.Position.equals
 		});
 		var _size = U.cached({
-			retrieve: () => ({ width: this.element.width(), height: this.element.height() }),
-			isEqual: sizeEqual
+			retrieve: () => new U.Size(this.element.height(), this.element.width()),
+			isEqual: U.Size.equals
 		});
 
 		// define properties
 		Object.defineProperty(this, 'position', {
-			get() { return posSubtract(_offset(), this.circuitboard._p_tilePosition_offset()) }
+			get() { return U.Position.subtract(_offset(), this.circuitboard._p_tilePosition_offset()) }
 		});
 		Object.defineProperty(this, 'size', {
 			get() { return _size() }
@@ -80,16 +65,16 @@ define([
 	.insert('construct', function () {
 		var _offset = this._p_positionTracking_offset = U.cached({
 			retrieve: () => this.element.offset(),
-			isEqual: posEqual
+			isEqual: U.Position.equals
 		});
 		var _size = this._p_positionTracking_size = U.cached({
-			retrieve: () => ({ width: this.element.width(), height: this.element.height() }),
-			isEqual: sizeEqual
+			retrieve: () => new U.Size(this.element.height(), this.element.width()),
+			isEqual: U.Size.equals
 		});
 
 		// define properties
 		Object.defineProperty(this, 'position', {
-			get() { return posSubtract(_offset(), this.circuitboard._p_tilePosition_offset()) }
+			get() { return U.Position.subtract(_offset(), this.circuitboard._p_tilePosition_offset()) }
 		});
 		Object.defineProperty(this, 'size', {
 			get() { return _size() }
@@ -103,10 +88,8 @@ define([
 		_offset.onChange(() => { this.trigger('position', this.position) });
 		_size.onChange((newSize) => { this.trigger('size', newSize) });
 
-		//
 		// if the size of any tile changes, trigger the `reorganize`
 		// event on the parent tilemap, so that sibling tiles can react
-		//
 		this.on('size', () => { this.parent.trigger('reorganize') });
 	});
 });
