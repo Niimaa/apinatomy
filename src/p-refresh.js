@@ -13,7 +13,7 @@ define([
 
 		plugin.add(`${cls}.prototype.refresh`, function () {
 			this.trigger('refresh');
-			this.children.forEach((child) => {
+			(this.children || []).forEach((child) => {
 				if (typeof child.refresh === 'function') {
 					child.refresh();
 				}

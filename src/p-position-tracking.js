@@ -6,7 +6,8 @@ define([
 
 	var plugin = $.circuitboard.plugin({
 		name: 'position-tracking',
-		expects: ['circuitboard-core', 'tilemap-core', 'tile-core']
+		expects: ['circuitboard-core', 'tilemap-core', 'tile-core'],
+		requires: ['refresh']
 	});
 
 	plugin.insert('Circuitboard.prototype.construct', function () {
@@ -31,6 +32,9 @@ define([
 		// trigger events
 		( this.options.resizeEvent || $(window).resize.bind($(window)) )(() => { setTimeout(_size) });
 		_size.onChange((newSize) => { this.trigger('size', newSize) });
+
+		// on refresh
+		this.on('refresh', () => { setTimeout(_size) });
 	});
 
 	plugin.insert('Tilemap.prototype.construct', function () {
@@ -55,6 +59,9 @@ define([
 		this.parent.on('size', () => { _offset(); _size(); });
 		_offset.onChange(() => { this.trigger('position', this.position) });
 		_size.onChange((newSize) => { this.trigger('size', newSize) });
+
+		// on refresh
+		this.on('refresh', () => { setTimeout(_size) });
 	});
 
 	plugin.modify('Tile.prototype')
@@ -91,5 +98,8 @@ define([
 		// if the size of any tile changes, trigger the `reorganize`
 		// event on the parent tilemap, so that sibling tiles can react
 		this.on('size', () => { this.parent.trigger('reorganize') });
+
+		// on refresh
+		this.on('refresh', () => { setTimeout(_size) });
 	});
 });
