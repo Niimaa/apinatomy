@@ -13,7 +13,6 @@ define(['jquery', 'd3', '../util/misc.js', './intersects.js'], function ($, d3, 
 
 		transReductGraph.topologically((key) => {
 			var val = graph.vertexValue(key);
-			//val.show = (U.isUndefined(val.if) || val.if === true);
 			val.show = true;
 			val.width = val.height = 0; // some initial value to avoid NaNs
 			deltas.push(val);
@@ -28,14 +27,14 @@ define(['jquery', 'd3', '../util/misc.js', './intersects.js'], function ($, d3, 
 
 		//////////////////// creating the graph ////////////////////////////////////////////////////////
 
-		// create the force layout
+		/* create the force layout */
 		var force = d3.layout.force()
 				.gravity(0.08)
 				.charge((d) => (d.if === true ? -2000 : -1000)) // deltas that are always applied get greater repulsion
 				.linkDistance((d) => (d.source.width + d.target.width + 2 * (d.source.height + d.target.height)) / 3)
 				.linkStrength(0.1);
 
-		// create corresponding svg elements
+		/* create corresponding svg elements */
 		var svgCanvas = d3.select(svgElement.find('> g.main')[0]);
 		var orderArrows = svgCanvas.selectAll('.application-order');
 		var deltaNodes = svgCanvas.selectAll('.delta');
@@ -45,9 +44,9 @@ define(['jquery', 'd3', '../util/misc.js', './intersects.js'], function ($, d3, 
 
 		function tick(e) {
 			shownOrder.forEach((d) => {
-				var sourceWidth = d.source.width + NODE_MARGIN;
+				var sourceWidth  = d.source.width  + NODE_MARGIN;
 				var sourceHeight = d.source.height + NODE_MARGIN;
-				var targetWidth = d.target.width + NODE_MARGIN;
+				var targetWidth  = d.target.width  + NODE_MARGIN;
 				var targetHeight = d.target.height + NODE_MARGIN;
 
 				var line = {
@@ -145,7 +144,8 @@ define(['jquery', 'd3', '../util/misc.js', './intersects.js'], function ($, d3, 
 				d.y2 = to.y;
 			});
 
-			// position deltas below their subordinates
+
+			/* position deltas below their subordinates */
 			var k = 0.3 * (e ? e.alpha : 0);
 			shownOrder.forEach((order) => {
 				var dist = order.source.y - order.target.y -
@@ -198,7 +198,7 @@ define(['jquery', 'd3', '../util/misc.js', './intersects.js'], function ($, d3, 
 			// using the d3 general update pattern:
 			// http://bl.ocks.org/mbostock/3808218
 
-			// restart the force
+			/* restart the force */
 			force
 					.nodes(shownDeltas)
 					.links(shownOrder)
@@ -207,10 +207,10 @@ define(['jquery', 'd3', '../util/misc.js', './intersects.js'], function ($, d3, 
 
 			function makeNode(d) {
 				var element = $(
-						`<svg class="delta">      ` +
-						`    <rect />             ` +
+						`<svg class="delta">        ` +
+						`    <rect />               ` +
 						`    <text >${d.name}</text>` +
-						`</svg>                   `
+						`</svg>                     `
 				);
 				d.element = element;
 				return element[0];
@@ -223,41 +223,41 @@ define(['jquery', 'd3', '../util/misc.js', './intersects.js'], function ($, d3, 
 				delta.height = bbox.height;
 
 				rect
-						.attr('width', delta.width + NODE_MARGIN)
+						.attr('width',  delta.width + NODE_MARGIN)
 						.attr('height', delta.height + NODE_MARGIN)
-						.attr('x', -(delta.width + NODE_MARGIN)  / 2)
-						.attr('y', -(delta.height + NODE_MARGIN) / 2);
+						.attr('x',    -(delta.width + NODE_MARGIN)  / 2)
+						.attr('y',    -(delta.height + NODE_MARGIN) / 2);
 
 				text
 						.attr('x', -delta.width / 2)
 						.attr('y', delta.height / 2 - 4);
 			}
 
-			// deltaNodes
+			/* deltaNodes */
 			deltaNodes = svgCanvas.selectAll('.delta').data(shownDeltas.filter((d) => d.show), (d) => d.name);
 			deltaNodes.enter()
 					.append(makeNode)
 					.classed('always', (d) => (d.if === true))
-					.classed('resolution', (d) => (!d.manuallySelectable))
+					.classed('resolution', (d) => !d.manuallySelectable)
 					.call(force.drag);
 			deltaNodes.exit().remove();
 
 
-			// set widths and heights
+			/* set widths and heights */
 			shownDeltas.forEach(setNodeSizing);
 
 
-			// orderArrows
+			/* orderArrows */
 			orderArrows = svgCanvas.selectAll('.application-order')
 					.data(shownOrder, (d) => `${d.source.name} - ${d.target.name}`);
 			orderArrows.enter()
 					.append("line")
 					.classed('application-order', true)
-					.classed('resolution', (d) => (!d.manuallySelectable));
+					.classed('resolution', (d) => (!d.source.manuallySelectable || !d.target.manuallySelectable));
 			orderArrows.exit().remove();
 
 
-			// define a nice visual z-order for the svg elements
+			/* define a nice visual z-order for the svg elements */
 			svgCanvas.selectAll('.delta, .application-order').sort((a, b) =>
 				(U.isDefined(a.source) && U.isUndefined(b.source)) ?
 						(-1) : (U.isUndefined(a.source) === U.isUndefined(b.source) ? 0 : 1)
