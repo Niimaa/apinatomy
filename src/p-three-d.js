@@ -9,7 +9,7 @@ define([
 	'use strict';
 
 
-	// test for browser 3D support
+	/* test for browser 3D support */
 	function browserSupport() {
 		var canvas;
 		try {
@@ -23,30 +23,30 @@ define([
 	}
 
 
-	// some useful constants for making intersection checks
+	/* some useful constants for making intersection checks */
 	var PLANE = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
 	var PROJECTOR = new THREE.Projector();
 
 
-	// the plugin
+	/* the plugin */
 	var plugin = $.circuitboard.plugin({
 		name: 'three-d',
 		requires: ['position-tracking']
 	}).modify('Circuitboard.prototype');
 
 
-	// the constructor is run once to initialize potential 3D-ness
+	/* the constructor is run once to initialize potential 3D-ness */
 	plugin.insert('construct', function () {
 
 
-		// test for browser support
+		/*  test for browser support */
 		if (!browserSupport()) {
 			console.warn("This browser doesn't seem to have WebGL support.");
 			return;
 		}
 
 
-		// the 'threeDCanvasElement' property
+		/* the 'threeDCanvasElement' property */
 		U.observable(this, { name: 'threeDCanvasElement' });
 		this.on('threeDCanvasElement', (newCanvas, oldCanvas) => {
 			if (oldCanvas) { oldCanvas.removeClass('three-d-canvas') }
@@ -54,7 +54,7 @@ define([
 		});
 
 
-		// the 'threeDMode' property
+		/* the 'threeDMode' property */
 		U.observable(this, {
 			name: 'threeDMode',
 			initial: false,
@@ -66,7 +66,7 @@ define([
 		});
 
 
-		// the 'threeDCanvasSize' property
+		/* the 'threeDCanvasSize' property */
 		var _canvasSize = U.cached({
 			retrieve: () => (this.threeDCanvasElement && new U.Size(
 					this.threeDCanvasElement.height(),
@@ -78,21 +78,21 @@ define([
 		_canvasSize.onChange((newSize) => { this.trigger('threeDCanvasSize', newSize) });
 
 
-		// react to canvas resize
+		/* react to canvas resize */
 		( this.options.canvasResizeEvent || $(window).resize.bind($(window)) )(_canvasSize);
 
 
-		// the 'threeDControlsEnabled' property
+		/* the 'threeDControlsEnabled' property */
 		U.observable(this, { name: 'threeDControlsEnabled' });
 
 
-		// Initialize when 3D mode is turned on
+		/* initialize when 3D mode is turned on */
 		this.on('threeDMode', (mode) => {
 			if (mode) { this._p_threeD_initialize() }
 		});
 
 
-		// Was a canvas given through the options?
+		/* was a canvas given through the options? */
 		this.threeDCanvasElement = this.options.threeDCanvasElement;
 		if (this.threeDCanvasElement) {
 			this.threeDMode = true;
@@ -101,10 +101,10 @@ define([
 
 	});
 
-	// `_p_threeD_initialize` is run every time 3D-ness is turned on
+	/* `_p_threeD_initialize` is run every time 3D-ness is turned on */
 	plugin.add('_p_threeD_initialize', function () {
 
-		// an easy way to act on 3D mode being turned off
+		/* an easy way to act on 3D mode being turned off */
 		var onThreeDModeOff = (cb) => {
 			var auxCb = (mode) => {
 				if (!mode) {
@@ -116,7 +116,7 @@ define([
 		};
 
 
-		// Remember the initial margin
+		/* remember the initial margin */
 		this._p_threeD_initialMargin = {};
 		this._p_threeD_initialMargin.left = this.element.offset().left - this.threeDCanvasElement.offset().left;
 		this._p_threeD_initialMargin.top = this.element.offset().top - this.threeDCanvasElement.offset().top;
@@ -127,14 +127,14 @@ define([
 		});
 
 
-		// Scene
+		/* scene */
 		this._p_threeD_scene = new THREE.Scene();
 		this.one('threeDMode', (mode) => {
 			if (!mode) { delete this._p_threeD_scene }
 		});
 
 
-		// Camera
+		/* camera */
 		this._p_threeD_camera =
 				new THREE.PerspectiveCamera(60, this.threeDCanvasSize.width / this.threeDCanvasSize.height, 1, 10000);
 		var setCameraAspect = (size) => { this._p_threeD_camera.aspect = size.width / size.height };
@@ -146,7 +146,7 @@ define([
 		});
 
 
-		// Lighting
+		/* lighting */
 		var ambientLight = new THREE.AmbientLight(0x101030);
 		this._p_threeD_scene.add(ambientLight);
 		//
@@ -165,7 +165,7 @@ define([
 		});
 
 
-		// Renderer: WebGL
+		/* renderer: WebGL */
 		this._p_threeD_renderer_webgl = new THREE.WebGLRenderer({ alpha: true, antialias: true });
 		this._p_threeD_renderer_webgl.sortObjects = false;
 		this._p_threeD_renderer_webgl.setSize(this.threeDCanvasElement.width(), this.threeDCanvasElement.height());
@@ -180,7 +180,7 @@ define([
 		});
 
 
-		// Renderer: CSS
+		/* renderer: CSS */
 		this._p_threeD_renderer_css = new THREE.CSS3DRenderer();
 		$(this._p_threeD_renderer_css.domElement).append(this._p_threeD_renderer_webgl.domElement);
 		this.threeDCanvasElement.append(this._p_threeD_renderer_css.domElement);
@@ -197,7 +197,7 @@ define([
 		});
 
 
-		// Render on size-change and every animation frame
+		/* render on size-change and every animation frame */
 		var trigger3DRender = () => { this.trigger('3d-render') };
 		this.on('size', trigger3DRender);
 		var stopTriggering3DRender = U.eachAnimationFrame(() => { this.trigger('3d-render') });
@@ -207,17 +207,12 @@ define([
 		});
 
 
-		// Controls
+		/* controls */
 		this._p_threeD_controls = new THREE.TrackballControls(this._p_threeD_camera, this.threeDCanvasElement[0]);
 		$.extend(this._p_threeD_controls, {
 			rotateSpeed: 1.0,
 			zoomSpeed: 1.2,
-			panSpeed: 0.8,
-			noZoom: false,
-			noPan: false,
-			staticMoving: true,
-			dynamicDampingFactor: 0.3,
-			keys: [65, 83, 68]
+			panSpeed: 0.8
 		});
 		this._p_threeD_controls.addEventListener('change', () => { this.trigger('3d-render') });
 		var handleResizeForControls = () => { this._p_threeD_controls.handleResize() };
@@ -234,7 +229,7 @@ define([
 		});
 
 
-		// Floating Tilemap
+		/* floating tilemap */
 		var initialCircuitboardParent = this.element.parent();
 		var initialCircuitboardPositioning = {
 			left: this.element.css('left'),
@@ -260,7 +255,7 @@ define([
 		});
 
 
-		// Tilemap Backface
+		/* tilemap backface */
 		var backfaceElement = $('<div>').css({
 			position: 'absolute',
 			border: 'solid 1px black',
@@ -271,9 +266,10 @@ define([
 		this._p_threeD_scene.add(backface);
 
 
-		// respond to resize
+		/* respond to resize */
 		var onCanvasResize = () => {
-			// sizing and positioning of the circuit-board and backface
+
+			/* sizing and positioning of the circuit-board and backface */
 			var size = {
 				width: this.threeDCanvasSize.width - this._p_threeD_initialMargin.left - this._p_threeD_initialMargin.right,
 				height: this.threeDCanvasSize.height - this._p_threeD_initialMargin.top - this._p_threeD_initialMargin.bottom
@@ -283,11 +279,12 @@ define([
 			backface.position.x = this._p_threeD_circuitboard.position.x = 0.5 * (this._p_threeD_initialMargin.left - this._p_threeD_initialMargin.right);
 			backface.position.y = this._p_threeD_circuitboard.position.y = 0.5 * (this._p_threeD_initialMargin.bottom - this._p_threeD_initialMargin.top);
 
-			// set the camera distance to correspond
+			/* set the camera distance to correspond */
 			this._p_threeD_controls.setCameraDistance(
 					this.threeDCanvasSize.height /
 					(2 * Math.tan(THREE.Math.degToRad(this._p_threeD_camera.fov) / 2))
 			);
+
 		};
 		this.on('threeDCanvasSize', onCanvasResize);
 		onCanvasResize();
@@ -298,10 +295,10 @@ define([
 	});
 
 
-	// `translatePositionFromCanvasToCircuitboard` has no side-effects and can be used
-	// from the outside to translate left/top coordinates on the screen to left/top
-	// coordinates of the private coordinate-system of the circuitboard, however it is
-	// oriented in 3D space.
+	/* `translatePositionFromCanvasToCircuitboard` has no side-effects and can be used   */
+	/*  from the outside to translate left/top coordinates on the screen to left/top     */
+	/*  coordinates of the private coordinate-system of the circuitboard, however it is  */
+	/*  oriented in 3D space.                                                            */
 	plugin.add('translatePositionFromCanvasToCircuitboard', function (positionOnCanvas) {
 
 		this._p_threeD_camera.updateMatrixWorld();
@@ -315,7 +312,7 @@ define([
 		var ray = new THREE.Ray(this._p_threeD_camera.position, mouse3D.sub(this._p_threeD_camera.position).normalize());
 		var intersects = ray.intersectPlane(PLANE);
 
-		// if the tested intersection is out of range, return undefined
+		/* if the tested intersection is out of range, return undefined */
 		if (!intersects) { return }
 
 		return {

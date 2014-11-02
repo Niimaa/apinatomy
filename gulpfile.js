@@ -27,7 +27,7 @@ var WEBPACK_ALIAS = {
 	'd3': 'd3/d3.js',
 	'three-js': 'three.js/three.js',
 	'lodash': 'lodash/dist/lodash.min.js',
-	'delta-js': 'delta-js/dist/delta.min.js'
+	'delta-js': 'delta.js/dist/delta.min.js'
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

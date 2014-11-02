@@ -1,669 +1,488 @@
-define(['three-js'], function (THREE) {
+/**
+ * @author Eberhard Graether     (http://egraether.com)
+ * @author Mark Lundin           (http://mark-lundin.com)
+ * @author Michiel Helvensteijn  (http://mhelvens.net)
+ */
+
+define(['jquery', 'three-js', 'delta-js', './misc.js'], ($, THREE, DeltaModel, U) => {
 	'use strict';
 
-	/* jshint ignore:start */
 
-	/**
-	 * @author Eberhard Graether / http://egraether.com/
-	 * @author Mark Lundin    / http://mark-lundin.com
-	 */
+	/* constants ******************************************************************************************************/
 
-	THREE.TrackballControls = function (object, domElement) {
-
-		var _this = this;
-		var STATE = { NONE: -1, ROTATE: 0, ZOOM: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_ZOOM_PAN: 4 };
-
-		this.object = object;
-		this.domElement = ( domElement !== undefined ) ? domElement : document;
-
-		// API
-
-		this.enabled = true;
-
-		this.screen = { left: 0, top: 0, width: 0, height: 0 };
-
-		this.rotateSpeed = 1.0;
-		this.zoomSpeed = 1.2;
-		this.panSpeed = 0.3;
-
-		this.noRotate = false;
-		this.noZoom = false;
-		this.noPan = false;
-		this.noRoll = false;
-
-		this.staticMoving = false;
-		this.dynamicDampingFactor = 0.2;
-
-		this.minDistance = 0;
-		this.maxDistance = Infinity;
-
-		this.keys = [ 65 /*A*/, 83 /*S*/, 68 /*D*/ ];
-
-		// internals
-
-		this.target = new THREE.Vector3();
-
-		var EPS = 0.000001;
-
-		var lastPosition = new THREE.Vector3();
-
-		var _state = STATE.NONE,
-			_prevState = STATE.NONE,
-
-			_eye = new THREE.Vector3(),
-
-			_rotateStart = new THREE.Vector3(),
-			_rotateEnd = new THREE.Vector3(),
-
-			_zoomStart = new THREE.Vector2(),
-			_zoomEnd = new THREE.Vector2(),
-
-			_touchZoomDistanceStart = 0,
-			_touchZoomDistanceEnd = 0,
-
-			_panStart = new THREE.Vector2(),
-			_panEnd = new THREE.Vector2();
-
-		// for reset
-
-		this.target0 = this.target.clone();
-		this.position0 = this.object.position.clone();
-		this.up0 = this.object.up.clone();
-
-		// events
-
-		var changeEvent = { type: 'change' };
-		var startEvent = { type: 'start'};
-		var endEvent = { type: 'end'};
+	var EPS = 0.000001;
+	var STATE = { NONE: -1, ROTATE: 0, ZOOM: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_ZOOM_PAN: 4 };
+	var CHANGE_EVENT = { type: 'change' };
+	var START_EVENT  = { type: 'start' };
+	var END_EVENT    = { type: 'end' };
 
 
-		// methods
+	/* delta model ****************************************************************************************************/
 
-		this.handleResize = function () {
+	var dm = new DeltaModel();
 
-			if (this.domElement === document) {
 
-				this.screen.left = 0;
-				this.screen.top = 0;
-				this.screen.width = window.innerWidth;
-				this.screen.height = window.innerHeight;
+	/* core ***********************************************************************************************************/
 
-			} else {
+	new dm.Delta('core', {
+		if: true
+	}).modify('TrackballControls.prototype')
+		/* 'construct' method core */
+			.add('construct', function (controlledObject, domElement) {
+				this._controlledObject = controlledObject;
+				this._domElement = domElement;
+			})
+		/* API */
+			.append('construct', function () {
 
-				var box = this.domElement.getBoundingClientRect();
-				// adjustments come from similar code in the jquery offset() function
-				var d = this.domElement.ownerDocument.documentElement;
-				this.screen.left = box.left + window.pageXOffset - d.clientLeft;
-				this.screen.top = box.top + window.pageYOffset - d.clientTop;
-				this.screen.width = box.width;
-				this.screen.height = box.height;
+				this.enabled = true;
 
-			}
+			})
+		/* private fields */
+			.append('construct', function () {
 
-		};
+				this._targetCoordinates = new THREE.Vector3();
+				this._lastPosition = new THREE.Vector3();
+				this._state = STATE.NONE;
+				this._eye = new THREE.Vector3();
+				this._rotateStart = new THREE.Vector3();
+				this._rotateEnd = new THREE.Vector3();
+				this._zoomStart = new THREE.Vector2();
+				this._zoomEnd = new THREE.Vector2();
+				this._touchZoomDistanceStart = 0;
+				this._touchZoomDistanceEnd = 0;
+				this._panStart = new THREE.Vector2();
+				this._panEnd = new THREE.Vector2();
+				this._screen = { left: 0, top: 0, width: 0, height: 0 };
+				this._targetCoordinates0 = this._targetCoordinates.clone();
+				this._position0 = this._controlledObject.position.clone();
+				this._up0 = this._controlledObject.up.clone();
 
-		//noinspection JSUnusedGlobalSymbols
-		this.handleEvent = function (event) {
+			})
+		/* public methods */
+			.add('update', function () {
 
-			if (typeof this[ event.type ] == 'function') {
+				this._eye.subVectors(this._controlledObject.position, this._targetCoordinates);
 
-				this[ event.type ](event);
+				this.rotateCamera();
+				this.zoomCamera();
+				this.panCamera();
 
-			}
+				this._controlledObject.position.addVectors(this._targetCoordinates, this._eye);
 
-		};
+				this._controlledObject.lookAt(this._targetCoordinates);
 
-		var getMouseOnScreen = ( function () {
+				if (this._lastPosition.distanceToSquared(this._controlledObject.position) > EPS) {
+					this.dispatchEvent(CHANGE_EVENT);
+					this._lastPosition.copy(this._controlledObject.position);
+				}
 
-			var vector = new THREE.Vector2();
+			}).add('reset', function () {
 
-			return function (pageX, pageY) {
+				this._state = STATE.NONE;
 
-				vector.set(
-						( pageX - _this.screen.left ) / _this.screen.width,
-						( pageY - _this.screen.top ) / _this.screen.height
-				);
+				this._targetCoordinates.copy(this._targetCoordinates0);
+				this._controlledObject.position.copy(this._position0);
+				this._controlledObject.up.copy(this._up0);
 
-				return vector;
+				this._eye.subVectors(this._controlledObject.position, this._targetCoordinates);
 
-			};
+				this._controlledObject.lookAt(this._targetCoordinates);
 
-		}() );
+				this.dispatchEvent(CHANGE_EVENT);
 
-		var getMouseProjectionOnBall = ( function () {
+				this._lastPosition.copy(this._controlledObject.position);
 
-			var vector = new THREE.Vector3();
-			var objectUp = new THREE.Vector3();
-			var mouseOnBall = new THREE.Vector3();
+			}).add('handleResize', function () {
 
-			return function (pageX, pageY) {
-
-				mouseOnBall.set(
-						( pageX - _this.screen.width * 0.5 - _this.screen.left ) / (_this.screen.width * .5),
-						( _this.screen.height * 0.5 + _this.screen.top - pageY ) / (_this.screen.height * .5),
-					0.0
-				);
-
-				var length = mouseOnBall.length();
-
-				if (_this.noRoll) {
-
-					if (length < Math.SQRT1_2) {
-
-						mouseOnBall.z = Math.sqrt(1.0 - length * length);
-
-					} else {
-
-						mouseOnBall.z = .5 / length;
-
-					}
-
-				} else if (length > 1.0) {
-
-					mouseOnBall.normalize();
-
+				if (this._domElement === document) {
+					this._screen.left = 0;
+					this._screen.top = 0;
+					this._screen.width = window.innerWidth;
+					this._screen.height = window.innerHeight;
 				} else {
-
-					mouseOnBall.z = Math.sqrt(1.0 - length * length);
-
+					var box = this._domElement.getBoundingClientRect();
+					// adjustments come from similar code in the jquery offset() function
+					var d = this._domElement.ownerDocument.documentElement;
+					this._screen.left = box.left + window.pageXOffset - d.clientLeft;
+					this._screen.top = box.top + window.pageYOffset - d.clientTop;
+					this._screen.width = box.width;
+					this._screen.height = box.height;
 				}
 
-				_eye.copy(_this.object.position).sub(_this.target);
-
-				vector.copy(_this.object.up).setLength(mouseOnBall.y);
-				vector.add(objectUp.copy(_this.object.up).cross(_eye).setLength(mouseOnBall.x));
-				vector.add(_eye.setLength(mouseOnBall.z));
-
-				return vector;
-
-			};
-
-		}() );
-
-		this.rotateCamera = (function () {
-
-			var axis = new THREE.Vector3(),
-				quaternion = new THREE.Quaternion();
+			});
 
 
-			return function () {
+	/* mouse event method cores ***************************************************************************************/
 
-				var angle = Math.acos(_rotateStart.dot(_rotateEnd) / _rotateStart.length() / _rotateEnd.length());
+	new dm.Delta('mouse-events', {
+		after: ['core'],
+		if: true
+	}).modify('TrackballControls.prototype')
+			.add('mousedown', function (event) {
 
-				if (angle) {
+				if (!this.enabled) { return }
+				if (this._state === STATE.NONE) { this._state = event.button }
 
-					axis.crossVectors(_rotateStart, _rotateEnd).normalize();
+				var mousemove = (e) => { this.mousemove(e) };
+				var mouseup = () => {
+					if (this.enabled === false) { return }
+					this._state = STATE.NONE;
+					document.removeEventListener('mousemove', mousemove);
+					document.removeEventListener('mouseup', mouseup);
+					this.dispatchEvent(END_EVENT);
+				};
 
-					angle *= _this.rotateSpeed;
+				document.addEventListener('mousemove', mousemove);
+				document.addEventListener('mouseup', mouseup);
 
-					quaternion.setFromAxisAngle(axis, -angle);
+				this.dispatchEvent(START_EVENT);
 
-					_eye.applyQuaternion(quaternion);
-					_this.object.up.applyQuaternion(quaternion);
+			}).add('mousemove', function () {
 
-					_rotateEnd.applyQuaternion(quaternion);
+				if (this.enabled === false) { return }
 
-					if (_this.staticMoving) {
+			}).add('touchstart', function (event) {
 
-						_rotateStart.copy(_rotateEnd);
+				if (!this.enabled) { return }
 
+				if (event.touches.length < 1 || event.touches.length > 2) {
+					this._state = STATE.NONE;
+				}
+
+				this.dispatchEvent(START_EVENT);
+
+			}).add('touchmove', function (event) {
+
+				if (!this.enabled) { return }
+
+				if (event.touches.length < 1 || event.touches.length > 2) {
+					this._state = STATE.NONE;
+				}
+
+			}).add('touchend', function () {
+
+				if (!this.enabled) { return }
+
+				this._state = STATE.NONE;
+				this.dispatchEvent(END_EVENT);
+
+			}).insert('construct', function () { // getMouseOnScreen
+
+				var vector = new THREE.Vector2();
+				this.getMouseOnScreen = function getMouseOnScreen(pageX, pageY) {
+					vector.set(
+							(pageX - this._screen.left) / this._screen.width,
+							(pageY - this._screen.top) / this._screen.height
+					);
+					return vector;
+				};
+
+			}).insert('construct', function () { // getMouseProjectionOnBall
+				var vector = new THREE.Vector3();
+				var objectUp = new THREE.Vector3();
+				var mouseOnBall = new THREE.Vector3();
+				this.getMouseProjectionOnBall = function getMouseProjectionOnBall(pageX, pageY) {
+
+					mouseOnBall.set(
+							(pageX - this._screen.width * 0.5 - this._screen.left) / (this._screen.width * 0.5),
+							(this._screen.height * 0.5 + this._screen.top - pageY) / (this._screen.height * 0.5),
+							0.0
+					);
+
+					var length = mouseOnBall.length();
+
+					if (length > 1.0) {
+						mouseOnBall.normalize();
 					} else {
-
-						quaternion.setFromAxisAngle(axis, angle * ( _this.dynamicDampingFactor - 1.0 ));
-						_rotateStart.applyQuaternion(quaternion);
-
+						mouseOnBall.z = Math.sqrt(1.0 - length * length);
 					}
 
+					this._eye.copy(this._controlledObject.position).sub(this._targetCoordinates);
+
+					vector.copy(this._controlledObject.up).setLength(mouseOnBall.y);
+					vector.add(objectUp.copy(this._controlledObject.up).cross(this._eye).setLength(mouseOnBall.x));
+					vector.add(this._eye.setLength(mouseOnBall.z));
+
+					return vector;
+
+				};
+			}).insert('construct', function () {
+
+				this._domElement.addEventListener('contextmenu', (e) => { e.preventDefault() });
+				this._domElement.addEventListener('mousedown', (e) => { this.mousedown(e) });
+				this._domElement.addEventListener('touchstart', (e) => { this.touchstart(e) });
+				this._domElement.addEventListener('touchmove', (e) => { this.touchmove(e) });
+				this._domElement.addEventListener('touchend', (e) => { this.touchend(e) });
+
+			});
+
+
+	/* rotate *********************************************************************************************************/
+
+	new dm.Delta('rotate', {
+		after: ['core', 'mouse-events'],
+		if: true
+	}).modify('TrackballControls.prototype')
+		/* mouse events */
+			.append('mousedown', function (event) {
+
+				if (this._state === STATE.ROTATE) {
+					this._rotateStart.copy(this.getMouseProjectionOnBall(event.pageX, event.pageY));
+					this._rotateEnd.copy(this._rotateStart);
 				}
-			}
 
-		}());
+			}).append('mousemove', function (event) {
 
-		this.zoomCamera = function () {
+				if (this._state === STATE.ROTATE) {
+					this._rotateEnd.copy(this.getMouseProjectionOnBall(event.pageX, event.pageY));
+				}
 
-			if (_state === STATE.TOUCH_ZOOM_PAN) {
+			}).append('touchstart', function (event) {
 
-				//noinspection JSDuplicatedDeclaration
-				var factor = _touchZoomDistanceStart / _touchZoomDistanceEnd;
-				_touchZoomDistanceStart = _touchZoomDistanceEnd;
-				_eye.multiplyScalar(factor);
+				if (event.touches.length === 1) {
+					this._state = STATE.TOUCH_ROTATE;
+					this._rotateStart.copy(this.getMouseProjectionOnBall(event.touches[0].pageX, event.touches[0].pageY));
+					this._rotateEnd.copy(this._rotateStart);
+				}
 
-			} else {
+			}).append('touchmove', function (event) {
 
-				//noinspection JSDuplicatedDeclaration
-				var factor = 1.0 + ( _zoomEnd.y - _zoomStart.y ) * _this.zoomSpeed;
+				if (event.touches.length === 1) {
+					this._rotateEnd.copy(this.getMouseProjectionOnBall(event.touches[0].pageX, event.touches[0].pageY));
+				}
 
-				if (factor !== 1.0 && factor > 0.0) {
+			}).append('touchend', function () {
 
-					_eye.multiplyScalar(factor);
+				if (event.touches.length === 1) {
+					this._rotateEnd.copy(this.getMouseProjectionOnBall(event.touches[0].pageX, event.touches[0].pageY));
+					this._rotateStart.copy(this._rotateEnd);
+				}
 
-					if (_this.staticMoving) {
+			})
+		/* rotating */
+			.insert('construct', function () { // rotateCamera
+				var axis = new THREE.Vector3();
+				var quaternion = new THREE.Quaternion();
+				this.rotateCamera = function rotateCamera() {
 
-						_zoomStart.copy(_zoomEnd);
+					var angle = Math.acos(
+							this._rotateStart.dot(this._rotateEnd) /
+							this._rotateStart.length() /
+							this._rotateEnd.length()
+					);
+					if (angle) {
+						axis.crossVectors(this._rotateStart, this._rotateEnd).normalize();
 
-					} else {
+						angle *= this.rotateSpeed;
 
-						_zoomStart.y += ( _zoomEnd.y - _zoomStart.y ) * this.dynamicDampingFactor;
+						quaternion.setFromAxisAngle(axis, -angle);
 
+						this._eye.applyQuaternion(quaternion);
+						this._controlledObject.up.applyQuaternion(quaternion);
+
+						this._rotateEnd.applyQuaternion(quaternion);
+						this._rotateStart.copy(this._rotateEnd);
 					}
 
+				};
+			})
+		/* rotating options */
+			.insert('construct', function () {
+
+				this.rotateSpeed = 1.0;
+
+			});
+
+
+	/* zoom ***********************************************************************************************************/
+
+	new dm.Delta('zoom', {
+		after: ['mouse-events'],
+		if: true
+	}).modify('TrackballControls.prototype')
+		/* mouse events */
+			.append('mousedown', function (event) {
+
+				if (this._state === STATE.ZOOM) {
+					this._zoomStart.copy(this.getMouseOnScreen(event.pageX, event.pageY));
+					this._zoomEnd.copy(this._zoomStart);
 				}
 
-			}
+			}).append('mousemove', function () {
 
-		};
+				if (this._state === STATE.ZOOM) {
+					this._zoomEnd.copy(this.getMouseOnScreen(event.pageX, event.pageY));
+				}
 
-		this.panCamera = (function () {
+			}).add('mousewheel', function (event) {
 
-			var mouseChange = new THREE.Vector2(),
-				objectUp = new THREE.Vector3(),
-				pan = new THREE.Vector3();
+				if (this.enabled === false) { return }
 
-			return function () {
+				event.preventDefault();
+				event.stopPropagation();
 
-				mouseChange.copy(_panEnd).sub(_panStart);
+				var diff = 0;
+				if (event.wheelDelta) { // WebKit / Opera / Explorer 9
+					diff = event.wheelDelta / 40;
+				} else if (event.detail) { // Firefox
+					diff = -event.detail / 3;
+				}
 
-				if (mouseChange.lengthSq()) {
+				this._zoomStart.y += diff * 0.01;
+				this.dispatchEvent(START_EVENT);
+				this.dispatchEvent(END_EVENT);
 
-					mouseChange.multiplyScalar(_eye.length() * _this.panSpeed);
+			}).insert('construct', function () {
 
-					pan.copy(_eye).cross(_this.object.up).setLength(mouseChange.x);
-					pan.add(objectUp.copy(_this.object.up).setLength(mouseChange.y));
+				this._domElement.addEventListener('mousewheel', (e) => { this.mousewheel(e) });
+				this._domElement.addEventListener('DOMMouseScroll', (e) => { this.mousewheel(e) }); // firefox
 
-					_this.object.position.add(pan);
-					_this.target.add(pan);
+			})
+		/* zooming */
+			.add('zoomCamera', function () {
 
-					if (_this.staticMoving) {
+				if (this._state === STATE.TOUCH_ZOOM_PAN) {
+					this._touchZoomDistanceStart = this._touchZoomDistanceEnd;
+					this._eye.multiplyScalar(this._touchZoomDistanceStart / this._touchZoomDistanceEnd);
+				} else {
+					var factor = 1.0 + ( this._zoomEnd.y - this._zoomStart.y ) * this.zoomSpeed;
+					if (factor !== 1.0 && factor > 0.0) {
+						this._eye.multiplyScalar(factor);
+						this._zoomStart.copy(this._zoomEnd);
+					}
+				}
 
-						_panStart.copy(_panEnd);
+			})
+		/* zooming options */
+			.insert('construct', function () {
 
-					} else {
+				this.zoomSpeed = 1.2;
 
-						_panStart.add(mouseChange.subVectors(_panEnd, _panStart).multiplyScalar(_this.dynamicDampingFactor));
+			});
 
+
+	/* pan ************************************************************************************************************/
+
+	new dm.Delta('pan', {
+		after: ['core', 'mouse-events'],
+		if: true
+	}).modify('TrackballControls.prototype')
+		/* mouse events */
+			.append('mousedown', function (event) {
+
+				if (this._state === STATE.PAN) {
+					this._panStart.copy(this.getMouseOnScreen(event.pageX, event.pageY));
+					this._panEnd.copy(this._panStart);
+				}
+
+			}).append('mousemove', function () {
+
+				if (this._state === STATE.PAN) {
+					this._panEnd.copy(this.getMouseOnScreen(event.pageX, event.pageY));
+				}
+
+			})
+		/* panning */
+			.insert('construct', function () { // panCamera
+				var mouseChange = new THREE.Vector2();
+				var objectUp = new THREE.Vector3();
+				var pan = new THREE.Vector3();
+				this.panCamera = function panCamera() {
+
+					mouseChange.copy(this._panEnd).sub(this._panStart);
+					if (mouseChange.lengthSq()) {
+						mouseChange.multiplyScalar(this._eye.length() * this.panSpeed);
+						pan.copy(this._eye).cross(this._controlledObject.up).setLength(mouseChange.x);
+						pan.add(objectUp.copy(this._controlledObject.up).setLength(mouseChange.y));
+						this._controlledObject.position.add(pan);
+						this._targetCoordinates.add(pan);
+						this._panStart.copy(this._panEnd);
 					}
 
+				};
+			})
+		/* panning options */
+			.insert('construct', function () {
+
+				this.panSpeed = 0.3;
+
+			});
+
+
+	/* zoom + pan *****************************************************************************************************/
+
+	new dm.Delta('zoom+pan', {
+		after: ['zoom', 'pan'],
+		if: true
+	}).modify('TrackballControls.prototype')
+		/* mouse events */
+			.append('touchstart', function (event) {
+
+				if (event.touches.length === 2) {
+					this._state = STATE.TOUCH_ZOOM_PAN;
+					var dx = event.touches[0].pageX - event.touches[1].pageX;
+					var dy = event.touches[0].pageY - event.touches[1].pageY;
+					this._touchZoomDistanceEnd = this._touchZoomDistanceStart = Math.sqrt(dx * dx + dy * dy);
+
+					var x = ( event.touches[0].pageX + event.touches[1].pageX ) / 2;
+					var y = ( event.touches[0].pageY + event.touches[1].pageY ) / 2;
+					this._panStart.copy(this.getMouseOnScreen(x, y));
+					this._panEnd.copy(this._panStart);
 				}
-			}
 
-		}());
+			}).append('touchmove', function (event) {
 
+				if (event.touches.length === 2) {
+					var dx = event.touches[0].pageX - event.touches[1].pageX;
+					var dy = event.touches[0].pageY - event.touches[1].pageY;
+					this._touchZoomDistanceEnd = Math.sqrt(dx * dx + dy * dy);
 
-		/////////////////////////
-		// Added for ApiNATOMY
-		//
-		this.setCameraDistance = function (distance) {
-			_this.object.position.normalize().multiplyScalar(distance);
-		};
-		//////
-
-
-		this.checkDistances = function () {
-
-			if (!_this.noZoom || !_this.noPan) {
-
-				if (_eye.lengthSq() > _this.maxDistance * _this.maxDistance) {
-
-					_this.object.position.addVectors(_this.target, _eye.setLength(_this.maxDistance));
-
+					var x = ( event.touches[0].pageX + event.touches[1].pageX ) / 2;
+					var y = ( event.touches[0].pageY + event.touches[1].pageY ) / 2;
+					this._panEnd.copy(this.getMouseOnScreen(x, y));
 				}
 
-				if (_eye.lengthSq() < _this.minDistance * _this.minDistance) {
+			}).append('touchend', function () {
 
-					_this.object.position.addVectors(_this.target, _eye.setLength(_this.minDistance));
+				if (event.touches.length === 2) {
+					this._touchZoomDistanceStart = this._touchZoomDistanceEnd = 0;
 
+					var x = ( event.touches[0].pageX + event.touches[1].pageX ) / 2;
+					var y = ( event.touches[0].pageY + event.touches[1].pageY ) / 2;
+					this._panEnd.copy(this.getMouseOnScreen(x, y));
+					this._panStart.copy(this._panEnd);
 				}
 
-			}
+			});
 
-		};
 
-		this.update = function () {
+	/* little hack for apinatomy-specific functionality ***************************************************************/
 
-			_eye.subVectors(_this.object.position, _this.target);
+	new dm.Delta('apinatomy-specific', {
+		if: true
+	}).modify('TrackballControls.prototype')
+			.add('setCameraDistance', function setCameraDistance(distance) {
 
-			if (!_this.noRotate) {
+				this._controlledObject.position.normalize().multiplyScalar(distance);
 
-				_this.rotateCamera();
+			});
 
-			}
 
-			if (!_this.noZoom) {
+	/* the TrackballControls class (variation point) ******************************************************************/
 
-				_this.zoomCamera();
+	THREE.TrackballControls = dm.vp('TrackballControls',
+			U.newClass(function TrackballControls(controlledObject, domElement = document) {
 
-			}
+				/* apply the construct method populated by deltas */
+				this.construct.apply(this, arguments);
 
-			if (!_this.noPan) {
+				/* explicitly update in the beginning */
+				this.handleResize();
+				this.update();
 
-				_this.panCamera();
+			}, Object.create(THREE.EventDispatcher.prototype))
+	);
 
-			}
-
-			_this.object.position.addVectors(_this.target, _eye);
-
-			_this.checkDistances();
-
-			_this.object.lookAt(_this.target);
-
-			if (lastPosition.distanceToSquared(_this.object.position) > EPS) {
-
-				_this.dispatchEvent(changeEvent);
-
-				lastPosition.copy(_this.object.position);
-
-			}
-
-		};
-
-		//noinspection JSUnusedGlobalSymbols
-		this.reset = function () {
-
-			_state = STATE.NONE;
-			_prevState = STATE.NONE;
-
-			_this.target.copy(_this.target0);
-			_this.object.position.copy(_this.position0);
-			_this.object.up.copy(_this.up0);
-
-			_eye.subVectors(_this.object.position, _this.target);
-
-			_this.object.lookAt(_this.target);
-
-			_this.dispatchEvent(changeEvent);
-
-			lastPosition.copy(_this.object.position);
-
-		};
-
-		// listeners
-
-//  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-		// added from http://threejs.org/examples/js/controls/PointerLockControls.js for ApiNATOMY
-		var _amy_velocity = new THREE.Vector3();
-
-		var KEYBOARD_VELOCITY = 5;
-
-		// added from http://threejs.org/examples/js/controls/PointerLockControls.js
-		function keydown( event ) {
-
-			//noinspection CoffeeScriptSwitchStatementWithNoDefaultBranch
-			switch ( event.keyCode ) {
-
-				case 38: // up
-				case 87: // w
-					_amy_velocity.y = KEYBOARD_VELOCITY;
-					break;
-
-				case 37: // left
-				case 65: // a
-					_amy_velocity.x = -KEYBOARD_VELOCITY;
-					break;
-
-				case 40: // down
-				case 83: // s
-					_amy_velocity.y = -KEYBOARD_VELOCITY;
-					break;
-
-				case 39: // right
-				case 68: // d
-					_amy_velocity.x = KEYBOARD_VELOCITY;
-					break;
-
-			}
-
-		}
-
-		// added from http://threejs.org/examples/js/controls/PointerLockControls.js
-		function keyup( event ) {
-
-			//noinspection CoffeeScriptSwitchStatementWithNoDefaultBranch
-			switch( event.keyCode ) {
-
-				case 38: // up
-				case 87: // w
-					_amy_velocity.y = 0;
-					break;
-
-				case 37: // left
-				case 65: // a
-					_amy_velocity.x = 0;
-					break;
-
-				case 40: // down
-				case 83: // s
-					_amy_velocity.y = 0;
-					break;
-
-				case 39: // right
-				case 68: // d
-					_amy_velocity.x = 0;
-					break;
-
-			}
-
-		}
-
-	//  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-		function mousedown(event) {
-
-			if (_this.enabled === false) return;
-
-			//event.preventDefault();
-			//event.stopPropagation();
-
-			if (_state === STATE.NONE) {
-
-				_state = event.button;
-
-			}
-
-			if (_state === STATE.ROTATE && !_this.noRotate) {
-
-				_rotateStart.copy(getMouseProjectionOnBall(event.pageX, event.pageY));
-				_rotateEnd.copy(_rotateStart);
-
-			} else if (_state === STATE.ZOOM && !_this.noZoom) {
-
-				_zoomStart.copy(getMouseOnScreen(event.pageX, event.pageY));
-				_zoomEnd.copy(_zoomStart);
-
-			} else if (_state === STATE.PAN && !_this.noPan) {
-
-				_panStart.copy(getMouseOnScreen(event.pageX, event.pageY));
-				_panEnd.copy(_panStart)
-
-			}
-
-			document.addEventListener('mousemove', mousemove, false);
-			document.addEventListener('mouseup', mouseup, false);
-
-			_this.dispatchEvent(startEvent);
-
-		}
-
-		function mousemove(event) {
-
-			if (_this.enabled === false) return;
-
-			//event.preventDefault();
-			//event.stopPropagation();
-
-			if (_state === STATE.ROTATE && !_this.noRotate) {
-
-				_rotateEnd.copy(getMouseProjectionOnBall(event.pageX, event.pageY));
-
-			} else if (_state === STATE.ZOOM && !_this.noZoom) {
-
-				_zoomEnd.copy(getMouseOnScreen(event.pageX, event.pageY));
-
-			} else if (_state === STATE.PAN && !_this.noPan) {
-
-				_panEnd.copy(getMouseOnScreen(event.pageX, event.pageY));
-
-			}
-
-		}
-
-		function mouseup(event) {
-
-			if (_this.enabled === false) return;
-
-			//event.preventDefault();
-			//event.stopPropagation();
-
-			_state = STATE.NONE;
-
-			document.removeEventListener('mousemove', mousemove);
-			document.removeEventListener('mouseup', mouseup);
-			_this.dispatchEvent(endEvent);
-
-		}
-
-		function mousewheel(event) {
-
-			if (_this.enabled === false) return;
-
-			event.preventDefault();
-			event.stopPropagation();
-
-			var delta = 0;
-
-			if (event.wheelDelta) { // WebKit / Opera / Explorer 9
-
-				delta = event.wheelDelta / 40;
-
-			} else if (event.detail) { // Firefox
-
-				delta = -event.detail / 3;
-
-			}
-
-			_zoomStart.y += delta * 0.01;
-			_this.dispatchEvent(startEvent);
-			_this.dispatchEvent(endEvent);
-
-		}
-
-		function touchstart(event) {
-
-			if (_this.enabled === false) { return }
-
-			switch (event.touches.length) {
-
-				case 1:
-					_state = STATE.TOUCH_ROTATE;
-					_rotateStart.copy(getMouseProjectionOnBall(event.touches[ 0 ].pageX, event.touches[ 0 ].pageY));
-					_rotateEnd.copy(_rotateStart);
-					break;
-
-				case 2:
-					_state = STATE.TOUCH_ZOOM_PAN;
-					var dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
-					var dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
-					_touchZoomDistanceEnd = _touchZoomDistanceStart = Math.sqrt(dx * dx + dy * dy);
-
-					var x = ( event.touches[ 0 ].pageX + event.touches[ 1 ].pageX ) / 2;
-					var y = ( event.touches[ 0 ].pageY + event.touches[ 1 ].pageY ) / 2;
-					_panStart.copy(getMouseOnScreen(x, y));
-					_panEnd.copy(_panStart);
-					break;
-
-				default:
-					_state = STATE.NONE;
-
-			}
-			_this.dispatchEvent(startEvent);
-
-
-		}
-
-		function touchmove(event) {
-
-			if (_this.enabled === false) return;
-
-			//event.preventDefault();
-			//event.stopPropagation();
-
-			switch (event.touches.length) {
-
-				case 1:
-					_rotateEnd.copy(getMouseProjectionOnBall(event.touches[ 0 ].pageX, event.touches[ 0 ].pageY));
-					break;
-
-				case 2:
-					var dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
-					var dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
-					_touchZoomDistanceEnd = Math.sqrt(dx * dx + dy * dy);
-
-					var x = ( event.touches[ 0 ].pageX + event.touches[ 1 ].pageX ) / 2;
-					var y = ( event.touches[ 0 ].pageY + event.touches[ 1 ].pageY ) / 2;
-					_panEnd.copy(getMouseOnScreen(x, y));
-					break;
-
-				default:
-					_state = STATE.NONE;
-
-			}
-
-		}
-
-		function touchend(event) {
-
-			if (_this.enabled === false) return;
-
-			//noinspection CoffeeScriptSwitchStatementWithNoDefaultBranch
-			switch (event.touches.length) {
-
-				case 1:
-					_rotateEnd.copy(getMouseProjectionOnBall(event.touches[ 0 ].pageX, event.touches[ 0 ].pageY));
-					_rotateStart.copy(_rotateEnd);
-					break;
-
-				case 2:
-					_touchZoomDistanceStart = _touchZoomDistanceEnd = 0;
-
-					var x = ( event.touches[ 0 ].pageX + event.touches[ 1 ].pageX ) / 2;
-					var y = ( event.touches[ 0 ].pageY + event.touches[ 1 ].pageY ) / 2;
-					_panEnd.copy(getMouseOnScreen(x, y));
-					_panStart.copy(_panEnd);
-					break;
-
-			}
-
-			_state = STATE.NONE;
-			_this.dispatchEvent(endEvent);
-
-		}
-
-
-		this.domElement.addEventListener('contextmenu', function (event) { event.preventDefault(); }, false);
-
-		this.domElement.addEventListener('mousedown', mousedown, false);
-
-		this.domElement.addEventListener('mousewheel', mousewheel, false);
-		this.domElement.addEventListener('DOMMouseScroll', mousewheel, false); // firefox
-
-		this.domElement.addEventListener('touchstart', touchstart, false);
-		this.domElement.addEventListener('touchend', touchend, false);
-		this.domElement.addEventListener('touchmove', touchmove, false);
-
-		window.addEventListener('keydown', keydown, false);
-		window.addEventListener('keyup', keyup, false);
-
-		this.handleResize();
-
-		// force an update at start
-		this.update();
-
-
-	};
-
-	THREE.TrackballControls.prototype = Object.create(THREE.EventDispatcher.prototype);
-
-	/* jshint ignore:end */
 
 });
