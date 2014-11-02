@@ -5,6 +5,7 @@
       <w>amywidget</w>
       <w>autoprefixer</w>
       <w>autoselect</w>
+      <w>bbox</w>
       <w>circuitboarddestroy</w>
       <w>concat</w>
       <w>deferreds</w>
@@ -28,6 +29,7 @@
       <w>npmjs</w>
       <w>prerelease</w>
       <w>putcssrules</w>
+      <w>reduct</w>
       <w>rimraf</w>
       <w>sourcemaps</w>
       <w>tilecreated</w>
@@ -39,6 +41,7 @@
       <w>touchmove</w>
       <w>touchstart</w>
       <w>traceur</w>
+      <w>transparentize</w>
       <w>uglify</w>
       <w>webgl</w>
     </words>

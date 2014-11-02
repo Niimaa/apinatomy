@@ -1,4 +1,4 @@
-// RequireJS Configuration
+/* RequireJS Configuration */
 requirejs.config({
 	paths: {
 		'domReady':  '../../bower_components/requirejs-domready/domReady',
@@ -19,17 +19,21 @@ requirejs.config({
 });
 
 
-// the application itself
+/* load the circuitboard code and style */
+require('../circuitboard.js');
+require('./plugin-explorer.scss');
+
+
+/* the application itself */
 require([
+
+	/* libraries that return a variable */
 	'jquery',
 	'js-graph',
-	'../circuitboard.js',
 	'./delta-diagram.js',
-	'./plugin-explorer.scss',
-	// plugins:
-	'../p-circuitboard-core.js',
-	'../p-tilemap-core.js',
-	'../p-tile-core.js',
+
+	/* plugins */
+	'../p-core.js',
 	'../p-refresh.js',
 	'../p-tile-skin.js',
 	'../p-tile-spacing.js',
@@ -49,12 +53,13 @@ require([
 	'../p-ppi.js',
 	'../p-three-d.js',
 	'../p-d3-three-d.js'
-], function ($, JsGraph, circuitboard, createDiagram) {
+
+], function ($, JsGraph, createDiagram) {
 	'use strict';
 
 	createDiagram(
 			$('body > svg'),
-			circuitboard.plugin.graph()
+			$.circuitboard.plugin.graph()
 	);
 
 });

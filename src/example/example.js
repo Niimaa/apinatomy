@@ -1,10 +1,5 @@
-// things to be loaded by webpack
-require('./example.scss');
-
-// RequireJS Configuration
-// Using an extra variable to stop webpack from messing with it
-var requireJs = requirejs;
-requireJs.config({
+/*  RequireJS Configuration */
+requirejs.config({
 	paths: {
 		'domReady':  '../../bower_components/requirejs-domready/domReady',
 		'jquery':    '../../bower_components/jquery/dist/jquery',
@@ -23,52 +18,59 @@ requireJs.config({
 });
 
 
-// Example application
-// circuitboard.js has to be loaded first
-requirejs(['../circuitboard.js'], function (circuitboard) {
-	requirejs([
-		'jquery',
-		'../fma-model.js',
-		'../p-circuitboard-core.js',
-		'../p-tilemap-core.js',
-		'../p-tile-core.js',
-		'../p-refresh.js',
-		'../p-tile-skin.js',
-		'../p-tile-spacing.js',
-		'../p-tile-click-to-open.js',
-		'../p-tile-weight.js',
-		'../p-tile-active.js',
-		'../p-tile-open.js',
-		'../p-tile-grow-when-open.js',
-		'../p-tile-open-active.js',
-		'../p-tile-skin-grow-when-open.js',
-		'../p-position-tracking.js',
-		'../p-transition-position-tracking.js',
-		'../p-tile-hidden.js',
-		'../p-tile-maximized.js',
-		'../p-tile-middleclick-to-maximize.js',
-		'../p-d3.js',
-		'../p-ppi.js',
-		'../p-three-d.js',
-		'../p-d3-three-d.js',
-		'domReady!'
-	], function ($, getFmaModels) {
-		'use strict';
+/* load the circuitboard code and style */
+require('../circuitboard.js');
+require('./example.scss');
 
-		// Select plugins to activate them;
-		// Note that these must already be *loaded* at this point
-		circuitboard.plugin([
-			'tile-skin',
-			'tile-click-to-open',
-			'tile-grow-when-open',
-			'tile-middleclick-to-maximize',
-			'tile-spacing',
-			'tile-active',
-			'ppi',
-			'three-d'
-		]);
 
-		// Use the $.fn.circuitboard method to instantiate the circuit-board
+/* example application  (circuitboard.js has to be loaded first) */
+require([
+
+	/* libraries that return a variable */
+	'jquery',
+	'../fma-model.js',
+
+	/* plugins */
+	'../p-core.js',
+	'../p-refresh.js',
+	'../p-tile-skin.js',
+	'../p-tile-spacing.js',
+	'../p-tile-click-to-open.js',
+	'../p-tile-weight.js',
+	'../p-tile-active.js',
+	'../p-tile-open.js',
+	'../p-tile-grow-when-open.js',
+	'../p-tile-open-active.js',
+	'../p-tile-skin-grow-when-open.js',
+	'../p-position-tracking.js',
+	'../p-transition-position-tracking.js',
+	'../p-tile-hidden.js',
+	'../p-tile-maximized.js',
+	'../p-tile-middleclick-to-maximize.js',
+	'../p-d3.js',
+	'../p-ppi.js',
+	'../p-three-d.js',
+	'../p-d3-three-d.js'
+
+], function ($, getFmaModels) {
+	'use strict';
+
+
+	/* select plugins to activate them  (note that these must already be *loaded* at this point) */
+	$.circuitboard.plugin([
+		'tile-skin',
+		'tile-click-to-open',
+		'tile-grow-when-open',
+		'tile-middleclick-to-maximize',
+		'tile-spacing',
+		'tile-active',
+		'ppi',
+		'three-d'
+	]);
+
+
+	/* use the $.fn.circuitboard method to instantiate the circuit-board */
+	$(document).ready(() => {
 		$('#circuitboard').circuitboard({
 			model: getFmaModels(['24tile:60000000'])[0],
 			tileSpacing: 1,
@@ -81,11 +83,8 @@ requirejs(['../circuitboard.js'], function (circuitboard) {
 			window.setThreeDMode = function (mode) {
 				circuitboard.threeDMode = mode;
 			};
-
-
 		});
-
-
 	});
-});
 
+
+});

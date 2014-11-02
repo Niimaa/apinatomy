@@ -6,7 +6,7 @@ define([
 
 	var plugin = $.circuitboard.plugin({
 		name: 'refresh',
-		expects: ['circuitboard-core', 'tilemap-core', 'tile-core']
+		expects: ['core']
 	});
 
 	['Tile', 'Tilemap', 'Circuitboard'].forEach((cls) => {

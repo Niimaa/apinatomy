@@ -3,7 +3,7 @@ define(['jquery'], function ($) {
 
 	var plugin = $.circuitboard.plugin({
 		name: 'tile-weight',
-		requires: ['tile-core']
+		requires: ['core']
 	}).modify('Tile.prototype');
 
 	//
