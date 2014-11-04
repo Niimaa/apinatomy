@@ -3,7 +3,7 @@ define([
 	'bluebird',
 	'./util/widget.js',
 	'./util/misc.js',
-	'./util/delta.js'
+	'delta-js'
 ], function ($, P, amyWidget, U, DM) {
 	'use strict';
 
