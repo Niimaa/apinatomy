@@ -32,11 +32,11 @@ define([
 	var plugin = $.circuitboard.plugin({
 		name: 'three-d',
 		requires: ['position-tracking']
-	}).modify('Circuitboard.prototype');
+	});
 
 
 	/* the constructor is run once to initialize potential 3D-ness */
-	plugin.insert('construct', function () {
+	plugin.insert('Circuitboard.prototype.construct', function () {
 
 
 		/*  test for browser support */
@@ -47,7 +47,7 @@ define([
 
 
 		/* the 'threeDCanvasElement' property */
-		U.observable(this, { name: 'threeDCanvasElement' });
+		U.observable(this, 'threeDCanvasElement');
 		this.on('threeDCanvasElement', (newCanvas, oldCanvas) => {
 			if (oldCanvas) { oldCanvas.removeClass('three-d-canvas') }
 			if (newCanvas) { newCanvas.addClass('three-d-canvas') }
@@ -55,8 +55,7 @@ define([
 
 
 		/* the 'threeDMode' property */
-		U.observable(this, {
-			name: 'threeDMode',
+		U.observable(this, 'threeDMode', {
 			initial: false,
 			validation: (val) => {
 				U.assert(!val || this.options.threeDCanvasElement,
@@ -83,7 +82,7 @@ define([
 
 
 		/* the 'threeDControlsEnabled' property */
-		U.observable(this, { name: 'threeDControlsEnabled' });
+		U.observable(this, 'threeDControlsEnabled');
 
 
 		/* initialize when 3D mode is turned on */
@@ -102,7 +101,7 @@ define([
 	});
 
 	/* `_p_threeD_initialize` is run every time 3D-ness is turned on */
-	plugin.add('_p_threeD_initialize', function () {
+	plugin.add('Circuitboard.prototype._p_threeD_initialize', function () {
 
 		/* an easy way to act on 3D mode being turned off */
 		var onThreeDModeOff = (cb) => {
@@ -134,10 +133,14 @@ define([
 		});
 
 
+
 		/* camera */
 		this._p_threeD_camera =
 				new THREE.PerspectiveCamera(60, this.threeDCanvasSize.width / this.threeDCanvasSize.height, 1, 10000);
-		var setCameraAspect = (size) => { this._p_threeD_camera.aspect = size.width / size.height };
+		var setCameraAspect = (size) => {
+			this._p_threeD_camera.aspect = size.width / size.height;
+			this._p_threeD_camera.updateProjectionMatrix();
+		};
 		this.on('threeDCanvasSize', setCameraAspect);
 		this._p_threeD_camera.position.z = 1;
 		onThreeDModeOff(() => {
@@ -241,8 +244,7 @@ define([
 		this.element.css({ left: 0, top: 0, bottom: 0, right: 0 });
 		this._p_threeD_scene.add(this._p_threeD_circuitboard);
 		onThreeDModeOff(() => {
-			this.element
-					.appendTo(initialCircuitboardParent)
+			this.element.appendTo(initialCircuitboardParent)
 					.css({
 						'width': 'auto',
 						'height': 'auto',
@@ -264,6 +266,16 @@ define([
 		var backface = new THREE.CSS3DObject(backfaceElement[0]);
 		backface.rotation.set(Math.PI, 0, 0);
 		this._p_threeD_scene.add(backface);
+
+
+		/* a three.js object with a coordinate system that corresponds to the html and svg of the circuitboard */
+		this.object3D = new THREE.Object3D();
+		this._p_threeD_scene.add(this.object3D);
+		this.object3D.scale.y = -1; // flip y axis
+		this.on('size', (size) => {
+			this.object3D.position.x = -size.width / 2;
+			this.object3D.position.y = size.height / 2;
+		});
 
 
 		/* respond to resize */
@@ -299,7 +311,7 @@ define([
 	/*  from the outside to translate left/top coordinates on the screen to left/top     */
 	/*  coordinates of the private coordinate-system of the circuitboard, however it is  */
 	/*  oriented in 3D space.                                                            */
-	plugin.add('translatePositionFromCanvasToCircuitboard', function (positionOnCanvas) {
+	plugin.add('Circuitboard.prototype.translatePositionFromCanvasToCircuitboard', function (positionOnCanvas) {
 
 		this._p_threeD_camera.updateMatrixWorld();
 		this._p_threeD_camera.updateProjectionMatrix();
@@ -319,6 +331,25 @@ define([
 			left: intersects.x + this.threeDCanvasSize.width / 2 - this._p_threeD_initialMargin.left,
 			top: -intersects.y + this.threeDCanvasSize.height / 2 - this._p_threeD_initialMargin.top
 		};
+
+	});
+
+
+	plugin.insert('Tile.prototype.construct', function () {
+
+		/* create the 3D object for this tile */
+		this.object3D = new THREE.Object3D();
+		this.circuitboard.object3D.add(this.object3D);
+
+		/* position it always in the center of the tile */
+		((reset) => {
+			this.on('position', reset);
+			this.on('size', reset);
+			reset(this.position);
+		})(() => {
+			this.object3D.position.x = this.position.left + this.size.width / 2;
+			this.object3D.position.y = this.position.top + this.size.height / 2;
+		});
 
 	});
 

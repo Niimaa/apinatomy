@@ -147,7 +147,7 @@ define(() => {
 				if (notRunYet) {
 					notRunYet = false;
 					setTimeout(() => { notRunYet = true }, 0);
-					func.apply(context, args);
+					func.apply(context || this, args);
 				}
 			};
 		},
@@ -155,14 +155,15 @@ define(() => {
 		// creates a new observable property to the given object;
 		// this object is assumed to have a `trigger` method
 		//
-		// options.name (mandatory) - the name of the property
+		// name (mandatory)   - the name of the property
+		// options.initial    - the initial value; defaults to undefined
 		// options.validation - if specified, this function is run before a new value is actually set.
 		//                      It is passed the new value and the old value, and should return the actual
 		//                      value that should be set. This could be the new or old value directly,
 		//                      or any transformation. It can also throw an exception, which will just be
 		//                      allowed to pass through. Returning the old value prevents a signal from
 		//                      being triggered.
-		observable(obj, {name, initial, validation}) {
+		observable(obj, name, {initial, validation} = {}) {
 			var value = initial;
 			Object.defineProperty(obj, name, {
 				get() { return value },
@@ -192,11 +193,11 @@ define(() => {
 			function setValue() {
 				var oldValue = cache;
 				cache = retrieve();
-				if (onChange && !isEqual(cache, oldValue)) {
-					onChange(cache, oldValue);
+				if (!isEqual(cache, oldValue)) {
+					onChange.forEach((fn) => fn(cache, oldValue));
 				}
 			}
-			setTimeout(setValue, 0);
+			setTimeout(setValue);
 
 			// retrieve a value at most once per stack and
 			// invoke the callback whenever the value is new
@@ -210,9 +211,8 @@ define(() => {
 			};
 
 			// allow the onChange callback to be set after creation;
-			// NOTE: only one callback is stored!
-			var onChange;
-			resultFn.onChange = (cb) => { onChange = cb; return resultFn; };
+			var onChange = [];
+			resultFn.onChange = (cb) => { onChange.push(cb); return resultFn; };
 
 			return resultFn;
 		}
@@ -229,7 +229,7 @@ define(() => {
 		return new U.Position(a.top - b.top, a.left - b.left);
 	};
 	U.Position.equals = (a, b) => {
-		return a && b && a.top === b.top && a.left === b.left;
+		return U.isDefined(a) && U.isDefined(b) && a.top === b.top && a.left === b.left;
 	};
 
 
@@ -238,8 +238,8 @@ define(() => {
 		this.height = height;
 		this.width = width;
 	});
-	U.Position.equals = (a, b) => {
-		return a && b && a.height === b.height && a.width === b.width;
+	U.Size.equals = (a, b) => {
+		return U.isDefined(a) && U.isDefined(b) && a.height === b.height && a.width === b.width;
 	};
 
 

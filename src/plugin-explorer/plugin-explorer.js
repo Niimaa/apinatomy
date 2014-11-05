@@ -34,7 +34,6 @@ require([
 
 	/* plugins */
 	'../p-core.js',
-	'../p-refresh.js',
 	'../p-tile-skin.js',
 	'../p-tile-spacing.js',
 	'../p-tile-click-to-open.js',
@@ -52,6 +51,7 @@ require([
 	'../p-d3.js',
 	'../p-ppi.js',
 	'../p-three-d.js',
+	'../p-three-d-geometric-models.js',
 	'../p-d3-three-d.js'
 
 ], function ($, JsGraph, createDiagram) {
