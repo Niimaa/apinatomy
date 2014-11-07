@@ -1,22 +1,19 @@
-define([
-	'jquery',
-	'./p-tile-skin-grow-when-open.scss'
-], function ($) {
+define(['jquery', './p-tile-skin-grow-when-open.scss'], function ($) {
 	'use strict';
+
 
 	var plugin = $.circuitboard.plugin({
 		name: 'tile-skin-grow-when-open',
 		resolves: ['tile-skin', 'tile-grow-when-open']
 	}).modify('Tile.prototype');
 
-	//
-	// react to a tile opening or closing by
-	// timely showing/hiding the content section
-	// to ensure smooth transition animation
-	//
+
+	/*  react to a tile opening or closing by      */
+	/*  timely showing/hiding the content section  */
+	/*  to ensure smooth transition animation      */
 	plugin.insert('construct', function () {
 		var sectionElement = this.element.children('section');
-		this.on('open', (open) => {
+		this.observe('open', (open) => {
 			if (open) {
 				setTimeout(() => {
 					sectionElement.css('opacity', 0);

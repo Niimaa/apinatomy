@@ -49,17 +49,19 @@ define([
 				.catch(()=>{}); // it's OK if '.tile.normal.css' is not on the model
 
 		// when the tile is closed, make the font size dynamic
-		var setHeaderFontSize = (size) => {
-			this._p_tileSkin_headerElement.css('fontSize', // formula gotten experimentally
-					Math.min(0.2 * Math.pow(size.height, 1.01), 0.13 * Math.pow(size.width, 1.01)));
-		};
-		this.on('open', (open) => {
+		var unsubscribe;
+		this.observe('open', (open) => {
 			if (open) {
-				this.off('size', setHeaderFontSize);
+				if (unsubscribe) {
+					unsubscribe();
+					unsubscribe = undefined;
+				}
 			} else {
-				this.on('size', setHeaderFontSize);
+				unsubscribe = this.observe('size', (size) => {
+					this._p_tileSkin_headerElement.css('fontSize', // formula gotten experimentally
+							Math.min(0.2 * Math.pow(size.height, 1.01), 0.13 * Math.pow(size.width, 1.01)));
+				});
 			}
 		});
-		if (!this.open) { this.on('size', setHeaderFontSize) }
 	});
 });

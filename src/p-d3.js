@@ -7,36 +7,35 @@ define([
 ], function ($, d3, U, uniqueId) {
 	'use strict';
 
+
 	var plugin = $.circuitboard.plugin({
 		name: 'd3',
 		requires: ['core', 'position-tracking']
 	}).modify('Circuitboard.prototype');
 
+
 	plugin.insert('construct', function () {
 		this._p_d3_vertices = {};
 		this._p_d3_edges = {};
 
-		//
-		// superimpose an `svg` canvas on top of the circuitboard
-		// the inner `svg` translates everything one pixel down and to the right,
-		// to correspond with tile positioning
-		//
-		var svgElement = $('<svg class="d3">').appendTo(this.element)
+
+		/*  superimpose an `svg` canvas on top of the circuitboard                  */
+		/*  the inner `svg` translates everything one pixel down and to the right,  */
+		/*  to correspond with tile positioning                                     */
+		var svgElement = $('<svg class="d3">')
+				.appendTo(this.element)
 				.append('<svg x="1" y="1">').children();
 
-		//
-		// enable the circuitboard element to serve as anchor
-		// for absolutely positioned children
-		//
+
+		/*  enable the circuitboard element to serve as anchor  */
+		/*  for absolutely positioned children                  */
 		U.makePositioned(this.element);
 
-		//
-		// create the force layout
-		//
+
+		/* create the force layout */
 		this.d3Force = d3.layout.force()
 				.nodes(U.objValues(this._p_d3_vertices))
 				.links(U.objValues(this._p_d3_edges))
-				.size([this.width, this.height])
 				.gravity(0)
 				.charge(function (d) {
 					return -0.025 *
@@ -56,92 +55,85 @@ define([
 				})
 				.linkStrength(0.8);
 
-		//
-		// auto-resize the force-layout canvas
-		//
-		this.on('size', (size) => { this.d3Force.size([size.width, size.height]) });
 
-		//
-		// create corresponding svg elements
-		//
+		/* auto-resize the force-layout canvas */
+		this.observe('size', (size) => {
+			this.d3Force.size([size.width, size.height]);
+		});
+
+
+		/* create corresponding svg elements */
 		var svg = d3.select(svgElement[0]);
 		var edges = svg.selectAll('.edge');
 		var vertices = svg.selectAll('.vertex');
 
-		//
-		// visible vertices and edges
-		//
+
+		/* visible vertices and edges */
 		var visibleVertices, visibleEdges;
 
-		//
-		// update the graph to account for new and/or removed vertices and/or edges
-		//
+
+		/* update the graph to account for new and/or removed vertices and/or edges */
 		this.updateGraph = U.debounce(() => {
 
 			// using the d3 general update pattern:
 			// http://bl.ocks.org/mbostock/3808218
 
+			/* gather the vertices/edges that ought to be visible */
 			visibleVertices = U.objValues(this._p_d3_vertices).filter((artefact) => artefact.showVertex);
 			visibleEdges = U.objValues(this._p_d3_edges);
 
-			//// restart the force
-			//
+			/* restart the force */
 			this.d3Force.nodes(visibleVertices).links(visibleEdges).start();
 
-			//// vertices
-			//
+			/* vertices */
 			vertices = svg.selectAll('.vertex').data(visibleVertices, U.field('graphId'));
 			vertices.enter().append((d) => d.element)
 					.classed('vertex', true).classed('edge', false)
 					.call(this.d3Force.drag); // all vertices can be dragged around
 			vertices.exit().remove();
 
-			//// edges
-			//
+			/* edges */
 			edges = svg.selectAll('.edge').data(visibleEdges, U.field('graphId'));
-			edges.enter().append((d) => d.element)
+			edges.enter()
+					.append((d) => d.element)
 					.classed('edge', true).classed('vertex', false);
 			edges.exit().remove();
 
-			//// define a nice visual z-order for the svg elements
-			//
+			/* define a nice visual z-order for the svg elements */
 			svg.selectAll('.vertex, .edge').sort(
 					(a, b) => (a.graphZIndex < b.graphZIndex) ? -1 : ((a.graphZIndex === b.graphZIndex) ? 0 : 1)
 			);
 
 		}, 200);
 
-		//
-		// while dragging a vertex, set the 'dragging-vertex' class on the circuitboard
-		//
+
+		/* while dragging a vertex, set the 'dragging-vertex' class on the circuitboard */
 		this.d3Force.drag().on('dragstart', () => {
 			svgElement.addClass('dragging-vertex');
 		}).on('dragend', () => {
 			svgElement.removeClass('dragging-vertex');
 		});
 
-		//
-		// on d3 animation tick
-		//
+
+		/* on d3 animation tick */
 		this.d3Force.on("tick", (e) => {
 			var k = 0.1 * e.alpha;
 
+			/* gravitate towards the center of the region */
 			visibleVertices.forEach(function (d) {
-				//
-				// gravitate towards the center of the region
-				//
 				d.x += d.group.gravityFactor * (d.group.region.left + 0.5 * d.group.region.width - d.x) * k;
 				d.y += d.group.gravityFactor * (d.group.region.top + 0.5 * d.group.region.height - d.y) * k;
+			});
 
-				//
-				// and always stay within the region
-				//
+			/* but always stay within the region */
+			visibleVertices.forEach(function (d) {
 				d.x = Math.max(d.x, d.group.region.left);
 				d.x = Math.min(d.x, d.group.region.left + d.group.region.width);
 				d.y = Math.max(d.y, d.group.region.top);
 				d.y = Math.min(d.y, d.group.region.top + d.group.region.height);
 			});
 
+			/* update the visible vertices and edges */
 			vertices
 					.attr('x', (d) => d.x)
 					.attr('y', (d) => d.y);
@@ -152,11 +144,8 @@ define([
 					.attr("y2", (d) => d.target.y);
 		});
 
-		$.extend(this, {
-			//
-			// a function for creating new interfaces,
-			// used to create vertices and edges and such:
-			//
+		/* a function for creating new interfaces, used to create vertices and edges and such */
+		U.extend(this, {
 			newGraphGroup(options) {
 				options = options || {};
 				var circuitboard = this;

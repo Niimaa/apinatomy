@@ -1,4 +1,4 @@
-define(() => {
+define(['bluebird'], (P) => {
 	'use strict';
 
 	var U = {
@@ -42,6 +42,10 @@ define(() => {
 		// create a function that returns the value of
 		// a specific field from a given object
 		field(name) { return (obj) => { return obj[name] } },
+
+		// create a function that returns the value of
+		// a specific field from a given object
+		call(fn, ...args) { return fn.apply(undefined, args) },
 
 		// get the object `obj[name]`; if `obj[name]` is not
 		// a (plain) object, make it an empty object first
@@ -118,7 +122,7 @@ define(() => {
 			return function (...args) {
 				var laterFn = () => {
 					timeout = null;
-					func.apply(context, args);
+					func.apply(context || this, args);
 				};
 				clearTimeout(timeout);
 				timeout = setTimeout(laterFn, wait);
@@ -129,98 +133,113 @@ define(() => {
 		// returns a function that can be called to stop the loop
 		eachAnimationFrame(fn, context) {
 			var stop = false;
+
 			function iterationFn() {
 				fn.apply(context);
 				if (stop) { return }
 				requestAnimationFrame(iterationFn);
 			}
+
 			iterationFn();
-			return function stopEachAnimationFrame() {
-				stop = true;
+
+			var unsubscribeFn = () => {
+				if (unsubscribeFn.stillSubscribed) {
+					unsubscribeFn.stillSubscribed = false;
+					delete unsubscribeFn.unsubscribeOn;
+					stop = true;
+				}
 			};
+			unsubscribeFn.stillSubscribed = true;
+			unsubscribeFn.unsubscribeOn = (subscriber) => {
+				subscriber(unsubscribeFn);
+				return unsubscribeFn;
+			};
+			return unsubscribeFn;
 		},
 
 		// Returns a function, that will only be triggered once per synchronous 'stack'.
 		oncePerStack(func, context) {
 			var notRunYet = true;
-			return function (...args) {
+			var result = function (...args) {
 				if (notRunYet) {
 					notRunYet = false;
 					setTimeout(() => { notRunYet = true }, 0);
 					func.apply(context || this, args);
 				}
 			};
+			result.allowAdditionalCall = () => {
+				notRunYet = true;
+			};
+			return result;
 		},
 
-		// creates a new observable property to the given object;
-		// this object is assumed to have a `trigger` method
-		//
-		// name (mandatory)   - the name of the property
-		// options.initial    - the initial value; defaults to undefined
-		// options.validation - if specified, this function is run before a new value is actually set.
-		//                      It is passed the new value and the old value, and should return the actual
-		//                      value that should be set. This could be the new or old value directly,
-		//                      or any transformation. It can also throw an exception, which will just be
-		//                      allowed to pass through. Returning the old value prevents a signal from
-		//                      being triggered.
-		observable(obj, name, {initial, validation} = {}) {
-			var value = initial;
-			Object.defineProperty(obj, name, {
-				get() { return value },
-				set(newValue) {
-					var oldValue = value;
-					if (validation) { newValue = validation(newValue, oldValue) }
-					if (newValue !== oldValue) {
-						value = newValue;
-						this.trigger(name, newValue, oldValue);
-					}
-				}
-			});
-		},
+		/*  Create a new cache to manage a specific value that is costly to compute or retrieve.    */
+		/*  It ensures that the retrieval function is not called only once per stack, and uses a    */
+		/*  cache to return a known value in between. It is also able to notify you when the value  */
+		/*  has actually changed. It does so using `===` comparison, but you can provide your own   */
+		/*  comparison function.                                                                    */
+		cached({retrieve, isEqual}) {
 
-		// Create a new cache to manage a specific value that is costly to compute or retrieve.
-		// It ensures that the retrieval function is not called only once per stack, and uses a cache
-		// to return a known value in between. It is also able to notify you when the value
-		// has actually changed. It does so using `===` comparison, but you can provide your own
-		// comparison function.
-		cached(options) {
-			// normalize parameters
-			var retrieve = options.retrieve,
-					isEqual = options.isEqual || ((a, b) => (a === b));
+			/* normalize parameters */
+			isEqual = isEqual || ((a, b) => (a === b));
 
-			// keep a cache and give it an initial value
+			/* keep a cache and give it an initial value */
 			var cache;
-			function setValue() {
+
+			/* how to retrieve a new value, and process it if it is new */
+			function retrieveValue() {
+				var newValue = retrieve();
 				var oldValue = cache;
-				cache = retrieve();
-				if (!isEqual(cache, oldValue)) {
-					onChange.forEach((fn) => fn(cache, oldValue));
+				if (!isEqual(newValue, oldValue)) {
+					cache = newValue;
+					onChange.forEach((fn) => fn(newValue, oldValue));
 				}
 			}
-			setTimeout(setValue);
 
-			// retrieve a value at most once per stack and
-			// invoke the callback whenever the value is new
-			var oncePerStackSetValue = U.oncePerStack(setValue);
+			/* retrieve a value at most once per stack */
+			var oncePerStackSetValue = U.oncePerStack(retrieveValue);
 
-			// the resulting function possibly performs retrieval,
-			// and always returns the cache (which may contain the new value)
+			/*  the resulting function possibly performs retrieval,             */
+			/*  and always returns the cache (which may contain the new value)  */
 			var resultFn = () => {
 				oncePerStackSetValue();
 				return cache;
 			};
 
-			// allow the onChange callback to be set after creation;
+			/* allow an onChange callback to be set */
 			var onChange = [];
-			resultFn.onChange = (cb) => { onChange.push(cb); return resultFn; };
+			resultFn.onChange = (cb) => {
+				onChange.push(cb);
+				return resultFn;
+			};
+
+			/* allow breaking of the cache, allowing multiple calls per stack */
+			resultFn.allowAdditionalCall = () => {
+				oncePerStackSetValue.allowAdditionalCall();
+			};
+
+			/* retrieve the first value right now */
+			oncePerStackSetValue();
 
 			return resultFn;
+		},
+
+		promisify(obj, method) {
+			return function (...args) {
+				return new P((resolve, reject) => {
+					try {
+						obj[method].apply(obj, args.concat(resolve));
+					} catch (error) {
+						reject(error);
+					}
+				});
+			};
 		}
 
 	};
 
 
-	// HTML element position
+	/* HTML element position */
 	U.Position = U.newClass(function (top, left) {
 		this.top = top;
 		this.left = left;
@@ -233,7 +252,7 @@ define(() => {
 	};
 
 
-	// HTML element size
+	/* HTML element size */
 	U.Size = U.newClass(function (height, width) {
 		this.height = height;
 		this.width = width;
@@ -244,4 +263,5 @@ define(() => {
 
 
 	return U;
+
 });

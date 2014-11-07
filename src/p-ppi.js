@@ -17,7 +17,13 @@ define([
 		var graphGroup = this.circuitboard.newGraphGroup();
 		this.on('destroy', () => { graphGroup.remove() });
 
-		var setGraphGroupRegion = () => {
+		graphGroup.setGravityFactor(1);
+		graphGroup.setChargeFactor(0.1);
+		((setGraphGroupRegion) => {
+			setGraphGroupRegion();
+			this.on('size', setGraphGroupRegion);
+			this.on('position', setGraphGroupRegion);
+		})(() => {
 			var AREA_MARGIN = 5;
 			graphGroup.setRegion({
 				top: this.position.top + AREA_MARGIN,
@@ -25,12 +31,7 @@ define([
 				height: this.size.height - 2 * AREA_MARGIN,
 				width: this.size.width - 2 * AREA_MARGIN
 			});
-		};
-
-		graphGroup.setGravityFactor(1);
-		graphGroup.setChargeFactor(0.1);
-		this.on('size', setGraphGroupRegion);
-		this.on('position', setGraphGroupRegion);
+		});
 
 		var constructExampleProteins = () => {
 			var protein1 = {

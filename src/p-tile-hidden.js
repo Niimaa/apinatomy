@@ -6,35 +6,31 @@ define(['jquery', './p-tile-hidden.scss'], function ($) {
 		requires: ['tile-open', 'tile-weight']
 	}).modify('Tile.prototype');
 
-	//
-	// allows a tile to be `hidden`
-	//
+	/* allows a tile to be `hidden` */
 	plugin.insert('construct', function () {
 
-		this._p_tileHidden = false;
-
-		Object.defineProperty(this, 'hidden', {
-			get() {
-				return this._p_tileHidden;
-			},
-			set(newHidden) {
-				if (newHidden === this._p_tileHidden) { return }
-
-				this._p_tileHidden = newHidden;
-
-				if (newHidden) {
-					this.element.addClass('hidden');
-					this.open = false; // first close the tile, then set weight to 0
-					this.weight = 0;   // (because the `open` property may reset the `weight`)
-				} else {
-					this.element.removeClass('hidden');
-					this.weight = this.weightWhenClosed();
-				}
-
-				this.trigger('hidden', newHidden);
-			}
-
+		this.newObservable('hidden', {
+			initial: false,
+			validation: (v) => !!v
 		});
+
+		this.observe('hidden', (hidden) => {
+			this.open = false;
+			if (hidden) {
+				this.element.addClass('hidden');
+				this.weight = 0;
+			} else {
+				this.element.removeClass('hidden');
+				this.weight = this.weightWhenClosed();
+			}
+		});
+
+		var parentTile = this.closestAncestorByType('Tile');
+		if (parentTile) {
+			parentTile.observe('open', (open) => {
+				this.hidden = !open;
+			});
+		}
 
 	});
 });

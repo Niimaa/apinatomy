@@ -1,36 +1,5 @@
-define(['jquery', 'bluebird', './misc.js'], function ($, P, U) {
+define(['jquery', 'bluebird', './misc.js', './signal-handler.js'], function ($, P, U, SignalHandler) {
 	'use strict';
-
-	/* a function to add signal handling methods to an object */
-	function enableSignalHandling(obj) {
-
-		var _callbacks = {};
-
-		function _signalCallbacks(signal) {
-			if (!_callbacks[signal]) {
-				_callbacks[signal] = $.Callbacks();
-			}
-			return _callbacks[signal];
-		}
-
-		$.extend(obj, {
-			on(signal, fn) { _signalCallbacks(signal).add(fn) },
-			off(signal, fn) { _signalCallbacks(signal).remove(fn) },
-			one(signal, fn) {
-				var paddedFn = () => {
-					fn.apply(null, arguments);
-					this.off(signal, paddedFn);
-				};
-				this.on(signal, paddedFn);
-			},
-			once(signal, fn) { this.one(signal, fn) },
-			trigger(signal, ...args) {
-				var callbacks = _callbacks[signal];
-				if (callbacks) { callbacks.fireWith(this, args) }
-			}
-		});
-
-	}
 
 	/* a function to implement artefact hierarchy methods */
 	function defineHierarchyMethods(obj, type) {
@@ -91,7 +60,6 @@ define(['jquery', 'bluebird', './misc.js'], function ($, P, U) {
 				element: element,
 				destroy() { this.trigger('destroy') }
 			});
-			enableSignalHandling(this);
 
 			/* set the element class */
 			this.element.addClass(this.options.cssClass);
@@ -128,6 +96,7 @@ define(['jquery', 'bluebird', './misc.js'], function ($, P, U) {
 
 		defineDefaultProperties(Widget.prototype);
 		defineHierarchyMethods(Widget.prototype, typeName);
+		U.extend(Widget.prototype, SignalHandler);
 
 		/* now define the widget creation & retrieval function as a jQuery plugin */
 		var lowercaseName = typeName[0].toLowerCase() + typeName.slice(1);

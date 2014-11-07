@@ -117,9 +117,7 @@ define([
 			}).add('construct', function () {
 
 				this._p_tilemapCore_tiles = null;
-				Object.defineProperty(this, 'tiles', {
-					get() { return this._p_tilemapCore_tiles }
-				});
+				Object.defineProperty(this, 'tiles', { get: () => this._p_tilemapCore_tiles });
 				this.refreshTiles();
 
 			});
@@ -159,12 +157,8 @@ define([
 					this.trigger('click-not-drop', event);
 				});
 
-				/* public access to the HTML element */
-				var _domContent = this.element;
-				Object.defineProperty(this, 'dom', {
-					get() { return _domContent },
-					set(newDOM) { _domContent = newDOM }
-				});
+				/* a field to hold the innermost HTML content element still belonging to this tile */
+				this.dom = this.element;
 
 				/* an element id for quick lookups */
 				this.id = uniqueID('tile');
