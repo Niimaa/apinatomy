@@ -74,8 +74,11 @@ define([
 
 		if (!this.model) { return }
 
+		var threeDModels = this.circuitboard.options.threeDModels;
+
+		if (!threeDModels) { return }
+
 		this.model.then((model) => {
-			var threeDModels = this.circuitboard.options.threeDModels;
 			if (U.isDefined(threeDModels[model.id])) {
 
 				/* load the 3D objects into the scene through a promise chain */
