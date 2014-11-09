@@ -35,7 +35,7 @@ define([
 
 		var constructExampleProteins = () => {
 			var protein1 = {
-				id: this.id + ':' + 'protein1',
+				id: `${this.id}:protein1`,
 				showVertex: true,
 				graphZIndex: 200,
 				get element() {
@@ -43,7 +43,7 @@ define([
 				}
 			};
 			var protein2 = {
-				id: this.id + ':' + 'protein2',
+				id: `${this.id}:protein2`,
 				showVertex: true,
 				graphZIndex: 200,
 				get element() {

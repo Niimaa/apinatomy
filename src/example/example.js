@@ -12,7 +12,7 @@ requirejs.config({
 	},
 	shim: {
 		'jquery':   { exports: 'jQuery' },
-		'bluebird': { init: function () { this.longStackTraces() } },
+		'bluebird': { init() { this.longStackTraces() } },
 		'three-js': { exports: 'THREE' }
 	}
 });
@@ -50,6 +50,7 @@ require([
 	'../p-ppi.js',
 	'../p-three-d.js',
 	'../p-three-d-geometric-models.js',
+	'../p-three-d-geometric-models-stl.js',
 	'../p-d3-three-d.js'
 
 ], function ($, getFmaModels) {
@@ -66,7 +67,8 @@ require([
 		'tile-active',
 		'ppi',
 		'three-d',
-		'three-d-geometric-models'
+		'three-d-geometric-models',
+		'three-d-geometric-models-stl'
 	]);
 
 
@@ -79,11 +81,13 @@ require([
 			weightWhenOpen: 8,
 			threeDCanvasElement: $('#three-d-canvas')
 		}).circuitboard('instance').then(function (circuitboard) {
+
 			console.info('circuitboard loaded');
 
 			window.setThreeDMode = function (mode) {
 				circuitboard.threeDMode = mode;
 			};
+
 		});
 	});
 

@@ -1,7 +1,4 @@
-define([
-	'jquery',
-	'./util/misc.js'
-], function ($, U) {
+define(['jquery', './util/misc.js'], function ($, U) {
 	'use strict';
 
 
@@ -72,7 +69,7 @@ define([
 
 		((cache) => {
 			this.offset = cache();
-			setTimeout(cache);
+			setInterval(cache, 100); // TODO: find the proper way to keep this updated
 			cache.onChange((newOffset) => { this.offset = newOffset });
 			this.on('reset-positioning', cache);
 		})(U.cached({
@@ -89,8 +86,10 @@ define([
 
 		((cache) => {
 			this.offset = cache();
+			setInterval(cache, 100); // TODO: find the proper way to keep this updated
 			cache.onChange((newOffset) => { this.offset = newOffset });
 			this.parent.observe('size', cache);
+			this.parent.on('offset', cache);
 			this.on('reset-positioning', cache);
 		})(U.cached({
 			retrieve: () => {
@@ -106,11 +105,12 @@ define([
 
 		((cache) => {
 			this.offset = cache();
+			setInterval(cache, 100); // TODO: find the proper way to keep this updated
 			cache.onChange((newOffset) => { this.offset = newOffset });
 			this.on('weight', cache);
-			this.parent.on('position', cache);
 			this.parent.on('size', cache);
 			this.parent.on('reorganize', cache);
+			this.parent.on('offset', cache);
 			this.on('reset-positioning', cache);
 		})(U.cached({
 			retrieve: () => {
@@ -163,8 +163,9 @@ define([
 
 		((cache) => {
 			this.size = cache();
+			setInterval(cache, 100); // TODO: find the proper way to keep this updated
 			cache.onChange((newSize) => { this.size = newSize });
-			(this.options.resizeEvent || U.bind($(window), 'resize'))(cache);
+			( this.options.resizeEvent || U.bind($(window), 'resize') )(cache);
 			this.on('reset-positioning', cache);
 		})(U.cached({
 			retrieve: () => new U.Size(this.element.height(), this.element.width()),
@@ -177,6 +178,7 @@ define([
 
 		((cache) => {
 			this.size = cache();
+			setInterval(cache, 100); // TODO: find the proper way to keep this updated
 			cache.onChange((newSize) => { this.size = newSize });
 			this.parent.on('size', cache);
 			this.on('reset-positioning', cache);
@@ -191,6 +193,7 @@ define([
 
 		((cache) => {
 			this.size = cache();
+			setInterval(cache, 100); // TODO: find the proper way to keep this updated
 			cache.onChange((newSize) => { this.size = newSize });
 			this.on('weight', cache);
 			this.parent.on('size', cache);

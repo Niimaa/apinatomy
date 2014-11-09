@@ -100,36 +100,32 @@ define([
 	plugin.add('Circuitboard.prototype._p_threeD_initialize', function () {
 
 
+		// TODO: fix bug: when 3D mode is turned off, then on, tiles no longer respond to clicks
+
+
 		/* an easy way to act on 3D mode being turned off */
-		var onThreeDModeOff = (cb) => {
-			var unsubscribe = this.on('threeDMode', (mode) => {
-				if (!mode) { unsubscribe(); cb(); }
-			});
-		};
-
-
 		/* remember the initial margin */
 		this._p_threeD_initialMargin = {};
 		this._p_threeD_initialMargin.left = this.element.offset().left - this.threeDCanvasElement.offset().left;
 		this._p_threeD_initialMargin.top = this.element.offset().top - this.threeDCanvasElement.offset().top;
 		this._p_threeD_initialMargin.right = this.threeDCanvasSize.width - this.size.width - this._p_threeD_initialMargin.left;
 		this._p_threeD_initialMargin.bottom = this.threeDCanvasSize.height - this.size.height - this._p_threeD_initialMargin.top;
-		onThreeDModeOff(() => { delete this._p_threeD_initialMargin });
+		this.oneValue('threeDMode', false, () => { delete this._p_threeD_initialMargin });
 
 
 		/* scene */
 		this._p_threeD_scene = new THREE.Scene();
-		onThreeDModeOff(() => { delete this._p_threeD_scene });
+		this.oneValue('threeDMode', false, () => { delete this._p_threeD_scene });
 
 
 		/* camera */
 		this.camera3D = new THREE.PerspectiveCamera(60, this.threeDCanvasSize.width / this.threeDCanvasSize.height, 1, 10000);
 		this.camera3D.position.z = 1;
-		onThreeDModeOff(() => { delete this.camera3D });
+		this.oneValue('threeDMode', false, () => { delete this.camera3D });
 		this.observe('threeDCanvasSize', (size) => {
 			this.camera3D.aspect = size.width / size.height;
 			this.camera3D.updateProjectionMatrix();
-		}).unsubscribeOn(onThreeDModeOff);
+		}).unsubscribeOn(this.oneValue('threeDMode', false));
 
 
 		/* lighting */
@@ -144,7 +140,7 @@ define([
 		directionalLight2.position.set(-1, 1, -1);
 		this._p_threeD_scene.add(directionalLight2);
 		//
-		onThreeDModeOff(() => {
+		this.oneValue('threeDMode', false, () => {
 			ambientLight = undefined;
 			directionalLight1 = undefined;
 			directionalLight2 = undefined;
@@ -156,32 +152,32 @@ define([
 		this._p_threeD_renderer_webgl.sortObjects = false;
 		this.on('3d-render', () => {
 			this._p_threeD_renderer_webgl.render(this._p_threeD_scene, this.camera3D);
-		}).unsubscribeOn(onThreeDModeOff);
+		}).unsubscribeOn(this.oneValue('threeDMode', false));
 		this.observe('threeDCanvasSize', (size) => {
 			this._p_threeD_renderer_webgl.setSize(size.width, size.height);
-		}).unsubscribeOn(onThreeDModeOff);
-		onThreeDModeOff(() => { delete this._p_threeD_renderer_webgl });
+		}).unsubscribeOn(this.oneValue('threeDMode', false));
+		this.oneValue('threeDMode', false, () => { delete this._p_threeD_renderer_webgl });
 
 
 		/* renderer: CSS */
 		this._p_threeD_renderer_css = new THREE.CSS3DRenderer();
 		$(this._p_threeD_renderer_css.domElement).append(this._p_threeD_renderer_webgl.domElement);
 		this.threeDCanvasElement.append(this._p_threeD_renderer_css.domElement);
-		onThreeDModeOff(() => {
+		this.oneValue('threeDMode', false, () => {
 			this.threeDCanvasElement.empty();
 			delete this._p_threeD_renderer_css;
 		});
 		this.on('3d-render', () => {
 			this._p_threeD_renderer_css.render(this._p_threeD_scene, this.camera3D);
-		}).unsubscribeOn(onThreeDModeOff);
+		}).unsubscribeOn(this.oneValue('threeDMode', false));
 		this.observe('threeDCanvasSize', (size) => {
 			this._p_threeD_renderer_css.setSize(size.width, size.height);
-		}).unsubscribeOn(onThreeDModeOff);
+		}).unsubscribeOn(this.oneValue('threeDMode', false));
 
 
 		/* render on size-change and every animation frame */
-		this.on('size', () => { this.trigger('3d-render') }).unsubscribeOn(onThreeDModeOff);
-		U.eachAnimationFrame(() => { this.trigger('3d-render') }).unsubscribeOn(onThreeDModeOff);
+		this.on('size', () => { this.trigger('3d-render') }).unsubscribeOn(this.oneValue('threeDMode', false));
+		U.eachAnimationFrame(() => { this.trigger('3d-render') }).unsubscribeOn(this.oneValue('threeDMode', false));
 
 
 		/* controls */
@@ -192,12 +188,12 @@ define([
 			panSpeed: 0.8
 		});
 		this._p_threeD_controls.addEventListener('change', () => { this.trigger('3d-render') });
-		onThreeDModeOff(() => { delete this._p_threeD_controls });
-		this.on('3d-render', () => { this._p_threeD_controls.update() }).unsubscribeOn(onThreeDModeOff);
-		this.observe('size', () => { this._p_threeD_controls.handleResize() }).unsubscribeOn(onThreeDModeOff);
+		this.oneValue('threeDMode', false, () => { delete this._p_threeD_controls });
+		this.on('3d-render', () => { this._p_threeD_controls.update() }).unsubscribeOn(this.oneValue('threeDMode', false));
+		this.observe('size', () => { this._p_threeD_controls.handleResize() }).unsubscribeOn(this.oneValue('threeDMode', false));
 		this.observe('threeDControlsEnabled', (enabled) => {
 			this._p_threeD_controls.enabled = enabled;
-		}).unsubscribeOn(onThreeDModeOff);
+		}).unsubscribeOn(this.oneValue('threeDMode', false));
 
 
 		/*  the circuitboard object has a coordinate system           */
@@ -212,8 +208,8 @@ define([
 		this.observe('size', (size) => {
 			this.object3D.position.x = -size.width / 2;
 			this.object3D.position.y = size.height / 2;
-		}).unsubscribeOn(onThreeDModeOff);
-		onThreeDModeOff(() => { delete this.object3D });
+		}).unsubscribeOn(this.oneValue('threeDMode', false));
+		this.oneValue('threeDMode', false, () => { delete this.object3D });
 
 
 		/* floating tilemap */
@@ -224,8 +220,8 @@ define([
 			right: this.element.css('right'),
 			bottom: this.element.css('bottom')
 		};
-		onThreeDModeOff(() => {
-			this.element.appendTo(initialCircuitboardParent)
+		this.oneValue('threeDMode', false, () => {
+			this.element.detach().appendTo(initialCircuitboardParent)
 					.css({
 						'width': 'auto',
 						'height': 'auto',
@@ -265,7 +261,6 @@ define([
 				y: 0.5 * (this._p_threeD_initialMargin.bottom - this._p_threeD_initialMargin.top)
 			};
 
-
 			this.element.css(newCircuitboardSize);
 			U.extend(this._p_threeD_circuitboard.position, newCircuitboardPosition);
 
@@ -278,7 +273,7 @@ define([
 					(2 * Math.tan(THREE.Math.degToRad(this.camera3D.fov) / 2))
 			);
 
-		}).unsubscribeOn(onThreeDModeOff);
+		}).unsubscribeOn(this.oneValue('threeDMode', false));
 
 	});
 

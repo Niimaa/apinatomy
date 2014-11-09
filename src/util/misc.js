@@ -234,6 +234,16 @@ define(['bluebird'], (P) => {
 					}
 				});
 			};
+		},
+
+		optionalCurry(fn) {
+			return function () {
+				if (fn.length <= arguments.length) {
+					return fn.apply(this, arguments);
+				} else {
+					return U.bindA(fn, this, arguments);
+				}
+			};
 		}
 
 	};

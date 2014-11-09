@@ -11,41 +11,48 @@ define(['jquery', './misc.js'], function ($, U) {
 	};
 
 	/* how to subscribe to a signal */
-	SignalHandler.on = function on(signal, fn) {
-		var behavior = (fn) => {
-			this._getCallbacks(signal).add(fn);
-			var unsubscribeFn = () => {
-				if (unsubscribeFn.stillSubscribed) {
-					unsubscribeFn.stillSubscribed = false;
-					delete unsubscribeFn.unsubscribeOn;
-					this._getCallbacks(signal).remove(fn);
-				}
-			};
-			unsubscribeFn.stillSubscribed = true;
-			unsubscribeFn.unsubscribeOn = (subscriber) => {
-				subscriber(unsubscribeFn);
-				return unsubscribeFn;
-			};
+	SignalHandler.on = U.optionalCurry(function on(signal, fn) {
+		this._getCallbacks(signal).add(fn);
+		var unsubscribeFn = () => {
+			if (unsubscribeFn.stillSubscribed) {
+				unsubscribeFn.stillSubscribed = false;
+				this._getCallbacks(signal).remove(fn);
+			}
+		};
+		unsubscribeFn.stillSubscribed = true;
+		unsubscribeFn.unsubscribeOn = (subscriber) => {
+			subscriber(unsubscribeFn);
 			return unsubscribeFn;
 		};
-
-		/* optional currying based on whether fn is already given */
-		return U.isDefined(fn) ? behavior(fn) : behavior;
-	};
+		unsubscribeFn.subscribeWhenever = (subscriber) => {
+			subscriber((val) => { this._getCallbacks(signal)[val ? 'add' : 'remove'](fn) });
+			return unsubscribeFn;
+		};
+		return unsubscribeFn;
+	});
+	SignalHandler.onValue = U.optionalCurry(function onValue(signal, anticipatedValue, fn) {
+		return this.on(signal, (value) => {
+			if (value === anticipatedValue) { fn() }
+		});
+	});
 
 	/* how to subscribe to a one-time signal */
-	SignalHandler.one = function one(signal, fn) {
-		var behavior = (fn) => {
-			var unsubscribeFn = this.on(signal, function (...args) {
+	SignalHandler.one = U.optionalCurry(function one(signal, fn) {
+		var unsubscribeFn = this.on(signal, function (...args) {
+			unsubscribeFn();
+			fn.apply(null, args);
+		});
+		return unsubscribeFn;
+	});
+	SignalHandler.oneValue = U.optionalCurry(function oneValue(signal, anticipatedValue, fn) {
+		var unsubscribeFn = this.on(signal, (value) => {
+			if (value === anticipatedValue) {
 				unsubscribeFn();
-				fn.apply(null, args);
-			});
-			return unsubscribeFn;
-		};
-
-		/* optional currying based on whether fn is already given */
-		return U.isDefined(fn) ? behavior(fn) : behavior;
-	};
+				fn();
+			}
+		});
+		return unsubscribeFn;
+	});
 
 	SignalHandler.once = SignalHandler.one;
 
@@ -89,8 +96,7 @@ define(['jquery', './misc.js'], function ($, U) {
 	};
 
 	/* observe an observable; if it already has a value, the callback is immediately called */
-	SignalHandler.observe = function observe(observable, fn) {
-
+	SignalHandler.observe = U.optionalCurry(function observe(observable, fn) {
 		/* subscribe to the value of the observable */
 		var unsubscribeFn = this.on(observable, fn);
 
@@ -99,8 +105,12 @@ define(['jquery', './misc.js'], function ($, U) {
 
 		/* return the unsubscribe callback */
 		return unsubscribeFn;
-
-	};
+	});
+	SignalHandler.observeValue = U.optionalCurry(function observeValue(signal, anticipatedValue, fn) {
+		return this.observe(signal, (value) => {
+			if (value === anticipatedValue) { fn() }
+		});
+	});
 
 	/* return the object that can be mixed into other objects */
 	return SignalHandler;

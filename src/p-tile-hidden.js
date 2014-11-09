@@ -9,11 +9,23 @@ define(['jquery', './p-tile-hidden.scss'], function ($) {
 	/* allows a tile to be `hidden` */
 	plugin.insert('construct', function () {
 
+		/* the 'hidden' observable */
 		this.newObservable('hidden', {
 			initial: false,
 			validation: (v) => !!v
 		});
 
+		/* the 'visible' observable */
+		this.newObservable('visible', {
+			initial: !this.hidden,
+			validation: (v) => !!v
+		});
+
+		/* the two are continual opposites */
+		this.on('hidden', (hidden) => { this.visible = !hidden });
+		this.on('visible', (visible) => { this.hidden = !visible });
+
+		/* enact tile hiding on the DOM */
 		this.observe('hidden', (hidden) => {
 			this.open = false;
 			if (hidden) {
@@ -25,6 +37,10 @@ define(['jquery', './p-tile-hidden.scss'], function ($) {
 			}
 		});
 
+		/* when the tile is destroyed, it is also hidden */
+		this.one('destroy', () => { this.hidden = true });
+
+		/* when the parent tile is closed, this tile is hidden */
 		var parentTile = this.closestAncestorByType('Tile');
 		if (parentTile) {
 			parentTile.observe('open', (open) => {

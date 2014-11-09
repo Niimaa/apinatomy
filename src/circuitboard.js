@@ -27,19 +27,19 @@ define([
 
 	// to define the widget classes after the proper plugins have been selected
 	function defineWidgetClasses() {
-		dm.vp('Circuitboard', amyWidget('Circuitboard', {
+		$.circuitboard.Circuitboard = dm.vp('Circuitboard', amyWidget('Circuitboard', {
 			cssClass: "circuitboard",
 			filter: ()=>P.resolve(true),
 			model: null
 		}));
 
-		dm.vp('Tilemap', amyWidget('Tilemap', {
+		$.circuitboard.Tilemap = dm.vp('Tilemap', amyWidget('Tilemap', {
 			cssClass: "tilemap",
 			model: null,
 			_circuitboard: null
 		}));
 
-		dm.vp('Tile', amyWidget('Tile', {
+		$.circuitboard.Tile = dm.vp('Tile', amyWidget('Tile', {
 			cssClass: 'tile',
 			model: null,
 			_circuitboard: null
