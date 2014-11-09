@@ -3,8 +3,9 @@ define([
 	'd3',
 	'./util/misc.js',
 	'./util/unique-id.js',
+	'./util/signal-handler.js',
 	'./p-d3.scss'
-], function ($, d3, U, uniqueId) {
+], function ($, d3, U, uniqueId, SignalHandler) {
 	'use strict';
 
 
@@ -163,8 +164,9 @@ define([
 						get height() { return circuitboard.size.height - 20 }
 					})
 				};
-				return {
+				var groupInterface = {
 					remove() {
+						this.trigger('destroy');
 						// called when a graph group is discarded;
 						// may do stuff in the future
 					},
@@ -187,6 +189,7 @@ define([
 						group.vertices.push(vertex);
 						vertex.graphId = vertex.id;
 						circuitboard._p_d3_vertices[vertex.graphId] = vertex;
+						this.trigger('vertex-added', vertex);
 						circuitboard.updateGraph();
 					},
 					removeVertex(vertex) {
@@ -196,6 +199,7 @@ define([
 							group.vertices.forEach(function (vertex, i) {
 								vertex.groupVertexIndex = i;
 							});
+							this.trigger('vertex-removed', vertex);
 							circuitboard.updateGraph();
 						}
 					},
@@ -204,21 +208,23 @@ define([
 						group.edges.push(edge);
 						edge.graphId = group.id + ':' + edge.id;
 						circuitboard._p_d3_edges[edge.graphId] = edge;
+						this.trigger('edge-added', edge);
 						circuitboard.updateGraph();
 					},
 					removeEdge(edge) {
 						if (edge) {
 							delete circuitboard._p_d3_edges[edge.graphId];
 							U.pull(group.edges, edge);
+							this.trigger('edge-removed', edge);
 							circuitboard.updateGraph();
 						}
 					},
 					removeAllEdgesAndVertices() {
 						group.edges.forEach((edge) => {
-							if (edge) { delete circuitboard._p_d3_edges[edge.graphId]; }
+							if (edge) { this.removeEdge(edge); }
 						});
 						group.vertices.forEach((vertex) => {
-							if (vertex) { delete circuitboard._p_d3_vertices[vertex.graphId]; }
+							if (vertex) { this.removeVertex(vertex); }
 						});
 						U.makeEmpty(group.edges);
 						U.makeEmpty(group.vertices);
@@ -228,6 +234,10 @@ define([
 					vertices() { return group.vertices.slice() },
 					edges() { return group.vertices.slice() }
 				};
+
+				U.extend(groupInterface, SignalHandler);
+
+				return groupInterface;
 			}
 		});
 
