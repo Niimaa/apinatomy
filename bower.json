@@ -1,6 +1,6 @@
 {
   "name": "apinatomy-core",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "description": "the core component (widget) of the ApiNATOMY circuit-board",
   "authors": [
     {
