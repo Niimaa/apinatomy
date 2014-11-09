@@ -8,14 +8,14 @@ define([
 ], function ($, color, U, defaults) {
 	'use strict';
 
+
 	var plugin = $.circuitboard.plugin({
 		name: 'tile-skin',
 		requires: ['tile-open', 'position-tracking']
 	}).modify('Tile.prototype');
 
-	//
-	// tile styling defaults generator
-	//
+
+	/* tile styling defaults generator */
 	var applyStyleDefaults = defaults({
 		'&':            {
 			backgroundColor: " 'white'                                                                ",
@@ -30,25 +30,25 @@ define([
 		}
 	}, { color: color });
 
-	//
-	// make tiles look nice, with a header, content section, and CSS styling derived from the model
-	//
+
+	/* make tiles look nice, with a header, content section, and CSS styling derived from the model */
 	plugin.insert('construct', function () {
-		// create the header and content elements, and reroute the
-		// 'dom' property to the new content element
+
+		/*  create the header and content elements, and reroute the  */
+		/* 'dom' property to the new content element                 */
 		var origElement = this.dom;
 		origElement.addClass('skinned-tile');
 		this._p_tileSkin_headerElement = $(`<header/>`).appendTo(origElement);
 		this.dom = $(`<section/>`).appendTo(origElement);
 
-		// put the name of the model in the header element
+		/* put the name of the model in the header element */
 		this.model.get('name').then((name)=> { this._p_tileSkin_headerElement.text(name) });
 
-		// take any css rules from the model and apply them to the tile
+		/* take any css rules from the model and apply them to the tile */
 		this.model.get('tile').get('normal').get('css').then((css)=> { this.element.amyPutCssRules(applyStyleDefaults(css)) })
 				.catch(()=>{}); // it's OK if '.tile.normal.css' is not on the model
 
-		// when the tile is closed, make the font size dynamic
+		/* when the tile is closed, make the font size dynamic */
 		var unsubscribe;
 		this.observe('open', (open) => {
 			if (open) {
@@ -63,5 +63,15 @@ define([
 				});
 			}
 		});
+
+		/* the 'headerSize' observable */
+		this.newObservable('headerSize');
+		this.observe('size', (size) => {
+			this.headerSize = new U.Size(this._p_tileSkin_headerElement.height(), size.width);
+		});
+
+		/* the 'headerPosition' observable */
+		this.newObservable('headerPosition');
+		this.observe('position', (position) => { this.headerPosition = position });
 	});
 });
