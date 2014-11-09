@@ -15,7 +15,7 @@ define([
 	plugin.insert('construct', function () {
 
 		var graphGroup = this.circuitboard.newGraphGroup();
-		this.on('destroy', () => { graphGroup.remove() });
+		this.one('destroy', () => { graphGroup.remove() });
 
 		graphGroup.setGravityFactor(1);
 		graphGroup.setChargeFactor(0.1);

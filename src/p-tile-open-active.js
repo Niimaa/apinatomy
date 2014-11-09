@@ -15,12 +15,12 @@ define(['jquery', './util/misc.js'], function ($, U) {
 		if (U.isUndefined(this.active)) { return; }
 
 		/* when a tile is opened, it becomes active */
-		this.observe('open', function (open) {
+		this.observe('open', (open) => {
 			if (open) { this.active = true }
 		});
 
 		/* when a tile is de-activated, it becomes closed */
-		this.observe('active', function (active) {
+		this.observe('active', (active) => {
 			if (!active) { this.open = false }
 		});
 
