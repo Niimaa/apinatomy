@@ -22,6 +22,8 @@ define(['jquery', 'bluebird', './util/defer.js'], function ($, P, defer) {
 		getModels(ids) { return getFmaModels(ids) },
 		get id() { return this._id }
 	};
+	// models are supposed to have a 'name' property, but that field
+	// is already present on the model objects retrieved from the database
 
 
 	/* storing and retrieving 'deferreds' to models */
