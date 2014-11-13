@@ -13,7 +13,8 @@ inside the treemap. We will use the term *treemap* when we consider only the (ne
 
 This library depends on
 [jQuery](https://github.com/jquery/jquery),
-[bluebird](https://github.com/petkaantonov/bluebird) and
+[bluebird](https://github.com/petkaantonov/bluebird),
+[delta.js](https://github.com/mhelvens/delta.js) and
 [js-graph](https://github.com/mhelvens/js-graph).
 
 ### Install using Bower
