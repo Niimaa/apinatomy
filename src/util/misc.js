@@ -15,12 +15,12 @@ define(['bluebird'], (P) => {
 		},
 
 		// create a new subclass, given a superclass, constructor and possible prototype
-		newSubclass(superClass, constructor, prototype) {
-			prototype = prototype || {};
+		newSubclass(SuperClass, constructor, prototype = {}) {
 			var cls = function (...args) {
-				constructor.apply(this, [superClass.prototype.constructor].concat(args));
+				constructor.apply(this, [SuperClass.prototype.constructor.bind(this)].concat(args));
 			};
-			cls.prototype = Object.create(superClass.prototype, prototype);
+			cls.prototype = Object.create(SuperClass.prototype);
+			U.extend(cls.prototype, prototype);
 			cls.prototype.constructor = cls;
 			return cls;
 		},
@@ -32,7 +32,7 @@ define(['bluebird'], (P) => {
 			rest.forEach((obj) => {
 				for (var key in obj) {
 					if (obj.hasOwnProperty(key)) {
-						obj1[key] = obj[key];
+						Object.defineProperty(obj1, key, Object.getOwnPropertyDescriptor(obj, key));
 					}
 				}
 			});

@@ -2,11 +2,10 @@ define([
 	'jquery',
 	'bluebird',
 	'./util/misc.js',
-	'./util/unique-id.js',
 	'./util/nested-flex-grow.js',
 	'./util/clickVsDrag.js',
 	'./p-core.scss'
-], function ($, P, U, uniqueID) {
+], function ($, P, U) {
 	'use strict';
 
 
@@ -61,10 +60,7 @@ define([
 						.tilemap({
 							model: this.options.model,
 							parent: this
-						}).tilemap('instance')
-						.then((tilemap) => {
-							this.one('destroy', ()=> { tilemap.destroy() });
-						});
+						}).tilemap('instance');
 			});
 
 
@@ -106,7 +102,6 @@ define([
 										parent: this
 									}).appendTo(row).amyNestedFlexGrow(1).tile('instance').then((tile) => {
 										this._p_tilemapCore_tiles.push(tile);
-										this.one('destroy', () => { tile.destroy() });
 									});
 								}
 							}
@@ -131,9 +126,7 @@ define([
 					this._p_tileCore_tilemap = this.dom.tilemap({
 						model: this.options.model,
 						parent: this
-					}).tilemap('instance').then((tilemap) => {
-						this.one('destroy', ()=> { tilemap.destroy() });
-					});
+					}).tilemap('instance');
 				}
 
 			}).add('construct', function () {
@@ -160,8 +153,7 @@ define([
 				/* a field to hold the innermost HTML content element still belonging to this tile */
 				this.dom = this.element;
 
-				/* an element id for quick lookups */
-				this.id = uniqueID('tile');
+				/* an element id for quick jQuery lookups */
 				this.element.attr('id', this.id);
 
 				/* inform circuitboard of new tile */

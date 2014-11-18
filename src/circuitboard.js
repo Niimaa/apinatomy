@@ -29,20 +29,15 @@ define([
 	function defineWidgetClasses() {
 		$.circuitboard.Circuitboard = dm.vp('Circuitboard', amyWidget('Circuitboard', {
 			cssClass: "circuitboard",
-			filter: ()=>P.resolve(true),
-			model: null
+			filter: ()=>P.resolve(true)
 		}));
 
 		$.circuitboard.Tilemap = dm.vp('Tilemap', amyWidget('Tilemap', {
-			cssClass: "tilemap",
-			model: null,
-			_circuitboard: null
+			cssClass: "tilemap"
 		}));
 
 		$.circuitboard.Tile = dm.vp('Tile', amyWidget('Tile', {
-			cssClass: 'tile',
-			model: null,
-			_circuitboard: null
+			cssClass: 'tile'
 		}));
 	}
 

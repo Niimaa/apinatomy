@@ -1,77 +1,32 @@
-define(['jquery', 'bluebird', './misc.js', './signal-handler.js'], function ($, P, U, SignalHandler) {
+define(['jquery', 'bluebird', './misc.js', './artefact.js'], function ($, P, U, Artefact) {
 	'use strict';
 
-	/* a function to implement artefact hierarchy methods */
-	function defineHierarchyMethods(obj, type) {
-
-		Object.defineProperty(obj, 'type', {
-			get() { return type }
-		});
-		Object.defineProperty(obj, 'parent', {
-			set(parent) {
-				this._parent = parent;
-				U.array(parent, '_children').push(this);
-			},
-			get() { return this._parent }
-		});
-		Object.defineProperty(obj, 'children', {
-			get() { return this._children || [] }
-		});
-		$.extend(obj, {
-			closestAncestorByType(type) {
-				var result = this;
-				do { result = result.parent } while (result && result.type && result.type !== type);
-				return result;
-			},
-			closestDescendantsByType(type) {
-				var result = [];
-				(this.children || []).forEach((child) => {
-					if (child.type === type) {
-						result.push(child);
-					} else {
-						result = result.concat(child.closestDescendantsByType(type));
-					}
-				});
-				return result;
-			}
-		});
-
-	}
-
-	/*  a function to make some important references that are part  */
-	/*  of the options property available in the object itself      */
-	function defineDefaultProperties(obj) {
-
-		Object.defineProperty(obj, 'model', {
-			get() { return this.options.model }
-		});
-
-	}
 
 	/*  a function to create an apinatomy component (widget)          */
 	/*  as a jQuery element plugin; this is returned from the module  */
 	function amyWidget(typeName, optionDefaults) {
 
-		/* the specific widget class */
-		function Widget({options, element}) {
 
-			$.extend(this, {
-				options: $.extend({}, optionDefaults, options),
-				element: element,
-				destroy() { this.trigger('destroy') }
+		/* the specific widget class */
+		var Widget = U.newSubclass(Artefact, function Widget(superFn, options) {
+
+			/* process options */
+			var processedOptions = options;
+			Object.keys(optionDefaults).forEach((key) => {
+				if (U.isUndefined(processedOptions[key])) {
+					processedOptions[key] = optionDefaults[key];
+				}
 			});
+			processedOptions.type = typeName;
+
+			/* call super-function */
+			superFn(processedOptions);
 
 			/* set the element class */
 			this.element.addClass(this.options.cssClass);
+
+			/* if the jquery element is removed, destroy the artefact */
 			this.element.one('remove', () => { this.destroy() });
-
-			/* connect to the parent artefact */
-			if (this.options.parent) { this.parent = this.options.parent }
-
-			/* cache a reference to the circuitboard (it is used often) */
-			Object.defineProperty(this, 'circuitboard', {
-				get() { return this.closestAncestorByType('Circuitboard') }
-			});
 
 			/* wait for something before construction (like plugins)? */
 			this.constructed = P.resolve();
@@ -86,34 +41,46 @@ define(['jquery', 'bluebird', './misc.js', './signal-handler.js'], function ($, 
 				}
 			});
 
-		}
+		}, {
 
-		Widget.prototype.beforeConstruction = function beforeConstruction(possiblePromise) {
-			this.constructed = this.constructed
-					.return(P.resolve(possiblePromise))
-					.return(this);
-		};
+			get model() { return this.options.model },
 
-		defineDefaultProperties(Widget.prototype);
-		defineHierarchyMethods(Widget.prototype, typeName);
-		U.extend(Widget.prototype, SignalHandler);
+			get element() { return this.options.element },
+
+			get circuitboard() {
+				if (!this._circuitboard) { this._circuitboard = this.closestAncestorByType('Circuitboard') }
+				return this._circuitboard;
+			},
+
+			beforeConstruction(possiblePromise) {
+				this.constructed = this.constructed
+						.return(P.resolve(possiblePromise))
+						.return(this);
+			}
+
+		});
+
 
 		/* now define the widget creation & retrieval function as a jQuery plugin */
 		var lowercaseName = typeName[0].toLowerCase() + typeName.slice(1);
 		$.fn[lowercaseName] = function (options) {
+
 			/* if the word 'instance' is passed, return the (already created) widget promise */
 			if (options === 'instance') { return this.data(`-amy-${lowercaseName}`) }
 
 			/* else, create a new widget and set a promise to it */
-			var newWidget = new Widget({ options: options, element: this });
+			var newWidget = new Widget(U.extend(options, { element: this }));
 			this.data(`-amy-${lowercaseName}`, newWidget.constructed);
 
 			/* return the jQuery element instance, by jQuery convention */
 			return this;
+
 		};
+
 
 		/* return the widget artefact class */
 		return Widget;
+
 
 	}
 
