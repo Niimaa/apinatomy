@@ -13,7 +13,8 @@ inside the treemap. We will use the term *treemap* when we consider only the (ne
 
 This library depends on
 [jQuery](https://github.com/jquery/jquery),
-[bluebird](https://github.com/petkaantonov/bluebird) and
+[bluebird](https://github.com/petkaantonov/bluebird),
+[delta.js](https://github.com/mhelvens/delta.js) and
 [js-graph](https://github.com/mhelvens/js-graph).
 
 ### Install using Bower
@@ -119,6 +120,8 @@ variation points where plugins can hook in. In ApiNATOMY, everything is plugins.
 A number of fundamental plugins are supplied with the core, `tile-skin` and
 `tile-click-to-open` being basic examples.
 
+The plugins of ApiNATOMY are based on the [`delta.js`](https://github.com/mhelvens/delta.js) library (i.e., a plugin is a delta). If you want to do advanced things with plugins, it is recommended that you familiarize yourself with `delta.js`.
+
 A plugin can be in one of three states:
 
 1. *registered*, meaning the plugin system is aware of the plugin, but not that it will necessarily be applied,
@@ -146,6 +149,7 @@ $('$my-circuitboard').circuitboard({
     model: myModel
 });
 ```
+This can only be done for plugins that have `manuallySelectable` set to `true` (the default).
 
 Note that plugins must be selected *before* any circuit-board artefact is instantiated.
 It should be one of the first things you do in your application.
@@ -177,14 +181,40 @@ var plugin = $.circuitboard.plugin({
 });
 ```
 
-The meta-data properties shown above have the following meaning:
+### Predicates
 
-| property   | meaning
-| -------    | ---
-| `name`     | an identifier (a string) by which to refer to the plugin. No two plugins may have the same name.
-| `if`       | *(optional)* a condition under which the plugin will be automatically selected . Use the value `true` to load the plugin unconditionally. Use an array of plugin names `['p-1', 'p-2']` to auto-load when each of those plugins is also selected. Use a predicate function `function (others) { /*...*/ }` for full flexibility. It receives an object which maps names of plugins that are being loaded to `true`, and should return `true` to auto-load or `false` not to.
-| `requires` | *(optional)* an array of plugin names. Each of them is automatically selected when this plugin is selected.
-| `after`    | *(optional)* an array of plugin names. Each of them, if loaded at all, is guaranteed to be loaded *before* this plugin. That way, this plugin can depend and extend upon their functionality.
+Before explaining the supported options, let's briefly describe the notion of 'predicate',
+a type of data accepted by several of those options.
+A predicate is a condition on the set of selected deltas, and can be
+given as one of the following:
+
+* the value `true`
+* the value `false`
+* an array of delta-names, interpreted as a conjunction. The condition is true exactly if *all* deltas in the list are selected.
+
+### Supported Options
+
+The following options may be passed to the `Delta` constructor:
+
+| options              | default   | meaning
+| -------------------- | --------- | -------
+| `name`               |           | an string by which to refer to the plugin. No two plugins may have the same name.
+| `manuallySelectable` | `true`    | a Boolean, specifying whether the plugin can be selected through the `.plugin` method
+| `if`                 | `false`   | a predicate, specifying whether this plugin will be automatically selected
+| `onlyIf`             | `true`    | a predicate that is required to hold if this plugin is ever selected. If this plugin is ever selected without this predicate being met, an error will be thrown at the variation point where the plugin is applied.
+| `after`              | `[]`      | a list of plugin names. This plugin is guaranteed to be applied after the deltas in this list. If the registration of this plugin creates an application order cycle, an error will be thrown.
+| `selects`            | `[]`      | a list of plugin names. If this plugin is selected, all deltas in this list will also be selected.
+
+Each of these options will be available as a field on the constructed plugin.
+For convenience, there are some options that combine multiple of the above:
+
+| options     | combines
+| ----------- | --------
+| `iff`       | `if` and `onlyIf`
+| `expects`   | `onlyIf` and `after`
+| `requires`  | `after` and `selects`
+| `resolves`  | `if`, `onlyIf` and `after`; and sets `manuallySelectable` to `false`
+
 
 The *operations*, which actually implement the plugin, deserve a separate subsection.
 
@@ -193,7 +223,7 @@ The *operations*, which actually implement the plugin, deserve a separate subsec
 Plugins modify the main ApiNATOMY artefacts on a code level (by something called *invasive composition*).
 At the top level, a plugin specifies one or more artefacts to modify. There are currently three
 types of artefact: `Circuitboard`, `Tilemap` and `Tile`. These can be seen as 'JavaScript classes', and
-are internally instantiated with `new`. A plugin can modify these artefact classes in any number of ways,
+are internally instantiated with `new`, and each is guaranteed to then call their own `.construct` method. A plugin can modify these artefact classes in any number of ways,
 and to a granularity of any depth. For example, to add a new `refresh` method to `Circuitboard` instances,
 you could do the following:
 
@@ -221,7 +251,7 @@ plugin.add('Circuitboard.prototype.refresh', function () { /* ... */ });
 
 > The dot-notation is a shorthand for inserting a number of chained `modify` operations.
 
-In those regards, `modify` is special. But there are a number of other available operations:
+In those regards, `modify` is special. But there are a number of other available operations. For comprehensive documentation for each of them, have a look at the documentation of the [delta API](https://github.com/mhelvens/delta.js#the-delta-api).
 
 | operation | meaning
 | -------   | ---
