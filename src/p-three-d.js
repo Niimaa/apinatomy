@@ -206,8 +206,8 @@ define([
 			subObj.scale.y = -1;
 		};
 		this.observe('size', (size) => {
-			this.object3D.position.x = -size.width / 2;
-			this.object3D.position.y = size.height / 2;
+			this.object3D.position.x = -size.width / 2 + 1;
+			this.object3D.position.y = size.height / 2 - 1;
 		}).unsubscribeOn(this.oneValue('threeDMode', false));
 		this.oneValue('threeDMode', false, () => { delete this.object3D });
 
