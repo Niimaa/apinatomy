@@ -2,10 +2,8 @@ define([
 	'jquery',
 	'd3',
 	'./util/misc.js',
-	'./util/unique-id.js',
-	'./util/signal-handler.js',
 	'./p-d3.scss'
-], function ($, d3, U, uniqueId, SignalHandler) {
+], function ($, d3, U) {
 	'use strict';
 
 
@@ -80,7 +78,7 @@ define([
 			// http://bl.ocks.org/mbostock/3808218
 
 			/* gather the vertices/edges that ought to be visible */
-			visibleVertices = U.objValues(this._p_d3_vertices).filter((artefact) => artefact.showVertex);
+			visibleVertices = U.objValues(this._p_d3_vertices).filter((artefact) => artefact.visible);
 			visibleEdges = U.objValues(this._p_d3_edges);
 
 			/* restart the force */
@@ -88,7 +86,7 @@ define([
 
 			/* vertices */
 			vertices = svg.selectAll('.vertex').data(visibleVertices, U.field('graphId'));
-			vertices.enter().append((d) => d.element)
+			vertices.enter().append((d) => d.element[0])
 					.classed('vertex', true).classed('edge', false)
 					.call(this.d3Force.drag); // all vertices can be dragged around
 			vertices.exit().remove();
@@ -96,7 +94,7 @@ define([
 			/* edges */
 			edges = svg.selectAll('.edge').data(visibleEdges, U.field('graphId'));
 			edges.enter()
-					.append((d) => d.element)
+					.append((d) => d.element[0])
 					.classed('edge', true).classed('vertex', false);
 			edges.exit().remove();
 
@@ -118,6 +116,11 @@ define([
 
 		/* on d3 animation tick */
 		this.d3Force.on("tick", (e) => {
+
+			/* make the tick event available to users of the circuitboard */
+			this.trigger('d3-tick', e);
+
+			/* dampening factor */
 			var k = 0.1 * e.alpha;
 
 			/* gravitate towards the center of the region */
@@ -143,102 +146,7 @@ define([
 					.attr("y1", (d) => d.source.y)
 					.attr("x2", (d) => d.target.x)
 					.attr("y2", (d) => d.target.y);
-		});
 
-		/* a function for creating new interfaces, used to create vertices and edges and such */
-		U.extend(this, {
-			newGraphGroup(options) {
-				options = options || {};
-				var circuitboard = this;
-				var group = {
-					id: uniqueId('group'),
-					vertices: [],
-					edges: [],
-					gravityFactor: U.defOr(options.gravityFactor, 1),
-					chargeFactor: U.defOr(options.chargeFactor, 1),
-					linkDistanceFactor: U.defOr(options.linkDistanceFactor, 1),
-					region: U.defOr(options.region, { // by default, the whole canvas with a small padding
-						top: 10,
-						left: 10,
-						get width() { return circuitboard.size.width - 20 },
-						get height() { return circuitboard.size.height - 20 }
-					})
-				};
-				var groupInterface = {
-					remove() {
-						this.trigger('destroy');
-						// called when a graph group is discarded;
-						// may do stuff in the future
-					},
-					setGravityFactor(factor) {
-						group.gravityFactor = factor;
-					},
-					setChargeFactor(factor) {
-						group.chargeFactor = factor;
-					},
-					setLinkDistanceFactor(factor) {
-						group.linkDistanceFactor = factor;
-					},
-					setRegion(region) {
-						group.region = region;
-						circuitboard.updateGraph();
-					},
-					addVertex(vertex) {
-						vertex.group = group;
-						vertex.groupVertexIndex = group.vertices.length;
-						group.vertices.push(vertex);
-						vertex.graphId = vertex.id;
-						circuitboard._p_d3_vertices[vertex.graphId] = vertex;
-						this.trigger('vertex-added', vertex);
-						circuitboard.updateGraph();
-					},
-					removeVertex(vertex) {
-						if (vertex) {
-							delete circuitboard._p_d3_vertices[vertex.graphId];
-							U.pull(group.vertices, vertex);
-							group.vertices.forEach(function (vertex, i) {
-								vertex.groupVertexIndex = i;
-							});
-							this.trigger('vertex-removed', vertex);
-							circuitboard.updateGraph();
-						}
-					},
-					addEdge(edge) {
-						edge.group = group;
-						group.edges.push(edge);
-						edge.graphId = group.id + ':' + edge.id;
-						circuitboard._p_d3_edges[edge.graphId] = edge;
-						this.trigger('edge-added', edge);
-						circuitboard.updateGraph();
-					},
-					removeEdge(edge) {
-						if (edge) {
-							delete circuitboard._p_d3_edges[edge.graphId];
-							U.pull(group.edges, edge);
-							this.trigger('edge-removed', edge);
-							circuitboard.updateGraph();
-						}
-					},
-					removeAllEdgesAndVertices() {
-						group.edges.forEach((edge) => {
-							if (edge) { this.removeEdge(edge); }
-						});
-						group.vertices.forEach((vertex) => {
-							if (vertex) { this.removeVertex(vertex); }
-						});
-						U.makeEmpty(group.edges);
-						U.makeEmpty(group.vertices);
-						circuitboard.updateGraph();
-					},
-					vertexCount() { return group.vertices.length },
-					vertices() { return group.vertices.slice() },
-					edges() { return group.vertices.slice() }
-				};
-
-				U.extend(groupInterface, SignalHandler);
-
-				return groupInterface;
-			}
 		});
 
 	});

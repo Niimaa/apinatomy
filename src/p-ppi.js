@@ -1,7 +1,10 @@
 define([
 	'jquery',
+	'./D3Group.js',
+	'./D3Vertex.js',
+	'./D3Edge.js',
 	'./p-ppi.scss'
-], function ($) {
+], function ($, D3Group, D3Vertex, D3Edge) {
 	'use strict';
 
 	var plugin = $.circuitboard.plugin({
@@ -14,11 +17,12 @@ define([
 	//
 	plugin.insert('construct', function () {
 
-		var graphGroup = this.circuitboard.newGraphGroup();
-		this.one('destroy', () => { graphGroup.remove() });
+		var graphGroup = new D3Group({
+			parent: this,
+			gravityFactor: 1,
+			chargeFactor: 0.1
+		});
 
-		graphGroup.setGravityFactor(1);
-		graphGroup.setChargeFactor(0.1);
 		((setGraphGroupRegion) => {
 			setGraphGroupRegion();
 			this.on('size', setGraphGroupRegion);
@@ -34,45 +38,32 @@ define([
 		});
 
 		var constructExampleProteins = () => {
-			var protein1 = {
-				id: `${this.id}:protein1`,
-				showVertex: true,
-				graphZIndex: 200,
-				get element() {
-					return $('<svg x="10" y="10"><circle class="example core" r="5"></circle></svg>')[0];
-				}
-			};
-			var protein2 = {
-				id: `${this.id}:protein2`,
-				showVertex: true,
-				graphZIndex: 200,
-				get element() {
-					return $('<svg x="10" y="10"><circle class="example core" r="5"></circle></svg>')[0];
-				}
-			};
+			var protein1 = new D3Vertex({
+				parent: graphGroup,
+				cssClass: 'example'
+			});
+			var protein2 = new D3Vertex({
+				parent: graphGroup,
+				cssClass: 'example'
+			});
 
 			graphGroup.addVertex(protein1);
 			graphGroup.addVertex(protein2);
-			graphGroup.addEdge({
-				get element() {
-					return $('<svg><line class="example edge"></line></svg>')
-							.children()[0]; // adding and discarding the 'svg' element prevents a bug where the line would not appear
-				},
+			graphGroup.addEdge(new D3Edge({
+				parent: graphGroup,
 				source: protein1,
 				target: protein2,
-				graphZIndex: 100
-			});
+				cssClass: 'example'
+			}));
 		};
 
-		this.on('open', (open) => {
+		this.observe('open', (open) => {
 			if (!open) {
 				constructExampleProteins();
 			} else {
 				graphGroup.removeAllEdgesAndVertices();
 			}
 		});
-
-		constructExampleProteins();
 
 	});
 });

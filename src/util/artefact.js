@@ -1,8 +1,8 @@
-define(['jquery', 'bluebird', './misc.js', './signal-handler.js', './unique-id.js'], function ($, P, U, SignalHandler, uniqueID) {
+define(['jquery', 'bluebird', './misc.js', './signal-handler.js', './unique-id.js', './main-delta-model.js'], function ($, P, U, SignalHandler, uniqueID, dm) {
 	'use strict';
 
 
-	var Artefact = U.newClass(function Artefact(options) {
+	var Artefact = dm.vp('Artefact', U.newClass(function Artefact(options) {
 		var {id, type, parent} = this._options = options;
 
 		/* set hierarchy stuff */
@@ -47,10 +47,37 @@ define(['jquery', 'bluebird', './misc.js', './signal-handler.js', './unique-id.j
 			this.children.forEach((child) => { child.destroy() });
 		}
 
-	});
+	}));
 
 
 	U.extend(Artefact.prototype, SignalHandler);
+
+
+	Artefact.newSubclass = function newSubClass(name, constructor, prototype = {}, optionDefaults = {}) {
+		return dm.vp(name, U.newSubclass(Artefact, function (superFn, options = {}) {
+
+			/* process options */
+			var processedOptions = options;
+			Object.keys(optionDefaults).forEach((key) => {
+				if (U.isUndefined(processedOptions[key])) {
+					processedOptions[key] = optionDefaults[key];
+				}
+			});
+			processedOptions.type = name;
+
+			/* call super-constructor */
+			superFn(U.extend(options, processedOptions));
+
+			/* call this constructor */
+			constructor.call(this, processedOptions);
+
+		}, U.extend({}, prototype, {
+			get circuitboard() {
+				if (!this._circuitboard) { this._circuitboard = this.closestAncestorByType('Circuitboard') }
+				return this._circuitboard;
+			}
+		})));
+	};
 
 
 	return Artefact;

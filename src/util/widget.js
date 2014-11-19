@@ -6,24 +6,11 @@ define(['jquery', 'bluebird', './misc.js', './artefact.js'], function ($, P, U, 
 	/*  as a jQuery element plugin; this is returned from the module  */
 	function amyWidget(typeName, optionDefaults) {
 
-
 		/* the specific widget class */
-		var Widget = U.newSubclass(Artefact, function Widget(superFn, options) {
-
-			/* process options */
-			var processedOptions = options;
-			Object.keys(optionDefaults).forEach((key) => {
-				if (U.isUndefined(processedOptions[key])) {
-					processedOptions[key] = optionDefaults[key];
-				}
-			});
-			processedOptions.type = typeName;
-
-			/* call super-function */
-			superFn(processedOptions);
+		var Widget = Artefact.newSubclass(typeName, function Widget({cssClass}) {
 
 			/* set the element class */
-			this.element.addClass(this.options.cssClass);
+			if (U.isDefined(cssClass)) { this.element.addClass(cssClass) }
 
 			/* if the jquery element is removed, destroy the artefact */
 			this.element.one('remove', () => { this.destroy() });
@@ -47,19 +34,13 @@ define(['jquery', 'bluebird', './misc.js', './artefact.js'], function ($, P, U, 
 
 			get element() { return this.options.element },
 
-			get circuitboard() {
-				if (!this._circuitboard) { this._circuitboard = this.closestAncestorByType('Circuitboard') }
-				return this._circuitboard;
-			},
-
 			beforeConstruction(possiblePromise) {
 				this.constructed = this.constructed
 						.return(P.resolve(possiblePromise))
 						.return(this);
 			}
 
-		});
-
+		}, optionDefaults);
 
 		/* now define the widget creation & retrieval function as a jQuery plugin */
 		var lowercaseName = typeName[0].toLowerCase() + typeName.slice(1);
@@ -77,10 +58,8 @@ define(['jquery', 'bluebird', './misc.js', './artefact.js'], function ($, P, U, 
 
 		};
 
-
 		/* return the widget artefact class */
 		return Widget;
-
 
 	}
 
