@@ -54,7 +54,7 @@
 	"dependencies": {},
 	"sniper": {
 		"js": [],
-		"snippets": "dist/example",
+		"snippets": ["dist/example"],
 		"first": "example"
 	}
 }
