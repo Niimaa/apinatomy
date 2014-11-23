@@ -16,7 +16,7 @@ define(['jquery', 'bluebird', './util/misc.js', './util/defer.js', './util/main-
 	// }
 
 
-	/* the class FMA models objects, implementing the interface expected by ApiNATOMY */
+	/* the class of FMA models, implementing the interface expected by ApiNATOMY */
 	var FmaModel = dm.vp('FmaModel', U.newClass(function (fields) {
 		U.extend(this, fields);
 	}, {
