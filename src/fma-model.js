@@ -20,6 +20,7 @@ define(['jquery', 'bluebird', './util/misc.js', './util/defer.js', './util/main-
 	var FmaModel = dm.vp('FmaModel', U.newClass(function (fields) {
 		U.extend(this, fields);
 	}, {
+		get type() { return 'fma' }, // <-- includes '24tiles' categorization models, though
 		get id() { return this._id },
 		getChildIds()  { return this.sub.map((sub) => sub.entity._id) },
 		getModels(ids) { return getFmaModels(ids) }
@@ -43,8 +44,13 @@ define(['jquery', 'bluebird', './util/misc.js', './util/defer.js', './util/main-
 		var newIds = [];
 		ids.forEach((id) => {
 			if (!_getDeferred(id).alreadyRequested) {
+				/* register this one to be requested from the server */
 				_getDeferred(id).alreadyRequested = true;
 				newIds.push(id);
+
+				/* make some info available from the promise itself */
+				_getDeferred(id).promise.id = id;
+				_getDeferred(id).promise.type = 'fma'; // <-- includes '24tiles' categorization models, though
 			}
 		});
 

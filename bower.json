@@ -1,6 +1,6 @@
 {
 	"name": "apinatomy-core",
-	"version": "0.14.0",
+	"version": "0.15.0",
 	"description": "the core component (widget) of the ApiNATOMY circuit-board",
 	"authors": [
 		{
@@ -20,7 +20,7 @@
 		"chroma-js": "~0.5.8",
 		"d3": "~3.4.11",
 		"three.js": "*",
-		"delta.js": "~0.2.1"
+		"delta.js": "~0.3.0"
 	},
 	"devDependencies": {
 		"requirejs-domready": "~2.0.1",
