@@ -1,4 +1,4 @@
-define(['jquery', 'bluebird', './util/defer.js'], function ($, P, defer) {
+define(['jquery', 'bluebird', './util/misc.js', './util/defer.js', './util/main-delta-model.js'], ($, P, U, defer, dm) => {
 	'use strict';
 
 
@@ -16,14 +16,14 @@ define(['jquery', 'bluebird', './util/defer.js'], function ($, P, defer) {
 	// }
 
 
-	/* the prototype for model objects, implementing the expected interface */
-	var _modelPrototype = {
+	/* the class FMA models objects, implementing the interface expected by ApiNATOMY */
+	var FmaModel = dm.vp('FmaModel', U.newClass(function (fields) {
+		U.extend(this, fields);
+	}, {
+		get id() { return this._id },
 		getChildIds()  { return this.sub.map((sub) => sub.entity._id) },
-		getModels(ids) { return getFmaModels(ids) },
-		get id() { return this._id }
-	};
-	// models are supposed to have a 'name' property, but that field
-	// is already present on the model objects retrieved from the database
+		getModels(ids) { return getFmaModels(ids) }
+	}));
 
 
 	/* storing and retrieving 'deferreds' to models */
@@ -63,13 +63,10 @@ define(['jquery', 'bluebird', './util/defer.js'], function ($, P, defer) {
 			}
 
 			/* create the new model object based on the prototype */
-			var newModel = Object.create(_modelPrototype);
-
-			/* assign the retrieved model values to the new model object */
-			$.extend(newModel, modelObj);
+			var newModel = new FmaModel(modelObj);
 
 			/* resolve the corresponding promise */
-			_getDeferred(newModel._id).resolve(newModel);
+			_getDeferred(newModel.id).resolve(newModel);
 
 		});
 
