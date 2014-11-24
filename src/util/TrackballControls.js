@@ -243,11 +243,7 @@ define(['jquery', 'three-js', 'delta-js', './misc.js'], ($, THREE, DeltaModel, U
 			.add('keyboardVelocity', () => 10)
 			.add('keydown', function (event) {
 
-				if (!this.enabled) { return }
-
-				if (this._state !== STATE.NONE) { return }
-
-				console.log('keydown:', event.keyCode);
+				if (!this.enabled || this._state !== STATE.NONE) { return }
 
 				var d = this.keyboardVelocity();
 				switch (event.keyCode) {
@@ -259,8 +255,6 @@ define(['jquery', 'three-js', 'delta-js', './misc.js'], ($, THREE, DeltaModel, U
 
 			}).add('keyup', function (event) {
 
-				console.log('keyup:', event.keyCode);
-
 				switch (event.keyCode) {
 					case 37: { this._velocity.x = 0 } break;
 					case 38: { this._velocity.y = 0 } break;
@@ -270,8 +264,8 @@ define(['jquery', 'three-js', 'delta-js', './misc.js'], ($, THREE, DeltaModel, U
 
 			}).insert('construct', function () {
 
-				window.addEventListener( 'keydown', (e) => { this.keydown(e) });
-				window.addEventListener( 'keyup', (e) => { this.keyup(e) });
+				$(window).on('keydown', (e) => { this.keydown(e) });
+				$(window).on('keyup',   (e) => { this.keyup(e)   });
 
 			});
 
