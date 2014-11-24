@@ -42,6 +42,7 @@ define(['jquery', 'three-js', 'delta-js', './misc.js'], ($, THREE, DeltaModel, U
 			.append('construct', function () {
 
 				this._targetCoordinates = new THREE.Vector3();
+				this._velocity = new THREE.Vector3();
 				this._lastPosition = new THREE.Vector3();
 				this._state = STATE.NONE;
 				this._eye = new THREE.Vector3();
@@ -60,7 +61,25 @@ define(['jquery', 'three-js', 'delta-js', './misc.js'], ($, THREE, DeltaModel, U
 
 			})
 		/* public methods */
-			.add('update', function () {
+			.add('reset', function () {
+
+				this._state = STATE.NONE;
+
+				this._targetCoordinates.copy(this._targetCoordinates0);
+				this._controlledObject.position.copy(this._position0);
+				this._controlledObject.up.copy(this._up0);
+
+				this._velocity.set(0, 0, 0);
+
+				this._eye.subVectors(this._controlledObject.position, this._targetCoordinates);
+
+				this._controlledObject.lookAt(this._targetCoordinates);
+
+				this.dispatchEvent(CHANGE_EVENT);
+
+				this._lastPosition.copy(this._controlledObject.position);
+
+			}).add('update', function () {
 
 				this._eye.subVectors(this._controlledObject.position, this._targetCoordinates);
 
@@ -77,21 +96,11 @@ define(['jquery', 'three-js', 'delta-js', './misc.js'], ($, THREE, DeltaModel, U
 					this._lastPosition.copy(this._controlledObject.position);
 				}
 
-			}).add('reset', function () {
-
-				this._state = STATE.NONE;
-
-				this._targetCoordinates.copy(this._targetCoordinates0);
-				this._controlledObject.position.copy(this._position0);
-				this._controlledObject.up.copy(this._up0);
-
-				this._eye.subVectors(this._controlledObject.position, this._targetCoordinates);
-
-				this._controlledObject.lookAt(this._targetCoordinates);
-
-				this.dispatchEvent(CHANGE_EVENT);
-
-				this._lastPosition.copy(this._controlledObject.position);
+				setTimeout(() => {
+					this._controlledObject.position.add(this._velocity);
+					this._controlledObject.lookAt(this._targetCoordinates);
+					this._lastPosition.copy(this._controlledObject.position);
+				});
 
 			}).add('handleResize', function () {
 
@@ -122,7 +131,14 @@ define(['jquery', 'three-js', 'delta-js', './misc.js'], ($, THREE, DeltaModel, U
 			.add('mousedown', function (event) {
 
 				if (!this.enabled) { return }
-				if (this._state === STATE.NONE) { this._state = event.button }
+
+				if (this._state === STATE.NONE) {
+					this._state = {
+						0: STATE.ROTATE,
+						1: STATE.ZOOM,
+						2: STATE.PAN
+					}[event.button];
+				}
 
 				var mousemove = (e) => { this.mousemove(e) };
 				var mouseup = () => {
@@ -214,6 +230,48 @@ define(['jquery', 'three-js', 'delta-js', './misc.js'], ($, THREE, DeltaModel, U
 				this._domElement.addEventListener('touchstart', (e) => { this.touchstart(e) });
 				this._domElement.addEventListener('touchmove', (e) => { this.touchmove(e) });
 				this._domElement.addEventListener('touchend', (e) => { this.touchend(e) });
+
+			});
+
+
+	/* keyboard event method cores ************************************************************************************/
+
+	new dm.Delta('keyboard-events', {
+		after: ['core'],
+		if: true
+	}).modify('TrackballControls.prototype')
+			.add('keyboardVelocity', () => 10)
+			.add('keydown', function (event) {
+
+				if (!this.enabled) { return }
+
+				if (this._state !== STATE.NONE) { return }
+
+				console.log('keydown:', event.keyCode);
+
+				var d = this.keyboardVelocity();
+				switch (event.keyCode) {
+					case 37: { this._velocity.x =  d } break;
+					case 38: { this._velocity.y =  d } break;
+					case 39: { this._velocity.x = -d } break;
+					case 40: { this._velocity.y = -d } break;
+				}
+
+			}).add('keyup', function (event) {
+
+				console.log('keyup:', event.keyCode);
+
+				switch (event.keyCode) {
+					case 37: { this._velocity.x = 0 } break;
+					case 38: { this._velocity.y = 0 } break;
+					case 39: { this._velocity.x = 0 } break;
+					case 40: { this._velocity.y = 0 } break;
+				}
+
+			}).insert('construct', function () {
+
+				window.addEventListener( 'keydown', (e) => { this.keydown(e) });
+				window.addEventListener( 'keyup', (e) => { this.keyup(e) });
 
 			});
 
