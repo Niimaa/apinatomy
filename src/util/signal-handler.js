@@ -11,7 +11,7 @@ define(['jquery', './misc.js'], function ($, U) {
 	};
 
 	/* how to subscribe to a signal */
-	SignalHandler.on = U.optionalCurry(function on(signal, fn) {
+	SignalHandler.on = function on(signal, fn) {
 		this._getCallbacks(signal).add(fn);
 		var unsubscribeFn = () => {
 			if (unsubscribeFn.stillSubscribed) {
@@ -29,22 +29,22 @@ define(['jquery', './misc.js'], function ($, U) {
 			return unsubscribeFn;
 		};
 		return unsubscribeFn;
-	});
-	SignalHandler.onValue = U.optionalCurry(function onValue(signal, anticipatedValue, fn) {
+	};
+	SignalHandler.onValue = function onValue(signal, anticipatedValue, fn) {
 		return this.on(signal, (value) => {
 			if (value === anticipatedValue) { fn() }
 		});
-	});
+	};
 
 	/* how to subscribe to a one-time signal */
-	SignalHandler.one = U.optionalCurry(function one(signal, fn) {
+	SignalHandler.one = function one(signal, fn) {
 		var unsubscribeFn = this.on(signal, function (...args) {
 			unsubscribeFn();
 			fn.apply(null, args);
 		});
 		return unsubscribeFn;
-	});
-	SignalHandler.oneValue = U.optionalCurry(function oneValue(signal, anticipatedValue, fn) {
+	};
+	SignalHandler.oneValue = function oneValue(signal, anticipatedValue, fn) {
 		var unsubscribeFn = this.on(signal, (value) => {
 			if (value === anticipatedValue) {
 				unsubscribeFn();
@@ -52,7 +52,7 @@ define(['jquery', './misc.js'], function ($, U) {
 			}
 		});
 		return unsubscribeFn;
-	});
+	};
 
 	SignalHandler.once = SignalHandler.one;
 
@@ -96,7 +96,7 @@ define(['jquery', './misc.js'], function ($, U) {
 	};
 
 	/* observe an observable; if it already has a value, the callback is immediately called */
-	SignalHandler.observe = U.optionalCurry(function observe(observable, fn) {
+	SignalHandler.observe = function observe(observable, fn) {
 		/* subscribe to the value of the observable */
 		var unsubscribeFn = this.on(observable, fn);
 
@@ -105,12 +105,12 @@ define(['jquery', './misc.js'], function ($, U) {
 
 		/* return the unsubscribe callback */
 		return unsubscribeFn;
-	});
-	SignalHandler.observeValue = U.optionalCurry(function observeValue(signal, anticipatedValue, fn) {
+	};
+	SignalHandler.observeValue = function observeValue(signal, anticipatedValue, fn) {
 		return this.observe(signal, (value) => {
 			if (value === anticipatedValue) { fn() }
 		});
-	});
+	};
 
 	/* return the object that can be mixed into other objects */
 	return SignalHandler;

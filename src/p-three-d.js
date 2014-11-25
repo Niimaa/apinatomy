@@ -122,10 +122,10 @@ define([
 		this.camera3D = new THREE.PerspectiveCamera(60, this.threeDCanvasSize.width / this.threeDCanvasSize.height, 1, 10000);
 		this.camera3D.position.z = 1;
 		this.oneValue('threeDMode', false, () => { delete this.camera3D });
-		this.observe('threeDCanvasSize', (size) => {
+		this.oneValue('threeDMode', false, this.observe('threeDCanvasSize', (size) => {
 			this.camera3D.aspect = size.width / size.height;
 			this.camera3D.updateProjectionMatrix();
-		}).unsubscribeOn(this.oneValue('threeDMode', false));
+		}));
 
 
 		/* lighting */
@@ -150,12 +150,12 @@ define([
 		/* renderer: WebGL */
 		this._p_threeD_renderer_webgl = new THREE.WebGLRenderer({ alpha: true, antialias: true });
 		this._p_threeD_renderer_webgl.sortObjects = false;
-		this.on('3d-render', () => {
+		this.oneValue('threeDMode', false, this.on('3d-render', () => {
 			this._p_threeD_renderer_webgl.render(this._p_threeD_scene, this.camera3D);
-		}).unsubscribeOn(this.oneValue('threeDMode', false));
-		this.observe('threeDCanvasSize', (size) => {
+		}));
+		this.oneValue('threeDMode', false, this.observe('threeDCanvasSize', (size) => {
 			this._p_threeD_renderer_webgl.setSize(size.width, size.height);
-		}).unsubscribeOn(this.oneValue('threeDMode', false));
+		}));
 		this.oneValue('threeDMode', false, () => { delete this._p_threeD_renderer_webgl });
 
 
@@ -167,17 +167,17 @@ define([
 			this.threeDCanvasElement.empty();
 			delete this._p_threeD_renderer_css;
 		});
-		this.on('3d-render', () => {
+		this.oneValue('threeDMode', false, this.on('3d-render', () => {
 			this._p_threeD_renderer_css.render(this._p_threeD_scene, this.camera3D);
-		}).unsubscribeOn(this.oneValue('threeDMode', false));
-		this.observe('threeDCanvasSize', (size) => {
+		}));
+		this.oneValue('threeDMode', false, this.observe('threeDCanvasSize', (size) => {
 			this._p_threeD_renderer_css.setSize(size.width, size.height);
-		}).unsubscribeOn(this.oneValue('threeDMode', false));
+		}));
 
 
 		/* render on size-change and every animation frame */
-		this.on('size', () => { this.trigger('3d-render') }).unsubscribeOn(this.oneValue('threeDMode', false));
-		U.eachAnimationFrame(() => { this.trigger('3d-render') }).unsubscribeOn(this.oneValue('threeDMode', false));
+		this.oneValue('threeDMode', false, this.on('size', () => { this.trigger('3d-render') }));
+		this.oneValue('threeDMode', false, U.eachAnimationFrame(() => { this.trigger('3d-render') }));
 
 
 		/* controls */
@@ -189,11 +189,11 @@ define([
 		});
 		this._p_threeD_controls.addEventListener('change', () => { this.trigger('3d-render') });
 		this.oneValue('threeDMode', false, () => { delete this._p_threeD_controls });
-		this.on('3d-render', () => { this._p_threeD_controls.update() }).unsubscribeOn(this.oneValue('threeDMode', false));
-		this.observe('size', () => { this._p_threeD_controls.handleResize() }).unsubscribeOn(this.oneValue('threeDMode', false));
-		this.observe('threeDControlsEnabled', (enabled) => {
+		this.oneValue('threeDMode', false, this.on('3d-render', () => { this._p_threeD_controls.update() }));
+		this.oneValue('threeDMode', false, this.observe('size', () => { this._p_threeD_controls.handleResize() }));
+		this.oneValue('threeDMode', false, this.observe('threeDControlsEnabled', (enabled) => {
 			this._p_threeD_controls.enabled = enabled;
-		}).unsubscribeOn(this.oneValue('threeDMode', false));
+		}));
 
 
 		/*  the circuitboard object has a coordinate system           */
@@ -205,10 +205,10 @@ define([
 			THREE.Object3D.prototype.add.call(this.object3D, subObj);
 			subObj.scale.y = -1;
 		};
-		this.observe('size', (size) => {
+		this.oneValue('threeDMode', false, this.observe('size', (size) => {
 			this.object3D.position.x = -size.width / 2 + 1;
 			this.object3D.position.y = size.height / 2 - 1;
-		}).unsubscribeOn(this.oneValue('threeDMode', false));
+		}));
 		this.oneValue('threeDMode', false, () => { delete this.object3D });
 
 
@@ -249,7 +249,7 @@ define([
 
 
 		/* respond to resize */
-		this.observe('threeDCanvasSize', () => {
+		this.oneValue('threeDMode', false, this.observe('threeDCanvasSize', () => {
 
 			/* sizing and positioning of the circuit-board and backface */
 			var newCircuitboardSize = {
@@ -273,7 +273,7 @@ define([
 					(2 * Math.tan(THREE.Math.degToRad(this.camera3D.fov) / 2))
 			);
 
-		}).unsubscribeOn(this.oneValue('threeDMode', false));
+		}));
 
 	});
 
