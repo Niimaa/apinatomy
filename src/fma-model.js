@@ -1,4 +1,4 @@
-define(['jquery', 'bluebird', './util/misc.js', './util/defer.js', './util/main-delta-model.js'], ($, P, U, defer, dm) => {
+define(['jquery', 'bluebird', './util/misc.js', './util/defer.js', './util/main-delta-model.js', './24tiles.json'], ($, P, U, defer, dm, tfTiles) => {
 	'use strict';
 
 
@@ -40,23 +40,32 @@ define(['jquery', 'bluebird', './util/misc.js', './util/defer.js', './util/main-
 	/* to retrieve an array of promises to models, given an array of ids */
 	function getFmaModels(ids) {
 
+		/* if nothing is requested, return nothing */
+		if (ids.length === 0) { return [] }
+
 		/* gather the ids that we have not requested from the server before */
 		var newIds = [];
 		ids.forEach((id) => {
 			if (!_getDeferred(id).alreadyRequested) {
-				/* register this one to be requested from the server */
 				_getDeferred(id).alreadyRequested = true;
-				newIds.push(id);
 
 				/* make some info available from the promise itself */
 				_getDeferred(id).promise.id = id;
-				_getDeferred(id).promise.type = 'fma'; // <-- includes '24tiles' categorization models, though
+				_getDeferred(id).promise.type = 'fma';
+
+				if (id.substr(0, id.indexOf(':')-1) === '24tile') {
+					/* immediately resolve */
+					_getDeferred(id).resolve(tfTiles[id]);
+				} else {
+					/* register to be requested from the server */
+					newIds.push(id);
+				}
 			}
 		});
 
 		/* request and build the model objects belonging to those ids */
 		P.resolve($.ajax({
-			url: `http://www.apinatomy.org:8766/resources/entities/${newIds.join(',')}`,
+			url: `http://open-physiology.org:20080/apinatomy/${newIds.join(',')}`,
 			dataType: 'jsonp'
 		})).each((modelObj) => {
 
@@ -70,6 +79,10 @@ define(['jquery', 'bluebird', './util/misc.js', './util/defer.js', './util/main-
 
 			/* create the new model object based on the prototype */
 			var newModel = new FmaModel(modelObj);
+
+			/* remove counter from name */
+			var match = newModel.name.match(/^(.*)\(\d+\)$/);
+			if (match) { newModel.name = match[1] }
 
 			/* resolve the corresponding promise */
 			_getDeferred(newModel.id).resolve(newModel);

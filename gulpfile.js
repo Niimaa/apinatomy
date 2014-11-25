@@ -85,7 +85,7 @@ gulp.task('traceur', ['clean-tmp', 'lint'], function () {
 });
 
 gulp.task('copy-non-js-files', ['clean-tmp'], function () {
-	return gulp.src(['src/**/*.scss', 'src/**/*.html'])
+	return gulp.src(['src/**/*.scss', 'src/**/*.html', 'src/**/*.json'])
 			.pipe(gulp.dest('.intermediate-output'));
 });
 
@@ -106,7 +106,8 @@ MODULES.forEach(function (m) {
 				{ test: /\/(?!addStyles)[^\/]+\.js$/, loader: "source-map" }
 			],
 			loaders: [
-				{ test: /\.scss$/, loader: "style!css!autoprefixer!sass" }
+				{ test: /\.scss$/, loader: "style!css!autoprefixer!sass" },
+				{ test: /\.json/, loader: "json" }
 			]
 		}
 	};
@@ -155,7 +156,7 @@ MODULES.forEach(function (m) {
 		});
 		gulp.task('build:' + m.name, ['webpack:' + m.name, 'uglify:' + m.name]);
 	} else if (m.type === 'application') {
-		gulp.task('copy-html:' + m.name, function () {
+		gulp.task('copy-other:' + m.name, function () {
 			return gulp.src(['src/' + m.dir + '/*.html'])
 					.pipe(gulp.dest('dist/' + m.dir));
 		});
@@ -164,7 +165,7 @@ MODULES.forEach(function (m) {
 		//			.pipe(uglify())
 		//			.pipe(gulp.dest('dist/' + m.dir));
 		//});
-		gulp.task('build:' + m.name, ['webpack:' + m.name, 'copy-html:' + m.name]);
+		gulp.task('build:' + m.name, ['webpack:' + m.name, 'copy-other:' + m.name]);
 	}
 });
 
