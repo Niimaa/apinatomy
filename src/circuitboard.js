@@ -37,6 +37,9 @@ define(['jquery', 'bluebird', './util/widget.js', './util/misc.js', './util/main
 	/* for getting the plugin graph */
 	$.circuitboard.plugin.graph = () => dm.graph();
 
+	/* for getting the main delta model */
+	$.circuitboard.plugin.dm = dm;
+
 
 	/*  return the static `$.circuitboard` object,         */
 	/*  through which plugins can be applied and selected  */
