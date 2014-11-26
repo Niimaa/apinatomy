@@ -103,7 +103,6 @@ define([
 		// TODO: fix bug: when 3D mode is turned off, then on, tiles no longer respond to clicks
 
 
-		/* an easy way to act on 3D mode being turned off */
 		/* remember the initial margin */
 		this._p_threeD_initialMargin = {};
 		this._p_threeD_initialMargin.left = this.element.offset().left - this.threeDCanvasElement.offset().left;
@@ -263,6 +262,10 @@ define([
 
 			this.element.css(newCircuitboardSize);
 			U.extend(this._p_threeD_circuitboard.position, newCircuitboardPosition);
+			U.extend(this.object3D.position, {
+				x: newCircuitboardPosition.x - this.size.width / 2,
+				y: newCircuitboardPosition.y + this.size.height / 2
+			});
 
 			backfaceElement.css(newCircuitboardSize);
 			U.extend(backface.position, newCircuitboardPosition);
