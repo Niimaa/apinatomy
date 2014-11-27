@@ -66,9 +66,11 @@ define([
 
 		/* the 'headerSize' observable */
 		this.newObservable('headerSize');
-		this.observe('size', (size) => {
-			this.headerSize = new U.Size(this._p_tileSkin_headerElement.height(), size.width);
-		});
+		var refreshHeaderSize = () => {
+			this.headerSize = new U.Size(this._p_tileSkin_headerElement.height(), this.size.width);
+		};
+		this.observe('size', refreshHeaderSize);
+		this.on('open', refreshHeaderSize);
 
 		/* the 'headerPosition' observable */
 		this.newObservable('headerPosition');
