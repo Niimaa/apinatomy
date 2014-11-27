@@ -1,0 +1,19 @@
+.circuitboard > svg.d3 {
+	.vascular.vertex > .core {
+		pointer-events: visiblePainted;
+		fill: lighten(red, 20);
+		stroke: red;
+
+		&.inter-tile {
+
+		}
+	}
+
+	.vascular.edge {
+		pointer-events: visiblePainted;
+		cursor: pointer;
+		stroke: red;
+		stroke-width: 2px;
+		stroke-linecap: round;
+	}
+}

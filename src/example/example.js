@@ -51,7 +51,10 @@ require([
 	'../p-three-d.js',
 	'../p-three-d-geometric-models.js',
 	'../p-three-d-geometric-models-stl.js',
-	'../p-d3-three-d.js'
+	'../p-d3-three-d.js',
+
+	/* files for testing */
+	'../p-connectivity.js'
 
 ], function ($, getFmaModels) {
 	'use strict';
@@ -65,10 +68,11 @@ require([
 		'tile-middleclick-to-maximize',
 		'tile-spacing',
 		'tile-active',
-		'ppi',
+		//'ppi',
 		'three-d',
 		'three-d-geometric-models',
-		'three-d-geometric-models-stl'
+		'three-d-geometric-models-stl',
+		'connectivity'
 	]);
 
 

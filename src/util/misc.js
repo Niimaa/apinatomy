@@ -1,4 +1,4 @@
-define(['bluebird'], (P) => {
+define(['bluebird', './defer.js'], (P, defer) => {
 	'use strict';
 
 	var U = {
@@ -116,16 +116,19 @@ define(['bluebird'], (P) => {
 
 		// Returns a function, that, as long as it continues to be invoked, will not
 		// be triggered. The function will be called after it stops being called for
-		// N milliseconds.
+		// N milliseconds. Every invocation returns a promise to the eventual result.
 		debounce(func, wait, context) {
 			var timeout;
+			var deferred = defer();
 			return function (...args) {
 				var laterFn = () => {
 					timeout = null;
-					func.apply(context || this, args);
+					deferred.resolve(func.apply(context || this, args));
+					deferred = defer();
 				};
 				clearTimeout(timeout);
 				timeout = setTimeout(laterFn, wait);
+				return deferred.promise;
 			};
 		},
 
