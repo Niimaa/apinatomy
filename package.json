@@ -58,6 +58,7 @@
     "snippets": [
       "dist/example"
     ],
-    "first": "example"
+    "first": "example",
+    "noBrowserify": true
   }
 }
