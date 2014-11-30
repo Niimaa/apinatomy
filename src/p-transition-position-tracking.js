@@ -1,7 +1,8 @@
 define([
 	'jquery',
+	'bacon',
 	'./util/misc.js'
-], function ($, U) {
+], function ($, Bacon, U) {
 	'use strict';
 
 
@@ -14,11 +15,11 @@ define([
 	/* make sure that positioning is updated during CSS3 transition animations */
 	plugin.insert('construct', function () {
 		this.on('weight', () => {
-			var stopUpdatingPosition = U.eachAnimationFrame(() => { this.resetPositioning() });
-			setTimeout(() => {
-				this.element.one('transitionend', stopUpdatingPosition);
-				setTimeout(stopUpdatingPosition, 500); // fallback
-			});
+
+			U.animationFrames()
+					.takeUntil(this.element.asEventStream('transitionend').merge(Bacon.later(500)))
+					.onValue(() => { this.resetPositioning() });
+
 		});
 	});
 

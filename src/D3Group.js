@@ -5,8 +5,18 @@ define(['./util/misc.js', './util/artefact.js'], function (U, Artefact) {
 	return Artefact.newSubclass('D3Group', function D3Group() {
 
 		U.extend(this, {
-			vertices: [],
-			edges: []
+			vertices: {},
+			edges: {}
+		});
+
+		this.newEvent('vertex-added');
+		this.newEvent('vertex-removed');
+		this.newEvent('edge-added');
+		this.newEvent('edge-removed');
+
+		this.one('destroy', () => {
+			this.vertices.forEach((v) => { v.destroy() });
+			// edges will be destroyed when their vertices are
 		});
 
 	}, {
@@ -22,21 +32,22 @@ define(['./util/misc.js', './util/artefact.js'], function (U, Artefact) {
 
 		addVertex(vertex) {
 			vertex.group = this;
-			vertex.groupVertexIndex = this.vertices.length;
-			this.vertices.push(vertex);
+			this.vertices[vertex.id] = vertex;
 			vertex.graphId = vertex.id;
 			this.circuitboard._p_d3_vertices[vertex.graphId] = vertex;
 			this.trigger('vertex-added', vertex);
 			this.circuitboard.updateGraph();
+			return vertex;
 		},
 
 		removeVertex(vertex) {
 			if (vertex) {
+				if (typeof vertex === 'string') {
+					vertex = this.vertices[vertex];
+				}
+				vertex.destroy();
 				delete this.circuitboard._p_d3_vertices[vertex.graphId];
-				U.pull(this.vertices, vertex);
-				this.vertices.forEach(function (vertex, i) {
-					vertex.groupVertexIndex = i;
-				});
+				delete this.vertices[vertex];
 				this.trigger('vertex-removed', vertex);
 				this.circuitboard.updateGraph();
 			}
@@ -44,39 +55,36 @@ define(['./util/misc.js', './util/artefact.js'], function (U, Artefact) {
 
 		addEdge(edge) {
 			edge.group = this;
-			this.edges.push(edge);
+			this.edges[edge.id] = edge;
 			edge.graphId = this.id + ':' + edge.id;
 			this.circuitboard._p_d3_edges[edge.graphId] = edge;
 			this.trigger('edge-added', edge);
 			this.circuitboard.updateGraph();
+			return edge;
 		},
 
 		removeEdge(edge) {
 			if (edge) {
+				if (typeof vertex === 'string') {
+					edge = this.edges[edge];
+				}
+				edge.destroy();
 				delete this.circuitboard._p_d3_edges[edge.graphId];
-				U.pull(this.edges, edge);
+				delete this.edges[edge.id];
 				this.trigger('edge-removed', edge);
 				this.circuitboard.updateGraph();
 			}
 		},
 
 		removeAllEdgesAndVertices() {
-			this.edges.forEach((edge) => {
-				if (edge) { this.removeEdge(edge); }
+			Object.keys(this.edges).forEach((edgeId) => {
+				if (this.edges[edgeId]) { this.removeEdge(this.edges[edgeId]); }
 			});
-			this.vertices.forEach((vertex) => {
-				if (vertex) { this.removeVertex(vertex); }
+			Object.keys(this.vertices).forEach((vertexId) => {
+				if (this.vertices[vertexId]) { this.removeVertex(this.vertices[vertexId]); }
 			});
-			U.makeEmpty(this.edges);
-			U.makeEmpty(this.vertices);
 			this.circuitboard.updateGraph();
-		},
-
-		vertexCount() { return this.vertices.length },
-
-		vertices() { return this.vertices.slice() },
-
-		edges() { return this.vertices.slice() }
+		}
 
 	}, {
 		gravityFactor: 1,

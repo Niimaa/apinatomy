@@ -49,31 +49,23 @@ define([
 				.catch(()=>{}); // it's OK if '.tile.normal.css' is not on the model
 
 		/* when the tile is closed, make the font size dynamic */
-		var unsubscribe;
-		this.observe('open', (open) => {
-			if (open) {
-				if (unsubscribe) {
-					unsubscribe();
-					unsubscribe = undefined;
-				}
-			} else {
-				unsubscribe = this.observe('size', (size) => {
-					this._p_tileSkin_headerElement.css('fontSize', // formula gotten experimentally
-							Math.min(0.2 * Math.pow(size.height, 1.01), 0.13 * Math.pow(size.width, 1.01)));
-				});
-			}
+		this.on('size').takeWhile(this.on('open').not()).onValue((size) => {
+			this._p_tileSkin_headerElement.css('fontSize', // formula gotten experimentally
+					Math.min(0.2 * Math.pow(size.height, 1.01), 0.13 * Math.pow(size.width, 1.01))
+			);
 		});
 
 		/* the 'headerSize' observable */
-		this.newObservable('headerSize');
+		this.newProperty('headerSize'); // TODO: use Bacon way to update this
 		var refreshHeaderSize = () => {
 			this.headerSize = new U.Size(this._p_tileSkin_headerElement.height(), this.size.width);
 		};
-		this.observe('size', refreshHeaderSize);
+		this.on('size', refreshHeaderSize);
 		this.on('open', refreshHeaderSize);
 
 		/* the 'headerPosition' observable */
-		this.newObservable('headerPosition');
-		this.observe('position', (position) => { this.headerPosition = position });
+		this.newProperty('headerPosition'); // TODO: use Bacon way to update this
+		this.on('position', (position) => { this.headerPosition = position });
+
 	});
 });

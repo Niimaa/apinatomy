@@ -1,21 +1,21 @@
 define(['jquery'], function ($) {
 	'use strict';
 
+
 	var plugin = $.circuitboard.plugin({
 		name: 'd3-three-d',
 		resolves: ['d3', 'three-d']
 	}).modify('Circuitboard.prototype');
 
-	//
-	// while dragging a vertex, lock the 3D camera
-	//
+
+	/* while dragging a vertex, lock the 3D camera */
 	plugin.after('construct', function () {
 		this.d3Force.drag().on('dragstart', () => {
 			this.threeDControlsEnabled = false;
 		}).on('dragend', () => {
-			//noinspection JSUnusedGlobalSymbols
 			this.threeDControlsEnabled = true;
 		});
 	});
+
 
 });

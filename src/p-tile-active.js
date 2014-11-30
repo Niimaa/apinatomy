@@ -15,12 +15,13 @@ define(['jquery', './util/misc.js'], function ($, U) {
 
 		/* put this tile in the queue of potentially active tiles */
 		U.array(this.model, '_p_tileActive_amyActiveTileQueue').push(this);
-		this.on('destroy', ()=> {
+		this.one('destroy', ()=> {
 			var index = this.model._p_tileActive_amyActiveTileQueue.indexOf(this);
 			this.model._p_tileActive_amyActiveTileQueue.splice(index, 1);
 		});
 
 		/* make the 'active' property available */
+		this.newEvent('active');
 		Object.defineProperty(this, 'active', {
 			get() { return this.model._p_tileActive_amyActiveTileQueue[0] === this },
 			set(shouldBeActive) {
@@ -29,8 +30,8 @@ define(['jquery', './util/misc.js'], function ($, U) {
 					if (index !== 0) {
 						this.model._p_tileActive_amyActiveTileQueue.splice(index, 1);
 						this.model._p_tileActive_amyActiveTileQueue.unshift(this);
-						this.model._p_tileActive_amyActiveTileQueue[1].trigger('active', false, true);
-						this.model._p_tileActive_amyActiveTileQueue[0].trigger('active', true, false);
+						this.model._p_tileActive_amyActiveTileQueue[1].trigger('active', false);
+						this.model._p_tileActive_amyActiveTileQueue[0].trigger('active', true);
 					}
 				} else {
 					throw new Error("You can't directly set tile activeness to false.");
@@ -39,9 +40,7 @@ define(['jquery', './util/misc.js'], function ($, U) {
 		});
 
 		/* automatically (un)set the CSS class 'active' */
-		this.observe('active', () => {
-			this.element.toggleClass('active', this.active);
-		});
+		this.on('active', (active) => { this.element.toggleClass('active', active) });
 
 		/* initial 'active' signal */
 		this.trigger('active', this.active);

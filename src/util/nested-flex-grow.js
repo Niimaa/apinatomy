@@ -17,7 +17,7 @@ define(['jquery'], function ($) {
 			element.data('amyFlexGrowPrevDisplay', element.css('display'));
 			element.css('flexGrow', 1e-5);
 			setTimeout(() => {
-				element.one('transitionend webkitTransitionEnd', () => {
+				element.one('transitionend', () => {
 					if (element.data('amyFlexGrowTarget') === 0) {
 						element.css('display', 'none');
 					}

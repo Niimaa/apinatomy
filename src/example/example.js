@@ -18,6 +18,10 @@ requirejs.config({
 });
 
 
+/* make 'jQuery' globally available for Bacon.js to find */
+window.jQuery = require('jquery');
+
+
 /* load the circuitboard code and style */
 require('../circuitboard.js');
 require('./example.scss');

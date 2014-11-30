@@ -13,10 +13,10 @@ define(['jquery'], function ($) {
 	plugin.insert('construct', function () {
 
 		/* the 'weight' observable */
-		this.newObservable('weight', { initial: 1 });
+		this.newProperty('weight', { initial: 1 });
 
 		/* enact 'weight' on the DOM */
-		this.observe('weight', (weight) => {
+		this.on('weight', (weight) => { // TODO: update DOM the Bacon way
 			this.element.amyNestedFlexGrow(weight);
 		});
 

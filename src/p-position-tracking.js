@@ -1,4 +1,4 @@
-define(['jquery', './util/misc.js'], function ($, U) {
+define(['jquery', './util/misc.js', 'bacon'], function ($, U, Bacon) {
 	'use strict';
 
 
@@ -9,55 +9,49 @@ define(['jquery', './util/misc.js'], function ($, U) {
 
 
 	/* private methods for calculating and caching element offset */
-	plugin.add('Circuitboard.prototype._p_posTracking_setOffset', U.oncePerStack(function () {
+	plugin.insert('Circuitboard.prototype.construct', function () {
 
-		// This function temporarily undoes all (3D) transformations on the
-		// circuitboard and parent to measure the left/top offsets of all artefacts.
-		// we're using `e[0].style.transform` instead of `e.css('transform')`,
-		// because the jQuery way causes some unexplained side-effects.
+		var PACING = U.animationFrames().merge(Bacon.once());
 
-		var restoreTransforms = [this.element, this.element.parent()].map((e) => {
-			var originalTransform = e[0].style.transform;
-			e[0].style.transform = '';
-			return () => { e[0].style.transform = originalTransform };
-		});
-		this._p_posTracking_offset_cache = this.element.offset();
-		this.children.forEach((c) => {
-			if (c._p_posTracking_setOffset) {
-				c._p_posTracking_setOffset();
-			}
-		});
-		restoreTransforms.forEach(U.call);
+		var limiter = new Bacon.Bus();
+		var windowWanted = false;
+		PACING.filter(() => windowWanted).onValue(() => {
+			/* setup: temporarily undoes all (3D) transformations on the circuitboard */
+			var restoreTransforms = [this.element, this.element.parent()].map((e) => {
+				// we're using `e[0].style.transform` instead of `e.css('transform')`,
+				// because the jQuery way causes some unexplained side-effects.
+				var originalTransform = e[0].style.transform;
+				e[0].style.transform = '';
+				return () => { e[0].style.transform = originalTransform };
+			});
 
-	})).insert('Tilemap.prototype.construct', function () {
+			/* the window for computing any tile's offset */
+			console.log('<window>'); // TODO: remove
+			limiter.push();
+			windowWanted = false;
+			console.log('</window>'); // TODO: remove
 
-		this.circuitboard._p_posTracking_setOffset.allowAdditionalCall();
-
-	}).insert('Tile.prototype.construct', function () {
-
-		this.circuitboard._p_posTracking_setOffset.allowAdditionalCall();
-
-	}).add('Tilemap.prototype._p_posTracking_setOffset', function () {
-
-		// only to be called (indirectly) by Circuitboard.prototype._p_posTracking_setOffset
-
-		this._p_posTracking_offset_cache = this.element.offset();
-		this.children.forEach((c) => {
-			if (c._p_posTracking_setOffset) {
-				c._p_posTracking_setOffset();
-			}
+			/* breakdown: restore the (3D) transformations */
+			restoreTransforms.forEach(U.call);
 		});
 
-	}).add('Tile.prototype._p_posTracking_setOffset', function () {
+		this._p_posTracking_offsetLimiter = function (...pacing) {
+			pacing = Bacon.mergeAll(pacing);
+			var wantBus = new Bacon.Bus();
+			var want = wantBus.skipDuplicates().toProperty(false);
+			wantBus.plug(pacing.map(true));
+			pacing.onValue(() => { windowWanted = true });
 
-		// only to be called (indirectly) by Circuitboard.prototype._p_posTracking_setOffset
+			var resultBus = new Bacon.Bus();
 
-		this._p_posTracking_offset_cache = this.element.offset();
-		this.children.forEach((c) => {
-			if (c._p_posTracking_setOffset) {
-				c._p_posTracking_setOffset();
-			}
-		});
+			limiter.filter(want).onValue(() => {
+				console.log('--- computation'); // TODO: remove
+				resultBus.push();
+				wantBus.push(false);
+			});
+
+			return resultBus;
+		};
 
 	});
 
@@ -65,60 +59,96 @@ define(['jquery', './util/misc.js'], function ($, U) {
 	/* the 'offset' observable */
 	plugin.insert('Circuitboard.prototype.construct', function () {
 
-		this.newObservable('offset');
+		this.newProperty('offset', {
+			source: this._p_posTracking_offsetLimiter(
+					Bacon.once(),
+					Bacon.interval(100), // TODO: find the proper way to keep this updated
+					this.on('reset-positioning')
+			).map(() => this.element.offset()).log('----------'),
+			isEqual: U.Position.equals,
+			initial: this.element.offset()
+		});
 
-		((cache) => {
-			this.offset = cache();
-			setInterval(cache, 100); // TODO: find the proper way to keep this updated
-			cache.onChange((newOffset) => { this.offset = newOffset });
-			this.on('reset-positioning', cache);
-		})(U.cached({
-			retrieve: () => {
-				this._p_posTracking_setOffset();
-				return this._p_posTracking_offset_cache;
-			},
-			isEqual: U.Position.equals
-		}));
+		console.log('==========', this.offset);
+
+		//((cache) => {
+		//	this.offset = cache();
+		//	setInterval(cache, 100);
+		//	cache.onChange((newOffset) => { this.offset = newOffset });
+		//	this.on('reset-positioning', cache);
+		//})(U.cached({
+		//	retrieve: () => {
+		//		this._p_posTracking_setOffset();
+		//		return this._p_posTracking_offset_cache;
+		//	},
+		//	isEqual: U.Position.equals
+		//}));
 
 	}).insert('Tilemap.prototype.construct', function () {
 
-		this.newObservable('offset');
+		this.newProperty('offset', {
+			source: this.circuitboard._p_posTracking_offsetLimiter(
+					Bacon.once(),
+					Bacon.interval(100), // TODO: find the proper way to keep this updated
+					this.parent.on('size'),
+					this.parent.on('offset'),
+					this.on('reset-positioning')
+			).map(() => this.element.offset()),
+			isEqual: U.Position.equals,
+			initial: this.element.offset()
+		});
 
-		((cache) => {
-			this.offset = cache();
-			setInterval(cache, 100); // TODO: find the proper way to keep this updated
-			cache.onChange((newOffset) => { this.offset = newOffset });
-			this.parent.observe('size', cache);
-			this.parent.on('offset', cache);
-			this.on('reset-positioning', cache);
-		})(U.cached({
-			retrieve: () => {
-				this.circuitboard._p_posTracking_setOffset();
-				return this._p_posTracking_offset_cache;
-			},
-			isEqual: U.Position.equals
-		}));
+		//this.newProperty('offset');
+		//
+		//((cache) => {
+		//	this.offset = cache();
+		//	setInterval(cache, 100);
+		//	cache.onChange((newOffset) => { this.offset = newOffset });
+		//	this.parent.on('size', cache);
+		//	this.parent.on('offset', cache);
+		//	this.on('reset-positioning', cache);
+		//})(U.cached({
+		//	retrieve: () => {
+		//		this.circuitboard._p_posTracking_setOffset();
+		//		return this._p_posTracking_offset_cache;
+		//	},
+		//	isEqual: U.Position.equals
+		//}));
 
 	}).insert('Tile.prototype.construct', function () {
 
-		this.newObservable('offset');
+		this.newProperty('offset', {
+			source: this.circuitboard._p_posTracking_offsetLimiter(
+					Bacon.once(),
+					Bacon.interval(100), // TODO: find the proper way to keep this updated
+					this.parent.on('size'),
+					this.parent.on('offset'),
+					this.parent.on('reorganize'),
+					this.on('weight').changes(),
+					this.on('reset-positioning')
+			).map(() => this.element.offset()),
+			isEqual: U.Position.equals,
+			initial: this.element.offset()
+		});
 
-		((cache) => {
-			this.offset = cache();
-			setInterval(cache, 100); // TODO: find the proper way to keep this updated
-			cache.onChange((newOffset) => { this.offset = newOffset });
-			this.on('weight', cache);
-			this.parent.on('size', cache);
-			this.parent.on('reorganize', cache);
-			this.parent.on('offset', cache);
-			this.on('reset-positioning', cache);
-		})(U.cached({
-			retrieve: () => {
-				this.circuitboard._p_posTracking_setOffset();
-				return this._p_posTracking_offset_cache;
-			},
-			isEqual: U.Position.equals
-		}));
+		//this.newProperty('offset');
+		//
+		//((cache) => {
+		//	this.offset = cache();
+		//	setInterval(cache, 100);
+		//	cache.onChange((newOffset) => { this.offset = newOffset });
+		//	this.on('weight', cache);
+		//	this.parent.on('size', cache);
+		//	this.parent.on('reorganize', cache);
+		//	this.parent.on('offset', cache);
+		//	this.on('reset-positioning', cache);
+		//})(U.cached({
+		//	retrieve: () => {
+		//		this.circuitboard._p_posTracking_setOffset();
+		//		return this._p_posTracking_offset_cache;
+		//	},
+		//	isEqual: U.Position.equals
+		//}));
 
 	});
 
@@ -127,11 +157,11 @@ define(['jquery', './util/misc.js'], function ($, U) {
 	plugin.insert('Circuitboard.prototype.construct', function () {
 
 		// for completeness sake; it's (0, 0) by definition
-		this.newObservable('position', { initial: new U.Position(0, 0) });
+		this.newProperty('position', { source: Bacon.constant(new U.Position(0, 0)) });
 
 	}).insert('Tilemap.prototype.construct', function () {
 
-		this.newObservable('position');
+		this.newProperty('position');
 
 		((setPosition) => {
 			setPosition();
@@ -143,7 +173,7 @@ define(['jquery', './util/misc.js'], function ($, U) {
 
 	}).insert('Tile.prototype.construct', function () {
 
-		this.newObservable('position');
+		this.newProperty('position');
 
 		((setPosition) => {
 			setPosition();
@@ -159,7 +189,7 @@ define(['jquery', './util/misc.js'], function ($, U) {
 	/* the 'size' observable */
 	plugin.insert('Circuitboard.prototype.construct', function () {
 
-		this.newObservable('size');
+		this.newProperty('size');
 
 		((cache) => {
 			this.size = cache();
@@ -174,7 +204,7 @@ define(['jquery', './util/misc.js'], function ($, U) {
 
 	}).insert('Tilemap.prototype.construct', function () {
 
-		this.newObservable('size');
+		this.newProperty('size');
 
 		((cache) => {
 			this.size = cache();
@@ -189,7 +219,7 @@ define(['jquery', './util/misc.js'], function ($, U) {
 
 	}).insert('Tile.prototype.construct', function () {
 
-		this.newObservable('size');
+		this.newProperty('size');
 
 		((cache) => {
 			this.size = cache();
@@ -209,7 +239,11 @@ define(['jquery', './util/misc.js'], function ($, U) {
 
 	/*  if the size of any tile changes, trigger the 'reorganize'     */
 	/*  event on the parent tilemap, so that sibling tiles can react  */
-	plugin.insert('Tile.prototype.construct', function () {
+	plugin.insert('Tilemap.prototype.construct', function () {
+
+		this.newEvent('reorganize');
+
+	}).insert('Tile.prototype.construct', function () {
 
 		this.on('size', () => { this.parent.trigger('reorganize') });
 
@@ -217,7 +251,11 @@ define(['jquery', './util/misc.js'], function ($, U) {
 
 
 	/* a method to trigger position/size recheck */
-	plugin.add('Tile.prototype.resetPositioning', function () {
+	plugin.insert('Tile.prototype.construct', function () {
+
+		this.newEvent('reset-positioning');
+
+	}).add('Tile.prototype.resetPositioning', function () {
 
 		this.trigger('reset-positioning');
 

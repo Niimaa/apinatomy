@@ -22,7 +22,7 @@ define([
 					this._p_circuitboardCore_tilesByModelId[tile.model.id] = [];
 				}
 				this._p_circuitboardCore_tilesByModelId[tile.model.id].push(tile);
-				this.trigger('tilecreated', tile);
+				this.trigger('tile-created', tile);
 			}).add('onTileCreated', function onTileCreated(tileSelector, fn) {
 
 				// `tileSelector` is optional, i.e., a single argument is `fn`
@@ -47,12 +47,14 @@ define([
 				});
 
 				// set up the callbacks for future tiles
-				this.on('tilecreated', (tile) => {
+				this.on('tile-created', (tile) => {
 					if (filter(tile)) { fn(tile) }
 				});
 
 			}).add('construct', function () {
 				this._p_circuitboardCore_tilesByModelId = {};
+
+				this.newEvent('tile-created');
 
 				// create the root tilemap
 				$('<div/>').appendTo(this.element)
@@ -111,6 +113,8 @@ define([
 
 			}).add('construct', function () {
 
+				this.newEvent('tiles-refreshed');
+
 				this._p_tilemapCore_tiles = null;
 				Object.defineProperty(this, 'tiles', { get: () => this._p_tilemapCore_tiles });
 				this.refreshTiles();
@@ -118,7 +122,7 @@ define([
 			});
 
 
-	/* Tilemap */
+	/* Tile */
 	plugin.modify('Tile.prototype')
 			.add('populateInnerTilemap', function populateInnerTilemap() {
 
@@ -134,17 +138,13 @@ define([
 				this._p_tileCore_tilemap = null;
 
 				/* support certain DOM-event subscriptions from the tile object itself */
-				$.each(['click', 'mouseover', 'mouseout'], (index, signal) => {
-					this.element.on(signal, (event) => {
-						event.stopPropagation();
-						this.trigger(signal, event);
-					});
+				['click', 'mouseover', 'mouseout'].forEach((event) => {
+					this.newEvent(event, { eventStream: this.element.asEventStream(event).doAction('.stopPropagation') });
 				});
-				$.each(['mouseenter', 'mouseleave'], (index, signal) => {
-					this.element.on(signal, (event) => {
-						this.trigger(signal, event);
-					});
+				['mouseenter', 'mouseleave'].forEach((event) => {
+					this.newEvent(event, { eventStream: this.element.asEventStream(event) });
 				});
+				this.newEvent('click-not-drop');
 				this.element.clickNotDrop((event) => {
 					event.stopPropagation();
 					this.trigger('click-not-drop', event);
@@ -160,7 +160,6 @@ define([
 				this.circuitboard._registerTile(this);
 
 			});
-
 
 
 });

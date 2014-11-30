@@ -1,8 +1,18 @@
-define(['jquery', 'bluebird', './misc.js', './signal-handler.js', './unique-id.js', './main-delta-model.js'], function ($, P, U, SignalHandler, uniqueID, dm) {
+define([
+	'jquery',
+	'bluebird',
+	'./misc.js',
+	'./bacon-signal-handler.js',
+	//'./signal-handler.js',
+	'./unique-id.js',
+	'./main-delta-model.js'
+], function ($, P, U, BaconSignalHandler, uniqueID, dm) {
 	'use strict';
 
 
-	var Artefact = dm.vp('Artefact', U.newClass(function Artefact(options) {
+	var Artefact = dm.vp('Artefact', U.newSubclass(BaconSignalHandler, function Artefact(superFn, options) {
+		superFn();
+
 		var {id, type, parent} = this._options = options;
 
 		/* set hierarchy stuff */
@@ -11,6 +21,9 @@ define(['jquery', 'bluebird', './misc.js', './signal-handler.js', './unique-id.j
 		this._parent = parent;
 		this._children = [];
 		if (parent) { U.array(parent, '_children').push(this) }
+
+		/* create events */
+		this.newEvent('destroy');
 
 	}, {
 
@@ -50,7 +63,7 @@ define(['jquery', 'bluebird', './misc.js', './signal-handler.js', './unique-id.j
 	}));
 
 
-	U.extend(Artefact.prototype, SignalHandler);
+	//U.extend(Artefact.prototype, SignalHandler);
 
 
 	Artefact.newSubclass = function newSubClass(name, constructor, prototype = {}, optionDefaults = {}) {

@@ -1,5 +1,13 @@
-define(['bluebird'], (P) => {
+define(['bluebird', 'bacon'], (P, Bacon) => {
 	'use strict';
+
+	var requestAnimationFrameFn =
+			window.requestAnimationFrame ||
+			window.webkitRequestAnimationFrame ||
+			window.mozRequestAnimationFrame ||
+			window.oRequestAnimationFrame ||
+			window.msRequestAnimationFrame ||
+			((f) => window.setTimeout(f, 1000 / 60));
 
 	var U = {
 
@@ -97,6 +105,12 @@ define(['bluebird'], (P) => {
 		// test if a value is defined (not `undefined`)
 		isDefined(val) { return typeof val !== 'undefined' },
 
+		// test if a value is a plain object
+		isPlainObject(val) { return typeof val === 'object' && val.constructor === Object },
+
+		// test if a value is a function
+		isFunction(val) { return typeof val === 'function' },
+
 		// extract an array of values from an object
 		objValues(obj) { return Object.keys(obj).map(key => obj[key]) },
 
@@ -131,30 +145,27 @@ define(['bluebird'], (P) => {
 
 		// runs a function every animation frame
 		// returns a function that can be called to stop the loop
-		eachAnimationFrame(fn, context) {
-			var stop = false;
+		animationFrames() {
+			return Bacon.fromBinder((sink) => {
 
-			function iterationFn() {
-				fn.apply(context);
-				if (stop) { return }
-				requestAnimationFrame(iterationFn);
-			}
+				/* self-calling animation-frame loop */
+				var stop = false;
+				var iterationFn = () => {
+					if (stop) { return }
+					sink();
+					requestAnimationFrameFn(iterationFn);
+				};
 
-			iterationFn();
+				/* start it now */
+				iterationFn();
 
-			var unsubscribeFn = () => {
-				if (unsubscribeFn.stillSubscribed) {
-					unsubscribeFn.stillSubscribed = false;
-					delete unsubscribeFn.unsubscribeOn;
+				/* unsubscribe function */
+				return () => {
 					stop = true;
-				}
-			};
-			unsubscribeFn.stillSubscribed = true;
-			unsubscribeFn.unsubscribeOn = (subscriber) => {
-				subscriber(unsubscribeFn);
-				return unsubscribeFn;
-			};
-			return unsubscribeFn;
+					sink(new Bacon.End());
+				};
+
+			});
 		},
 
 		// Returns a function, that will only be triggered once per synchronous 'stack'.
