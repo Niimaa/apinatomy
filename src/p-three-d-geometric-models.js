@@ -106,7 +106,7 @@ define([
 						.tap(calculateBoundingBox)
 						.tap(centerGeometries)
 						.tap((obj) => {
-							this.observe('size', () => {
+							this.on('size').takeWhile(this.on('visible')).onValue(() => {
 								var ratio = Math.min(this.size.width / obj.userData.boundingBox.size().x,
 												this.size.height / obj.userData.boundingBox.size().y) * 0.7;
 
@@ -115,7 +115,7 @@ define([
 
 								/* adjust 'altitude' */
 								obj.position.z = 0.5 * ratio * obj.userData.boundingBox.size().z + 30;
-							}).subscribeWhenever(this.observe('visible'));
+							});
 						})
 
 					/* add the object to the scene, centered on this tile */

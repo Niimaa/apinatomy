@@ -56,9 +56,7 @@ define([
 
 
 		/* auto-resize the force-layout canvas */
-		this.observe('size', (size) => {
-			this.d3Force.size([size.width, size.height]);
-		});
+		this.on('size').map((v) => [v.width, v.height]).assign(this.d3Force, 'size');
 
 
 		/* create corresponding svg elements */
@@ -115,6 +113,7 @@ define([
 
 
 		/* on d3 animation tick */
+		this.newEvent('d3-tick');
 		this.d3Force.on("tick", (e) => {
 
 			/* make the tick event available to users of the circuitboard */
@@ -124,13 +123,13 @@ define([
 			var k = 0.1 * e.alpha;
 
 			/* gravitate towards the center of the region */
-			visibleVertices.forEach(function (d) {
+			visibleVertices.forEach((d) => {
 				d.x += d.group.gravityFactor * (d.group.region.left + 0.5 * d.group.region.width - d.x) * k;
 				d.y += d.group.gravityFactor * (d.group.region.top + 0.5 * d.group.region.height - d.y) * k;
 			});
 
 			/* but always stay within the region */
-			visibleVertices.forEach(function (d) {
+			visibleVertices.forEach((d) => {
 				d.x = Math.max(d.x, d.group.region.left);
 				d.x = Math.min(d.x, d.group.region.left + d.group.region.width);
 				d.y = Math.max(d.y, d.group.region.top);

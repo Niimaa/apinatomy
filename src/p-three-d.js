@@ -47,8 +47,8 @@ define([
 
 
 		/* the 'threeDCanvasElement' property */
-		this.newObservable('threeDCanvasElement');
-		this.observe('threeDCanvasElement', (newCanvas, oldCanvas) => {
+		this.newProperty('threeDCanvasElement');
+		this.on('threeDCanvasElement').slidingWindow(2).map('.reverse').onValues((newCanvas, oldCanvas) => {
 			if (oldCanvas) { oldCanvas.removeClass('three-d-canvas') }
 			if (newCanvas) { newCanvas.addClass('three-d-canvas') }
 		});
@@ -59,18 +59,13 @@ define([
 
 
 		/* the 'threeDMode' property */
-		this.newObservable('threeDMode', {
-			initial: U.isDefined(this.options.threeDCanvasElement),
-			validation: (val) => {
-				U.assert(!val || this.threeDCanvasElement,
-						`You cannot turn on 3D mode when no 'threeDCanvasElement' has been set.`);
-				return !!val;
-			}
-		});
+		this.newProperty('threeDMode', {
+			initial: U.isDefined(this.options.threeDCanvasElement)
+		}); // TODO: error if no canvas element is set
 
 
 		/* the 'threeDCanvasSize' observable */
-		this.newObservable('threeDCanvasSize');
+		this.newProperty('threeDCanvasSize');
 		((cache) => {
 			this.threeDCanvasSize = cache();
 			cache.onChange((newSize) => { this.threeDCanvasSize = newSize });
@@ -85,20 +80,26 @@ define([
 
 
 		/* the 'threeDControlsEnabled' property */
-		this.newObservable('threeDControlsEnabled');
+		this.newProperty('threeDControlsEnabled', { initial: true });
+
+
+
+		/* preemptively set the object3D property */
+		this.object3D = new THREE.Object3D(); // TODO: move back
+
+
+
+		this.newEvent('3d-render'); // TODO: seek out all trigger methods; see that each has an event definition
 
 
 		/* initialize when 3D mode is turned on */
-		this.observe('threeDMode', (mode) => { // TODO: this can be moved to the end, now that 'observe' is used rather than 'on'
-			if (mode) { this._p_threeD_initialize() }
-		});
+		this.on('threeDMode', true, () => { this._p_threeD_initialize() });
 
 
 	});
 
 	/* `_p_threeD_initialize` is run every time 3D-ness is turned on */
 	plugin.add('Circuitboard.prototype._p_threeD_initialize', function () {
-
 
 		// TODO: fix bug: when 3D mode is turned off, then on, tiles no longer respond to clicks
 
@@ -109,22 +110,23 @@ define([
 		this._p_threeD_initialMargin.top = this.element.offset().top - this.threeDCanvasElement.offset().top;
 		this._p_threeD_initialMargin.right = this.threeDCanvasSize.width - this.size.width - this._p_threeD_initialMargin.left;
 		this._p_threeD_initialMargin.bottom = this.threeDCanvasSize.height - this.size.height - this._p_threeD_initialMargin.top;
-		this.oneValue('threeDMode', false, () => { delete this._p_threeD_initialMargin });
+
+		this.one('threeDMode', false, () => { delete this._p_threeD_initialMargin });
 
 
 		/* scene */
 		this._p_threeD_scene = new THREE.Scene();
-		this.oneValue('threeDMode', false, () => { delete this._p_threeD_scene });
+		this.one('threeDMode', false, () => { delete this._p_threeD_scene });
 
 
 		/* camera */
 		this.camera3D = new THREE.PerspectiveCamera(60, this.threeDCanvasSize.width / this.threeDCanvasSize.height, 1, 10000);
 		this.camera3D.position.z = 1;
-		this.oneValue('threeDMode', false, () => { delete this.camera3D });
-		this.oneValue('threeDMode', false, this.observe('threeDCanvasSize', (size) => {
+		this.one('threeDMode', false, () => { delete this.camera3D });
+		this.on('threeDCanvasSize').takeWhile(this.on('threeDMode')).onValue((size) => {
 			this.camera3D.aspect = size.width / size.height;
 			this.camera3D.updateProjectionMatrix();
-		}));
+		});
 
 
 		/* lighting */
@@ -138,45 +140,41 @@ define([
 		var directionalLight2 = new THREE.DirectionalLight(0xffeedd);
 		directionalLight2.position.set(-1, 1, -1);
 		this._p_threeD_scene.add(directionalLight2);
-		//
-		this.oneValue('threeDMode', false, () => {
-			ambientLight = undefined;
-			directionalLight1 = undefined;
-			directionalLight2 = undefined;
-		});
 
 
 		/* renderer: WebGL */
 		this._p_threeD_renderer_webgl = new THREE.WebGLRenderer({ alpha: true, antialias: true });
 		this._p_threeD_renderer_webgl.sortObjects = false;
-		this.oneValue('threeDMode', false, this.on('3d-render', () => {
+		this.on('3d-render').takeWhile(this.on('threeDMode')).onValue(() => {
 			this._p_threeD_renderer_webgl.render(this._p_threeD_scene, this.camera3D);
-		}));
-		this.oneValue('threeDMode', false, this.observe('threeDCanvasSize', (size) => {
+		});
+
+		this.on('threeDCanvasSize').takeWhile(this.on('threeDMode')).onValue((size) => {
 			this._p_threeD_renderer_webgl.setSize(size.width, size.height);
-		}));
-		this.oneValue('threeDMode', false, () => { delete this._p_threeD_renderer_webgl });
+		});
+		this.one('threeDMode', false, () => { delete this._p_threeD_renderer_webgl });
 
 
 		/* renderer: CSS */
 		this._p_threeD_renderer_css = new THREE.CSS3DRenderer();
 		$(this._p_threeD_renderer_css.domElement).append(this._p_threeD_renderer_webgl.domElement);
 		this.threeDCanvasElement.append(this._p_threeD_renderer_css.domElement);
-		this.oneValue('threeDMode', false, () => {
+		this.one('threeDMode', false, () => {
 			this.threeDCanvasElement.empty();
 			delete this._p_threeD_renderer_css;
 		});
-		this.oneValue('threeDMode', false, this.on('3d-render', () => {
+		this.on('3d-render').takeWhile(this.on('threeDMode')).onValue(() => {
 			this._p_threeD_renderer_css.render(this._p_threeD_scene, this.camera3D);
-		}));
-		this.oneValue('threeDMode', false, this.observe('threeDCanvasSize', (size) => {
+		});
+		this.on('threeDCanvasSize').takeWhile(this.on('threeDMode')).onValue((size) => {
 			this._p_threeD_renderer_css.setSize(size.width, size.height);
-		}));
+		});
 
 
 		/* render on size-change and every animation frame */
-		this.oneValue('threeDMode', false, this.on('size', () => { this.trigger('3d-render') }));
-		this.oneValue('threeDMode', false, U.eachAnimationFrame(() => { this.trigger('3d-render') }));
+		U.animationFrames().merge(this.property('size').changes())
+				.takeWhile(this.on('threeDMode'))
+				.onValue(() => { this.trigger('3d-render') });
 
 
 		/* controls */
@@ -186,29 +184,26 @@ define([
 			zoomSpeed: 1.2,
 			panSpeed: 0.8
 		});
-		this._p_threeD_controls.addEventListener('change', () => { this.trigger('3d-render') });
-		this.oneValue('threeDMode', false, () => { delete this._p_threeD_controls });
-		this.oneValue('threeDMode', false, this.on('3d-render', () => { this._p_threeD_controls.update() }));
-		this.oneValue('threeDMode', false, this.observe('size', () => { this._p_threeD_controls.handleResize() }));
-		this.oneValue('threeDMode', false, this.observe('threeDControlsEnabled', (enabled) => {
+		this.one('threeDMode', false, () => { delete this._p_threeD_controls });
+		this.on('3d-render').takeWhile(this.on('threeDMode')).onValue(() => { this._p_threeD_controls.update() });
+		this.on('size').takeWhile(this.on('threeDMode')).onValue(() => { this._p_threeD_controls.handleResize() });
+		this.on('threeDControlsEnabled').takeWhile(this.on('threeDMode')).onValue((enabled) => {
 			this._p_threeD_controls.enabled = enabled;
-		}));
+		});
 
 
 		/*  the circuitboard object has a coordinate system           */
 		/*  that corresponds to the html and svg of the circuitboard  */
-		this.object3D = new THREE.Object3D();
 		this._p_threeD_scene.add(this.object3D);
 		this.object3D.scale.y = -1;       // invert y axis
 		this.object3D.add = (subObj) => { // and re-invert the y axis of its children
 			THREE.Object3D.prototype.add.call(this.object3D, subObj);
 			subObj.scale.y = -1;
 		};
-		this.oneValue('threeDMode', false, this.observe('size', (size) => {
+		this.on('size').takeWhile(this.on('threeDMode')).onValue((size) => {
 			this.object3D.position.x = -size.width / 2 + 1;
 			this.object3D.position.y = size.height / 2 - 1;
-		}));
-		this.oneValue('threeDMode', false, () => { delete this.object3D });
+		});
 
 
 		/* floating tilemap */
@@ -219,7 +214,7 @@ define([
 			right: this.element.css('right'),
 			bottom: this.element.css('bottom')
 		};
-		this.oneValue('threeDMode', false, () => {
+		this.one('threeDMode', false, () => {
 			this.element.detach().appendTo(initialCircuitboardParent)
 					.css({
 						'width': 'auto',
@@ -248,7 +243,7 @@ define([
 
 
 		/* respond to resize */
-		this.oneValue('threeDMode', false, this.observe('threeDCanvasSize', () => {
+		this.on('threeDCanvasSize').takeWhile(this.on('threeDMode')).onValue(() => {
 
 			/* sizing and positioning of the circuit-board and backface */
 			var newCircuitboardSize = {
@@ -276,7 +271,7 @@ define([
 					(2 * Math.tan(THREE.Math.degToRad(this.camera3D.fov) / 2))
 			);
 
-		}));
+		});
 
 	});
 
@@ -318,7 +313,6 @@ define([
 
 		/* position it always in the center of the tile */
 		((reset) => {
-			reset();
 			this.on('position', reset);
 			this.on('size', reset);
 		})(() => {
@@ -327,9 +321,7 @@ define([
 		});
 
 		/* hide it when the tile is hidden */
-		this.observe('hidden', (hidden) => {
-			this.object3D.visible = !hidden;
-		});
+		this.on('visible', (visible) => { this.object3D.visible = visible });
 
 	});
 

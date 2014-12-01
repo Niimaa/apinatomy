@@ -13,38 +13,37 @@ define(['jquery', './util/misc.js'], function ($, U) {
 		/* only interesting if the tile has a model */
 		if (!this.model) { return }
 
+		/* the 'active' property */
+		this.newProperty('active', { initial: false });
+
+		/* convenience function for activating the first tile in the model queue and deactivating the second */
+		var _activateProperTile = () => {
+			var tiles = this.model._p_amyActiveTileQueue;
+			if (tiles[1]) { tiles[1].active = false }
+			if (tiles[0]) { tiles[0].active = true }
+		};
+
 		/* put this tile in the queue of potentially active tiles */
-		U.array(this.model, '_p_tileActive_amyActiveTileQueue').push(this);
-		this.on('destroy', ()=> {
-			var index = this.model._p_tileActive_amyActiveTileQueue.indexOf(this);
-			this.model._p_tileActive_amyActiveTileQueue.splice(index, 1);
+		U.array(this.model, '_p_amyActiveTileQueue').push(this);
+		_activateProperTile();
+		this.one('destroy', () => {
+			var index = this.model._p_amyActiveTileQueue.indexOf(this);
+			this.model._p_amyActiveTileQueue.splice(index, 1);
+			_activateProperTile();
 		});
 
 		/* make the 'active' property available */
-		Object.defineProperty(this, 'active', {
-			get() { return this.model._p_tileActive_amyActiveTileQueue[0] === this },
-			set(shouldBeActive) {
-				if (shouldBeActive) {
-					var index = this.model._p_tileActive_amyActiveTileQueue.indexOf(this);
-					if (index !== 0) {
-						this.model._p_tileActive_amyActiveTileQueue.splice(index, 1);
-						this.model._p_tileActive_amyActiveTileQueue.unshift(this);
-						this.model._p_tileActive_amyActiveTileQueue[1].trigger('active', false, true);
-						this.model._p_tileActive_amyActiveTileQueue[0].trigger('active', true, false);
-					}
-				} else {
-					throw new Error("You can't directly set tile activeness to false.");
-				}
+		this.on('active', true, () => {
+			var index = this.model._p_amyActiveTileQueue.indexOf(this);
+			if (index !== 0) {
+				this.model._p_amyActiveTileQueue.splice(index, 1);
+				this.model._p_amyActiveTileQueue.unshift(this);
+				_activateProperTile();
 			}
 		});
 
 		/* automatically (un)set the CSS class 'active' */
-		this.observe('active', () => {
-			this.element.toggleClass('active', this.active);
-		});
-
-		/* initial 'active' signal */
-		this.trigger('active', this.active);
+		this.on('active').assign(this.element, 'toggleClass', 'active');
 
 	});
 });

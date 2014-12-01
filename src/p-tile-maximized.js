@@ -12,13 +12,10 @@ define(['jquery', './p-tile-maximized.scss'], function ($) {
 	plugin.insert('construct', function () {
 
 		/* the 'maximized' observable */
-		this.newObservable('maximized', {
-			initial: false,
-			validation: (v) => !!v
-		});
+		this.newProperty('maximized', { initial: false });
 
 		/* enact 'maximized' on the DOM */
-		this.observe('maximized', (maximized) => {
+		this.on('maximized', (maximized) => {
 			var tilemap = this.closestAncestorByType('Tilemap');
 			if (maximized) {
 				this.element.addClass('maximized');
@@ -37,11 +34,7 @@ define(['jquery', './p-tile-maximized.scss'], function ($) {
 
 		/* if/when the parent tile closes, de-maximize this tile */
 		var parentTile = this.closestAncestorByType('Tile');
-		if (parentTile) {
-			parentTile.observe('open', (open) => {
-				if (!open) { this.maximized = false }
-			});
-		}
+		if (parentTile) { parentTile.on('open', false, () => { this.maximized = false }) }
 
 	});
 

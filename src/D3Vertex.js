@@ -9,34 +9,16 @@ define([
 
 	return Artefact.newSubclass('D3Vertex', function D3Vertex({visible}) {
 
-		/* the coordinate observables */
-		this.newObservable('x', { initial: 10 });
-		this.newObservable('y', { initial: 10 });
+		/* the coordinate properties */
+		this.newProperty('x', { initial: 10 });
+		this.newProperty('y', { initial: 10 });
 
-		/* the 'hidden' observable */
-		this.newObservable('hidden', {
-			initial: !visible,
-			validation: (v) => !!v
-		});
+		/* the 'visible' and 'hidden' properties */
+		this.newProperty('visible', { observable: this.property('hidden').not(),  initial:  visible });
+		this.newProperty('hidden',  { observable: this.property('visible').not(), initial: !visible });
 
-		/* the 'visible' observable */
-		this.newObservable('visible', {
-			initial: visible,
-			validation: (v) => !!v
-		});
-
-		/* the two are continual opposites */
-		this.on('hidden', (hidden) => { this.visible = !hidden });
-		this.on('visible', (visible) => { this.hidden = !visible });
-
-		/* enact tile hiding on the DOM */
-		this.observe('hidden', (hidden) => {
-			if (hidden) {
-				this.element.addClass('hidden');
-			} else {
-				this.element.removeClass('hidden');
-			}
-		});
+		/* enact tile hiding on the DOM */ // TODO: update the DOM the Bacon way
+		this.on('hidden', (hidden) => { this.element.toggleClass('hidden', hidden) });
 
 		/* when the tile is destroyed, it is also hidden */
 		this.one('destroy', () => { this.hidden = true });

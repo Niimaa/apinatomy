@@ -10,10 +10,9 @@ define(['jquery'], function ($) {
 
 	/* When a tile is clicked, it is opened/closed. */
 	plugin.insert('construct', function () {
-		this.on('click-not-drop', function (event) {
-			if (event.which !== 1) { return }
-			this.open = !this.open;
-		});
+
+		this.on('click-not-drop').filter(e => e.which === 1).onValue(() => { this.open = !this.open });
+
 	});
 
 
