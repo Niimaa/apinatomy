@@ -13,11 +13,6 @@ define(['jquery', './p-tile-hidden.scss'], function ($) {
 		this.newProperty('visible', { observable: this.property('hidden').not(),  initial: true  });
 		this.newProperty('hidden',  { observable: this.property('visible').not(), initial: false });
 
-
-		///* the two are continual opposites */
-		//this.on('hidden', (hidden) => { this.visible = !hidden });
-		//this.on('visible', (visible) => { this.hidden = !visible });
-
 		/* enact tile hiding on the DOM */
 		this.on('hidden', (hidden) => {
 			this.open = false;

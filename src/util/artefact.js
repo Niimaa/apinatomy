@@ -3,13 +3,16 @@ define([
 	'bluebird',
 	'./misc.js',
 	'./bacon-signal-handler.js',
-	//'./signal-handler.js',
 	'./unique-id.js',
 	'./main-delta-model.js'
 ], function ($, P, U, BaconSignalHandler, uniqueID, dm) {
 	'use strict';
 
 
+	/** {@export @class Artefact @extends BaconSignalHandler}
+	 * Use this as a subclass (or just mix it in) to provide support for
+	 * events and observable properties through Bacon.js.
+	 */
 	var Artefact = dm.vp('Artefact', U.newSubclass(BaconSignalHandler, function Artefact(superFn, options) {
 		superFn();
 
@@ -25,24 +28,59 @@ define([
 		/* create events */
 		this.newEvent('destroy');
 
-	}, {
+	}, /** @lends Artefact.prototype */ {
 
+		/** {@public}{@property}
+		 *
+		 * @return {Object} - the options provided through the constructor
+		 */
 		get options() { return this._options },
 
+		/** {@public}{@property}
+		 *
+		 * @return {String} - the unique identifier belonging to this artefact
+		 */
 		get id() { return this._id },
 
+		/** {@public}{@property}
+		 *
+		 * @return {String} - the type of this artefact
+		 */
 		get type() { return this._type },
 
+		/** {@public}{@property}
+		 *
+		 * @return {Artefact|undefined} - the parent of this artefact, unless this is the root
+		 */
 		get parent() { return this._parent },
 
+		/** {@public}{@property}
+		 *
+		 * @return {[Artefact]} - the children of this artefact
+		 */
 		get children() { return this._children },
 
+		/** {@public}{@method}
+		 *
+		 * Retrieve the closest ancestor (parent, parent's parent, ...)
+		 * of this artefact with the given type.
+		 *
+		 * @return {Artefact|undefined} - the closest ancestor of the given type, unless there is none
+		 */
 		closestAncestorByType(type) {
 			var result = this;
 			do { result = result.parent } while (result && result.type && result.type !== type);
 			return result;
 		},
 
+		/** {@public}{@method}
+		 *
+		 * Retrieve the closest descendant (children, children's children, ...)
+		 * of this artefact with the given type.
+		 *
+		 * @return {[Artefact]} - the closest descendants of the given type; none of them
+		 *                        are descendant from any other
+		 */
 		closestDescendantsByType(type) {
 			var result = [];
 			this.children.forEach((child) => {
@@ -55,6 +93,11 @@ define([
 			return result;
 		},
 
+		/** {@public}{@method}
+		 *
+		 * Indicate that this artefact will never be used again, allowing it
+		 * to do any necessary cleanup.
+		 */
 		destroy() {
 			this.trigger('destroy');
 			this.children.forEach((child) => { child.destroy() });
@@ -63,9 +106,9 @@ define([
 	}));
 
 
-	//U.extend(Artefact.prototype, SignalHandler);
-
-
+	/** {@function Artefact.newSubclass}
+	 * A static convenience function for creating a subclass of {@link Artefact}.
+	 */
 	Artefact.newSubclass = function newSubClass(name, constructor, prototype = {}, optionDefaults = {}) {
 		return dm.vp(name, U.newSubclass(Artefact, function (superFn, options = {}) {
 

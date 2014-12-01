@@ -56,7 +56,7 @@ define([
 
 
 		/* auto-resize the force-layout canvas */
-		this.on('size').map((v) => [v.width, v.height]).assign(this, 'd3Force', 'size');
+		this.on('size').map((v) => [v.width, v.height]).assign(this.d3Force, 'size');
 
 
 		/* create corresponding svg elements */
