@@ -509,18 +509,6 @@ define(['jquery', 'three-js', 'delta-js', './misc.js'], ($, THREE, DeltaModel, U
 			});
 
 
-	/* little hack for apinatomy-specific functionality ***************************************************************/
-
-	new dm.Delta('apinatomy-specific', {
-		if: true
-	}).modify('TrackballControls.prototype')
-			.add('setCameraDistance', function setCameraDistance(distance) {
-
-				this._controlledObject.position.normalize().multiplyScalar(distance);
-
-			});
-
-
 	/* the TrackballControls class (variation point) ******************************************************************/
 
 	THREE.TrackballControls = dm.vp('TrackballControls',

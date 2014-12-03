@@ -55,7 +55,9 @@ require([
 	'../p-three-d.js',
 	'../p-three-d-geometric-models.js',
 	'../p-three-d-geometric-models-stl.js',
-	'../p-d3-three-d.js'
+	'../p-d3-three-d.js',
+	'../p-three-d-manual-controls.js',
+	'../p-three-d-auto-controls.js'
 
 ], function ($, getFmaModels) {
 	'use strict';
@@ -71,6 +73,8 @@ require([
 		'tile-active',
 		'ppi',
 		'three-d',
+		//'three-d-manual-controls',
+		'three-d-auto-controls',
 		'three-d-geometric-models',
 		'three-d-geometric-models-stl'
 	]);

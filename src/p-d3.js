@@ -2,8 +2,10 @@ define([
 	'jquery',
 	'd3',
 	'./util/misc.js',
+	'bacon',
+	'./util/eggs.js',
 	'./p-d3.scss'
-], function ($, d3, U) {
+], function ($, d3, U, Bacon) {
 	'use strict';
 
 
@@ -83,14 +85,14 @@ define([
 			this.d3Force.nodes(visibleVertices).links(visibleEdges).start();
 
 			/* vertices */
-			vertices = svg.selectAll('.vertex').data(visibleVertices, U.field('graphId'));
+			vertices = svg.selectAll('.vertex').data(visibleVertices, (d) => d.graphId);
 			vertices.enter().append((d) => d.element[0])
 					.classed('vertex', true).classed('edge', false)
 					.call(this.d3Force.drag); // all vertices can be dragged around
 			vertices.exit().remove();
 
 			/* edges */
-			edges = svg.selectAll('.edge').data(visibleEdges, U.field('graphId'));
+			edges = svg.selectAll('.edge').data(visibleEdges, (d) => d.graphId);
 			edges.enter()
 					.append((d) => d.element[0])
 					.classed('edge', true).classed('vertex', false);
@@ -104,20 +106,32 @@ define([
 		}, 200);
 
 
-		/* while dragging a vertex, set the 'dragging-vertex' class on the circuitboard */
-		this.d3Force.drag().on('dragstart', () => {
-			svgElement.addClass('dragging-vertex');
-		}).on('dragend', () => {
-			svgElement.removeClass('dragging-vertex');
+		///* while dragging a vertex, set the 'dragging-vertex' class on the circuitboard */
+		//this.d3Force.drag().on('dragstart', () => {
+		//	svgElement.addClass('dragging-vertex');
+		//}).on('dragend', () => {
+		//	svgElement.removeClass('dragging-vertex');
+		//}); // TODO: this wasn't working; is something like this still needed?
+
+
+
+		var currentEventData = () => d3.select(d3.event.sourceEvent.target.parentElement).data()[0];
+
+
+
+		this.newProperty('draggingVertex', {
+			stream: Bacon.mergeAll(
+					Bacon.fromOnNull(this.d3Force.drag(), 'dragstart').map(currentEventData),
+					Bacon.fromOnNull(this.d3Force.drag(), 'dragend').map(null)
+			)
 		});
 
+		this.on('draggingVertex').log();
 
-		/* on d3 animation tick */
-		this.newEvent('d3-tick');
-		this.d3Force.on("tick", (e) => {
 
-			/* make the tick event available to users of the circuitboard */
-			this.trigger('d3-tick', e);
+
+		/* declarer the 'd3-tick' event-stream, and perform animation on a tick */
+		this.newEvent('d3-tick', { source: Bacon.fromOn(this.d3Force, 'tick') }).onValue((e) => {
 
 			/* dampening factor */
 			var k = 0.1 * e.alpha;
@@ -148,6 +162,8 @@ define([
 
 		});
 
+
 	});
+
 
 });

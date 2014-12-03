@@ -19,12 +19,12 @@ define(['jquery', './misc.js', 'bacon'], function ($, U, Bacon) {
 		/** {@public}{@method}
 		 * Declares a new event stream for this object.
 		 *
-		 * @param  {String}             name         - the name of the event, used to trigger or subscribe to it
-		 * @param  {Bacon.EventStream} [eventStream] - another event stream to automatically trigger this event
+		 * @param  {String}             name    - the name of the event, used to trigger or subscribe to it
+		 * @param  {Bacon.EventStream} [source] - another event stream to automatically trigger this event
 		 *
 		 * @return {Bacon.Bus} - the created event stream
 		 */
-		newEvent(name, {eventStream} = {}) {
+		newEvent(name, {source} = {}) {
 			/* is the event name already taken? */
 			U.assert(!this._events[name],
 					`There is already an event '${name}' on this object.`);
@@ -33,7 +33,7 @@ define(['jquery', './misc.js', 'bacon'], function ($, U, Bacon) {
 
 			/* define the event stream */
 			var bus = new Bacon.Bus();
-			if (eventStream) { bus.plug(eventStream) }
+			if (source) { bus.plug(source) }
 			return this._events[name] = bus.name(name);
 		},
 

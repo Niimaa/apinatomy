@@ -2,10 +2,11 @@ define([
 	'jquery',
 	'bluebird',
 	'./util/misc.js',
+	'./util/defer.js',
 	'./util/nested-flex-grow.js',
 	'./util/clickVsDrag.js',
 	'./p-core.scss'
-], function ($, P, U) {
+], function ($, P, U, defer) {
 	'use strict';
 
 
@@ -19,42 +20,51 @@ define([
 	plugin.modify('Circuitboard.prototype')
 			.add('_registerTile', function _registerTile(tile) { // used by tiles
 				if (!this._p_circuitboardCore_tilesByModelId[tile.model.id]) {
-					this._p_circuitboardCore_tilesByModelId[tile.model.id] = [];
+					this._p_circuitboardCore_tilesByModelId[tile.model.id] = defer();
 				}
-				this._p_circuitboardCore_tilesByModelId[tile.model.id].push(tile);
-				this.trigger('tile-created', tile);
-			}).add('onTileCreated', function onTileCreated(tileSelector, fn) {
+				this._p_circuitboardCore_tilesByModelId[tile.model.id].resolve(tile);
+			}).add('tile', function (tileSelector) {
 
-				// `tileSelector` is optional, i.e., a single argument is `fn`
-				if ($.isUndefined(arguments[1])) {
-					fn = arguments[0];
-					tileSelector = null;
+				if (!this._p_circuitboardCore_tilesByModelId[tileSelector]) {
+					this._p_circuitboardCore_tilesByModelId[tileSelector] = defer();
 				}
 
-				// build the filter based on the selector
-				var filter = null;
-				if (!tileSelector) { // no tile selector = all tiles
-					filter = ()=>P.resolve(true);
-				} else if (typeof tileSelector === 'string') { // model.id
-					filter = (tile) => (tile.model.id === tileSelector);
-				}
+				return this._p_circuitboardCore_tilesByModelId[tileSelector].promise;
 
-				// apply the callback for existing tiles
-				$.each(this._p_circuitboardCore_tilesByModelId, (modelId, tiles) => {
-					$.each(tiles, (index, tile) => {
-						if (filter(tile)) { fn(tile) }
-					});
-				});
-
-				// set up the callbacks for future tiles
-				this.on('tile-created', (tile) => {
-					if (filter(tile)) { fn(tile) }
-				});
-
-			}).add('construct', function () {
+			})
+			//.add('onTileCreated', function onTileCreated(tileSelector, fn) {
+			//
+			//	// `tileSelector` is optional, i.e., a single argument is `fn`
+			//	if ($.isUndefined(arguments[1])) {
+			//		fn = arguments[0];
+			//		tileSelector = null;
+			//	}
+			//
+			//	// build the filter based on the selector
+			//	var filter = null;
+			//	if (!tileSelector) { // no tile selector = all tiles
+			//		filter = ()=>P.resolve(true);
+			//	} else if (typeof tileSelector === 'string') { // model.id
+			//		filter = (tile) => (tile.model.id === tileSelector);
+			//	}
+			//
+			//	// apply the callback for existing tiles
+			//	$.each(this._p_circuitboardCore_tilesByModelId, (modelId, tiles) => {
+			//		$.each(tiles, (index, tile) => {
+			//			if (filter(tile)) { fn(tile) }
+			//		});
+			//	});
+			//
+			//	// set up the callbacks for future tiles
+			//	this.on('tile-created', (tile) => {
+			//		if (filter(tile)) { fn(tile) }
+			//	});
+			//
+			//})
+			.add('construct', function () {
 				this._p_circuitboardCore_tilesByModelId = {};
 
-				this.newEvent('tile-created');
+				//this.newEvent('tile-created');
 
 				// create the root tilemap
 				$('<div/>').appendTo(this.element)
