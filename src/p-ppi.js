@@ -7,14 +7,14 @@ define([
 ], function ($, D3Group, D3Vertex, D3Edge) {
 	'use strict';
 
+
 	var plugin = $.circuitboard.plugin({
 		name: 'ppi',
 		requires: ['d3']
 	});
 
-	//
+
 	// TODO: implement this properly; this is just for testing purposes
-	//
 	plugin.insert('Tile.prototype.construct', function () {
 
 		var graphGroup = new D3Group({
@@ -62,4 +62,6 @@ define([
 		});
 
 	});
+
+
 });

@@ -14,14 +14,14 @@ define([
 		this.newProperty('y', { initial: 10 });
 
 		/* the 'visible' and 'hidden' properties */
-		this.newProperty('visible', { observable: this.property('hidden').not(),  initial:  visible });
-		this.newProperty('hidden',  { observable: this.property('visible').not(), initial: !visible });
+		this.newProperty('visible', { source: this.property('hidden').not(),  initial:  visible, settable: true });
+		this.newProperty('hidden',  { source: this.property('visible').not(), initial: !visible, settable: true });
 
-		/* enact tile hiding on the DOM */ // TODO: update the DOM the Bacon way
-		this.on('hidden', (hidden) => { this.element.toggleClass('hidden', hidden) });
+		/* enact vertex hiding on the DOM */
+		this.on('hidden').assign(this.element, 'toggleClass', 'hidden');
 
 		/* when the tile is destroyed, it is also hidden */
-		this.one('destroy', () => { this.hidden = true });
+		this.on('destroy').take(1).onValue(() => { this.hidden = true });
 
 	}, {
 

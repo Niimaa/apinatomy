@@ -51,6 +51,7 @@ require([
 	'../p-tile-maximized.js',
 	'../p-tile-middleclick-to-maximize.js',
 	'../p-d3.js',
+	'../p-animation-loop.js', // TODO: figure out why we get an error when this is moved down one line
 	'../p-ppi.js',
 	'../p-three-d.js',
 	'../p-three-d-geometric-models.js',
@@ -73,7 +74,7 @@ require([
 		'tile-active',
 		'ppi',
 		'three-d',
-		//'three-d-manual-controls',
+		'three-d-manual-controls',
 		'three-d-auto-controls',
 		'three-d-geometric-models',
 		'three-d-geometric-models-stl'

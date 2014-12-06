@@ -14,9 +14,9 @@ define(['./util/misc.js', './util/artefact.js'], function (U, Artefact) {
 		this.newEvent('edge-added');
 		this.newEvent('edge-removed');
 
-		this.one('destroy', () => {
+		this.on('destroy').take(1).onValue(() => {
 			this.vertices.forEach((v) => { v.destroy() });
-			// edges will be destroyed when their vertices are
+			// edges will be destroyed when their vertices are destroyed
 		});
 
 	}, {

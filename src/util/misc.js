@@ -1,13 +1,5 @@
-define(['bluebird', 'bacon'], (P, Bacon) => {
+define(['bluebird', 'bacon'], (P) => {
 	'use strict';
-
-	var requestAnimationFrameFn =
-			window.requestAnimationFrame ||
-			window.webkitRequestAnimationFrame ||
-			window.mozRequestAnimationFrame ||
-			window.oRequestAnimationFrame ||
-			window.msRequestAnimationFrame ||
-			((f) => window.setTimeout(f, 1000 / 60));
 
 	var U = {
 
@@ -55,19 +47,27 @@ define(['bluebird', 'bacon'], (P, Bacon) => {
 		// a specific field from a given object
 		call(fn, ...args) { return fn.apply(undefined, args) },
 
+		// a function that returns its first argument
+		id(v) { return v },
+
 		// get the object `obj[name]`; if `obj[name]` is not
-		// a (plain) object, make it an empty object first
-		object(obj, name) {
-			if (U.isUndefined(obj[name])) { obj[name] = {} }
+		// defined, give it a default value first; if the given value
+		// is a function, it is called, and its result is used
+		getDef(obj, name, value) {
+			if (U.isUndefined(obj[name])) {
+				if (typeof value === 'function') { value = value() }
+				obj[name] = value;
+			}
 			return obj[name];
 		},
 
+		// get the object `obj[name]`; if `obj[name]` is not
+		// a (plain) object, make it an empty object first
+		object(obj, name) { return U.getDef(obj, name, {}) },
+
 		// get the array `obj[name]`; if `obj[name]` is not
 		// an array, make it an empty array first
-		array(obj, name) {
-			if (U.isUndefined(obj[name])) { obj[name] = [] }
-			return obj[name];
-		},
+		array(obj, name) { return U.getDef(obj, name, []) },
 
 		// pull a value from an array
 		pull(arr, val) {
@@ -141,31 +141,6 @@ define(['bluebird', 'bacon'], (P, Bacon) => {
 				clearTimeout(timeout);
 				timeout = setTimeout(laterFn, wait);
 			};
-		},
-
-		// runs a function every animation frame
-		// returns a function that can be called to stop the loop
-		animationFrames() {
-			return Bacon.fromBinder((sink) => {
-
-				/* self-calling animation-frame loop */
-				var stop = false;
-				var iterationFn = () => {
-					if (stop) { return }
-					sink();
-					requestAnimationFrameFn(iterationFn);
-				};
-
-				/* start it now */
-				iterationFn();
-
-				/* unsubscribe function */
-				return () => {
-					stop = true;
-					sink(new Bacon.End());
-				};
-
-			});
 		},
 
 		// Returns a function, that will only be triggered once per synchronous 'stack'.
@@ -245,10 +220,30 @@ define(['bluebird', 'bacon'], (P, Bacon) => {
 					}
 				});
 			};
+		},
+
+		// this `memoize` function is SLOW, as it uses linear search
+		memoize(fn) {
+			var keys = [];
+			var cache = [];
+			return function (...args) {
+				/* check the cache */
+				var index = keys.findIndex((key) => key.every((v, i) => v === args[i]));
+				if (index >= 0) { return cache[index] }
+
+				/* no cache hit; compute value, store and return */
+				var result = fn.apply(this, args);
+				keys.push(args);
+				cache.push(result);
+				return result;
+			};
 		}
 
 	};
 
+
+	var EPS = 0.000001;
+	var sortOfEqual = (a, b) => (b - EPS < a && a < b + EPS);
 
 	/* HTML element position */
 	U.Position = U.newClass(function (top, left) {
@@ -259,7 +254,7 @@ define(['bluebird', 'bacon'], (P, Bacon) => {
 		return new U.Position(a.top - b.top, a.left - b.left);
 	};
 	U.Position.equals = (a, b) => {
-		return U.isDefined(a) && U.isDefined(b) && a.top === b.top && a.left === b.left;
+		return U.isDefined(a) && U.isDefined(b) && sortOfEqual(a.top, b.top) && sortOfEqual(a.left, b.left);
 	};
 
 
@@ -269,7 +264,7 @@ define(['bluebird', 'bacon'], (P, Bacon) => {
 		this.width = width;
 	});
 	U.Size.equals = (a, b) => {
-		return U.isDefined(a) && U.isDefined(b) && a.height === b.height && a.width === b.width;
+		return U.isDefined(a) && U.isDefined(b) && sortOfEqual(a.height, b.height) && sortOfEqual(a.width, b.width);
 	};
 
 

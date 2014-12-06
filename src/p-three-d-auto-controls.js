@@ -1,4 +1,4 @@
-define(['jquery', './util/misc.js', 'bluebird', 'bacon', 'three-js', 'tweenjs'], function ($, U, P, Bacon, THREE, TWEEN) {
+define(['jquery', './util/misc.js', 'bluebird', './util/bacon-and-eggs.js', 'three-js', 'tweenjs'], function ($, U, P, Bacon, THREE, TWEEN) {
 	'use strict';
 
 
@@ -9,67 +9,60 @@ define(['jquery', './util/misc.js', 'bluebird', 'bacon', 'three-js', 'tweenjs'],
 
 
 	plugin.add('Circuitboard.prototype.animateCameraTo', function (coordinatesOrTileId) {
-		this.on('threeDMode', true).onValue(() => {
 
-			var coordinates;
-			if (typeof coordinatesOrTileId === 'string') { // tile id
-				coordinates = this.tile(coordinatesOrTileId).then((tile) => {
-					var pos = tile.position;
-					var size = tile.size;
-					return {
-						x: pos.left + size.width / 2 - this.size.width / 2,
-						y: -pos.top - size.height / 2 + this.size.height / 2
-					};
-				});
-			} else {
-				coordinates = P.resolve(coordinatesOrTileId);
-			}
+		return (typeof coordinatesOrTileId === 'string' ? this.tile(coordinatesOrTileId).then((tile) => {
+			var pos = tile.position;
+			var size = tile.size;
+			return {
+				x: pos.left + size.width / 2 - this.size.width / 2,
+				y: -pos.top - size.height / 2 + this.size.height / 2
+			};
+		}) : P.resolve(coordinatesOrTileId)).then((coords) => {
 
-			coordinates.then((coords) => {
+			var initialZ = this.camera3D.position.z;
 
-				var tween = (property, to, duration, easing, inout) => {
-					return new TWEEN.Tween(this.camera3D[property])
-							.to(to, duration * 1000)
-							.easing(TWEEN.Easing[easing][inout]);
-				};
+			var tweenXY = Bacon.tween(this.camera3D.position, coords, { duration: 800, easing: TWEEN.Easing.Sinusoidal.Out });
+			var tweenZ = Bacon.tween(this.camera3D.position, { z: 1.5 * initialZ }, { duration: 600, easing: TWEEN.Easing.Sinusoidal.Out })
+					.chain(Bacon.tween(this.camera3D.position, { z: initialZ }, { duration: 200, easing: TWEEN.Easing.Sinusoidal.In }));
 
-				var initialZ = this.camera3D.position.z;
+			var animation = Bacon.mergeAll([
+				tweenZ.start(),
+				tweenXY.start()
+			]);
 
-				var tweenXY = tween('position', coords, 0.8, 'Sinusoidal', 'Out');
-
-				var tweenZ =   tween('position', { z: 1.5* initialZ }, 0.6,  'Sinusoidal', 'Out')
-						.chain(tween('position', { z:      initialZ }, 0.2,  'Sinusoidal', 'In' ));
-
-				tweenXY.start();
-				tweenZ.start();
-
+			animation.onValue(({x, y}) => {
+				this.camera3D.userData.target.x = x;
+				this.camera3D.userData.target.y = y;
+				this.camera3D.lookAt(this.camera3D.userData.target);
 			});
 
-
+			return animation;
 
 		});
+
 	}).append('Circuitboard.prototype.construct', function () {
+		this.on('threeDMode', true).onValue(() => {
 
-		this.on('3d-render').assign(TWEEN, 'update');
-
-		var tiles = [
-			'24tile:60000001',
-			'24tile:60000003',
-			'24tile:60000020',
-			'24tile:60000015'
-		];
-		var cTile = -1;
-		function nextTile() {
-			cTile = (cTile + 1) % tiles.length;
-			return tiles[cTile];
-		}
+			this.on('3d-render').assign(TWEEN, 'update');
 
 
-		// temporary test code; TODO: remove
-		$(window).asEventStream('keypress').filter((e) => e.keyCode === 13).onValue(() => {
-			this.animateCameraTo(nextTile());
+			/* some example 3D travels triggered by the 'enter' key */// TODO: remove
+			var tiles = [
+				'24tile:60000001',
+				'24tile:60000024',
+				'24tile:60000020',
+				'24tile:60000015'
+			];
+			var cTile = -1;
+			function nextTile() {
+				cTile = (cTile + 1) % tiles.length;
+				return tiles[cTile];
+			}
+
+			Bacon.keyPress(13).flatMapFirst(() => Bacon.fromPromise(this.animateCameraTo(nextTile())).flatMap(U.id)).run();
+
+
 		});
-
 	});
 
 

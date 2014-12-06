@@ -20,13 +20,13 @@ define(['jquery', './p-tile-maximized.scss'], function ($) {
 			if (maximized) {
 				this.element.addClass('maximized');
 				tilemap.element.addClass('maximized');
-				tilemap.tiles.forEach((sibling) => {
+				tilemap.children.forEach((sibling) => {
 					sibling.hidden = (sibling !== this);
 				});
 			} else {
 				this.element.removeClass('maximized');
 				tilemap.element.removeClass('maximized');
-				tilemap.tiles.forEach((sibling) => {
+				tilemap.children.forEach((sibling) => {
 					sibling.hidden = false;
 				});
 			}
@@ -34,7 +34,7 @@ define(['jquery', './p-tile-maximized.scss'], function ($) {
 
 		/* if/when the parent tile closes, de-maximize this tile */
 		var parentTile = this.closestAncestorByType('Tile');
-		if (parentTile) { parentTile.on('open', false, () => { this.maximized = false }) }
+		if (parentTile) { parentTile.on('open').value(false).onValue(() => { this.maximized = false }) }
 
 	});
 

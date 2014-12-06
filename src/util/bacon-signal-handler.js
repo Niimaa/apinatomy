@@ -68,11 +68,18 @@ define(['jquery', './misc.js', 'bacon'], function ($, U, Bacon) {
 		 * @return {Bacon.Property} - the property associated with the given name
 		 */
 		property(name) {
-			/* if it doesn't exist, create it now */
+			/* if it doesn't exist */
 			if (!this._properties[name]) {
+				/* create it now */
 				this._propertyBusses[name] = new Bacon.Bus();
 				this._properties[name] = this._propertyBusses[name].toProperty().name(name);
+
+				/* allow modifiers to be added to the stream */ // TODO: test
+				this._properties[name].appendModifier = function (modifier, ...args) {
+					this._properties[name] = this._properties[name][modifier].apply(this._properties[name], args);
+				};
 			}
+
 
 			/* return it */
 			return this._properties[name];

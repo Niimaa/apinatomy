@@ -18,53 +18,19 @@ define([
 
 	/* Circuitboard */
 	plugin.modify('Circuitboard.prototype')
-			.add('_registerTile', function _registerTile(tile) { // used by tiles
-				if (!this._p_circuitboardCore_tilesByModelId[tile.model.id]) {
-					this._p_circuitboardCore_tilesByModelId[tile.model.id] = defer();
-				}
-				this._p_circuitboardCore_tilesByModelId[tile.model.id].resolve(tile);
+			.add('_registerTile', function _registerTile(tile) {
+
+				// called by the tile constructor
+
+				U.getDef(this._p_circuitboardCore_tilesByModelId, tile.model.id, defer).resolve(tile);
+
 			}).add('tile', function (tileSelector) {
 
-				if (!this._p_circuitboardCore_tilesByModelId[tileSelector]) {
-					this._p_circuitboardCore_tilesByModelId[tileSelector] = defer();
-				}
+				return U.getDef(this._p_circuitboardCore_tilesByModelId, tileSelector, defer).promise;
 
-				return this._p_circuitboardCore_tilesByModelId[tileSelector].promise;
+			}).add('construct', function () {
 
-			})
-			//.add('onTileCreated', function onTileCreated(tileSelector, fn) {
-			//
-			//	// `tileSelector` is optional, i.e., a single argument is `fn`
-			//	if ($.isUndefined(arguments[1])) {
-			//		fn = arguments[0];
-			//		tileSelector = null;
-			//	}
-			//
-			//	// build the filter based on the selector
-			//	var filter = null;
-			//	if (!tileSelector) { // no tile selector = all tiles
-			//		filter = ()=>P.resolve(true);
-			//	} else if (typeof tileSelector === 'string') { // model.id
-			//		filter = (tile) => (tile.model.id === tileSelector);
-			//	}
-			//
-			//	// apply the callback for existing tiles
-			//	$.each(this._p_circuitboardCore_tilesByModelId, (modelId, tiles) => {
-			//		$.each(tiles, (index, tile) => {
-			//			if (filter(tile)) { fn(tile) }
-			//		});
-			//	});
-			//
-			//	// set up the callbacks for future tiles
-			//	this.on('tile-created', (tile) => {
-			//		if (filter(tile)) { fn(tile) }
-			//	});
-			//
-			//})
-			.add('construct', function () {
 				this._p_circuitboardCore_tilesByModelId = {};
-
-				//this.newEvent('tile-created');
 
 				// create the root tilemap
 				$('<div/>').appendTo(this.element)
@@ -73,12 +39,13 @@ define([
 							model: this.options.model,
 							parent: this
 						}).tilemap('instance');
+
 			});
 
 
 	/* Tilemap */
 	plugin.modify('Tilemap.prototype')
-			.add('refreshTiles', function refreshTiles() {
+			.add('refreshTiles', function () {
 
 				/* sanity check */
 				U.assert(U.isDefined(this.model),
@@ -100,7 +67,6 @@ define([
 							/* remove all old tiles */
 							this.element.children().empty();
 							this.element.empty();
-							// TODO: maintain references, so they won't have to be recreated
 
 							/* render and store references to the new tiles */
 							this._p_tilemapCore_tiles = [];
@@ -112,9 +78,7 @@ define([
 									$('<div/>').tile({
 										model: childrenToDisplay.shift(),
 										parent: this
-									}).appendTo(row).amyNestedFlexGrow(1).tile('instance').then((tile) => {
-										this._p_tilemapCore_tiles.push(tile);
-									});
+									}).appendTo(row).amyNestedFlexGrow(1);
 								}
 							}
 						})

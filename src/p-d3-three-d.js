@@ -4,17 +4,20 @@ define(['jquery'], function ($) {
 
 	var plugin = $.circuitboard.plugin({
 		name: 'd3-three-d',
-		resolves: ['d3', 'three-d']
+		resolves: ['d3', 'three-d-manual-controls']
 	}).modify('Circuitboard.prototype');
 
 
 	/* while dragging a vertex, lock the 3D camera */
 	plugin.after('construct', function () {
-		this.d3Force.drag().on('dragstart', () => {
-			this.threeDControlsEnabled = false;
-		}).on('dragend', () => {
-			this.threeDControlsEnabled = true;
+
+		this.on('draggingVertex').filter((v) => v && this.threeDManualControlsEnabled).onValue(() => {
+			this.threeDManualControlsEnabled = false;
+			this.on('draggingVertex').value(null).take(1).onValue(() => {
+				this.threeDManualControlsEnabled = true;
+			});
 		});
+
 	});
 
 
