@@ -1,4 +1,4 @@
-define(['jquery', './util/misc.js', 'three-js', './util/TrackballControls.js'], function ($, U, THREE) {
+define(['jquery', './util/misc.js', 'three-js', './util/bacon-and-eggs.js', './util/TrackballControls.js'], function ($, U, THREE, Bacon) {
 	'use strict';
 
 
@@ -69,8 +69,11 @@ define(['jquery', './util/misc.js', 'three-js', './util/TrackballControls.js'], 
 			/* creating various event streams */
 			this.threeDCanvasElement.asEventStream('contextmenu').onValue('.preventDefault');
 			var dragging = this.threeDCanvasElement.mouseDrag({ threshold: 5 }).filter(() => this.threeDManualControlsEnabled);
+			var keydown = $(window).asEventStream('keydown').filter(() => this.threeDManualControlsEnabled);
+			var keyup = $(window).asEventStream('keyup');
 			var scrolling = this.threeDCanvasElement.mouseWheel().filter(() => this.threeDManualControlsEnabled);
 			var button = (b) => ({mouseDownEvent}) => (mouseDownEvent.which === b);
+			var key = (from, to) => (event) => (event.which >= from && event.which <= (to || from));
 
 
 			/* rotating with the left mouse button */
@@ -87,6 +90,17 @@ define(['jquery', './util/misc.js', 'three-js', './util/TrackballControls.js'], 
 				this._rotateEnd.copy(this.getMouseProjectionOnBall(mouseMoveEvent.pageX, mouseMoveEvent.pageY));
 
 			});
+
+			/* rotating with the keyboard */
+			this.newProperty('currentArrowKey', {
+				source: keydown.filter(key(37, 40)).flatMapLatest((keydownEvent) => Bacon.mergeAll([
+					Bacon.once(keydownEvent.which),
+					keyup.filter(key(keydownEvent.which)).map(false).take(1)
+				])),
+				initial: false
+			});
+			this.on('currentArrowKey').onValue((v) => { somethingChanged = true });
+
 
 			/* zooming with the middle mouse button */
 			this._zoomStart = new THREE.Vector2();
@@ -150,7 +164,7 @@ define(['jquery', './util/misc.js', 'three-js', './util/TrackballControls.js'], 
 			this.zoomSpeed = 1.0;
 			this.on('3d-render').takeWhile(this.on('threeDMode')).onValue(() => {
 
-				if (somethingChanged) {
+				if (somethingChanged || this.currentArrowKey) {
 					somethingChanged = false;
 
 					/* setup */
@@ -174,7 +188,7 @@ define(['jquery', './util/misc.js', 'three-js', './util/TrackballControls.js'], 
 							this._panStart.copy(this._panEnd);
 						}
 					})();
-					/* rotating */
+					/* rotating by mouse */
 					(() => {
 						var axis = new THREE.Vector3();
 						var quaternion = new THREE.Quaternion();
@@ -185,6 +199,38 @@ define(['jquery', './util/misc.js', 'three-js', './util/TrackballControls.js'], 
 						);
 						if (angle) {
 							axis.crossVectors(this._rotateStart, this._rotateEnd).normalize();
+
+							angle *= this._rotateSpeed;
+
+							quaternion.setFromAxisAngle(axis, -angle);
+
+							this._eye.applyQuaternion(quaternion);
+							this.camera3D.up.applyQuaternion(quaternion);
+
+							this._rotateEnd.applyQuaternion(quaternion);
+							this._rotateStart.copy(this._rotateEnd);
+						}
+					})();
+					/* rotating by keyboard */
+					(() => {
+						var axis = new THREE.Vector3();
+						var quaternion = new THREE.Quaternion();
+						var angle = 0.015 * Math.PI;
+						if (this.currentArrowKey === 37) {
+							axis.setY(1);
+						} else if (this.currentArrowKey === 39) {
+							angle = -angle;
+							axis.setY(1);
+						} else if (this.currentArrowKey === 38) {
+							axis.setX(1);
+						} else if (this.currentArrowKey === 40) {
+							angle = -angle;
+							axis.setX(1);
+						} else {
+							angle = 0;
+						}
+						if (angle) {
+							axis.normalize();
 
 							angle *= this._rotateSpeed;
 

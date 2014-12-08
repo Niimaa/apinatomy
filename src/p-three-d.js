@@ -155,11 +155,6 @@ define([
 						.css({ left: 0, top: 0, bottom: 0, right: 0 })[0]);
 				this._p_threeD_scene.add(threeDCircuitboard);
 				this.on('threeDCanvasSize').takeWhile(this.on('threeDMode')).onValue((canvasSize) => {
-					console.log({
-						width: canvasSize.width - margin0.left - margin0.right,
-						height: canvasSize.height - margin0.top - margin0.bottom
-					});
-
 					$(threeDCircuitboard.element).css({
 						width: canvasSize.width - margin0.left - margin0.right,
 						height: canvasSize.height - margin0.top - margin0.bottom
