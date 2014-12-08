@@ -1,0 +1,9 @@
+{
+  "type": "external-library",
+  "name": "Array.prototype.findIndex",
+  "dir": "Array.prototype.findIndex",
+  "file": "index.js"
+  
+      , "var": ""
+  
+}
