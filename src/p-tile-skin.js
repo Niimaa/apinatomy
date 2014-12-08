@@ -49,9 +49,9 @@ define([
 				.catch(()=>{}); // it's OK if '.tile.normal.css' is not on the model
 
 		/* when the tile is closed, make the font size dynamic */
-		this.on('size').takeWhile(this.on('open').not()).onValue((size) => {
-			this._p_tileSkin_headerElement.css('fontSize', // formula gotten experimentally
-					Math.min(0.2 * Math.pow(size.height, 1.01), 0.13 * Math.pow(size.width, 1.01))
+		this.on('size').filter(this.on('open').not()).onValue((size) => {
+			this._p_tileSkin_headerElement // formula gotten experimentally
+					.css('fontSize', Math.min(0.2 * Math.pow(size.height, 1.01), 0.13 * Math.pow(size.width, 1.01))
 			);
 		});
 
