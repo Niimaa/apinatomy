@@ -1,4 +1,4 @@
-define(['bluebird', 'bacon'], (P) => {
+define(['bluebird', 'bacon', 'Array.prototype.findIndex'], (P) => {
 	'use strict';
 
 	var U = {
