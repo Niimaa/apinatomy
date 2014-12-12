@@ -1,4 +1,4 @@
-define(['jquery', './util/bacon-and-eggs.js'], function ($) {
+define(['jquery', './util/codes.js', './util/bacon-and-eggs.js'], function ($, {button}) {
 	'use strict';
 
 
@@ -8,12 +8,11 @@ define(['jquery', './util/bacon-and-eggs.js'], function ($) {
 	}).modify('Tile.prototype');
 
 
-	/* allows a tile to be maximized by middle-clicking on it */
+	/* When a tile is middle-clicked, it is maximized/un-maximized. */
 	plugin.insert('construct', function () {
 
-		this.on('click')
-				.filter(e => e.which === 2)       // only middle clicks
-				.onlyOnceFor('tile-middle-click') // only for the inner-most tile (smart '.stopPropagation')
+		this.on('click').which(button.MIDDLE)
+				.skipPropagation('tile-middle-click')  // only register this event for the inner-most tile
 				.onValue(() => { this.maximized = !this.maximized });
 
 	});
