@@ -141,10 +141,10 @@ define([
 
 
 			/* render on size-change and every animation frame */
-			Bacon.mergeAll(
-					this.on('animation-frame'),
-					this.on('size').changes()
-			).takeWhile(this.on('threeDMode')).assign(this, 'trigger', '3d-render');
+			Bacon.mergeAll([
+				this.on('animation-frame'),
+				this.on('size').changes()
+			]).takeWhile(this.on('threeDMode')).assign(this, 'trigger', '3d-render');
 
 
 			/* the circuitboard floating in 3D space */
