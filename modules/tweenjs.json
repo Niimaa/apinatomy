@@ -1,0 +1,9 @@
+{
+  "type": "external-library",
+  "name": "tweenjs",
+  "dir": "tweenjs/build",
+  "file": "tween.min.js"
+  
+      , "var": "TWEEN"
+  
+}

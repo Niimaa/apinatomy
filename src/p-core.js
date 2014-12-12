@@ -2,10 +2,11 @@ define([
 	'jquery',
 	'bluebird',
 	'./util/misc.js',
+	'./util/defer.js',
 	'./util/nested-flex-grow.js',
 	'./util/clickVsDrag.js',
 	'./p-core.scss'
-], function ($, P, U) {
+], function ($, P, U, defer) {
 	'use strict';
 
 
@@ -17,41 +18,18 @@ define([
 
 	/* Circuitboard */
 	plugin.modify('Circuitboard.prototype')
-			.add('_registerTile', function _registerTile(tile) { // used by tiles
-				if (!this._p_circuitboardCore_tilesByModelId[tile.model.id]) {
-					this._p_circuitboardCore_tilesByModelId[tile.model.id] = [];
-				}
-				this._p_circuitboardCore_tilesByModelId[tile.model.id].push(tile);
-				this.trigger('tilecreated', tile);
-			}).add('onTileCreated', function onTileCreated(tileSelector, fn) {
+			.add('_registerTile', function _registerTile(tile) {
 
-				// `tileSelector` is optional, i.e., a single argument is `fn`
-				if ($.isUndefined(arguments[1])) {
-					fn = arguments[0];
-					tileSelector = null;
-				}
+				// called by the tile constructor
 
-				// build the filter based on the selector
-				var filter = null;
-				if (!tileSelector) { // no tile selector = all tiles
-					filter = ()=>P.resolve(true);
-				} else if (typeof tileSelector === 'string') { // model.id
-					filter = (tile) => (tile.model.id === tileSelector);
-				}
+				U.getDef(this._p_circuitboardCore_tilesByModelId, tile.model.id, defer).resolve(tile);
 
-				// apply the callback for existing tiles
-				$.each(this._p_circuitboardCore_tilesByModelId, (modelId, tiles) => {
-					$.each(tiles, (index, tile) => {
-						if (filter(tile)) { fn(tile) }
-					});
-				});
+			}).add('tile', function (tileSelector) {
 
-				// set up the callbacks for future tiles
-				this.on('tilecreated', (tile) => {
-					if (filter(tile)) { fn(tile) }
-				});
+				return U.getDef(this._p_circuitboardCore_tilesByModelId, tileSelector, defer).promise;
 
 			}).add('construct', function () {
+
 				this._p_circuitboardCore_tilesByModelId = {};
 
 				// create the root tilemap
@@ -61,12 +39,13 @@ define([
 							model: this.options.model,
 							parent: this
 						}).tilemap('instance');
+
 			});
 
 
 	/* Tilemap */
 	plugin.modify('Tilemap.prototype')
-			.add('refreshTiles', function refreshTiles() {
+			.add('refreshTiles', function () {
 
 				/* sanity check */
 				U.assert(U.isDefined(this.model),
@@ -88,7 +67,6 @@ define([
 							/* remove all old tiles */
 							this.element.children().empty();
 							this.element.empty();
-							// TODO: maintain references, so they won't have to be recreated
 
 							/* render and store references to the new tiles */
 							this._p_tilemapCore_tiles = [];
@@ -100,9 +78,7 @@ define([
 									$('<div/>').tile({
 										model: childrenToDisplay.shift(),
 										parent: this
-									}).appendTo(row).amyNestedFlexGrow(1).tile('instance').then((tile) => {
-										this._p_tilemapCore_tiles.push(tile);
-									});
+									}).appendTo(row).amyNestedFlexGrow(1);
 								}
 							}
 						})
@@ -111,6 +87,8 @@ define([
 
 			}).add('construct', function () {
 
+				this.newEvent('tiles-refreshed');
+
 				this._p_tilemapCore_tiles = null;
 				Object.defineProperty(this, 'tiles', { get: () => this._p_tilemapCore_tiles });
 				this.refreshTiles();
@@ -118,7 +96,7 @@ define([
 			});
 
 
-	/* Tilemap */
+	/* Tile */
 	plugin.modify('Tile.prototype')
 			.add('populateInnerTilemap', function populateInnerTilemap() {
 
@@ -134,17 +112,13 @@ define([
 				this._p_tileCore_tilemap = null;
 
 				/* support certain DOM-event subscriptions from the tile object itself */
-				$.each(['click', 'mouseover', 'mouseout'], (index, signal) => {
-					this.element.on(signal, (event) => {
-						event.stopPropagation();
-						this.trigger(signal, event);
-					});
+				['click', 'mouseover', 'mouseout'].forEach((event) => {
+					this.newEvent(event, { eventStream: this.element.asEventStream(event).doAction('.stopPropagation') });
 				});
-				$.each(['mouseenter', 'mouseleave'], (index, signal) => {
-					this.element.on(signal, (event) => {
-						this.trigger(signal, event);
-					});
+				['mouseenter', 'mouseleave'].forEach((event) => {
+					this.newEvent(event, { eventStream: this.element.asEventStream(event) });
 				});
+				this.newEvent('click-not-drop');
 				this.element.clickNotDrop((event) => {
 					event.stopPropagation();
 					this.trigger('click-not-drop', event);
@@ -160,7 +134,6 @@ define([
 				this.circuitboard._registerTile(this);
 
 			});
-
 
 
 });

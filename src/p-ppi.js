@@ -7,20 +7,21 @@ define([
 ], function ($, D3Group, D3Vertex, D3Edge) {
 	'use strict';
 
+
 	var plugin = $.circuitboard.plugin({
 		name: 'ppi',
 		requires: ['d3']
-	}).modify('Tile.prototype');
+	});
 
-	//
+
 	// TODO: implement this properly; this is just for testing purposes
-	//
-	plugin.insert('construct', function () {
+	plugin.insert('Tile.prototype.construct', function () {
 
 		var graphGroup = new D3Group({
 			parent: this,
 			gravityFactor: 1,
-			chargeFactor: 0.1
+			chargeFactor: 0.1,
+			linkDistanceFactor: 0.3
 		});
 
 		((setGraphGroupRegion) => {
@@ -38,27 +39,22 @@ define([
 		});
 
 		var constructExampleProteins = () => {
-			var protein1 = new D3Vertex({
-				parent: graphGroup,
-				cssClass: 'example'
-			});
-			var protein2 = new D3Vertex({
-				parent: graphGroup,
-				cssClass: 'example'
-			});
-
-			graphGroup.addVertex(protein1);
-			graphGroup.addVertex(protein2);
 			graphGroup.addEdge(new D3Edge({
 				parent: graphGroup,
-				source: protein1,
-				target: protein2,
+				source: graphGroup.addVertex(new D3Vertex({
+					parent: graphGroup,
+					cssClass: 'example'
+				})),
+				target: graphGroup.addVertex(new D3Vertex({
+					parent: graphGroup,
+					cssClass: 'example'
+				})),
 				cssClass: 'example'
 			}));
 		};
 
-		this.observe('open', (open) => {
-			if (!open) {
+		this.on('open').not().and(this.on('visible')).onValue((showProteins) => {
+			if (showProteins) {
 				constructExampleProteins();
 			} else {
 				graphGroup.removeAllEdgesAndVertices();
@@ -66,4 +62,6 @@ define([
 		});
 
 	});
+
+
 });

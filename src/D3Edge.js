@@ -1,15 +1,25 @@
 define([
 	'jquery',
 	'./util/misc.js',
+	'./util/bacon-and-eggs.js',
 	'./util/artefact.js',
 	'./D3Edge.scss'
-], function ($, U, Artefact) {
+], function ($, U, Bacon, Artefact) {
 	'use strict';
 
 
 	return Artefact.newSubclass('D3Edge', function D3Edge({source, target}) {
+
+		/* store references to the two vertices */
 		this._source = source;
 		this._target = target;
+
+		/* when one of the vertices is destroyed, so is this edge */
+		Bacon.mergeAll(
+				source.on('destroy'),
+				target.on('destroy')
+		).take(1).assign(this, 'destroy');
+
 	}, {
 
 		get source() { return this._source },

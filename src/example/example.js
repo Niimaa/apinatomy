@@ -18,6 +18,10 @@ requirejs.config({
 });
 
 
+/* make 'jQuery' globally available for Bacon.js to find */
+window.jQuery = require('jquery');
+
+
 /* load the circuitboard code and style */
 require('../circuitboard.js');
 require('./example.scss');
@@ -47,11 +51,14 @@ require([
 	'../p-tile-maximized.js',
 	'../p-tile-middleclick-to-maximize.js',
 	'../p-d3.js',
+	'../p-animation-loop.js', // TODO: figure out why we get an error when this is moved down one line
 	'../p-ppi.js',
 	'../p-three-d.js',
 	'../p-three-d-geometric-models.js',
 	'../p-three-d-geometric-models-stl.js',
 	'../p-d3-three-d.js',
+	'../p-three-d-manual-controls.js',
+	'../p-three-d-auto-controls.js'
 
 	/* files for testing */
 	'../p-connectivity.js'
@@ -68,11 +75,12 @@ require([
 		'tile-middleclick-to-maximize',
 		'tile-spacing',
 		'tile-active',
-		//'ppi',
+		'ppi',
 		'three-d',
+		'three-d-manual-controls',
+		'three-d-auto-controls',
 		'three-d-geometric-models',
-		'three-d-geometric-models-stl',
-		'connectivity'
+		'three-d-geometric-models-stl'
 	]);
 
 

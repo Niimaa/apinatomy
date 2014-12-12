@@ -19,10 +19,13 @@
       <w>jshint</w>
       <w>jsonp</w>
       <w>keydown</w>
+      <w>keypress</w>
       <w>keyup</w>
       <w>lightgray</w>
       <w>lookups</w>
       <w>lundin</w>
+      <w>memberof</w>
+      <w>memoize</w>
       <w>middleclick</w>
       <w>mousewheel</w>
       <w>ness</w>
@@ -31,6 +34,7 @@
       <w>prerelease</w>
       <w>putcssrules</w>
       <w>reduct</w>
+      <w>renderers</w>
       <w>reqwest</w>
       <w>rimraf</w>
       <w>sourcemaps</w>

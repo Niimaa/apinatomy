@@ -13,7 +13,7 @@ define(['jquery', './p-tile-skin-grow-when-open.scss'], function ($) {
 	/*  to ensure smooth transition animation      */
 	plugin.insert('construct', function () {
 		var sectionElement = this.element.children('section');
-		this.observe('open', (open) => {
+		this.on('open', (open) => {
 			if (open) {
 				setTimeout(() => {
 					sectionElement.css('opacity', 0);
@@ -28,4 +28,6 @@ define(['jquery', './p-tile-skin-grow-when-open.scss'], function ($) {
 			}
 		});
 	});
+
+
 });

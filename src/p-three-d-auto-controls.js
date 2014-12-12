@@ -1,0 +1,69 @@
+define(['jquery', './util/misc.js', 'bluebird', './util/bacon-and-eggs.js', 'three-js', 'tweenjs'], function ($, U, P, Bacon, THREE, TWEEN) {
+	'use strict';
+
+
+	var plugin = $.circuitboard.plugin({
+		name: 'three-d-auto-controls',
+		requires: ['three-d']
+	});
+
+
+	plugin.add('Circuitboard.prototype.animateCameraTo', function (coordinatesOrTileId) {
+
+		return (typeof coordinatesOrTileId === 'string' ? this.tile(coordinatesOrTileId).then((tile) => {
+			var pos = tile.position;
+			var size = tile.size;
+			return {
+				x: pos.left + size.width / 2 - this.size.width / 2,
+				y: -pos.top - size.height / 2 + this.size.height / 2
+			};
+		}) : P.resolve(coordinatesOrTileId)).then((coords) => {
+
+			var initialZ = this.camera3D.position.z;
+
+			var tweenXY = Bacon.tween(this.camera3D.position, coords, { duration: 800, easing: TWEEN.Easing.Sinusoidal.Out });
+			var tweenZ = Bacon.tween(this.camera3D.position, { z: 1.5 * initialZ }, { duration: 600, easing: TWEEN.Easing.Sinusoidal.Out })
+					.chain(Bacon.tween(this.camera3D.position, { z: initialZ }, { duration: 200, easing: TWEEN.Easing.Sinusoidal.In }));
+
+			var animation = Bacon.mergeAll([
+				tweenZ.start(),
+				tweenXY.start()
+			]);
+
+			animation.onValue(({x, y}) => {
+				this.camera3D.userData.target.x = x;
+				this.camera3D.userData.target.y = y;
+				this.camera3D.lookAt(this.camera3D.userData.target);
+			});
+
+			return animation;
+
+		});
+
+	}).append('Circuitboard.prototype.construct', function () {
+		this.on('threeDMode', true).onValue(() => {
+
+			this.on('3d-render').assign(TWEEN, 'update');
+
+
+			/* some example 3D travels triggered by the 'enter' key */// TODO: remove
+			var tiles = [
+				'24tile:60000001',
+				'24tile:60000024',
+				'24tile:60000020',
+				'24tile:60000015'
+			];
+			var cTile = -1;
+			function nextTile() {
+				cTile = (cTile + 1) % tiles.length;
+				return tiles[cTile];
+			}
+
+			Bacon.keyPress(13).flatMapFirst(() => Bacon.fromPromise(this.animateCameraTo(nextTile())).flatMap(U.id)).run();
+
+
+		});
+	});
+
+
+});

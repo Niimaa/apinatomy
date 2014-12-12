@@ -11,10 +11,7 @@ define(['jquery'], function ($) {
 	/* allows a tile to be maximized by middle-clicking on it */
 	plugin.insert('construct', function () {
 
-		this.on('click', function (event) {
-			if (event.which !== 2) { return }
-			this.maximized = !this.maximized;
-		});
+		this.on('click').filter((e) => e.which === 2).onValue(() => { this.maximized = !this.maximized });
 
 	});
 

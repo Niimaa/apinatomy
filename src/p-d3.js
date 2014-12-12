@@ -2,14 +2,16 @@ define([
 	'jquery',
 	'd3',
 	'./util/misc.js',
+	'bacon',
+	'./util/bacon-and-eggs.js',
 	'./p-d3.scss'
-], function ($, d3, U) {
+], function ($, d3, U, Bacon) {
 	'use strict';
 
 
 	var plugin = $.circuitboard.plugin({
 		name: 'd3',
-		requires: ['core', 'position-tracking']
+		requires: ['core', 'position-tracking', 'animation-loop']
 	}).modify('Circuitboard.prototype');
 
 
@@ -56,9 +58,7 @@ define([
 
 
 		/* auto-resize the force-layout canvas */
-		this.observe('size', (size) => {
-			this.d3Force.size([size.width, size.height]);
-		});
+		this.on('size').map((v) => [v.width, v.height]).assign(this.d3Force, 'size');
 
 
 		/* create corresponding svg elements */
@@ -85,14 +85,14 @@ define([
 			this.d3Force.nodes(visibleVertices).links(visibleEdges).start();
 
 			/* vertices */
-			vertices = svg.selectAll('.vertex').data(visibleVertices, U.field('graphId'));
+			vertices = svg.selectAll('.vertex').data(visibleVertices, (d) => d.graphId);
 			vertices.enter().append((d) => d.element[0])
 					.classed('vertex', true).classed('edge', false)
 					.call(this.d3Force.drag); // all vertices can be dragged around
 			vertices.exit().remove();
 
 			/* edges */
-			edges = svg.selectAll('.edge').data(visibleEdges, U.field('graphId'));
+			edges = svg.selectAll('.edge').data(visibleEdges, (d) => d.graphId);
 			edges.enter()
 					.append((d) => d.element[0])
 					.classed('edge', true).classed('vertex', false);
@@ -106,31 +106,32 @@ define([
 		}, 200);
 
 
-		/* while dragging a vertex, set the 'dragging-vertex' class on the circuitboard */
-		this.d3Force.drag().on('dragstart', () => {
-			svgElement.addClass('dragging-vertex');
-		}).on('dragend', () => {
-			svgElement.removeClass('dragging-vertex');
+		var currentEventData = () => d3.select(d3.event.sourceEvent.target.parentElement).data()[0];
+		this.newProperty('draggingVertex', {
+			initial: null,
+			source: Bacon.mergeAll(
+					Bacon.fromOnNull(this.d3Force.drag(), 'dragstart').map(currentEventData),
+					Bacon.fromOnNull(this.d3Force.drag(), 'dragend').map(null)
+			)
 		});
 
 
-		/* on d3 animation tick */
-		this.d3Force.on("tick", (e) => {
-
-			/* make the tick event available to users of the circuitboard */
-			this.trigger('d3-tick', e);
+		/* declarer the 'd3-tick' event-stream, and perform animation on a tick */
+		this.newEvent('d3-tick', {
+			source: Bacon.fromOnNull(this.d3Force, 'tick').holdUntil(this.on('animation-frame'))
+		}).onValue((e) => {
 
 			/* dampening factor */
 			var k = 0.1 * e.alpha;
 
 			/* gravitate towards the center of the region */
-			visibleVertices.forEach(function (d) {
+			visibleVertices.forEach((d) => {
 				d.x += d.group.gravityFactor * (d.group.region.left + 0.5 * d.group.region.width - d.x) * k;
 				d.y += d.group.gravityFactor * (d.group.region.top + 0.5 * d.group.region.height - d.y) * k;
 			});
 
 			/* but always stay within the region */
-			visibleVertices.forEach(function (d) {
+			visibleVertices.forEach((d) => {
 				d.x = Math.max(d.x, d.group.region.left);
 				d.x = Math.min(d.x, d.group.region.left + d.group.region.width);
 				d.y = Math.max(d.y, d.group.region.top);
@@ -149,6 +150,8 @@ define([
 
 		});
 
+
 	});
+
 
 });

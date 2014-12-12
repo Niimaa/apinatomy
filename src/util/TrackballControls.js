@@ -31,6 +31,7 @@ define(['jquery', 'three-js', 'delta-js', './misc.js'], ($, THREE, DeltaModel, U
 			.add('construct', function (controlledObject, domElement) {
 				this._controlledObject = controlledObject;
 				this._domElement = domElement;
+				this._scene = controlledObject.parent;
 			})
 		/* API */
 			.append('construct', function () {
@@ -59,6 +60,21 @@ define(['jquery', 'three-js', 'delta-js', './misc.js'], ($, THREE, DeltaModel, U
 				this._position0 = this._controlledObject.position.clone();
 				this._up0 = this._controlledObject.up.clone();
 
+
+
+				var newHelper = (name, obj, color) => {
+					var geometry = new THREE.SphereGeometry(5, 64, 64);
+					var material = new THREE.MeshLambertMaterial({ color: color });
+					var sphere = new THREE.Mesh( geometry, material );
+					this._scene.add(sphere);
+					return () => {
+						sphere.position.copy(obj);
+					};
+				};
+				//this._refreshHelper1 = newHelper('eye', this._eye, 0xff0000);
+				this._refreshHelper2 = newHelper('target', this._targetCoordinates, 0x00ff00);
+
+
 			})
 		/* public methods */
 			.add('reset', function () {
@@ -72,6 +88,7 @@ define(['jquery', 'three-js', 'delta-js', './misc.js'], ($, THREE, DeltaModel, U
 				this._velocity.set(0, 0, 0);
 
 				this._eye.subVectors(this._controlledObject.position, this._targetCoordinates);
+				this._refreshHelper2();
 
 				this._controlledObject.lookAt(this._targetCoordinates);
 
@@ -96,10 +113,14 @@ define(['jquery', 'three-js', 'delta-js', './misc.js'], ($, THREE, DeltaModel, U
 					this._lastPosition.copy(this._controlledObject.position);
 				}
 
+				this._refreshHelper2();
+
 				setTimeout(() => {
 					this._controlledObject.position.add(this._velocity);
 					this._controlledObject.lookAt(this._targetCoordinates);
 					this._lastPosition.copy(this._controlledObject.position);
+
+					this._refreshHelper2();
 				});
 
 			}).add('handleResize', function () {
@@ -216,7 +237,7 @@ define(['jquery', 'three-js', 'delta-js', './misc.js'], ($, THREE, DeltaModel, U
 
 					this._eye.copy(this._controlledObject.position).sub(this._targetCoordinates);
 
-					vector.copy(this._controlledObject.up).setLength(mouseOnBall.y);
+					vector.copy(this._controlledObject.up).setLength(-mouseOnBall.y);
 					vector.add(objectUp.copy(this._controlledObject.up).cross(this._eye).setLength(mouseOnBall.x));
 					vector.add(this._eye.setLength(mouseOnBall.z));
 
@@ -446,7 +467,7 @@ define(['jquery', 'three-js', 'delta-js', './misc.js'], ($, THREE, DeltaModel, U
 					if (mouseChange.lengthSq()) {
 						mouseChange.multiplyScalar(this._eye.length() * this.panSpeed);
 						pan.copy(this._eye).cross(this._controlledObject.up).setLength(mouseChange.x);
-						pan.add(objectUp.copy(this._controlledObject.up).setLength(mouseChange.y));
+						pan.add(objectUp.copy(this._controlledObject.up).setLength(-mouseChange.y));
 						this._controlledObject.position.add(pan);
 						this._targetCoordinates.add(pan);
 						this._panStart.copy(this._panEnd);
@@ -505,18 +526,6 @@ define(['jquery', 'three-js', 'delta-js', './misc.js'], ($, THREE, DeltaModel, U
 					this._panEnd.copy(this.getMouseOnScreen(x, y));
 					this._panStart.copy(this._panEnd);
 				}
-
-			});
-
-
-	/* little hack for apinatomy-specific functionality ***************************************************************/
-
-	new dm.Delta('apinatomy-specific', {
-		if: true
-	}).modify('TrackballControls.prototype')
-			.add('setCameraDistance', function setCameraDistance(distance) {
-
-				this._controlledObject.position.normalize().multiplyScalar(distance);
 
 			});
 

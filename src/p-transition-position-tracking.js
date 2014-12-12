@@ -1,24 +1,25 @@
 define([
 	'jquery',
+	'./util/bacon-and-eggs.js',
 	'./util/misc.js'
-], function ($, U) {
+], function ($, Bacon) {
 	'use strict';
 
 
 	var plugin = $.circuitboard.plugin({
 		name: 'transition-position-tracking',
-		resolves: ['position-tracking', 'tile-grow-when-open']
-	}).modify('Tile.prototype');
+		resolves: ['position-tracking', 'tile-grow-when-open', 'animation-loop']
+	});
 
 
 	/* make sure that positioning is updated during CSS3 transition animations */
-	plugin.insert('construct', function () {
+	plugin.insert('Tile.prototype.construct', function () {
 		this.on('weight', () => {
-			var stopUpdatingPosition = U.eachAnimationFrame(() => { this.resetPositioning() });
-			setTimeout(() => {
-				this.element.one('transitionend', stopUpdatingPosition);
-				setTimeout(stopUpdatingPosition, 500); // fallback
-			});
+
+			this.circuitboard.on('animation-frame')
+					.takeUntil(this.element.asEventStream('transitionend').merge(Bacon.later(500)))
+					.onValue(() => { this.resetPositioning() });
+
 		});
 	});
 

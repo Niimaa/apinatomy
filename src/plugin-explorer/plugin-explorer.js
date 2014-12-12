@@ -49,10 +49,14 @@ require([
 	'../p-tile-maximized.js',
 	'../p-tile-middleclick-to-maximize.js',
 	'../p-d3.js',
+	'../p-animation-loop.js', // TODO: figure out why we get an error when this is moved down one line
 	'../p-ppi.js',
 	'../p-three-d.js',
 	'../p-three-d-geometric-models.js',
-	'../p-d3-three-d.js'
+	'../p-three-d-geometric-models-stl.js',
+	'../p-d3-three-d.js',
+	'../p-three-d-manual-controls.js',
+	'../p-three-d-auto-controls.js'
 
 ], function ($, JsGraph, createDiagram) {
 	'use strict';

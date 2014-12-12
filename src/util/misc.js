@@ -1,4 +1,4 @@
-define(['bluebird', './defer.js'], (P, defer) => {
+define(['bluebird', './defer.js', 'bacon'], (P, defer) => {
 	'use strict';
 
 	var U = {
@@ -47,19 +47,27 @@ define(['bluebird', './defer.js'], (P, defer) => {
 		// a specific field from a given object
 		call(fn, ...args) { return fn.apply(undefined, args) },
 
+		// a function that returns its first argument
+		id(v) { return v },
+
 		// get the object `obj[name]`; if `obj[name]` is not
-		// a (plain) object, make it an empty object first
-		object(obj, name) {
-			if (U.isUndefined(obj[name])) { obj[name] = {} }
+		// defined, give it a default value first; if the given value
+		// is a function, it is called, and its result is used
+		getDef(obj, name, value) {
+			if (U.isUndefined(obj[name])) {
+				if (typeof value === 'function') { value = value() }
+				obj[name] = value;
+			}
 			return obj[name];
 		},
 
+		// get the object `obj[name]`; if `obj[name]` is not
+		// a (plain) object, make it an empty object first
+		object(obj, name) { return U.getDef(obj, name, {}) },
+
 		// get the array `obj[name]`; if `obj[name]` is not
 		// an array, make it an empty array first
-		array(obj, name) {
-			if (U.isUndefined(obj[name])) { obj[name] = [] }
-			return obj[name];
-		},
+		array(obj, name) { return U.getDef(obj, name, []) },
 
 		// pull a value from an array
 		pull(arr, val) {
@@ -97,6 +105,12 @@ define(['bluebird', './defer.js'], (P, defer) => {
 		// test if a value is defined (not `undefined`)
 		isDefined(val) { return typeof val !== 'undefined' },
 
+		// test if a value is a plain object
+		isPlainObject(val) { return typeof val === 'object' && val.constructor === Object },
+
+		// test if a value is a function
+		isFunction(val) { return typeof val === 'function' },
+
 		// extract an array of values from an object
 		objValues(obj) { return Object.keys(obj).map(key => obj[key]) },
 
@@ -130,34 +144,6 @@ define(['bluebird', './defer.js'], (P, defer) => {
 				timeout = setTimeout(laterFn, wait);
 				return deferred.promise;
 			};
-		},
-
-		// runs a function every animation frame
-		// returns a function that can be called to stop the loop
-		eachAnimationFrame(fn, context) {
-			var stop = false;
-
-			function iterationFn() {
-				fn.apply(context);
-				if (stop) { return }
-				requestAnimationFrame(iterationFn);
-			}
-
-			iterationFn();
-
-			var unsubscribeFn = () => {
-				if (unsubscribeFn.stillSubscribed) {
-					unsubscribeFn.stillSubscribed = false;
-					delete unsubscribeFn.unsubscribeOn;
-					stop = true;
-				}
-			};
-			unsubscribeFn.stillSubscribed = true;
-			unsubscribeFn.unsubscribeOn = (subscriber) => {
-				subscriber(unsubscribeFn);
-				return unsubscribeFn;
-			};
-			return unsubscribeFn;
 		},
 
 		// Returns a function, that will only be triggered once per synchronous 'stack'.
@@ -237,10 +223,37 @@ define(['bluebird', './defer.js'], (P, defer) => {
 					}
 				});
 			};
+		},
+
+		findIndex(array, pred) {
+			for (var i = 0; i < array.length; ++i) {
+				if (pred(array[i], i, array)) { return i }
+			}
+			return -1;
+		},
+
+		// this `memoize` function is SLOW, as it uses linear search
+		memoize(fn) {
+			var keys = [];
+			var cache = [];
+			return function (...args) {
+				/* check the cache */
+				var index = U.findIndex(keys, (key) => key.every((v, i) => v === args[i]));
+				if (index >= 0) { return cache[index] }
+
+				/* no cache hit; compute value, store and return */
+				var result = fn.apply(this, args);
+				keys.push(args);
+				cache.push(result);
+				return result;
+			};
 		}
 
 	};
 
+
+	var EPS = 0.000001;
+	var sortOfEqual = (a, b) => (b - EPS < a && a < b + EPS);
 
 	/* HTML element position */
 	U.Position = U.newClass(function (top, left) {
@@ -251,7 +264,7 @@ define(['bluebird', './defer.js'], (P, defer) => {
 		return new U.Position(a.top - b.top, a.left - b.left);
 	};
 	U.Position.equals = (a, b) => {
-		return U.isDefined(a) && U.isDefined(b) && a.top === b.top && a.left === b.left;
+		return U.isDefined(a) && U.isDefined(b) && sortOfEqual(a.top, b.top) && sortOfEqual(a.left, b.left);
 	};
 
 
@@ -261,7 +274,7 @@ define(['bluebird', './defer.js'], (P, defer) => {
 		this.width = width;
 	});
 	U.Size.equals = (a, b) => {
-		return U.isDefined(a) && U.isDefined(b) && a.height === b.height && a.width === b.width;
+		return U.isDefined(a) && U.isDefined(b) && sortOfEqual(a.height, b.height) && sortOfEqual(a.width, b.width);
 	};
 
 
