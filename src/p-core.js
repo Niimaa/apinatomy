@@ -4,7 +4,6 @@ define([
 	'./util/misc.js',
 	'./util/defer.js',
 	'./util/nested-flex-grow.js',
-	'./util/clickVsDrag.js',
 	'./p-core.scss'
 ], function ($, P, U, defer) {
 	'use strict';
@@ -112,16 +111,11 @@ define([
 				this._p_tileCore_tilemap = null;
 
 				/* support certain DOM-event subscriptions from the tile object itself */
-				['click', 'mouseover', 'mouseout'].forEach((event) => {
-					this.newEvent(event, { eventStream: this.element.asEventStream(event).doAction('.stopPropagation') });
+				['mouseover', 'mouseout', 'mouseenter', 'mouseleave'].forEach((event) => {
+					this.newEvent(event, { source: this.element.asEventStream(event) });
 				});
-				['mouseenter', 'mouseleave'].forEach((event) => {
-					this.newEvent(event, { eventStream: this.element.asEventStream(event) });
-				});
-				this.newEvent('click-not-drop');
-				this.element.clickNotDrop((event) => {
-					event.stopPropagation();
-					this.trigger('click-not-drop', event);
+				this.newEvent('click', {
+					source: this.element.mouseClick({ threshold: this.circuitboard.options.dragTheshold })
 				});
 
 				/* a field to hold the innermost HTML content element still belonging to this tile */

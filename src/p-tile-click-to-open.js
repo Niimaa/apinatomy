@@ -1,4 +1,4 @@
-define(['jquery'], function ($) {
+define(['jquery', './util/bacon-and-eggs.js'], function ($) {
 	'use strict';
 
 
@@ -11,7 +11,10 @@ define(['jquery'], function ($) {
 	/* When a tile is clicked, it is opened/closed. */
 	plugin.insert('construct', function () {
 
-		this.on('click-not-drop').filter(e => e.which === 1).onValue(() => { this.open = !this.open });
+		this.on('click')
+				.filter(e => e.which === 1)     // only left clicks
+				.onlyOnceFor('tile-left-click') // only for the inner-most tile (smart '.stopPropagation')
+				.onValue(() => { this.open = !this.open });
 
 	});
 

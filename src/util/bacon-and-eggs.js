@@ -174,13 +174,22 @@ define(['jquery', './misc.js', 'bacon', 'tweenjs'], function ($, U, Bacon, TWEEN
 		return this.subscribe(()=>{});
 	};
 
+	// This is a 'smart' .stopPropagation, marking events with a label
+	// and skipping those that already have that label.
+	Bacon.Observable.prototype.onlyOnceFor = function (label) {
+		return this.filter((event) => {
+			return !U.array(event.originalEvent, '_onlyOnceFor')[label];
+		}).map((event) => {
+			U.array(event.originalEvent, '_onlyOnceFor')[label] = true;
+		});
+	};
+
 
 	/* EventStream generators *****************************************************************************************/
 
-
-	$.fn.mouseDrag = function mouseDrag({threshold}) {
+	$.fn.mouseDrag = function mouseDrag({threshold} = {}) {
 		return $(this).asEventStream('mousedown').flatMap((mouseDownEvent) => {
-			var stream = $(document).asEventStream('mousemove').takeUntil($(document).asEventStream('mouseup'));
+			var stream = $(document).asEventStream('mousemove');
 			if (threshold) {
 				var crossed = false;
 				stream = stream.filter((mouseMoveEvent) => { // TODO: don't use 'filter', but something like 'skipUntil' or 'flatMap'
@@ -191,7 +200,26 @@ define(['jquery', './misc.js', 'bacon', 'tweenjs'], function ($, U, Bacon, TWEEN
 					return false;
 				});
 			}
-			return stream.map((mouseMoveEvent) => ({ mouseDownEvent, mouseMoveEvent }));
+			return stream
+					.takeUntil($(document).asEventStream('mouseup'))
+					.map((mouseMoveEvent) => ({ mouseDownEvent, mouseMoveEvent }));
+		});
+	};
+
+	$.fn.mouseClick = function mouseClick({threshold} = {}) {
+		return $(this).asEventStream('mousedown').flatMap((mouseDownEvent) => {
+			var untilStream = $(document).asEventStream('mousemove');
+			if (threshold) {
+				var crossed = false;
+				untilStream = untilStream.filter((mouseMoveEvent) => {
+					if (crossed) { return true }
+					var dx = mouseDownEvent.pageX - mouseMoveEvent.pageX;
+					var dy = mouseDownEvent.pageY - mouseMoveEvent.pageY;
+					if (dx * dx + dy * dy > threshold * threshold) { return crossed = true }
+					return false;
+				});
+			}
+			return $(document).asEventStream('mouseup').take(1).takeUntil(untilStream);
 		});
 	};
 

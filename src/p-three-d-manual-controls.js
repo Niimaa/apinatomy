@@ -68,7 +68,7 @@ define(['jquery', './util/misc.js', 'three-js', './util/bacon-and-eggs.js', './u
 
 			/* creating various event streams */
 			this.threeDCanvasElement.asEventStream('contextmenu').onValue('.preventDefault');
-			var dragging = this.threeDCanvasElement.mouseDrag({ threshold: 5 }).filter(() => this.threeDManualControlsEnabled);
+			var dragging = this.threeDCanvasElement.mouseDrag({ threshold: this.options.dragThreshold }).filter(() => this.threeDManualControlsEnabled);
 			var keydown = $(window).asEventStream('keydown').filter(() => this.threeDManualControlsEnabled);
 			var keyup = $(window).asEventStream('keyup');
 			var scrolling = this.threeDCanvasElement.mouseWheel().filter(() => this.threeDManualControlsEnabled);
@@ -99,7 +99,7 @@ define(['jquery', './util/misc.js', 'three-js', './util/bacon-and-eggs.js', './u
 				])),
 				initial: false
 			});
-			this.on('currentArrowKey').onValue((v) => { somethingChanged = true });
+			this.on('currentArrowKey').onValue(() => { somethingChanged = true });
 
 
 			/* zooming with the middle mouse button */
