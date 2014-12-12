@@ -274,7 +274,7 @@ define([
 			/* position it always in the center of the tile */
 			Bacon.mergeAll(this.on('position'), this.on('size')).onValue(() => {
 				this.object3D.position.x = this.position.left + this.size.width / 2;
-				this.object3D.position.y = this.position.top + this.size.height / 2;
+				this.object3D.position.y = this.circuitboard.threeDCanvasSize.height -this.position.top - this.size.height / 2;
 			});
 
 			/* hide it when the tile is hidden */
