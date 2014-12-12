@@ -1,6 +1,7 @@
 define([
 	'jquery',
 	'bluebird',
+	'bacon',
 	'js-graph',
 	'./util/misc.js',
 	'./D3Group.js',
@@ -9,7 +10,7 @@ define([
 	'./path-model.js',
 	'./p-ppi.scss',
 	'./p-connectivity.scss'
-], function ($, P, Graph, U, D3Group, D3Vertex, D3Edge, PathModel) {
+], function ($, P, Bacon, Graph, U, D3Group, D3Vertex, D3Edge, PathModel) {
 	'use strict';
 
 
@@ -30,11 +31,11 @@ define([
 			chargeFactor: 0.1,
 			linkDistanceFactor: 0.04
 		});
-		((setGraphGroupRegion) => {
-			setGraphGroupRegion();
-			this.on('size', setGraphGroupRegion);
-			this.on('position', setGraphGroupRegion);
-		})(() => {
+		Bacon.mergeAll([
+				Bacon.once(),
+				this.on('size').changes(),
+				this.on('position').changes()
+		]).onValue(() => {
 			var AREA_MARGIN = 5;
 			this._p_connectivity_d3group.setRegion({
 				top: this.position.top + AREA_MARGIN,
@@ -71,7 +72,7 @@ define([
 		}
 
 		/* active tiles are eligible to participate in the graph */
-		this.observe('active', (active) => {
+		this.on('active').onValue((active) => {
 			if (active) {
 				this.circuitboard._p_connectivity_activeTiles[this.model.id] = this;
 			} else {
@@ -80,7 +81,7 @@ define([
 		});
 
 		/* when the 'active' property changes, initiate a graph update */
-		this.observe('active', () => { this.circuitboard._p_connectivity_fetchPaths() });
+		this.on('active').onValue(() => { this.circuitboard._p_connectivity_fetchPaths() });
 
 	}).add('Circuitboard.prototype._p_connectivity_registerType', function (type) {
 

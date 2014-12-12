@@ -80,7 +80,8 @@ require([
 		'three-d-manual-controls',
 		'three-d-auto-controls',
 		'three-d-geometric-models',
-		'three-d-geometric-models-stl'
+		'three-d-geometric-models-stl',
+		'connectivity'
 	]);
 
 
