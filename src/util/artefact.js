@@ -13,10 +13,11 @@ define([
 	 * Use this as a subclass (or just mix it in) to provide support for
 	 * events and observable properties through Bacon.js.
 	 */
-	var Artefact = dm.vp('Artefact', U.newSubclass(BaconSignalHandler, function Artefact(superFn, options) {
-		superFn();
+	var Artefact = dm.vp('Artefact', U.newSubclass(BaconSignalHandler, (superFn) => function Artefact(options) {
+		superFn.apply(this, arguments);
 
-		var {id, type, parent} = this._options = options;
+		this._options = options;
+		var {id, type, parent} = options;
 
 		/* set hierarchy stuff */
 		this._id = id || uniqueID(type);
@@ -110,7 +111,7 @@ define([
 	 * A static convenience function for creating a subclass of {@link Artefact}.
 	 */
 	Artefact.newSubclass = function newSubClass(name, constructor, prototype = {}, optionDefaults = {}) {
-		return dm.vp(name, U.newSubclass(Artefact, function (superFn, options = {}) {
+		return dm.vp(name, U.newSubclass(Artefact, (superFn) => function (options = {}) {
 
 			/* process options */
 			var processedOptions = options;
@@ -122,7 +123,7 @@ define([
 			processedOptions.type = name;
 
 			/* call super-constructor */
-			superFn(U.extend(options, processedOptions));
+			superFn.call(this, U.extend(options, processedOptions));
 
 			/* call this constructor */
 			constructor.call(this, processedOptions);
