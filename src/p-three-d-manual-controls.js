@@ -1,4 +1,4 @@
-define(['jquery', './util/misc.js', 'three-js', './util/bacon-and-eggs.js', './util/TrackballControls.js'], function ($, U, THREE, Bacon) {
+define(['jquery', './util/misc.js', 'three-js', './util/bacon-and-eggs.js'], function ($, U, THREE, Bacon) {
 	'use strict';
 
 
@@ -213,34 +213,18 @@ define(['jquery', './util/misc.js', 'three-js', './util/bacon-and-eggs.js', './u
 					})();
 					/* rotating by keyboard */
 					(() => {
-						var axis = new THREE.Vector3();
-						var quaternion = new THREE.Quaternion();
-						var angle = 0.015 * Math.PI;
-						if (this.currentArrowKey === 37) {
-							axis.setY(1);
-						} else if (this.currentArrowKey === 39) {
-							angle = -angle;
-							axis.setY(1);
-						} else if (this.currentArrowKey === 38) {
-							axis.setX(1);
-						} else if (this.currentArrowKey === 40) {
-							angle = -angle;
-							axis.setX(1);
-						} else {
-							angle = 0;
-						}
-						if (angle) {
-							axis.normalize();
-
-							angle *= this._rotateSpeed;
+						if (this.currentArrowKey) {
+							var quaternion = new THREE.Quaternion();
+							var axis = new THREE.Vector3(
+									+(this.currentArrowKey === 38 || this.currentArrowKey === 40), // x
+									+(this.currentArrowKey === 37 || this.currentArrowKey === 39)  // y
+							);
+							var angle = 0.015 * Math.PI * this._rotateSpeed;
+							if (this.currentArrowKey === 39 || this.currentArrowKey === 40) { angle *= -1 }
 
 							quaternion.setFromAxisAngle(axis, -angle);
-
 							this._eye.applyQuaternion(quaternion);
 							this.camera3D.up.applyQuaternion(quaternion);
-
-							this._rotateEnd.applyQuaternion(quaternion);
-							this._rotateStart.copy(this._rotateEnd);
 						}
 					})();
 					/* zooming */
