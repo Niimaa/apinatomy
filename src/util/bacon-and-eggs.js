@@ -176,12 +176,18 @@ define(['jquery', './misc.js', 'bacon', 'tweenjs'], function ($, U, Bacon, TWEEN
 
 	// This is a 'smart' .stopPropagation, marking events with a label
 	// and skipping those that already have that label.
-	Bacon.Observable.prototype.onlyOnceFor = function (label) {
+	Bacon.EventStream.prototype.skipPropagation = function (label) {
 		return this.filter((event) => {
 			return !U.array(event.originalEvent, '_onlyOnceFor')[label];
 		}).map((event) => {
 			U.array(event.originalEvent, '_onlyOnceFor')[label] = true;
 		});
+	};
+
+	// Filter events to only certain keys / buttons. Can be a predicate function or single number.
+	Bacon.EventStream.prototype.which = function (buttonId) {
+		var pred = (typeof buttonId === 'function') ? (buttonId) : (b => b === buttonId);
+		return this.filter(e => pred(e.which));
 	};
 
 
