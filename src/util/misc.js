@@ -222,13 +222,20 @@ define(['bluebird', 'bacon', 'Array.prototype.findIndex'], (P) => {
 			};
 		},
 
+		findIndex(array, pred) {
+			for (var i = 0; i < array.length; ++i) {
+				if (pred(array[i], i, array)) { return i }
+			}
+			return -1;
+		},
+
 		// this `memoize` function is SLOW, as it uses linear search
 		memoize(fn) {
 			var keys = [];
 			var cache = [];
 			return function (...args) {
 				/* check the cache */
-				var index = keys.findIndex((key) => key.every((v, i) => v === args[i]));
+				var index = U.findIndex(keys, (key) => key.every((v, i) => v === args[i]));
 				if (index >= 0) { return cache[index] }
 
 				/* no cache hit; compute value, store and return */
