@@ -58,7 +58,7 @@ require([
 	'../p-three-d-geometric-models-stl.js',
 	'../p-d3-three-d.js',
 	'../p-three-d-manual-controls.js',
-	'../p-three-d-auto-controls.js'
+	'../p-three-d-auto-controls.js',
 
 	/* files for testing */
 	'../p-connectivity.js'
@@ -75,7 +75,7 @@ require([
 		'tile-middleclick-to-maximize',
 		'tile-spacing',
 		'tile-active',
-		'ppi',
+		//'ppi',
 		'three-d',
 		'three-d-manual-controls',
 		'three-d-auto-controls',
