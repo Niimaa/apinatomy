@@ -15,10 +15,10 @@ define([
 		this._target = target;
 
 		/* when one of the vertices is destroyed, so is this edge */
-		Bacon.mergeAll(
-				source.on('destroy'),
-				target.on('destroy')
-		).take(1).assign(this, 'destroy');
+		Bacon.mergeAll([
+			source.on('destroy'),
+			target.on('destroy')
+		]).take(1).assign(this, 'destroy');
 
 	}, {
 
