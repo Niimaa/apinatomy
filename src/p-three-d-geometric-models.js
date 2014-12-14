@@ -16,23 +16,49 @@ define([
 
 	/* convenience predicate functions */
 	function isGeometry(v) { return v instanceof THREE.Geometry || v instanceof THREE.BufferGeometry }
+	function isObject3D(v) { return v instanceof THREE.Object3D }
 	function isFilename(v) { return typeof v === 'string' }
-	function isCoordinates(v) { return Array.isArray(v) && v.length === 3 && v.every((c) => typeof c === 'number') }
+	function endsWith(str, suffix) { return str.indexOf(suffix, str.length - suffix.length) !== -1 }
 
 
 	/* a function to load a 3D model from a filename and return a promise */
-	function load(file) {
-		var i = file.lastIndexOf('.');
-		U.assert(i >= 0, `The filename '${file}' does not have a file extension.`);
-		var ext = file.substr(i + 1);
+	function load(filename) {
+
+		/* select the longest extension that fits the filename */
+		// e.g., "points.json" has priority over "json"
+		var ext = '';
+		Object.keys($.circuitboard.Circuitboard.threeJsLoaders).forEach((extension) => {
+			if (extension.length > ext.length) {
+				if (endsWith(filename, `.${extension}`)) {
+					ext = extension;
+				}
+			}
+		});
+
+		/* was an extension found? */
+		U.assert(ext.length > 0, `The file '${filename}' is not recognized as a 3D model.`);
+
+		/* fetch the loader for that file extension */
 		var Loader = $.circuitboard.Circuitboard.threeJsLoaders[ext];
-		U.assert(U.isDefined(Loader), `The '${ext}' extension is not recognized as a 3D model.`);
-		return U.promisify(new Loader(), 'load')(file).then((obj) => {
+
+		/* sanity check */
+		U.assert(U.isDefined(Loader), `Something went wrong loading the 3D model Loader.`);
+
+		/* return a promise to the 3D object */
+		return U.promisify(new Loader(), 'load')(filename).then((obj) => {
+
+			/* for now, we only accept Geometry's and Object3D's from a loader */
+			U.assert(isGeometry(obj) || isObject3D(obj),
+					`The 3D Loader for the '${ext}' extension returned an unsupported value.`);
+
+			/* if a Geometry is returned, create an Object3D around it */
 			if (isGeometry(obj)) {
 				var geometry = obj;
 				var material = new THREE.MeshLambertMaterial({ color: 'white' });
 				obj = new THREE.Mesh(geometry, material);
 			}
+
+			/* return the object */
 			return obj;
 		});
 	}
@@ -85,19 +111,23 @@ define([
 				P
 
 					/* load any 3D models from files */
-						.all(threeDModels[model.id].filter(isFilename).map(load))
+						.all(threeDModels[model.id])
+						.filter(isFilename)
+						.map(load)
 
-					/* add the connection markers */
-						.tap((objs) => {
-							threeDModels[model.id].filter(isCoordinates).forEach((coords) => {
-								var geometry = new THREE.SphereGeometry(4, 32, 32);
-								geometry.applyMatrix(new THREE.Matrix4()
-										.setPosition(U.applyConstructor(THREE.Vector3, coords)));
-								var material = new THREE.MeshLambertMaterial({ color: 'red' });
-								var mesh = new THREE.Mesh(geometry, material);
-								objs.push(mesh);
-							});
-						})
+					///* add the connection markers */
+					//	.tap((objs) => {
+					//		threeDModels[model.id].filter(isCoordinatesObject).forEach(({color, coordinates}) => {
+					//			coordinates.forEach((coords) => {
+					//				var geometry = new THREE.SphereGeometry(4, 32, 32);
+					//				geometry.applyMatrix(new THREE.Matrix4()
+					//						.setPosition(U.applyConstructor(THREE.Vector3, coords)));
+					//				var material = new THREE.MeshLambertMaterial({ color });
+					//				var mesh = new THREE.Mesh(geometry, material);
+					//				objs.push(mesh);
+					//			});
+					//		});
+					//	})
 
 					/* put them all in one parent Object3D object */
 						.reduce((parent, child) => { parent.add(child); return parent; }, new THREE.Object3D())
