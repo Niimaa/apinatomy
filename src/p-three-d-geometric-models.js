@@ -115,20 +115,6 @@ define([
 						.filter(isFilename)
 						.map(load)
 
-					///* add the connection markers */
-					//	.tap((objs) => {
-					//		threeDModels[model.id].filter(isCoordinatesObject).forEach(({color, coordinates}) => {
-					//			coordinates.forEach((coords) => {
-					//				var geometry = new THREE.SphereGeometry(4, 32, 32);
-					//				geometry.applyMatrix(new THREE.Matrix4()
-					//						.setPosition(U.applyConstructor(THREE.Vector3, coords)));
-					//				var material = new THREE.MeshLambertMaterial({ color });
-					//				var mesh = new THREE.Mesh(geometry, material);
-					//				objs.push(mesh);
-					//			});
-					//		});
-					//	})
-
 					/* put them all in one parent Object3D object */
 						.reduce((parent, child) => { parent.add(child); return parent; }, new THREE.Object3D())
 

@@ -60,18 +60,15 @@ define([
 
 
 		/* the 'threeDCanvasSize' observable */
-		this.newProperty('threeDCanvasSize');
-		((cache) => {
-			this.threeDCanvasSize = cache();
-			cache.onChange((newSize) => { this.threeDCanvasSize = newSize });
-			( this.options.canvasResizeEvent || $(window).resize.bind($(window)) )(cache);
-		})(U.cached({
-			retrieve: () => (this.threeDCanvasElement && new U.Size(
+		this.newProperty('threeDCanvasSize', {
+			source: Bacon.mergeAll([
+				Bacon.once(),
+				( this.options.canvasResizeEvent || $(window).asEventStream('resize') )
+			]).map(() => this.threeDCanvasElement && new U.Size(
 					this.threeDCanvasElement.height(),
 					this.threeDCanvasElement.width()
-			)),
-			isEqual: U.Size.equals
-		}));
+			))
+		});
 
 
 	});
