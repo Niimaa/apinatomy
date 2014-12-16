@@ -39,20 +39,18 @@ define([
 				.links(U.objValues(this._p_d3_edges))
 				.gravity(0)
 				.charge(function (d) {
-					return -0.025 *
-							d.group.chargeFactor *
-							d.group.region.width *
-							d.group.region.height *
-							(U.defOr(d.chargeFactor, 1)) /
-							(d.group.vertices.length || 1);
+					return -2 *
+							(d.group.region.width + d.group.region.height) *
+							U.defOr(d.group.chargeFactor, 1) *
+							U.defOr(d.chargeFactor, 1) /
+							Math.sqrt(d.group.vertices.length || 1);
 				})
+				.chargeDistance(200)
 				.linkDistance(function (d) {
-					return 0.01 *
-							d.group.linkDistanceFactor *
-							d.group.region.width *
-							d.group.region.height *
-							(U.defOr(d.linkDistanceFactor, 1)) /
-							(d.group.vertices.length || 1);
+					return (d.group.region.width + d.group.region.height) *
+							U.defOr(d.group.linkDistanceFactor, 1) *
+							U.defOr(d.linkDistanceFactor, 1) /
+							Math.sqrt(d.group.vertices.length || 1);
 				})
 				.linkStrength(0.8);
 
@@ -106,6 +104,7 @@ define([
 		}, 200);
 
 
+		/* a property for which vertex (if any) is being dragged */
 		var currentEventData = () => d3.select(d3.event.sourceEvent.target.parentElement).data()[0];
 		this.newProperty('draggingVertex', {
 			initial: null,
@@ -116,9 +115,10 @@ define([
 		});
 
 
-		/* declarer the 'd3-tick' event-stream, and perform animation on a tick */
+		/* the 'd3-tick' event-stream, and performing animation on a tick */
 		this.newEvent('d3-tick', {
-			source: Bacon.fromOnNull(this.d3Force, 'tick').holdUntil(this.on('animation-frame'))
+			source: Bacon.fromOnNull(this.d3Force, 'tick')
+					.holdUntil(this.on('animation-frame'))
 		}).onValue((e) => {
 
 			/* dampening factor */
