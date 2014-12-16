@@ -8,19 +8,18 @@ define([
 
 	var plugin = $.circuitboard.plugin({
 		name: 'transition-position-tracking',
-		resolves: ['position-tracking', 'tile-grow-when-open', 'animation-loop']
+		requires: ['animation-loop'],
+		resolves: ['position-tracking', 'tile-grow-when-open']
 	});
 
 
 	/* make sure that positioning is updated during CSS3 transition animations */
 	plugin.insert('Tile.prototype.construct', function () {
-		this.on('weight', () => {
 
-			this.circuitboard.on('animation-frame')
-					.takeUntil(this.element.asEventStream('transitionend').merge(Bacon.later(500)))
-					.onValue(() => { this.resetPositioning() });
+		this.on('weight').changes().flatMapLatest(
+			() => Bacon.animationFrames().takeUntil(this.element.asEventStream('transitionend webkitTransitionEnd'))
+		).onValue(() => { this.trigger('reset-positioning') });
 
-		});
 	});
 
 

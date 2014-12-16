@@ -16,9 +16,7 @@ define(['jquery'], function ($) {
 		this.newProperty('weight', { initial: 1 });
 
 		/* enact 'weight' on the DOM */
-		this.on('weight', (weight) => { // TODO: update DOM the Bacon way
-			this.element.amyNestedFlexGrow(weight);
-		});
+		this.on('weight').assign(this.element, 'amyNestedFlexGrow');
 
 	});
 

@@ -18,35 +18,30 @@ define(['jquery', './misc.js', 'bacon', 'tweenjs'], function ($, U, Bacon, TWEEN
 	});
 
 
-	Bacon.animationFrames = U.memoize(function animationFrames() {
-		var requestAnimationFrameFn =
-				window.requestAnimationFrame ||
-				window.webkitRequestAnimationFrame ||
-				window.mozRequestAnimationFrame ||
-				window.oRequestAnimationFrame ||
-				window.msRequestAnimationFrame ||
-				((f) => window.setTimeout(f, 1000 / 60));
+	var requestAnimationFrameFn =
+			window.requestAnimationFrame       ||
+			window.webkitRequestAnimationFrame ||
+			window.mozRequestAnimationFrame    ||
+			window.oRequestAnimationFrame      ||
+			window.msRequestAnimationFrame     ||
+			((f) => { window.setTimeout(f, 1000 / 60) });
+	Bacon.animationFrames = function animationFrames() {
 		return Bacon.fromBinder((sink) => {
 
 			/* self-calling animation-frame loop */
-			var stop = false;
-			var iterationFn = () => {
-				if (stop) { return }
-				sink();
-				requestAnimationFrameFn(iterationFn);
-			};
-
-			/* start it now */
-			iterationFn();
+			var subscribed = true;
+			(function iterationFn() {
+				requestAnimationFrameFn(() => {
+					if (sink() === Bacon.noMore) { subscribed = false }
+					if (subscribed) { iterationFn() }
+				});
+			})();
 
 			/* unsubscribe function */
-			return () => {
-				stop = true;
-				sink(new Bacon.End());
-			};
+			return () => { subscribed = false };
 
 		});
-	});
+	};
 
 
 	Bacon.tween = function tween(objStart, objEnd, {duration, delay, easing}) {

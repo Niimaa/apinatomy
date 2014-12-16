@@ -2,10 +2,11 @@ define([
 	'jquery',
 	'chroma-js',
 	'./util/misc.js',
+	'./util/bacon-and-eggs.js',
 	'./util/defaults.js',
 	'./util/put-css-rules.js',
 	'./p-tile-skin.scss'
-], function ($, color, U, defaults) {
+], function ($, color, U, Bacon, defaults) {
 	'use strict';
 
 
@@ -51,11 +52,10 @@ define([
 		/* when the tile is closed, make the font size dynamic */
 		this.on('size').filter(this.on('open').not()).onValue((size) => {
 			this._p_tileSkin_headerElement // formula gotten experimentally
-					.css('fontSize', Math.min(0.2 * Math.pow(size.height, 1.01), 0.13 * Math.pow(size.width, 1.01))
+					.css('fontSize', Math.min(0.2 * Math.pow(size.height, 1.01), 0.13 * Math.pow(size.width, 1.01)));
 					// We're growing / shrinking the font size in proportion to the (1.01)st power of the tile size.
 					// Making the font grow/shrink just a tiny bit faster than the tile prevents an awkward 'flickering'
 					// between different line-breaks that would otherwise happen sometimes.
-			);
 		});
 
 		/* the 'headerSize' observable */
