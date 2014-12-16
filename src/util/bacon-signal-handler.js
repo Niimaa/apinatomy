@@ -150,6 +150,8 @@ define(['jquery', './misc.js', 'bacon'], function ($, U, Bacon) {
 			/* initial value */
 			if (U.isDefined(initial)) { innerBus.push(initial) }
 
+			return this.property(name);
+
 		},
 
 
