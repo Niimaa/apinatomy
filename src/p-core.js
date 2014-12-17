@@ -23,6 +23,16 @@ define([
 
 				U.getDef(this._p_circuitboardCore_tilesByModelId, tile.model.id, defer).resolve(tile);
 
+			}).add('allTiles', function () {
+
+				var tiles = {};
+
+				Object.keys(this._p_circuitboardCore_tilesByModelId).forEach((id) => {
+					tiles[id] = this._p_circuitboardCore_tilesByModelId[id].promise;
+				});
+
+				return tiles;
+
 			}).add('tile', function (tileSelector) {
 
 				return U.getDef(this._p_circuitboardCore_tilesByModelId, tileSelector, defer).promise;
