@@ -15,7 +15,7 @@ define(['jquery', './p-tile-maximized.scss'], function ($) {
 		this.newProperty('maximized', { initial: false });
 
 		/* enact 'maximized' on the DOM */
-		this.on('maximized', (maximized) => {
+		this.on('maximized').onValue((maximized) => {
 			var tilemap = this.closestAncestorByType('Tilemap');
 			if (maximized) {
 				this.element.addClass('maximized');

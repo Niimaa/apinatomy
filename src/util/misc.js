@@ -1,4 +1,4 @@
-define(['bluebird', 'bacon'], (P) => {
+define(['bluebird'], (P) => {
 	'use strict';
 
 	var U = {

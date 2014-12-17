@@ -1,4 +1,4 @@
-define(['jquery', './p-tile-skin-grow-when-open.scss'], function ($) {
+define(['jquery', './util/bacon-and-eggs.js', './p-tile-skin-grow-when-open.scss'], function ($, Bacon) {
 	'use strict';
 
 
@@ -13,11 +13,11 @@ define(['jquery', './p-tile-skin-grow-when-open.scss'], function ($) {
 	/*  to ensure smooth transition animation      */
 	plugin.insert('construct', function () {
 		var sectionElement = this.element.children('section');
-		this.on('open', (open) => {
+		this.on('open').onValue((open) => {
 			if (open) {
 				setTimeout(() => {
 					sectionElement.css('opacity', 0);
-					this.element.one('transitionend', () => {
+					this.element.asEventStream('transitionend webkitTransitionEnd').merge(Bacon.later(300)).take(1).onValue(() => {
 						sectionElement.css('visibility', 'visible');
 						sectionElement.css('opacity', 1);
 					});

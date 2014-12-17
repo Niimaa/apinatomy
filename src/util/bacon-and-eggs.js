@@ -1,6 +1,9 @@
 'use strict';
 
-define(['jquery', './misc.js', 'bacon', 'tweenjs'], function ($, U, Bacon, TWEEN) {
+define(['jquery', './misc.js', 'baconjs', 'tweenjs'], function ($, U, Bacon, TWEEN) {
+
+	require('bacon.model');
+	require('bacon.jquery');
 
 
 	/* EventStream generators *****************************************************************************************/

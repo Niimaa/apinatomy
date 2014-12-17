@@ -3,8 +3,9 @@ define([
 	'./D3Group.js',
 	'./D3Vertex.js',
 	'./D3Edge.js',
+	'./util/bacon-and-eggs.js',
 	'./p-ppi.scss'
-], function ($, D3Group, D3Vertex, D3Edge) {
+], function ($, D3Group, D3Vertex, D3Edge, Bacon) {
 	'use strict';
 
 
@@ -24,11 +25,12 @@ define([
 			linkDistanceFactor: 0.3
 		});
 
-		((setGraphGroupRegion) => {
-			setGraphGroupRegion();
-			this.on('size', setGraphGroupRegion);
-			this.on('position', setGraphGroupRegion);
-		})(() => {
+
+		Bacon.mergeAll([
+			Bacon.once(),
+			this.on('size').changes(),
+			this.on('position').changes()
+		]).onValue(() => {
 			var AREA_MARGIN = 5;
 			graphGroup.setRegion({
 				top: this.position.top + AREA_MARGIN,

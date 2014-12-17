@@ -19,32 +19,7 @@ define(['jquery', './util/misc.js', 'three-js', './util/bacon-and-eggs.js'], fun
 		/* the 'threeDManualControlsEnabled' property */
 		this.newProperty('threeDManualControlsEnabled', { initial: true });
 
-		this.on('threeDMode', true).onValue(() => {
-
-			/* initialization */
-			//this.camera3D.userData.target = new THREE.Vector3(
-			//		this.camera3D.position.x,
-			//		this.camera3D.position.y,
-			//		0
-			//);
-			//this.camera3D.lookAt(this.camera3D.userData.target);
-			//this._velocity = new THREE.Vector3();
-			//this._lastPosition = new THREE.Vector3();
-			//this._lastPosition.copy(this.camera3D.position);
-			//this._state = STATE.NONE;
-			//this._eye = new THREE.Vector3();
-			//this._eye.subVectors(this.camera3D.position, this.camera3D.userData.target);
-			//this._rotateStart = new THREE.Vector3();
-			//this._rotateEnd = new THREE.Vector3();
-			//this._zoomStart = new THREE.Vector2();
-			//this._zoomEnd = new THREE.Vector2();
-			//this._touchZoomDistanceStart = 0;
-			//this._touchZoomDistanceEnd = 0;
-			//this._panStart = new THREE.Vector2();
-			//this._panEnd = new THREE.Vector2();
-			//this._targetCoordinates0 = this._targetCoordinates.clone();
-			//this._position0 = this.camera3D.position.clone();
-			//this._up0 = this.camera3D.up.clone();
+		this.on('threeDMode').value(true).onValue(() => {
 
 
 			var somethingChanged = false;
@@ -93,12 +68,11 @@ define(['jquery', './util/misc.js', 'three-js', './util/bacon-and-eggs.js'], fun
 
 			/* rotating with the keyboard */
 			this.newProperty('currentArrowKey', {
-				source: keydown.filter(key(37, 40)).flatMapLatest((keydownEvent) => Bacon.mergeAll([
-					Bacon.once(keydownEvent.which),
-					keyup.filter(key(keydownEvent.which)).map(false).take(1)
-				])),
 				initial: false
-			});
+			}).addSource(keydown.filter(key(37, 40)).flatMapLatest((keydownEvent) => Bacon.mergeAll([
+				Bacon.once(keydownEvent.which),
+				keyup.filter(key(keydownEvent.which)).map(false).take(1)
+			])));
 			this.on('currentArrowKey').onValue(() => { somethingChanged = true });
 
 

@@ -2,7 +2,6 @@ define([
 	'jquery',
 	'd3',
 	'./util/misc.js',
-	'bacon',
 	'./util/bacon-and-eggs.js',
 	'./p-d3.scss'
 ], function ($, d3, U, Bacon) {
@@ -106,13 +105,10 @@ define([
 
 		/* a property for which vertex (if any) is being dragged */
 		var currentEventData = () => d3.select(d3.event.sourceEvent.target.parentElement).data()[0];
-		this.newProperty('draggingVertex', {
-			initial: null,
-			source: Bacon.mergeAll(
-					Bacon.fromOnNull(this.d3Force.drag(), 'dragstart').map(currentEventData),
-					Bacon.fromOnNull(this.d3Force.drag(), 'dragend').map(null)
-			)
-		});
+		this.newProperty('draggingVertex', { initial: null }).addSource(Bacon.mergeAll([
+			Bacon.fromOnNull(this.d3Force.drag(), 'dragstart').map(currentEventData),
+			Bacon.fromOnNull(this.d3Force.drag(), 'dragend').map(null)
+		]));
 
 
 		/* the 'd3-tick' event-stream, and performing animation on a tick */

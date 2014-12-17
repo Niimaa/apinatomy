@@ -1,9 +1,0 @@
-{
-  "type": "external-library",
-  "name": "bacon",
-  "dir": "bacon/dist",
-  "file": "Bacon.js"
-  
-      , "var": "Bacon"
-  
-}

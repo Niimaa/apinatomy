@@ -13,7 +13,7 @@ define(['jquery', 'bluebird', './misc.js', './artefact.js'], function ($, P, U, 
 			if (U.isDefined(cssClass)) { this.element.addClass(cssClass) }
 
 			/* if the jquery element is removed, destroy the artefact */
-			this.element.one('remove', () => { this.destroy() });
+			this.element.asEventStream('remove').onValue(() => { this.destroy() });
 
 			/* wait for something before construction (like plugins)? */
 			this.constructed = P.resolve();

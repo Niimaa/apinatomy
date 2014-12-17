@@ -59,16 +59,20 @@ define([
 		});
 
 		/* the 'headerSize' observable */
-		this.newProperty('headerSize'); // TODO: use Bacon way to update this
-		var refreshHeaderSize = () => {
-			this.headerSize = new U.Size(this._p_tileSkin_headerElement.height(), this.size.width);
-		};
-		this.on('size', refreshHeaderSize);
-		this.on('open', refreshHeaderSize);
+		this.newProperty('headerSize', {
+			settable: false,
+			isEqual: U.Size.equals
+		}).addSource(Bacon.mergeAll([
+			Bacon.once(),
+			this.on('size').changes(),
+			this.on('open').changes()
+		]).map(() => new U.Size(this._p_tileSkin_headerElement.height(), this.size.width)));
+
 
 		/* the 'headerPosition' observable */
-		this.newProperty('headerPosition'); // TODO: use Bacon way to update this
-		this.on('position', (position) => { this.headerPosition = position });
+		this.newProperty('headerPosition', {
+			settable: false
+		}).addSource(this.on('position'));
 
 	});
 });

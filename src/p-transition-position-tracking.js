@@ -17,7 +17,7 @@ define([
 	plugin.insert('Tile.prototype.construct', function () {
 
 		this.on('weight').changes().flatMapLatest(
-			() => Bacon.animationFrames().takeUntil(this.element.asEventStream('transitionend webkitTransitionEnd'))
+			() => Bacon.animationFrames().takeUntil(this.element.asEventStream('transitionend webkitTransitionEnd').merge(Bacon.later(300)))
 		).onValue(() => { this.trigger('reset-positioning') });
 
 	});

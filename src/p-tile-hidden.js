@@ -10,11 +10,13 @@ define(['jquery', './p-tile-hidden.scss'], function ($) {
 	plugin.insert('construct', function () {
 
 		/* the 'visible' and 'hidden' properties */
-		this.newProperty('visible', { observable: this.property('hidden').not(),  initial: true  });
-		this.newProperty('hidden',  { observable: this.property('visible').not(), initial: false });
+		this.newProperty('visible', { initial: true });
+		this.newProperty('hidden');
+		this.p('visible').addSource(this.property('hidden').not());
+		this.p('hidden').addSource(this.property('visible').not());
 
 		/* enact tile hiding on the DOM */
-		this.on('hidden', (hidden) => {
+		this.on('hidden').onValue((hidden) => {
 			this.open = false;
 			if (hidden) {
 				this.element.addClass('hidden');
@@ -26,11 +28,11 @@ define(['jquery', './p-tile-hidden.scss'], function ($) {
 		});
 
 		/* when the tile is destroyed, it is also hidden */
-		this.one('destroy', () => { this.hidden = true });
+		this.on('destroy').take(1).onValue(() => { this.hidden = true });
 
 		/* when the parent tile is closed, this tile is hidden */
 		var parentTile = this.closestAncestorByType('Tile');
-		if (parentTile) { parentTile.on('open', (open) => { this.hidden = !open }) }
+		if (parentTile) { parentTile.on('open').onValue((open) => { this.hidden = !open }) }
 
 	});
 });

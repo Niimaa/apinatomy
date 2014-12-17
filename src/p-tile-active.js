@@ -26,14 +26,14 @@ define(['jquery', './util/misc.js'], function ($, U) {
 		/* put this tile in the queue of potentially active tiles */
 		U.array(this.model, '_p_amyActiveTileQueue').push(this);
 		_activateProperTile();
-		this.one('destroy', () => {
+		this.on('destroy').take(1).onValue(() => {
 			var index = this.model._p_amyActiveTileQueue.indexOf(this);
 			this.model._p_amyActiveTileQueue.splice(index, 1);
 			_activateProperTile();
 		});
 
-		/* make the 'active' property available */
-		this.on('active', true, () => {
+		/* make setting the 'active' property affect the tile queue on the model */
+		this.on('active').value(true).onValue(() => {
 			var index = this.model._p_amyActiveTileQueue.indexOf(this);
 			if (index !== 0) {
 				this.model._p_amyActiveTileQueue.splice(index, 1);

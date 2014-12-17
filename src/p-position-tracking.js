@@ -1,4 +1,4 @@
-define(['jquery', './util/misc.js', 'bacon'], function ($, U, Bacon) {
+define(['jquery', './util/misc.js', './util/bacon-and-eggs.js'], function ($, U, Bacon) {
 	'use strict';
 
 
@@ -54,41 +54,41 @@ define(['jquery', './util/misc.js', 'bacon'], function ($, U, Bacon) {
 	plugin.insert('Circuitboard.prototype.construct', function () {
 
 		this.newProperty('offset', {
-			source: Bacon.mergeAll([
-				Bacon.once(),
-				Bacon.interval(1000)
-				// TODO: allow outside stream to trigger this
-			]).flatMapLatest(catchUp).limitedBy(this._p_posTracking_limiter).map(() => this.element.offset()),
+			settable: false,
 			isEqual: U.Position.equals,
 			initial: this.element.offset()
-		});
+		}).addSource(Bacon.mergeAll([
+			Bacon.once(),
+			Bacon.interval(1000)
+			// TODO: allow outside stream to trigger this
+		]).flatMapLatest(catchUp).limitedBy(this._p_posTracking_limiter).map(() => this.element.offset()));
 
 	}).insert('Tilemap.prototype.construct', function () {
 
 		this.newProperty('offset', {
-			source: Bacon.mergeAll([
-				Bacon.once(),
-				this.parent.on('size').changes(),
-				this.parent.on('offset').changes()
-			]).flatMapLatest(catchUp).limitedBy(this.circuitboard._p_posTracking_limiter).map(() => this.element.offset()),
+			settable: false,
 			isEqual: U.Position.equals,
 			initial: this.element.offset()
-		});
+		}).addSource(Bacon.mergeAll([
+			Bacon.once(),
+			this.parent.on('size').changes(),
+			this.parent.on('offset').changes()
+		]).flatMapLatest(catchUp).limitedBy(this.circuitboard._p_posTracking_limiter).map(() => this.element.offset()));
 
 	}).insert('Tile.prototype.construct', function () {
 
 		this.newProperty('offset', {
-			source: Bacon.mergeAll([
-				Bacon.once(),
-				this.parent.on('size').changes(),
-				this.parent.on('offset').changes(),
-				this.parent.on('reorganize'),
-				this.on('weight').changes(),
-				this.on('reset-positioning')
-			]).flatMapLatest(catchUp).limitedBy(this.circuitboard._p_posTracking_limiter).map(() => this.element.offset()),
+			settable: false,
 			isEqual: U.Position.equals,
 			initial: this.element.offset()
-		});
+		}).addSource(Bacon.mergeAll([
+			Bacon.once(),
+			this.parent.on('size').changes(),
+			this.parent.on('offset').changes(),
+			this.parent.on('reorganize'),
+			this.on('weight').changes(),
+			this.on('reset-positioning')
+		]).flatMapLatest(catchUp).limitedBy(this.circuitboard._p_posTracking_limiter).map(() => this.element.offset()));
 
 	});
 
@@ -96,33 +96,33 @@ define(['jquery', './util/misc.js', 'bacon'], function ($, U, Bacon) {
 	/* the 'position' observable */
 	plugin.insert('Circuitboard.prototype.construct', function () {
 
-		// for completeness sake; it's (0, 0) by definition
+		/* for completeness sake; it's (0, 0) by definition */
 		this.newProperty('position', {
-			source: Bacon.constant(new U.Position(0, 0)),
-			isEqual: U.Position.equals
+			settable: false,
+			initial: new U.Position(0, 0)
 		});
 
 	}).insert('Tilemap.prototype.construct', function () {
 
 		this.newProperty('position', {
-			source: Bacon.mergeAll([
-				Bacon.once(),
-				this.on('offset').changes(),
-				this.circuitboard.on('offset').changes()
-			]).flatMapLatest(catchUp).map(() => U.Position.subtract(this.offset, this.circuitboard.offset)),
+			settable: false,
 			isEqual: U.Position.equals
-		});
+		}).addSource(Bacon.mergeAll([
+			Bacon.once(),
+			this.on('offset').changes(),
+			this.circuitboard.on('offset').changes()
+		]).flatMapLatest(catchUp).map(() => U.Position.subtract(this.offset, this.circuitboard.offset)));
 
 	}).insert('Tile.prototype.construct', function () {
 
 		this.newProperty('position', {
-			source: Bacon.mergeAll([
-				Bacon.once(),
-				this.on('offset').changes(),
-				this.circuitboard.on('offset').changes()
-			]).flatMapLatest(catchUp).map(() => U.Position.subtract(this.offset, this.circuitboard.offset)),
+			settable: false,
 			isEqual: U.Position.equals
-		});
+		}).addSource(Bacon.mergeAll([
+			Bacon.once(),
+			this.on('offset').changes(),
+			this.circuitboard.on('offset').changes()
+		]).flatMapLatest(catchUp).map(() => U.Position.subtract(this.offset, this.circuitboard.offset)));
 
 	});
 
@@ -131,35 +131,35 @@ define(['jquery', './util/misc.js', 'bacon'], function ($, U, Bacon) {
 	plugin.insert('Circuitboard.prototype.construct', function () {
 
 		this.newProperty('size', {
-			source: Bacon.mergeAll([
-				Bacon.once(),
-				this.options.resizeEvent || $(window).asEventStream('resize')
-			]).flatMapLatest(catchUp).map(() => new U.Size(this.element.height(), this.element.width())),
+			settable: false,
 			isEqual: U.Size.equals
-		});
+		}).addSource(Bacon.mergeAll([
+			Bacon.once(),
+			this.options.resizeEvent || $(window).asEventStream('resize')
+		]).flatMapLatest(catchUp).map(() => new U.Size(this.element.height(), this.element.width())));
 
 	}).insert('Tilemap.prototype.construct', function () {
 
 		this.newProperty('size', {
-			source: Bacon.mergeAll([
-				Bacon.once(),
-				this.parent.on('size').changes()
-			]).flatMapLatest(catchUp).map(() => new U.Size(this.element.height(), this.element.width())),
+			settable: false,
 			isEqual: U.Size.equals
-		});
+		}).addSource(Bacon.mergeAll([
+			Bacon.once(),
+			this.parent.on('size').changes()
+		]).flatMapLatest(catchUp).map(() => new U.Size(this.element.height(), this.element.width())));
 
 	}).insert('Tile.prototype.construct', function () {
 
 		this.newProperty('size', {
-			source: Bacon.mergeAll([
-				Bacon.once(),
-				this.on('weight').changes(),
-				this.parent.on('size').changes(),
-				this.parent.on('reorganize'),
-				this.on('reset-positioning')
-			]).flatMapLatest(catchUp).map(() => new U.Size(this.element.height(), this.element.width())),
+			settable: false,
 			isEqual: U.Size.equals
-		});
+		}).addSource(Bacon.mergeAll([
+			Bacon.once(),
+			this.on('weight').changes(),
+			this.parent.on('size').changes(),
+			this.parent.on('reorganize'),
+			this.on('reset-positioning')
+		]).flatMapLatest(catchUp).map(() => new U.Size(this.element.height(), this.element.width())));
 
 	});
 

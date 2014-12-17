@@ -8,7 +8,8 @@ requirejs.config({
 		'bluebird':  '../../bower_components/bluebird/js/browser/bluebird',
 		'chroma-js': '../../bower_components/chroma-js/chroma',
 		'd3':        '../../bower_components/d3/d3',
-		'three-js':  '../../bower_components/three.js/three'
+		'three-js':  '../../bower_components/three.js/three',
+		'baconjs':   '../../bower_components/bacon/dist/Bacon.js'
 	},
 	shim: {
 		'jquery':   { exports: 'jQuery' },

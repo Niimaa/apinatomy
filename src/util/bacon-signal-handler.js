@@ -1,6 +1,6 @@
 'use strict';
 
-define(['jquery', './misc.js', 'bacon'], function ($, U, Bacon) {
+define(['jquery', './misc.js', './bacon-and-eggs.js'], function ($, U, Bacon) {
 
 
 	/** {@export}{@class BaconSignalHandler}
@@ -25,6 +25,7 @@ define(['jquery', './misc.js', 'bacon'], function ($, U, Bacon) {
 		 * @return {Bacon.Bus} - the created event stream
 		 */
 		newEvent(name, {source} = {}) {
+
 			/* is the event name already taken? */
 			U.assert(!this._events[name],
 					`There is already an event '${name}' on this object.`);
@@ -35,6 +36,7 @@ define(['jquery', './misc.js', 'bacon'], function ($, U, Bacon) {
 			var bus = new Bacon.Bus();
 			if (source) { bus.plug(source) }
 			return this._events[name] = bus.name(name);
+
 		},
 
 
@@ -46,111 +48,61 @@ define(['jquery', './misc.js', 'bacon'], function ($, U, Bacon) {
 		 * @return {Bacon.EventStream} - the event stream associated with the given name
 		 */
 		event(name) {
+
 			/* does the event exist? */
 			U.assert(this._events[name],
 					`There is no event '${name}' on this object.`);
 
 			/* return it */
 			return this._events[name];
+
 		},
 
 
 		/** {@public}{@method}
-		 * This method lazily creates and returns this property, with
-		 * an empty {Bacon.Bus} at the base. This allows a property to be referenced
-		 * before it is defined:
+		 * Retrieve a property by name.
 		 *
-		 *          ╔═════╗   ┌───────────────┐   ┌───────────────┐
-		 *    ⋯ ⸩───╢ Bus ╟───┤ .toProperty() ├───┤ .name( name ) │
-		 *          ╚═════╝   └───────────────┘   └───────────────┘
-		 *
-		 * @param  {String}    name - the name of the event stream to retrieve
-		 * @return {Bacon.Property} - the property associated with the given name
+		 * @param  {String} name - the name of the property to retrieve
+		 * @return {Bacon.Model} - the property associated with the given name
 		 */
-		property(name) {
-			/* if it doesn't exist */
-			if (!this._properties[name]) {
-				/* create it now */
-				this._propertyBusses[name] = new Bacon.Bus();
-				this._properties[name] = this._propertyBusses[name].toProperty().name(name);
+		property(name) { return this._properties[name] },
 
-				/* allow modifiers to be added to the stream */ // TODO: test
-				this._properties[name].appendModifier = function (modifier, ...args) {
-					this._properties[name] = this._properties[name][modifier].apply(this._properties[name], args);
-				};
-			}
-
-
-			/* return it */
-			return this._properties[name];
-		},
+		/** @alias property */
+		p(name) { return this._properties[name] },
 
 
 		/** {@public}{@method}
-		 * This method actually defines a property by backing
-		 * `property(name)` bus above with the following construction:
-		 *
-		 *                                ╭┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈╮
-		 *                            ╭┈┈┈┤ .push( initial ) ┊
-		 *                            ┊?  ╰┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈╯
-		 *   ╔════════════╗        ╔══╧══╗        ┌────────────────────────────┐
-		 *   ║ observable ╟───◯⸩───╢ Bus ╟────────┤ .skipDuplicates( isEqual ) ├───◯ ⋯
-		 *   ╚════════════╝        ╚══╤══╝        └────────────────────────────┘
-		 *                            ┊*  ╭┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈╮
-		 *                            ╰┈┈┈┤ .push( newValue ) ┊
-		 *                                ╰┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈╯
+		 * This method defines a new property on this object.
 		 *
 		 * @param  {String}                   name           - the name of the event stream to retrieve
-		 * @param  {Bacon.Observable}        [source]        - a source stream to automatically set this property
-		 * @param  {Boolean}                 [settable=true] - whether the value can be manually set (if `source` is given, defaults to false)
+		 * @param  {Boolean}                 [settable=true] - whether the value can be manually set
 		 * @param  {*}                       [initial]       - the initial value of this property
 		 * @param  {function(*,*):Boolean}   [isEqual]       - a predicate function by which to test for duplicate values
 		 *
-		 * @return {Bacon.Property} - the event stream associated with the given name
+		 * @return {Bacon.Model} - the property associated with the given name
 		 */
-		newProperty(name, {source, settable, initial, isEqual} = {}) {
+		newProperty(name, {settable, initial, isEqual} = {}) {
 
 			/* is the property name already taken? */
 			U.assert(!this._events[name],
 					`There is already an event '${name}' on this object.`);
-			U.assert(!this._properties[name] || !this._properties[name]._amy_plugged,
+			U.assert(!this._properties[name],
 					`There is already a property '${name}' on this object.`);
 
-			/* initialize the public property and outer bus, and mark it as plugged */
-			this.property(name)._amy_plugged = true;
+			/* default value for 'settable' */
+			if (U.isUndefined(settable)) { settable = true }
 
-			/* internal bus, acting as a hub for all new values */
-			var innerBus = new Bacon.Bus();
+			/* define the Bacon.Model which stores the property */
+			var property = this._properties[name] = new Bacon.Model(initial, { equals: isEqual });
 
-			/* if a source is given, plug it in; if not, the property becomes manually settable by default */
-			if (source) {
-				innerBus.plug(source);
-			} else if (settable !== false) {
-				settable = true;
-			}
-
-			/* caching the current value */
-			var value;
-
-			/* add the property to the object interface, writable through the internal bus */
-			Object.defineProperty(this, name, settable ? {
-				get() { return value },
-				set(newValue) { innerBus.push(newValue) }
-			} : {
-				get() { return value }
+			/* add the property to the object interface */
+			Object.defineProperty(this, name, {
+				get() { return property.get() },
+				set: settable ? function (v) { property.set(v) } : undefined
 			});
 
-			/* finish up the property for public consumption */
-			var innerProperty = innerBus.skipDuplicates(isEqual);
-			this._propertyBusses[name].plug(innerProperty);
-
-			/* keep our value in sync with the stream */
-			this.property(name).onValue((v) => { value = v });
-
-			/* initial value */
-			if (U.isDefined(initial)) { innerBus.push(initial) }
-
-			return this.property(name);
+			/* return the property */
+			return property;
 
 		},
 
@@ -162,11 +114,14 @@ define(['jquery', './misc.js', 'bacon'], function ($, U, Bacon) {
 		 * @value {*}      value - the value to attach to the event
 		 */
 		trigger(name, value) {
+
 			/* does the event stream exist? */
 			U.assert(this._events[name],
 					`There is no event '${name}' on this object.`);
+
 			/* push the value to the stream */
 			this._events[name].push(value);
+
 		},
 
 
@@ -176,16 +131,16 @@ define(['jquery', './misc.js', 'bacon'], function ($, U, Bacon) {
 		 * on whether a callback is provided.
 		 *
 		 *
-		 * @param {String}            name                - the name of the event or property to subscribe to
-		 * @param {*}                [expectedValue]      - if provided, filters the stream by === equality with this value;
-		 *                                                  this may not be a plain object
-		 * @param {Object}           [options]            - a plain object for providing additional options
-		 * @param {Boolean}          [options.once=false] - whether the stream ends after one event
-		 * @param {function(*):void} [callback]           - if provided, subscribes to this stream with the this callback
+		 * @param {String}            name                 - the name of the event or property to subscribe to
+		 * @param {*}                [expectedValue]       - if provided, filters the stream by === equality with this value;
+		 *                                                   this may not be a plain object
+		 * @param {Object}           [options]             - a plain object for providing additional options
+		 * @param {Boolean}          [options.once=false]  - whether the stream ends after one event
+		 * @param {function(*):void} [callback]            - if provided, subscribes to this stream with the this callback
 		 *
-		 * @return {Bacon.Observable|function():void} - if no `callback` is provided, the specified event stream
-		 *                                              or property; otherwise, a function to unsubscribe to said
-		 *                                              stream or property
+		 * @return {Bacon.Observable|function():undefined} - if no `callback` is provided, the specified event stream
+		 *                                                   or property; otherwise, a function to unsubscribe to said
+		 *                                                   stream or property
 		 */
 		on(name, expectedValue, options, callback) {
 			var argsObj = this._gatherOnArguments(name, expectedValue, options, callback);

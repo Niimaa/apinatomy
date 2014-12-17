@@ -14,8 +14,10 @@ define([
 		this.newProperty('y', { initial: 10 });
 
 		/* the 'visible' and 'hidden' properties */
-		this.newProperty('visible', { source: this.property('hidden').not(),  initial:  visible, settable: true });
-		this.newProperty('hidden',  { source: this.property('visible').not(), initial: !visible, settable: true });
+		this.newProperty('visible', { initial: true });
+		this.newProperty('hidden');
+		this.p('visible').addSource(this.property('hidden').not());
+		this.p('hidden').addSource(this.property('visible').not());
 
 		/* enact vertex hiding on the DOM */
 		this.on('hidden').assign(this.element, 'toggleClass', 'hidden');

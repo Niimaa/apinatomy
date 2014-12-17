@@ -60,15 +60,13 @@ define([
 
 
 		/* the 'threeDCanvasSize' observable */
-		this.newProperty('threeDCanvasSize', {
-			source: Bacon.mergeAll([
-				Bacon.once(),
-				( this.options.canvasResizeEvent || $(window).asEventStream('resize') )
-			]).map(() => this.threeDCanvasElement && new U.Size(
-					this.threeDCanvasElement.height(),
-					this.threeDCanvasElement.width()
-			))
-		});
+		this.newProperty('threeDCanvasSize').addSource(Bacon.mergeAll([
+			Bacon.once(),
+			( this.options.canvasResizeEvent || $(window).asEventStream('resize') )
+		]).map(() => this.threeDCanvasElement && new U.Size(
+				this.threeDCanvasElement.height(),
+				this.threeDCanvasElement.width()
+		)));
 
 
 	});
@@ -78,7 +76,7 @@ define([
 
 		this.newEvent('3d-render');
 
-		this.on('threeDMode', true).onValue(() => {
+		this.on('threeDMode').value(true).onValue(() => {
 
 
 			// TODO: fix bug: when 3D mode is turned off, then on, tiles no longer respond to clicks
@@ -262,7 +260,7 @@ define([
 
 	/* artefact-specific object3D objects */
 	plugin.insert('Tile.prototype.construct', function () {
-		this.circuitboard.on('threeDMode', true).onValue(() => {
+		this.circuitboard.on('threeDMode').value(true).onValue(() => {
 
 			/* create the 3D object for this tile */
 			this.object3D = new THREE.Object3D();
