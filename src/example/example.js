@@ -73,7 +73,7 @@ require([
 		'tile-middleclick-to-maximize',
 		'tile-spacing',
 		'tile-active',
-		'ppi',
+		//'ppi',
 		'three-d',
 		'three-d-manual-controls'
 		//'three-d-auto-controls',
