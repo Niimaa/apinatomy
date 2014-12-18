@@ -97,8 +97,8 @@ define(['jquery', './misc.js', './bacon-and-eggs.js'], function ($, U, Bacon) {
 
 			/* add the property to the object interface */
 			Object.defineProperty(this, name, {
-				get() { return property.get() },
-				set: settable ? function (v) { property.set(v) } : undefined
+				get: property.get,
+				set: settable ? property.set : undefined
 			});
 
 			/* return the property */
