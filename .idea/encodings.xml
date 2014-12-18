@@ -38,7 +38,6 @@
     <file url="file://$PROJECT_DIR$/src/p-tile-spacing.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/p-tile-weight.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/p-transition-position-tracking.js" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/util/Snapshot.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/util/artefact.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/util/defaults.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/util/defer.js" charset="UTF-8" />

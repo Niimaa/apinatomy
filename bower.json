@@ -24,7 +24,7 @@
     "bacon": "~0.7.37",
     "bacon.jquery": "~0.4.11",
     "tweenjs": "*",
-    "bacon.model": "~0.1.12"
+    "bacon.model": "mhelvens/bacon.model#master"
   },
   "devDependencies": {
     "requirejs-domready": "~2.0.1",

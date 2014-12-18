@@ -93,7 +93,7 @@ define(['jquery', './misc.js', './bacon-and-eggs.js'], function ($, U, Bacon) {
 			if (U.isUndefined(settable)) { settable = true }
 
 			/* define the Bacon.Model which stores the property */
-			var property = this._properties[name] = new Bacon.Model(initial, { equals: isEqual });
+			var property = this._properties[name] = new Bacon.Model(initial, { isEqual });
 
 			/* add the property to the object interface */
 			Object.defineProperty(this, name, {

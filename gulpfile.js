@@ -28,8 +28,7 @@ var WEBPACK_ALIAS = {
 	'three-js': 'three.js/three.js',
 	'lodash': 'lodash/dist/lodash.js',
 	'delta-js': 'delta.js/dist/delta.min.js',
-	'baconjs': 'bacon/dist/Bacon.js',
-	'bacon.model': 'bacon.model.PATCHED/dist/bacon.model.js'
+	'baconjs': 'bacon/dist/Bacon.js'
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -64,7 +63,7 @@ fs.readdirSync('./modules')
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 gulp.task('lint', function () {
-	return gulp.src('src/**/*.js')
+	return gulp.src(['src/**/*.js', '!src/util/bacon.model.PATCHED.js'])
 			.pipe(jshint())
 			.pipe(jshint.reporter('jshint-stylish'))
 			.pipe(jshint.reporter('fail'));
