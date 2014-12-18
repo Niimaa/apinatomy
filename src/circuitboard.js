@@ -1,4 +1,10 @@
-define(['jquery', 'bluebird', './util/widget.js', './util/misc.js', './util/main-delta-model.js' ], function ($, P, amyWidget, U, dm) {
+define([
+	'jquery',
+	'bluebird',
+	'./util/widget.js',
+	'./util/misc.js',
+	'./util/main-delta-model.js'
+], function ($, P, newWidgetType, U, dm) {
 	'use strict';
 
 
@@ -19,30 +25,34 @@ define(['jquery', 'bluebird', './util/widget.js', './util/misc.js', './util/main
 
 	/* to define the widget classes after the proper plugins have been selected */
 	function defineWidgetClasses() {
-		$.circuitboard.Circuitboard = amyWidget('Circuitboard', {
-			cssClass: "circuitboard",
-			filter: ()=>P.resolve(true)
-		});
 
-		$.circuitboard.Tilemap = amyWidget('Tilemap', {
-			cssClass: "tilemap"
-		});
+		$.circuitboard.Circuitboard =
+				newWidgetType('Circuitboard', {
+					cssClass: "circuitboard",
+					filter: () => P.resolve(true) // don't hide any entities
+				});
 
-		$.circuitboard.Tile = amyWidget('Tile', {
-			cssClass: 'tile'
-		});
+		$.circuitboard.Tilemap =
+				newWidgetType('Tilemap', {
+					cssClass: "tilemap"
+				});
+
+		$.circuitboard.Tile =
+				newWidgetType('Tile', {
+					cssClass: 'tile'
+				});
+
 	}
 
 
-	/* for getting the plugin graph */
+	/* for retrieval of certain objects */
 	$.circuitboard.plugin.graph = () => dm.graph();
-
-	/* for getting the main delta model */
 	$.circuitboard.plugin.dm = dm;
 
 
 	/*  return the static `$.circuitboard` object,         */
 	/*  through which plugins can be applied and selected  */
 	return $.circuitboard;
+
 
 });

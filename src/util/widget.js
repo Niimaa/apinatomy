@@ -4,46 +4,31 @@ define(['jquery', 'bluebird', './misc.js', './artefact.js'], function ($, P, U, 
 
 	/*  a function to create an apinatomy component (widget)          */
 	/*  as a jQuery element plugin; this is returned from the module  */
-	function amyWidget(typeName, optionDefaults) {
+	function newWidgetType(typeName, optionDefaults) {
 
 		/* the specific widget class */
 		var Widget = Artefact.newSubclass(typeName, function Widget({cssClass}) {
 
-			/* set the element class */
+			/* set the element CSS class */
 			if (U.isDefined(cssClass)) { this.element.addClass(cssClass) }
 
 			/* if the jquery element is removed, destroy the artefact */
 			this.element.asEventStream('remove').onValue(() => { this.destroy() });
 
-			/* wait for something before construction (like plugins)? */
-			this.constructed = P.resolve();
-			this.beforeConstruction(this.options.beforeConstruction);
-
-			/*  if present, run the construct method after    */
-			/* `this.options.beforeConstruction` is finished  */
-			/*  and then wait on it                           */
-			this.constructed.then(() => {
-				if ($.isFunction(this.construct)) {
-					this.beforeConstruction(this.construct());
-				}
-			});
-
 		}, {
 
 			get model() { return this.options.model },
 
-			get element() { return this.options.element },
+			get element() { return this.options.element }
 
-			beforeConstruction(possiblePromise) {
-				this.constructed = this.constructed
-						.return(P.resolve(possiblePromise))
-						.return(this);
-			}
+		}, U.extend({
+			beforeConstruction: P.resolve() // guarantee all widget construction to be asynchronous
+		}, optionDefaults));
 
-		}, optionDefaults);
-
-		/* now define the widget creation & retrieval function as a jQuery plugin */
+		/* create a lowercase name for this widget type */
 		var lowercaseName = typeName[0].toLowerCase() + typeName.slice(1);
+
+		/* jQuery plugin: the widget creation & retrieval function  */
 		$.fn[lowercaseName] = function (options) {
 
 			/* if the word 'instance' is passed, return the (already created) widget promise */
@@ -63,6 +48,9 @@ define(['jquery', 'bluebird', './misc.js', './artefact.js'], function ($, P, U, 
 
 	}
 
-	return amyWidget;
+
+	/* expose the widget class creator function */
+	return newWidgetType;
+
 
 });
