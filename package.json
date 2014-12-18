@@ -17,7 +17,8 @@
     "bluebird": "^2.3.6",
     "bower": "^1.3.10",
     "css-loader": "^0.8.0",
-    "generator-mhelvens-library": "^0.2.0",
+    "expose-loader": "^0.6.0",
+    "generator-mhelvens-library": "^0.6.0",
     "gulp": "^3.8.7",
     "gulp-bump": "^0.1.11",
     "gulp-jshint": "^1.8.4",
@@ -40,7 +41,7 @@
     "sass-loader": "^0.2.0",
     "source-map-loader": "^0.1.3",
     "style-loader": "^0.8.0",
-    "traceur": "^0.0.66",
+    "traceur-loader": "^0.6.3",
     "webpack": "^1.4.0-beta8"
   },
   "keywords": [

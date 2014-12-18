@@ -1,6 +1,0 @@
-{
-    "type": "external-library",
-	"external": true,
-	"name": "delta-js",
-	"var": "DeltaModel"
-}
