@@ -68,6 +68,7 @@ EXTERNAL_LIBRARIES.forEach(function (mod) {
 
 /* if the external module file is not enough, overwriting aliases can be set up */
 fs.readdirSync('./build-config/aliases')
+		.filter(function (filename) { return filename !== '.gitignore' })
 		.map(function (filename) { return fs.readFileSync('./build-config/aliases/'+filename) })
 		.map(JSON.parse)
 		.forEach(function (alias) {
