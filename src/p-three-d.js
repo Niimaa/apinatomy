@@ -194,16 +194,12 @@ define([
 				/*  the object containing all 3D things co-located with the circuitboard */
 				this.object3D = new THREE.Object3D();
 				this._p_threeD_scene.add(this.object3D);
-				//this.object3D.rotation.x = Math.PI; // 180° // TODO: does this work?
-				this.on('size').takeWhile(this.on('threeDMode')).onValue((size) => {
-					this.object3D.position.x = -size.width / 2 + 1;
-					this.object3D.position.y = -size.height / 2 + 1;
-				});
-				this.on('threeDCanvasSize').takeWhile(this.on('threeDMode')).onValue(() => {
-					U.extend(this.object3D.position, {
-						x: 0.5 * (margin0.left - margin0.right) - this.size.width / 2,
-						y: 0.5 * (margin0.bottom - margin0.top) + this.size.height / 2
-					});
+				Bacon.mergeAll([
+					this.on('threeDCanvasSize'),
+					this.on('size')
+				]).takeWhile(this.on('threeDMode')).onValue(() => {
+					this.object3D.position.x = 0.5 * (margin0.left - margin0.right) - this.size.width  / 2 + 1;
+					this.object3D.position.y = 0.5 * (margin0.bottom - margin0.top) - this.size.height / 2 + 1;
 				});
 
 
@@ -269,7 +265,7 @@ define([
 			/* position it always in the center of the tile */
 			Bacon.mergeAll(this.on('position'), this.on('size')).onValue(() => {
 				this.object3D.position.x = this.position.left + this.size.width / 2;
-				this.object3D.position.y = this.circuitboard.threeDCanvasSize.height -this.position.top - this.size.height / 2;
+				this.object3D.position.y = this.circuitboard.threeDCanvasSize.height - this.position.top - this.size.height / 2;
 			});
 
 			/* hide it when the tile is hidden */

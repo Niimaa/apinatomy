@@ -28,6 +28,7 @@ require('../p-ppi.js');
 require('../p-three-d.js');
 require('../p-three-d-geometric-models.js');
 require('../p-three-d-geometric-models-stl.js');
+require('../p-three-d-geometric-models-obj.js');
 require('../p-d3-three-d.js');
 require('../p-three-d-manual-controls.js');
 require('../p-three-d-auto-controls.js');
@@ -41,12 +42,11 @@ circuitboard.plugin([
 	'tile-middleclick-to-maximize',
 	'tile-spacing',
 	'tile-active',
-	//'ppi',
 	'three-d',
-	'three-d-manual-controls'
-	//'three-d-auto-controls',
-	//'three-d-geometric-models',
-	//'three-d-geometric-models-stl'
+	'three-d-manual-controls',
+	'three-d-auto-controls',
+	'three-d-geometric-models',
+	'three-d-geometric-models-obj'
 ]);
 
 
@@ -58,7 +58,12 @@ $(document).ready(() => {
 		tileSpacing: 1,
 		tilemapMargin: 0,
 		weightWhenOpen: 8,
-		threeDCanvasElement: $('#three-d-canvas')
+		threeDCanvasElement: $('#three-d-canvas'),
+		threeDModels: {
+
+			'fma:7148': [ require('./3d-models/FMA7148_Stomach.obj') ]
+
+		}
 	}).circuitboard('instance').then(function (circuitboard) {
 
 		console.info('circuitboard loaded');
