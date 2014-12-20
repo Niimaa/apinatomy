@@ -113,7 +113,7 @@ define([
 
 
 			/* renderers */
-			(()=>{
+			(()=> {
 				/* WebGL renderer */
 				var webglRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
 				webglRenderer.sortObjects = false;
@@ -165,23 +165,40 @@ define([
 					});
 				});
 
-
-				/* its backface */
-				var threeDBackface = new THREE.CSS3DObject($('<div>').css({
-					position: 'absolute',
-					border: 'solid 1px black',
-					backfaceVisibility: 'hidden',
-					left: 0, top: 0, bottom: 0, right: 0
-				})[0]);
-				threeDBackface.rotation.x = Math.PI; // 180°
-				this._p_threeD_scene.add(threeDBackface);
+				/* webGL stand-in for the circuitboard */
+				var threeDCircuitboardMesh = new THREE.Mesh(
+						new THREE.PlaneBufferGeometry(1, 1),
+						new THREE.MeshBasicMaterial({
+							color: 'black',
+							opacity: 0,
+							blending: THREE.NoBlending
+						})
+				);
+				this._p_threeD_scene.add(threeDCircuitboardMesh);
 				this.on('threeDCanvasSize').takeWhile(this.on('threeDMode')).onValue((canvasSize) => {
-					$(threeDBackface.element).css({
-						width: canvasSize.width - margin0.left - margin0.right,
-						height: canvasSize.height - margin0.top - margin0.bottom
-					});
+					threeDCircuitboardMesh.scale.x = canvasSize.width - margin0.left - margin0.right;
+					threeDCircuitboardMesh.scale.y = canvasSize.height - margin0.top - margin0.bottom;
 				});
 
+				/* its backface */
+				var backfaceGeometry = new THREE.Geometry();
+				backfaceGeometry.vertices.push(
+					new THREE.Vector3(-0.5, -0.5, 0),
+					new THREE.Vector3( 0.5, -0.5, 0),
+					new THREE.Vector3( 0.5,  0.5, 0),
+					new THREE.Vector3(-0.5,  0.5, 0),
+					new THREE.Vector3(-0.5, -0.5, 0)
+				);
+				var backface = new THREE.Line(
+						backfaceGeometry,
+						new THREE.LineBasicMaterial({ color: 'black' })
+				);
+				backface.z -= 1;
+				this._p_threeD_scene.add(backface);
+				this.on('threeDCanvasSize').takeWhile(this.on('threeDMode')).onValue((canvasSize) => {
+					backface.scale.x = canvasSize.width - margin0.left - margin0.right - 2;
+					backface.scale.y = canvasSize.height - margin0.top - margin0.bottom - 2;
+				});
 
 				/*  the object containing all 3D things co-located with the circuitboard */
 				this.object3D = new THREE.Object3D();
@@ -190,7 +207,7 @@ define([
 					this.on('threeDCanvasSize'),
 					this.on('size')
 				]).takeWhile(this.on('threeDMode')).onValue(() => {
-					this.object3D.position.x = 0.5 * (margin0.left - margin0.right) - this.size.width  / 2 + 1;
+					this.object3D.position.x = 0.5 * (margin0.left - margin0.right) - this.size.width / 2 + 1;
 					this.object3D.position.y = 0.5 * (margin0.bottom - margin0.top) - this.size.height / 2 + 1;
 				});
 
@@ -204,14 +221,12 @@ define([
 					bottom: this.element.css('bottom')
 				},
 				margin0: {
-					left:   this.offset.left - this.threeDCanvasElement.offset().left,
-					top:    this.offset.top  - this.threeDCanvasElement.offset().top,
-					right:  this.threeDCanvasSize.width  - this.size.width  - (this.offset.left - this.threeDCanvasElement.offset().left),
-					bottom: this.threeDCanvasSize.height - this.size.height - (this.offset.top  - this.threeDCanvasElement.offset().top)
+					left: this.offset.left - this.threeDCanvasElement.offset().left,
+					top: this.offset.top - this.threeDCanvasElement.offset().top,
+					right: this.threeDCanvasSize.width - this.size.width - (this.offset.left - this.threeDCanvasElement.offset().left),
+					bottom: this.threeDCanvasSize.height - this.size.height - (this.offset.top - this.threeDCanvasElement.offset().top)
 				}
 			});
-
-
 
 
 		});
