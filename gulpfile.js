@@ -57,6 +57,7 @@ fs.readdirSync('./build-config/auto-loaders')
 			AUTO_LOADERS.push(loader);
 		});
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -74,6 +75,7 @@ fs.readdirSync('./build-config/aliases')
 		.forEach(function (alias) {
 			WEBPACK_ALIAS[alias.from] = alias.to;
 		});
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -185,6 +187,17 @@ gulp.task('watch', function () {
 		'src/**/*.css',
 		'src/**/*.html'
 	], ['lint', 'build', 'test']);
+});
+
+APPLICATIONS.forEach(function (m) {
+	gulp.task('watch:' + m.name, function () {
+		gulp.watch([
+			'src/**/*.js',
+			'src/**/*.scss',
+			'src/**/*.css',
+			'src/**/*.html'
+		], ['lint', 'build:' + m.name]);
+	});
 });
 
 
