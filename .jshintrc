@@ -21,5 +21,7 @@
 	"forin":     true,
 	"evil":      true,
 
+    "debug":     true,
+
 	"predef": [ "requirejs", "define", "describe", "beforeEach", "it", "expect" ]
 }
