@@ -11,7 +11,7 @@ define([
 	/* the plugin */
 	var plugin = $.circuitboard.plugin({
 		name: 'three-d-geometric-models',
-		requires: ['three-d', 'tile-hidden', 'animation-loop']
+		requires: ['three-d', 'tile-hidden']
 	});
 
 
@@ -132,7 +132,7 @@ define([
 				morphObjs.push(subObj);
 			}
 		});
-		this.on('animation-frame').onValue(() => {
+		Bacon.animationFrames().onValue(() => {
 			var dTime = clock.getDelta();
 			morphObjs.forEach((morphObj) => {
 				morphObj.updateAnimation(1000 * dTime);

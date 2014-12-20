@@ -8,7 +8,6 @@ define([
 
 	var plugin = $.circuitboard.plugin({
 		name: 'transition-position-tracking',
-		requires: ['animation-loop'],
 		resolves: ['position-tracking', 'tile-grow-when-open']
 	});
 

@@ -1,36 +1,25 @@
-.three-d-canvas {
-	& > div {
+.three-d-canvas > div {
 
-		& > div {
-			display: block;
-			position: absolute;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			margin: 0;
+	& > div    { z-index: 0 }
+	& > canvas { z-index: 1 }
 
-			z-index: 0;
-			pointer-events: none;
+	& > canvas, & > div {
+		display: block;
 
-			& > .circuitboard {
-				pointer-events: visible;
-				backface-visibility: hidden;
-			}
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+
+		margin: 0;
+
+		pointer-events: none;
+
+		& > .circuitboard {
+			pointer-events: visible;
+			backface-visibility: hidden;
 		}
-
-		& > canvas {
-			display: block;
-			position: absolute;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			margin: 0;
-
-			z-index: 1;
-			pointer-events: none;
-		}
-
 	}
+
 }

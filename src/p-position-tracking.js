@@ -17,29 +17,13 @@ define(['jquery', './util/misc.js', './util/bacon-and-eggs.js'], function ($, U,
 
 
 	/* a stream limiter, setting up a window for calculating element offsets */
+	plugin.add('Circuitboard.prototype._posTrackingWindow', function (window) { window() });
 	plugin.insert('Circuitboard.prototype.construct', function () {
-		this._p_posTracking_limiter = Bacon.limiter(Bacon.mergeAll([
+		this._posTrackingLimiter = Bacon.limiter(Bacon.mergeAll([
 			Bacon.once(),
 			Bacon.interval(100)
-		]), (window) => {
-
-			/* setup: temporarily undoes all (3D) transformations on the circuitboard */
-			var transform0 = this.element.css('transform');
-			var parentTransform0 = this.element.parent().css('transform');
-			this.element.css('transform', '');
-			this.element.parent().css('transform', '');
-
-			/* the window for computing any tile's offset */
-			window();
-
-			/* breakdown: restore the (3D) transformations */
-			this.element.css('transform', transform0);
-			this.element.parent().css('transform', parentTransform0);
-
-		});
+		]), this._posTrackingWindow.bind(this));
 	});
-
-
 
 
 	/* the 'offset' observable */
@@ -48,8 +32,7 @@ define(['jquery', './util/misc.js', './util/bacon-and-eggs.js'], function ($, U,
 				.concat(Bacon.later(10))
 				.concat(Bacon.later(50))
 				.concat(Bacon.later(100))
-				.concat(Bacon.later(500))
-				.concat(Bacon.later(1000));
+				.concat(Bacon.later(500));
 	}
 	plugin.insert('Circuitboard.prototype.construct', function () {
 
@@ -61,7 +44,9 @@ define(['jquery', './util/misc.js', './util/bacon-and-eggs.js'], function ($, U,
 			Bacon.once(),
 			Bacon.interval(1000)
 			// TODO: allow outside stream to trigger this
-		]).flatMapLatest(catchUp).limitedBy(this._p_posTracking_limiter).map(() => this.element.offset()));
+		]).flatMapLatest(catchUp)
+				.limitedBy(this._posTrackingLimiter)
+				.map(() => this.element.offset()));
 
 	}).insert('Tilemap.prototype.construct', function () {
 
@@ -73,7 +58,9 @@ define(['jquery', './util/misc.js', './util/bacon-and-eggs.js'], function ($, U,
 			Bacon.once(),
 			this.parent.on('size').changes(),
 			this.parent.on('offset').changes()
-		]).flatMapLatest(catchUp).limitedBy(this.circuitboard._p_posTracking_limiter).map(() => this.element.offset()));
+		]).flatMapLatest(catchUp)
+				.limitedBy(this.circuitboard._posTrackingLimiter)
+				.map(() => this.element.offset()));
 
 	}).insert('Tile.prototype.construct', function () {
 
@@ -88,7 +75,9 @@ define(['jquery', './util/misc.js', './util/bacon-and-eggs.js'], function ($, U,
 			this.parent.on('reorganize'),
 			this.on('weight').changes(),
 			this.on('reset-positioning')
-		]).flatMapLatest(catchUp).limitedBy(this.circuitboard._p_posTracking_limiter).map(() => this.element.offset()));
+		]).flatMapLatest(catchUp)
+				.limitedBy(this.circuitboard._posTrackingLimiter)
+				.map(() => this.element.offset()));
 
 	});
 

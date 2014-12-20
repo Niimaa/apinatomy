@@ -23,7 +23,6 @@ require('../p-tile-hidden.js');
 require('../p-tile-maximized.js');
 require('../p-tile-middleclick-to-maximize.js');
 require('../p-d3.js');
-require('../p-animation-loop.js'); // TODO: check if we still get an error when this is moved down one line
 require('../p-ppi.js');
 require('../p-three-d.js');
 require('../p-three-d-geometric-models.js');
@@ -48,7 +47,8 @@ circuitboard.plugin([
 	'three-d-auto-controls',
 	'three-d-geometric-models',
 	'three-d-geometric-models-obj',
-	'three-d-geometric-models-json'
+	'three-d-geometric-models-json',
+		'ppi'
 ]);
 
 
@@ -65,33 +65,33 @@ $(document).ready(() => {
 
 			'fma:7148': [
 				{ file: require('./3d-models/FMA7148_Stomach.obj') }
-			],
-
-			'fma:7187': [
-				{
-					id: 'walking-legs',
-					parts: [
-						{ file: require('./3d-models/walking-legs/left_femur_1.json') },
-						{ file: require('./3d-models/walking-legs/left_fibula_1.json') },
-						{ file: require('./3d-models/walking-legs/left_foot_1.json') },
-						{ file: require('./3d-models/walking-legs/left_hip_1.json') },
-						{ file: require('./3d-models/walking-legs/left_patella_1.json') },
-						{ file: require('./3d-models/walking-legs/left_tibia_1.json') },
-						{ file: require('./3d-models/walking-legs/muscles_1.json'), color: 0x7F1F1A },
-						{ file: require('./3d-models/walking-legs/right_femur_1.json') },
-						{ file: require('./3d-models/walking-legs/right_fibula_1.json') },
-						{ file: require('./3d-models/walking-legs/right_foot_1.json') },
-						{ file: require('./3d-models/walking-legs/right_hip_1.json') },
-						{ file: require('./3d-models/walking-legs/right_patella_1.json') },
-						{ file: require('./3d-models/walking-legs/right_tibia_1.json') }
-					],
-					color: 0xE6E6B3,
-					animation: { duration: 1500 },
-					relativePosition: {
-						z: 100
-					}
-				}
 			]
+			//,
+			//'fma:7187': [
+			//	{
+			//		id: 'walking-legs',
+			//		parts: [
+			//			{ file: require('./3d-models/walking-legs/left_femur_1.json') },
+			//			{ file: require('./3d-models/walking-legs/left_fibula_1.json') },
+			//			{ file: require('./3d-models/walking-legs/left_foot_1.json') },
+			//			{ file: require('./3d-models/walking-legs/left_hip_1.json') },
+			//			{ file: require('./3d-models/walking-legs/left_patella_1.json') },
+			//			{ file: require('./3d-models/walking-legs/left_tibia_1.json') },
+			//			{ file: require('./3d-models/walking-legs/muscles_1.json'), color: 0x7F1F1A },
+			//			{ file: require('./3d-models/walking-legs/right_femur_1.json') },
+			//			{ file: require('./3d-models/walking-legs/right_fibula_1.json') },
+			//			{ file: require('./3d-models/walking-legs/right_foot_1.json') },
+			//			{ file: require('./3d-models/walking-legs/right_hip_1.json') },
+			//			{ file: require('./3d-models/walking-legs/right_patella_1.json') },
+			//			{ file: require('./3d-models/walking-legs/right_tibia_1.json') }
+			//		],
+			//		color: 0xE6E6B3,
+			//		animation: { duration: 1500 },
+			//		relativePosition: {
+			//			z: 100
+			//		}
+			//	}
+			//]
 
 		}
 	}).circuitboard('instance').then(function (circuitboard) {

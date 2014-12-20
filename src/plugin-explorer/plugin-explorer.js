@@ -24,7 +24,6 @@ require('../p-tile-hidden.js');
 require('../p-tile-maximized.js');
 require('../p-tile-middleclick-to-maximize.js');
 require('../p-d3.js');
-require('../p-animation-loop.js'); // TODO: check if we still get an error when this is moved down one line
 require('../p-ppi.js');
 require('../p-three-d.js');
 require('../p-three-d-geometric-models.js');

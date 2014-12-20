@@ -10,7 +10,7 @@ define([
 
 	var plugin = $.circuitboard.plugin({
 		name: 'd3',
-		requires: ['core', 'position-tracking', 'animation-loop']
+		requires: ['core', 'position-tracking']
 	}).modify('Circuitboard.prototype');
 
 
@@ -114,7 +114,6 @@ define([
 		/* the 'd3-tick' event-stream, and performing animation on a tick */
 		this.newEvent('d3-tick', {
 			source: Bacon.fromOnNull(this.d3Force, 'tick')
-					.holdUntil(this.on('animation-frame'))
 		}).onValue((e) => {
 
 			/* dampening factor */

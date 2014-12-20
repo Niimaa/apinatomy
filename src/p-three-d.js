@@ -12,7 +12,7 @@ define([
 	/* the plugin */
 	var plugin = $.circuitboard.plugin({
 		name: 'three-d',
-		requires: ['position-tracking', 'tile-hidden', 'animation-loop']
+		requires: ['position-tracking', 'tile-hidden']
 	});
 
 
@@ -93,13 +93,12 @@ define([
 
 			/* camera */
 			this.camera3D = new THREE.PerspectiveCamera(60, this.threeDCanvasSize.width / this.threeDCanvasSize.height, 1, 10000);
-			//this.camera3D.scale.y = -1; // TODO: ????
-			this.camera3D.position.z = 1000;
 			this.camera3D.userData.target = new THREE.Vector3().copy(this.camera3D.position).setZ(0);
 			this.camera3D.lookAt(this.camera3D.userData.target);
 			onThreeDModeOff.onValue(() => { delete this.camera3D });
 			this.on('threeDCanvasSize').takeWhile(this.on('threeDMode')).onValue((canvasSize) => {
 				this.camera3D.aspect = canvasSize.width / canvasSize.height;
+				if (this.camera3D.position.z === 0) { this.camera3D.position.z = 1 }
 				this.camera3D.position.normalize()
 						.multiplyScalar(canvasSize.height / Math.tan(THREE.Math.degToRad(this.camera3D.fov) / 2) / 2);
 				this.camera3D.updateProjectionMatrix();
@@ -125,6 +124,7 @@ define([
 
 				/* CSS renderer */
 				var cssRenderer = new THREE.CSS3DRenderer();
+				this._cssRenderer = cssRenderer; // for access later
 				$(cssRenderer.domElement).append(webglRenderer.domElement);
 				this.threeDCanvasElement.append(cssRenderer.domElement);
 				onThreeDModeOff.onValue(() => { this.threeDCanvasElement.empty() });
@@ -137,7 +137,7 @@ define([
 
 			/* render on size-change and every animation frame */
 			Bacon.mergeAll([
-				this.on('animation-frame'),
+				Bacon.animationFrames(),
 				this.on('size').changes()
 			]).takeWhile(this.on('threeDMode')).assign(this, 'trigger', '3d-render');
 
@@ -153,10 +153,6 @@ define([
 					$(threeDCircuitboard.element).css({
 						width: canvasSize.width - margin0.left - margin0.right,
 						height: canvasSize.height - margin0.top - margin0.bottom
-					});
-					U.extend(threeDCircuitboard.position, {
-						x: 0.5 * (margin0.left - margin0.right),
-						y: 0.5 * (margin0.bottom - margin0.top)
 					});
 				});
 				onThreeDModeOff.onValue(() => {
@@ -183,10 +179,6 @@ define([
 					$(threeDBackface.element).css({
 						width: canvasSize.width - margin0.left - margin0.right,
 						height: canvasSize.height - margin0.top - margin0.bottom
-					});
-					U.extend(threeDBackface.position, {
-						x: 0.5 * (margin0.left - margin0.right),
-						y: 0.5 * (margin0.bottom - margin0.top)
 					});
 				});
 
@@ -272,6 +264,31 @@ define([
 			this.on('visible').onValue((visible) => { this.object3D.visible = visible });
 
 		});
+	});
+
+
+	/* necessary setup and breakdown for querying an element's 'offset' */
+	plugin.append('Circuitboard.prototype.construct', function () {
+
+		/* setup another camera that always stays at a circuitboard-looks-not-3D position */
+		this._originalCamera3D = new THREE.PerspectiveCamera(60, this.threeDCanvasSize.width / this.threeDCanvasSize.height, 1, 10000);
+		this._originalCamera3D.lookAt(new THREE.Vector3(0, 0, 0));
+		this.on('threeDMode').value(false).take(1).onValue(() => { delete this._originalCamera3D });
+		this.on('threeDCanvasSize').takeWhile(this.on('threeDMode')).onValue((canvasSize) => {
+			this._originalCamera3D.aspect = canvasSize.width / canvasSize.height;
+			if (this._originalCamera3D.position.z === 0) { this._originalCamera3D.position.z = 1 }
+			this._originalCamera3D.position.normalize()
+					.multiplyScalar(canvasSize.height / Math.tan(THREE.Math.degToRad(this._originalCamera3D.fov) / 2) / 2);
+			this._originalCamera3D.updateProjectionMatrix();
+		});
+
+	}).replace('Circuitboard.prototype._posTrackingWindow', function (window) {
+
+		/* the 'offset' property is only reliable when the circuitboard is not rotated / positioned / scaled */
+		this._cssRenderer.render(this._p_threeD_scene, this._originalCamera3D);
+		window();
+		this._cssRenderer.render(this._p_threeD_scene, this.camera3D);
+
 	});
 
 
