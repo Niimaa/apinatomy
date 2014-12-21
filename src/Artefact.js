@@ -98,6 +98,40 @@ define([
 
 			/** {@public}{@method}
 			 *
+			 * Traverse the Artefact hierarchy with this as root.
+			 *
+			 * @param fn {(Artefact) => Boolean} - the function to call on each artefact
+			 */
+			traverseArtefacts(fn, options = {}) {
+				var {order} = options;
+				if (!order) { order = 'prefix' }
+
+				if (order === 'prefix') { fn(this) }
+				this.children.forEach((child) => {
+					child.traverseArtefacts(fn, options);
+				});
+				if (order === 'postfix') { fn(this) }
+			},
+
+			/** {@public}{@method}
+			 *
+			 * Traverse the Artefact hierarchy with this as root.
+			 *
+			 * @param fn {(Artefact) => Boolean} - the function to call on each artefact
+			 */
+			traverseArtefactsByType(type, fn, options = {}) {
+				var {order} = options;
+				if (!order) { order = 'prefix' }
+
+				if (order === 'prefix' && this.type === type) { fn(this) }
+				this.closestDescendantsByType(type).forEach((descendent) => {
+					descendent.traverseArtefactsByType(type, fn, options);
+				});
+				if (order === 'postfix' && this.type === type) { fn(this) }
+			},
+
+			/** {@public}{@method}
+			 *
 			 * Retrieve the closest ancestor (parent, parent's parent, ...)
 			 * of this artefact with the given type.
 			 *

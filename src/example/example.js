@@ -34,6 +34,7 @@ require('../p-three-d-manual-controls.js');
 require('../p-three-d-auto-controls.js');
 require('../p-snapshot.js');
 require('../p-three-d-snapshot.js');
+require('../p-tile-open-snapshot.js');
 
 
 /* select plugins to activate them  (note that these must already be *loaded* at this point) */
@@ -50,7 +51,7 @@ circuitboard.plugin([
 	'three-d-geometric-models',
 	'three-d-geometric-models-obj',
 	'three-d-geometric-models-json',
-	'three-d-snapshot',
+	'snapshot',
 	//'ppi',
 ]);
 

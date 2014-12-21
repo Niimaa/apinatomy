@@ -4,7 +4,8 @@ define(['jquery', './util/bacon-and-eggs.js', 'tweenjs'], function ($, Bacon, TW
 
 	var plugin = $.circuitboard.plugin({
 		name: 'three-d-snapshot',
-		requires: ['three-d-auto-controls', 'snapshot']
+		resolves: ['three-d', 'snapshot'],
+		requires: ['three-d-auto-controls']
 	});
 
 

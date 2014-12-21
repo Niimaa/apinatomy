@@ -25,11 +25,11 @@ define([
 				this.object[key] = value;
 			},
 
-			get(key) {
-				return this.object[key];
-			},
+			get(key) { return this.object[key] },
 
 			serialize() { return JSON.stringify(this.object) },
+
+			deserialize(str) { this.object = JSON.parse(str) },
 
 			/** to be extended by deltas */
 			take() {},
