@@ -20,6 +20,7 @@
 	"nonew":     true,
 	"forin":     true,
 	"evil":      true,
+    "laxbreak":  true,
 
     "debug":     true,
 

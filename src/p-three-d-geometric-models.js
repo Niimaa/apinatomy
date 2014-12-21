@@ -63,14 +63,10 @@ define([
 					obj.duration = animation.duration;
 					material.morphTargets = true;
 					geometry.computeMorphNormals(obj);
-					console.log(geometry); // TODO; remove
 				} else {
 					obj = new THREE.Mesh(geometry, material);
 				}
 			}
-
-			/* store the descriptor in the object */
-			obj.userData.descriptor = descriptor;
 
 			/* return the object */
 			return obj;
@@ -83,28 +79,33 @@ define([
 				if (U.isUndefined(part[prop])) { part[prop] = descriptor[prop] }
 			});
 			return load(part);
-		})).reduce((parent, child) => { parent.add(child); return parent; }, new THREE.Object3D()).tap((obj) => {
-			obj.userData.descriptor = descriptor;
-		});
+		})).reduce((parent, child) => { parent.add(child); return parent; }, new THREE.Object3D());
 	}
 	function load(descriptor) {
-		if (U.isDefined(descriptor.file)) { return loadFile(descriptor) }
-		if (U.isDefined(descriptor.parts)) { return loadParts(descriptor) }
+		var result;
+		if (U.isDefined(descriptor.file)) { result = loadFile(descriptor) }
+		if (U.isDefined(descriptor.parts)) { result = loadParts(descriptor) }
+		return result.tap((obj) => { obj.userData.descriptor = descriptor });
+	}
+
+
+	function traverseGeometries(obj, fn) {
+		obj.traverse((subObj) => {
+			if (U.isUndefined(subObj.geometry)) { return }
+			fn(subObj.geometry);
+		});
 	}
 
 
 	/* to calculate overall bounding box of an object3D */
 	function calculateBoundingBox(obj) {
-		obj.userData.boundingBox = null;
-		obj.traverse(function (subObj) {
-			var geometry = subObj.geometry;
-			if (U.isUndefined(geometry)) { return }
-			geometry.computeBoundingBox();
-			if (obj.userData.boundingBox === null) {
-				obj.userData.boundingBox = geometry.boundingBox;
-			} else {
-				obj.userData.boundingBox.union(geometry.boundingBox);
-			}
+		obj.userData.boundingBox = new THREE.Box3();
+		traverseGeometries(obj, (geometry) => {
+			geometry.morphTargets.concat([geometry]).forEach(({vertices}) => {
+				vertices.forEach((point) => {
+					obj.userData.boundingBox.expandByPoint(point);
+				});
+			});
 		});
 	}
 
@@ -112,13 +113,16 @@ define([
 	/* to center all the geometry of an object on its (0, 0, 0) point */
 	function centerGeometries(obj) {
 		var translation = obj.userData.boundingBox.center().negate();
-		obj.traverse(function (o) {
-			if (o.geometry) {
-				o.geometry.applyMatrix(new THREE.Matrix4().setPosition(translation));
-			}
+		traverseGeometries(obj, (geometry) => {
+			var matrix = new THREE.Matrix4().setPosition(translation);
+			geometry.morphTargets.forEach(({vertices}) => {
+				vertices.forEach((point) => {
+					point.applyMatrix4(matrix);
+				});
+			});
+			geometry.applyMatrix(matrix);
 		});
 	}
-
 
 	/* an object where three.js loaders for different file formats can be plugged in */
 	plugin.add('Circuitboard.threeJsLoaders', {});
@@ -161,37 +165,34 @@ define([
 						.map(load)
 
 					/* put them all in one parent Object3D object */
-						.reduce((parent, child) => { parent.add(child); return parent; }, new THREE.Object3D())
+						.reduce((parent, child) => {
+							parent.add(child);
+							parent.userData.descriptor = child.userData.descriptor;
+							return parent;
+						}, new THREE.Object3D())
 
 					/* reposition and resize the resulting object */
 						.tap(calculateBoundingBox)
 						.tap(centerGeometries)
 						.tap((obj) => {
 							this.on('size').takeWhile(this.on('visible')).onValue(() => {
-								var ratio = Math.min(this.size.width / obj.userData.boundingBox.size().x,
-												this.size.height / obj.userData.boundingBox.size().y) * 0.7;
+
+								var ratio = Math.min(
+									(this.size.width  / obj.userData.boundingBox.size().x),
+									(this.size.height / obj.userData.boundingBox.size().y)
+								) * 0.7;
 
 								/* adjust size */
 								obj.scale.set(ratio, ratio, ratio);
 
 								/* adjust 'altitude' */
-								obj.position.z = 0.5 * ratio * obj.userData.boundingBox.size().z + 120;
-
-								///* perform adjustments from the descriptor */
-								//if (obj.userData.descriptor.relativePosition) {
-								//	obj.position.x += obj.userData.descriptor.relativePosition.x;
-								//	obj.position.y += obj.userData.descriptor.relativePosition.y;
-								//	obj.position.z += obj.userData.descriptor.relativePosition.z;
-								//}
+								var elevation = U.defOr(obj.userData.descriptor.elevation, Math.min(this.size.width, this.size.height) / 4);
+								obj.position.z = 0.5 * ratio * obj.userData.boundingBox.size().z + elevation;
 							});
 						})
 
 					/* add the object to the scene, centered on this tile */
 						.tap((obj) => { this.object3D.add(obj) })
-						.tap((obj) => {
-							var bbox = new THREE.BoundingBoxHelper( obj, 0xff0000 );
-							this.circuitboard._p_threeD_scene.add(bbox);
-						})
 						.tap((obj) => { this.circuitboard._startThreeDAnimation(obj) });
 
 			}

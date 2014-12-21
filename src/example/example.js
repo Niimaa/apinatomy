@@ -48,7 +48,7 @@ circuitboard.plugin([
 	'three-d-geometric-models',
 	'three-d-geometric-models-obj',
 	'three-d-geometric-models-json',
-		'ppi'
+		//'ppi',
 ]);
 
 
@@ -65,8 +65,7 @@ $(document).ready(() => {
 
 			'fma:7148': [
 				{ file: require('./3d-models/FMA7148_Stomach.obj') }
-			]
-			//,
+			],
 			//'fma:7187': [
 			//	{
 			//		id: 'walking-legs',
@@ -87,11 +86,9 @@ $(document).ready(() => {
 			//		],
 			//		color: 0xE6E6B3,
 			//		animation: { duration: 1500 },
-			//		relativePosition: {
-			//			z: 100
-			//		}
+			//		elevation: 0
 			//	}
-			//]
+			//],
 
 		}
 	}).circuitboard('instance').then(function (circuitboard) {
