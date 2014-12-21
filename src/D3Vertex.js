@@ -34,10 +34,10 @@ define([
 			get element() {
 				if (!this._element) {
 					this._element = $(`
-					<svg x="${this.x}" y="${this.y}" class="vertex ${this.options.cssClass}">
-						<circle class="core" r="${this.options.radius}"></circle>
-					</svg>
-				`);
+						<svg x="${this.x}" y="${this.y}" class="vertex ${this.options.cssClass}">
+							<circle class="core" r="${this.options.radius}"></circle>
+						</svg>
+					`);
 				}
 				return this._element;
 			},
