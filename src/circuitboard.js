@@ -1,53 +1,35 @@
 define([
 	'jquery',
 	'bluebird',
-	'./util/widget.js',
-	'./util/misc.js',
-	'./util/main-delta-model.js'
-], function ($, P, newWidgetType, U, dm) {
+	'./util/newWidgetType.js',
+	'./util/plugin.js'
+], function ($, P, newWidgetType, plugin) {
 	'use strict';
 
 
-	/* allow '$.circuitboard' to accept plugins */
-	U.extend(U.object($, 'circuitboard'), {
-		plugin(pluginOrSelection) {
-			if ($.isPlainObject(pluginOrSelection)) {
-				// the function is used to register a new plugin
-				return new dm.Delta(pluginOrSelection.name, pluginOrSelection);
-			} else {
-				// the function is used to select plugins to be applied
-				dm.select.apply(dm, pluginOrSelection);
-				defineWidgetClasses();
-			}
-		}
-	});
+	/* create $.circuitboard object if it doesn't exist */
+	$.circuitboard = { plugin };
 
 
 	/* to define the widget classes after the proper plugins have been selected */
-	function defineWidgetClasses() {
+	newWidgetType('Circuitboard', {
+		cssClass: "circuitboard",
+		filter: () => P.resolve(true) // don't hide any entities
+	}).then((Circuitboard) => {
+		$.circuitboard.Circuitboard = Circuitboard;
+	});
 
-		$.circuitboard.Circuitboard =
-				newWidgetType('Circuitboard', {
-					cssClass: "circuitboard",
-					filter: () => P.resolve(true) // don't hide any entities
-				});
+	newWidgetType('Tilemap', {
+		cssClass: "tilemap"
+	}).then((Tilemap) => {
+		$.circuitboard.Tilemap = Tilemap;
+	});
 
-		$.circuitboard.Tilemap =
-				newWidgetType('Tilemap', {
-					cssClass: "tilemap"
-				});
-
-		$.circuitboard.Tile =
-				newWidgetType('Tile', {
-					cssClass: 'tile'
-				});
-
-	}
-
-
-	/* for retrieval of certain objects */
-	$.circuitboard.plugin.graph = () => dm.graph();
-	$.circuitboard.plugin.dm = dm;
+	newWidgetType('Tile', {
+		cssClass: "tile"
+	}).then((Tile) => {
+		$.circuitboard.Tile = Tile;
+	});
 
 
 	/*  return the static `$.circuitboard` object,         */

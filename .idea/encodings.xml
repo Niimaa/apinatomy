@@ -12,6 +12,7 @@
     <file url="file://$PROJECT_DIR$/build-config/modules/p-tile-middleclick-to-maximize.json" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/gulpfile.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/package.json" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/Artefact.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/circuitboard.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/fma-model.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/p-d3.js" charset="UTF-8" />
@@ -38,14 +39,14 @@
     <file url="file://$PROJECT_DIR$/src/p-tile-spacing.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/p-tile-weight.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/p-transition-position-tracking.js" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/util/artefact.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/util/defaults.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/util/defer.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/util/misc.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/util/nested-flex-grow.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/util/newWidgetType.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/util/plugin.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/util/put-css-rules.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/util/traverse-dag.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/util/unique-id.js" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/util/widget.js" charset="UTF-8" />
   </component>
 </project>

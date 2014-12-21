@@ -5,7 +5,7 @@ define([
 	'./D3Edge.js',
 	'./util/bacon-and-eggs.js',
 	'./p-ppi.scss'
-], function ($, D3Group, D3Vertex, D3Edge, Bacon) {
+], function ($, D3GroupP, D3VertexP, D3EdgeP, Bacon) {
 	'use strict';
 
 
@@ -17,6 +17,10 @@ define([
 
 	// TODO: implement this properly; this is just for testing purposes
 	plugin.insert('Tile.prototype.construct', function () {
+
+		var D3Group = D3GroupP.value();
+		var D3Vertex = D3VertexP.value();
+		var D3Edge = D3EdgeP.value();
 
 		var graphGroup = new D3Group({
 			parent: this,
