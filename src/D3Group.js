@@ -4,9 +4,12 @@ define(['jquery', './util/misc.js', './Artefact.js'], function ($, U, ArtefactP)
 
 	return ArtefactP.then((Artefact) => {
 
-		if (U.isDefined($.circuitboard.D3Group)) { return $.circuitboard.D3Group }
 
-		$.circuitboard.D3Group = Artefact.newSubclass('D3Group', function D3Group() {
+		/* however (often) this is loaded, create the class only once */
+		if (U.isDefined(window._amy_D3Group)) { return window._amy_D3Group }
+
+
+		window._amy_D3Group = Artefact.newSubclass('D3Group', function D3Group() {
 
 			U.extend(this, {
 				vertices: {},
@@ -102,9 +105,11 @@ define(['jquery', './util/misc.js', './Artefact.js'], function ($, U, ArtefactP)
 			}
 		});
 
-		return $.circuitboard.D3Group;
 
-	});
+		return window._amy_D3Group;
+
+
+	}).tap((c) => { $.circuitboard.D3Group = c });
 
 
 });

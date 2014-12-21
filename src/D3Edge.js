@@ -10,9 +10,12 @@ define([
 
 	return ArtefactP.then((Artefact) => {
 
-		if (U.isDefined($.circuitboard.D3Edge)) { return $.circuitboard.D3Edge }
 
-		$.circuitboard.D3Edge = Artefact.newSubclass('D3Edge', function D3Edge({source, target}) {
+		/* however (often) this is loaded, create the class only once */
+		if (U.isDefined(window._amy_D3Edge)) { return window._amy_D3Edge }
+
+
+		window._amy_D3Edge = Artefact.newSubclass('D3Edge', function D3Edge({source, target}) {
 
 			/* store references to the two vertices */
 			this._source = source;
@@ -45,9 +48,11 @@ define([
 			cssClass: ''
 		});
 
-		return $.circuitboard.D3Edge;
 
-	});
+		return window._amy_D3Edge;
+
+
+	}).tap((c) => { $.circuitboard.D3Edge = c });
 
 
 });

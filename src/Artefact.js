@@ -12,7 +12,10 @@ define([
 
 	return plugin.selected.then(() => {
 
-		if (U.isDefined($.circuitboard.Artefact)) { return $.circuitboard.Artefact }
+
+		/* however (often) this is loaded, create the class only once */
+		if (U.isDefined(window._amy_Artefact)) { return window._amy_Artefact }
+
 
 		/** {@export @class Artefact @extends BaconSignalHandler}
 		 * Use this as a subclass (or just mix it in) to provide support for
@@ -24,7 +27,7 @@ define([
 		 * If it is defined, it is a promise that has to be waited for.
 		 * If not, the object instance can be used synchronously after construction.
 		 */
-		$.circuitboard.Artefact = dm.vp('Artefact', U.newSubclass(BaconSignalHandler, (superFn) => function Artefact(options) {
+		window._amy_Artefact = dm.vp('Artefact', U.newSubclass(BaconSignalHandler, (superFn) => function Artefact(options) {
 			superFn.apply(this, arguments);
 
 			this._options = options;
@@ -138,15 +141,12 @@ define([
 
 		}));
 
-		return $.circuitboard.Artefact;
-
-	}).tap((Artefact) => {
 
 		/** {@function Artefact.newSubclass}
 		 * A static convenience function for creating a subclass of {@link Artefact}.
 		 */
-		Artefact.newSubclass = function newSubClass(name, constructor, prototype = {}, optionDefaults = {}) {
-			return dm.vp(name, U.newSubclass(Artefact, (superFn) => function (options = {}) {
+		window._amy_Artefact.newSubclass = function newSubClass(name, constructor, prototype = {}, optionDefaults = {}) {
+			return dm.vp(name, U.newSubclass(window._amy_Artefact, (superFn) => function (options = {}) {
 
 				/* process options */
 				var processedOptions = options;
@@ -182,7 +182,11 @@ define([
 			})));
 		};
 
-	});
+
+		return window._amy_Artefact;
+
+
+	}).tap((c) => { $.circuitboard.Artefact = c });
 
 
 });

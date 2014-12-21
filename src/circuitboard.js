@@ -11,25 +11,23 @@ define([
 	$.circuitboard = { plugin };
 
 
-	/* to define the widget classes after the proper plugins have been selected */
-	newWidgetType('Circuitboard', {
+	/* create the classes directly circuitboard related */
+	var CircuitboardP = newWidgetType('Circuitboard', {
 		cssClass: "circuitboard",
 		filter: () => P.resolve(true) // don't hide any entities
-	}).then((Circuitboard) => {
-		$.circuitboard.Circuitboard = Circuitboard;
 	});
-
-	newWidgetType('Tilemap', {
+	var TilemapP = newWidgetType('Tilemap', {
 		cssClass: "tilemap"
-	}).then((Tilemap) => {
-		$.circuitboard.Tilemap = Tilemap;
+	});
+	var TileP = newWidgetType('Tile', {
+		cssClass: "tile"
 	});
 
-	newWidgetType('Tile', {
-		cssClass: "tile"
-	}).then((Tile) => {
-		$.circuitboard.Tile = Tile;
-	});
+
+	/* put those classes on the $.circuitboard object */
+	CircuitboardP.then((c) => { $.circuitboard.Circuitboard = c });
+	TilemapP.then((c) => { $.circuitboard.Tilemap = c });
+	TileP.then((c) => { $.circuitboard.Tile = c });
 
 
 	/*  return the static `$.circuitboard` object,         */

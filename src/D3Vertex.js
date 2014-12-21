@@ -9,9 +9,12 @@ define([
 
 	return ArtefactP.then((Artefact) => {
 
-		if (U.isDefined($.circuitboard.D3Vertex)) { return $.circuitboard.D3Vertex }
 
-		$.circuitboard.D3Vertex = Artefact.newSubclass('D3Vertex', function D3Vertex({visible}) {
+		/* however (often) this is loaded, create the class only once */
+		if (U.isDefined(window._amy_D3Vertex)) { return window._amy_D3Vertex }
+
+
+		window._amy_D3Vertex = Artefact.newSubclass('D3Vertex', function D3Vertex({visible}) {
 
 			/* the coordinate properties */
 			this.newProperty('x', { initial: 10 });
@@ -51,9 +54,11 @@ define([
 			visible: true
 		});
 
-		return $.circuitboard.D3Vertex;
 
-	});
+		return window._amy_D3Vertex;
+
+
+	}).tap((c) => { $.circuitboard.D3Vertex = c });
 
 
 });

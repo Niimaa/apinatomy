@@ -32,6 +32,8 @@ require('../p-three-d-geometric-models-json.js');
 require('../p-d3-three-d.js');
 require('../p-three-d-manual-controls.js');
 require('../p-three-d-auto-controls.js');
+require('../p-snapshot.js');
+require('../p-three-d-snapshot.js');
 
 
 /* select plugins to activate them  (note that these must already be *loaded* at this point) */
@@ -48,7 +50,8 @@ circuitboard.plugin([
 	'three-d-geometric-models',
 	'three-d-geometric-models-obj',
 	'three-d-geometric-models-json',
-		'ppi',
+	'three-d-snapshot',
+	//'ppi',
 ]);
 
 
@@ -96,8 +99,9 @@ $(document).ready(() => {
 
 		console.info('circuitboard loaded');
 
-		window.setThreeDMode = function (mode) {
-			circuitboard.threeDMode = mode;
+		/* set up global functions to test with from the JavaScript console */
+		window.newSnapshot = (options) => {
+			return new circuitboard.Snapshot(options);
 		};
 
 	});
