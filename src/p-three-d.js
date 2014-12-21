@@ -196,8 +196,8 @@ define([
 				backface.z -= 1;
 				this._p_threeD_scene.add(backface);
 				this.on('threeDCanvasSize').takeWhile(this.on('threeDMode')).onValue((canvasSize) => {
-					backface.scale.x = canvasSize.width - margin0.left - margin0.right - 2;
-					backface.scale.y = canvasSize.height - margin0.top - margin0.bottom - 2;
+					backface.scale.x = canvasSize.width - margin0.left - margin0.right - 1;
+					backface.scale.y = canvasSize.height - margin0.top - margin0.bottom - 1;
 				});
 
 				/*  the object containing all 3D things co-located with the circuitboard */
