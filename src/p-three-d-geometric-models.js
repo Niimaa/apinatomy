@@ -177,10 +177,20 @@ define([
 						.tap((obj) => {
 							this.on('size').takeWhile(this.on('visible')).onValue(() => {
 
-								var ratio = Math.min(
-									(this.size.width  / obj.userData.boundingBox.size().x),
-									(this.size.height / obj.userData.boundingBox.size().y)
-								) * 0.7;
+								/* abbreviate 3D-object width and height */
+								var objWidth = obj.userData.boundingBox.size().x;
+								var objHeight = obj.userData.boundingBox.size().y;
+
+								/* rotate 90° on the z-axis if this gives a better fit */
+								if ((this.size.width < this.size.height) !== (objWidth < objHeight)) {
+									obj.rotation.z = 0.5 * Math.PI;
+									[objWidth, objHeight] = [objHeight, objWidth];
+								} else {
+									obj.rotation.z = 0;
+								}
+
+								/* determine the scale ratio */
+								var ratio = 0.8 * Math.min(this.size.width / objWidth, this.size.height / objHeight);
 
 								/* adjust size */
 								obj.scale.set(ratio, ratio, ratio);
@@ -188,6 +198,7 @@ define([
 								/* adjust 'altitude' */
 								var elevation = U.defOr(obj.userData.descriptor.elevation, Math.min(this.size.width, this.size.height) / 4);
 								obj.position.z = 0.5 * ratio * obj.userData.boundingBox.size().z + elevation;
+
 							});
 						})
 
