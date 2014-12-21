@@ -193,7 +193,7 @@ define([
 						backfaceGeometry,
 						new THREE.LineBasicMaterial({ color: 'black' })
 				);
-				backface.z -= 1;
+				backface.position.z -= 1;
 				this._p_threeD_scene.add(backface);
 				this.on('threeDCanvasSize').takeWhile(this.on('threeDMode')).onValue((canvasSize) => {
 					backface.scale.x = canvasSize.width - margin0.left - margin0.right - 1;
