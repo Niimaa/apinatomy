@@ -74,7 +74,7 @@ define([
 	}
 	function loadParts(descriptor) {
 		var INHERITED_PROPS = ['color', 'animation'];
-		return P.all(descriptor.parts.map((part) => {
+		return P.all(Object.keys(descriptor.parts).map((id) => descriptor.parts[id]).map((part) => {
 			INHERITED_PROPS.forEach((prop) => {
 				if (U.isUndefined(part[prop])) { part[prop] = descriptor[prop] }
 			});
@@ -85,7 +85,7 @@ define([
 		var result;
 		if (U.isDefined(descriptor.file)) { result = loadFile(descriptor) }
 		if (U.isDefined(descriptor.parts)) { result = loadParts(descriptor) }
-		return result.tap((obj) => { obj.userData.descriptor = descriptor });
+		return descriptor.object3D = result.tap((obj) => { obj.userData.descriptor = descriptor });
 	}
 
 
@@ -151,64 +151,145 @@ define([
 
 		var threeDModels = this.circuitboard.options.threeDModels;
 
-		if (!threeDModels) { return }
+		this.threeDModels = threeDModels && threeDModels[this.model.id] || {};
 
-		this.model.then((model) => {
-			if (U.isDefined(threeDModels[model.id])) {
+		if (Object.keys(this.threeDModels).length > 0) {
+			this.showThreeDModel(false);
+		}
 
+		//function traverse3dDescriptor(obj, prop, fn) {
+		//	if (obj[prop]) {
+		//		Object.keys(obj[prop]).forEach((id) => {
+		//			fn(id, obj[prop][id]);
+		//			traverse3dDescriptor(obj[prop][id], 'parts', fn);
+		//		});
+		//	}
+		//}
+		//
+		//traverse3dDescriptor(this, 'threeDModels', (id, descriptor) => {
+		//	console.log(id, descriptor);
+		//});
 
-				/* load the 3D objects into the scene through a promise chain */
-				P
+	}).add('Tile.prototype.showThreeDModel', function (id) {
 
-					/* load any 3D models from files */
-						.all(threeDModels[model.id])
-						.map(load)
+		this.currentThreeDModelID = id;
 
-					/* put them all in one parent Object3D object */
-						.reduce((parent, child) => {
-							parent.add(child);
-							parent.userData.descriptor = child.userData.descriptor;
-							return parent;
-						}, new THREE.Object3D())
+		/* load the model if it is not already loaded */
+		if (id && !this.threeDModels[id].object3D) {
+			/* load the 3D objects into the scene through a promise chain */
+			this.threeDModels[id].object3D = P.resolve(this.threeDModels[id])
+				/* load the 3D model from files */
+				.then(load)
+				/* reposition and resize the resulting object */
+				.tap(calculateBoundingBox)
+				.tap(centerGeometries)
+				.tap((obj) => {
+					this.on('size').takeWhile(this.on('visible')).onValue(() => {
 
-					/* reposition and resize the resulting object */
-						.tap(calculateBoundingBox)
-						.tap(centerGeometries)
-						.tap((obj) => {
-							this.on('size').takeWhile(this.on('visible')).onValue(() => {
+						/* abbreviate 3D-object width and height */
+						var objWidth = obj.userData.boundingBox.size().x;
+						var objHeight = obj.userData.boundingBox.size().y;
 
-								/* abbreviate 3D-object width and height */
-								var objWidth = obj.userData.boundingBox.size().x;
-								var objHeight = obj.userData.boundingBox.size().y;
+						/* rotate 90° on the z-axis if this gives a better fit */
+						if ((this.size.width < this.size.height) !== (objWidth < objHeight)) {
+							obj.rotation.z = 0.5 * Math.PI;
+							[objWidth, objHeight] = [objHeight, objWidth];
+						} else {
+							obj.rotation.z = 0;
+						}
 
-								/* rotate 90° on the z-axis if this gives a better fit */
-								if ((this.size.width < this.size.height) !== (objWidth < objHeight)) {
-									obj.rotation.z = 0.5 * Math.PI;
-									[objWidth, objHeight] = [objHeight, objWidth];
-								} else {
-									obj.rotation.z = 0;
-								}
+						/* determine the scale ratio */
+						var ratio = 0.8 * Math.min(this.size.width / objWidth, this.size.height / objHeight);
 
-								/* determine the scale ratio */
-								var ratio = 0.8 * Math.min(this.size.width / objWidth, this.size.height / objHeight);
+						/* adjust size */
+						obj.scale.set(ratio, ratio, ratio);
 
-								/* adjust size */
-								obj.scale.set(ratio, ratio, ratio);
+						/* adjust 'altitude' */
+						var elevation = U.defOr(obj.userData.descriptor.elevation, Math.min(this.size.width, this.size.height) / 4);
+						obj.position.z = 0.5 * ratio * obj.userData.boundingBox.size().z + elevation;
 
-								/* adjust 'altitude' */
-								var elevation = U.defOr(obj.userData.descriptor.elevation, Math.min(this.size.width, this.size.height) / 4);
-								obj.position.z = 0.5 * ratio * obj.userData.boundingBox.size().z + elevation;
+					});
+				})
+				/* record the object, and add it to the scene, centered on this tile */
+				.tap((obj) => { this.object3D.add(obj) })
+				.tap((obj) => { this.circuitboard._startThreeDAnimation(obj) });
+		}
 
-							});
-						})
-
-					/* add the object to the scene, centered on this tile */
-						.tap((obj) => { this.object3D.add(obj) })
-						.tap((obj) => { this.circuitboard._startThreeDAnimation(obj) });
-
+		/* make the model visible */
+		Object.keys(this.threeDModels).forEach((id2) => {
+			var visible = (id === id2);
+			if (this.threeDModels[id2] && this.threeDModels[id2].object3D) {
+				this.threeDModels[id2].object3D.then((obj) => {
+					obj.visible = visible;
+				});
 			}
 		});
+
 	});
+	//plugin.insert('Tile.prototype.construct', function () {
+	//
+	//	if (!this.model) { return }
+	//
+	//	var threeDModels = this.circuitboard.options.threeDModels;
+	//
+	//	if (!threeDModels) { return }
+	//
+	//	this.model.then((model) => {
+	//		if (U.isDefined(threeDModels[model.id])) {
+	//
+	//
+	//			/* load the 3D objects into the scene through a promise chain */
+	//			P
+	//
+	//				/* load any 3D models from files */
+	//					.all(threeDModels[model.id])
+	//					.map(load)
+	//
+	//				/* put them all in one parent Object3D object */
+	//					.reduce((parent, child) => {
+	//						parent.add(child);
+	//						parent.userData.descriptor = child.userData.descriptor;
+	//						return parent;
+	//					}, new THREE.Object3D())
+	//
+	//				/* reposition and resize the resulting object */
+	//					.tap(calculateBoundingBox)
+	//					.tap(centerGeometries)
+	//					.tap((obj) => {
+	//						this.on('size').takeWhile(this.on('visible')).onValue(() => {
+	//
+	//							/* abbreviate 3D-object width and height */
+	//							var objWidth = obj.userData.boundingBox.size().x;
+	//							var objHeight = obj.userData.boundingBox.size().y;
+	//
+	//							/* rotate 90° on the z-axis if this gives a better fit */
+	//							if ((this.size.width < this.size.height) !== (objWidth < objHeight)) {
+	//								obj.rotation.z = 0.5 * Math.PI;
+	//								[objWidth, objHeight] = [objHeight, objWidth];
+	//							} else {
+	//								obj.rotation.z = 0;
+	//							}
+	//
+	//							/* determine the scale ratio */
+	//							var ratio = 0.8 * Math.min(this.size.width / objWidth, this.size.height / objHeight);
+	//
+	//							/* adjust size */
+	//							obj.scale.set(ratio, ratio, ratio);
+	//
+	//							/* adjust 'altitude' */
+	//							var elevation = U.defOr(obj.userData.descriptor.elevation, Math.min(this.size.width, this.size.height) / 4);
+	//							obj.position.z = 0.5 * ratio * obj.userData.boundingBox.size().z + elevation;
+	//
+	//						});
+	//					})
+	//
+	//				/* add the object to the scene, centered on this tile */
+	//					.tap((obj) => { this.object3D.add(obj) })
+	//					.tap((obj) => { this.circuitboard._startThreeDAnimation(obj) });
+	//
+	//		}
+	//	});
+	//});
 
 
 });
