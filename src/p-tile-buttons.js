@@ -27,7 +27,7 @@ define([
 
 		/* create the button itself */
 		var buttonElement = $(`
-			<div class="tile-button"
+			<div class="tile-button ${name}"
 			     style="background-image: url(${icon})">
 			</div>
 		`).appendTo(this._buttonHolder);

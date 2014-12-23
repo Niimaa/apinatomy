@@ -1,4 +1,4 @@
-define(['jquery', './util/bacon-and-eggs.js', 'tweenjs'], function ($, Bacon, TWEEN) {
+define(['jquery', 'bluebird', './util/misc.js', './util/bacon-and-eggs.js', 'tweenjs'], function ($, P, U, Bacon, TWEEN) {
 	'use strict';
 
 
@@ -28,35 +28,66 @@ define(['jquery', './util/bacon-and-eggs.js', 'tweenjs'], function ($, Bacon, TW
 				x: this.circuitboard.camera3D.up.x,
 				y: this.circuitboard.camera3D.up.y,
 				z: this.circuitboard.camera3D.up.z
-			},
-			target: {
+			}
+		};
+
+		var semanticTarget = this.circuitboard.camera3D.userData.semanticTarget;
+		if (semanticTarget) {
+			U.assert(semanticTarget.type === 'Tile',
+					`At this point in development, the only semantic camera target should be a Tile. But it's a ${semanticTarget.type}!`);
+
+			this.object.camera3D.semanticTarget = semanticTarget.model.id;
+		} else {
+			this.object.camera3D.target = {
 				x: this.circuitboard.camera3D.userData.target.x,
 				y: this.circuitboard.camera3D.userData.target.y,
 				z: this.circuitboard.camera3D.userData.target.z
-			}
-		};
+			};
+		}
 
 	}).insert('Snapshot.prototype.restore', function () {
 
 		if (!this.options.camera3D) { return }
 
-		var easing = { duration: 800, easing: TWEEN.Easing.Sinusoidal.InOut };
+		/* turn off any currently existing semantic targets */
+		this.circuitboard.cameraTargetTile = null;
 
-		var from = this.circuitboard.camera3D;
-		var to = this.object.camera3D;
+		/* determine the new target, which can either have a semantic source (a tile)  */
+		/* or a syntactic source (an explicit set of coordinates) */
+		var targetP;
+		if (this.object.camera3D.semanticTarget) {
+			targetP = this.circuitboard.tile(this.object.camera3D.semanticTarget).then((tile) => {
+				return this.circuitboard.object3D.localToWorld(tile.object3D.position.clone());
+			});
+		} else {
+			targetP = P.resolve(this.object.camera3D.target);
+		}
 
-		var tweenPosition = Bacon.tween(from.position,        to.position, easing);
-		var tweenRotation = Bacon.tween(from.rotation,        to.rotation, easing);
-		var tweenUp       = Bacon.tween(from.up,              to.up,       easing);
-		var tweenTarget   = Bacon.tween(from.userData.target, to.target,   easing);
+		/* smoothly transition the camera to its new target */
+		targetP.then((target) => {
 
-		Bacon.mergeAll([
-			tweenPosition.start(),
-			tweenRotation.start(),
-			tweenUp.start(),
-			tweenTarget.start()
-		]);
+			// TODO: in order to work smoothly with both syntactic and semantic targets,
+			//     : we should perform manipulations and corrections on a dummy camera in the three.js world;
+			//     : this will work better than 'just changing the target' as we do below
 
+			var easing = { duration: 800, easing: TWEEN.Easing.Sinusoidal.InOut };
+
+			var from = this.circuitboard.camera3D;
+			var to = this.object.camera3D;
+
+			var tweenPosition = Bacon.tween(from.position,        to.position, easing);
+			var tweenRotation = Bacon.tween(from.rotation,        to.rotation, easing);
+			var tweenUp       = Bacon.tween(from.up,              to.up,       easing);
+			var tweenTarget   = Bacon.tween(from.userData.target, target,      easing);
+
+			Bacon.mergeAll([
+				tweenPosition.start(),
+				tweenRotation.start(),
+				tweenUp.start(),
+				tweenTarget.start()
+			]);
+
+		});
 	});
 
 

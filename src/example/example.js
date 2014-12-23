@@ -42,6 +42,7 @@ require('../p-tile-maximized-snapshot.js');
 require('../p-three-d-model-snapshot.js');
 require('../p-tile-button-to-maximize.js');
 require('../p-tile-button-to-swap-three-d-model.js');
+require('../p-tile-button-to-point-camera.js');
 
 
 /* select plugins to activate them  (note that these must already be *loaded* at this point) */
@@ -63,6 +64,7 @@ circuitboard.plugin([
 	'tile-button-to-hide',
 	'tile-button-to-maximize',
 	'tile-button-to-swap-three-d-model',
+	'tile-button-to-point-camera',
 	//'ppi',
 ]);
 

@@ -40,7 +40,6 @@ define([
 			}).add('construct', function () {
 
 				this._p_circuitboardCore_tilesByModelId = {};
-				this._p_circuitboardCore_artefactsById = {};
 
 				// create the root tilemap
 				$('<div/>').appendTo(this.element)
@@ -134,6 +133,9 @@ define([
 
 				/* an element id for quick jQuery lookups */
 				this.element.attr('id', this.id);
+
+				/* notify the circuitboard of this new tile */
+				this.circuitboard._registerTile(this);
 
 			});
 

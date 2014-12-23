@@ -19,6 +19,9 @@ define(['jquery', './util/misc.js', 'three-js', './util/bacon-and-eggs.js'], fun
 		/* the 'threeDManualControlsEnabled' property */
 		this.newProperty('threeDManualControlsEnabled', { initial: true });
 
+		/* the 'three-d-manual-controls-used' event */
+		this.newEvent('three-d-manual-controls-used');
+
 		this.on('threeDMode').value(true).onValue(() => {
 
 
@@ -141,26 +144,35 @@ define(['jquery', './util/misc.js', 'three-js', './util/bacon-and-eggs.js'], fun
 				if (somethingChanged || this.currentArrowKey) {
 					somethingChanged = false;
 
+
+					/* trigger event for manual controls used */
+					this.event('three-d-manual-controls-used').push();
+
+
 					/* setup */
 					this._eye.subVectors(this.camera3D.position, this.camera3D.userData.target);
 
 
 					/* panning */
 					(() => {
-						var mouseChange = new THREE.Vector2();
-						var objectUp = new THREE.Vector3();
-						var pan = new THREE.Vector3();
-						mouseChange.copy(this._panEnd).sub(this._panStart); // TODO: just store this directly?
-						if (mouseChange.lengthSq()) {
-							mouseChange.multiplyScalar(this._eye.length() * this._panSpeed);
-							pan.copy(this._eye);
-							pan.cross(this.camera3D.up);
-							pan.setLength(mouseChange.x);
-							pan.add(objectUp.copy(this.camera3D.up).setLength(mouseChange.y));
-							this.camera3D.position.add(pan);
-							this.camera3D.userData.target.add(pan);
-							this._panStart.copy(this._panEnd);
-						}
+
+							var mouseChange = new THREE.Vector2();
+							var objectUp = new THREE.Vector3();
+							var pan = new THREE.Vector3();
+							mouseChange.copy(this._panEnd).sub(this._panStart); // TODO: just store this directly?
+							if (mouseChange.lengthSq()) {
+								mouseChange.multiplyScalar(this._eye.length() * this._panSpeed);
+								pan.copy(this._eye);
+								pan.cross(this.camera3D.up);
+								pan.setLength(mouseChange.x);
+								pan.add(objectUp.copy(this.camera3D.up).setLength(mouseChange.y));
+								this.camera3D.position.add(pan);
+								if (!this.camera3D.userData.semanticTarget) {
+									this.camera3D.userData.target.add(pan);
+								}
+								this._panStart.copy(this._panEnd);
+							}
+
 					})();
 					/* rotating by mouse */
 					(() => {
