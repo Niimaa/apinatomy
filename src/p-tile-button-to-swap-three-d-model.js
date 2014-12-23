@@ -5,25 +5,47 @@ define(['jquery'], function ($) {
 	var plugin = $.circuitboard.plugin({
 		name: 'tile-button-to-swap-three-d-model',
 		requires: ['tile-buttons', 'three-d-geometric-models']
-	}).modify('Tile.prototype');
+	});
 
 
-	plugin.append('construct', function () {
+	plugin.append('Tile.prototype.construct', function () {
 
-		if (Object.keys(this.threeDModels).length === 0) { return }
+		/* an array containing null, and each 3D model artefact */
+		var models = [null].concat(this.children.filter((child) => child.type === 'ThreeDModel'));
 
-		// an array containing false, and a string for each 3D model id
-		var modelIds = [false].concat(Object.keys(this.threeDModels));
+		if (models.length > 1) {
+			this.addButton({ name: 'swap3dModel', icon: require('./util/icons/3d-white.png') }).onValue(() => {
 
-		// the current model ID or false
-		var current = 0;
+				// the button switches between the available 3D models on the top level of the tile
 
-		this.addButton({ name: 'swap3dModel', icon: require('./util/icons/3d-white.png') })
-			.onValue(() => {
-				current = (current + 1) % modelIds.length;
-				var id = modelIds[current];
-				this.showThreeDModel(id);
+				var i;
+				for (i = 1; i < models.length; ++i) {
+					if (models[i].visible) {
+						models[i].visible = false;
+						break;
+					}
+				}
+				i = (i+1) % models.length;
+				if (models[i]) {
+
+					/* make the corresponding model visible, as well as all its children */
+					models[i].traverseArtefactsByType('ThreeDModel', (model) => { model.visible = true });
+
+					/* temporary information in the console for Bernard */// TODO: remove when the corresponding demo is over
+					var indentation = "-- ";
+					var modelHierarchy = "Available parts of this 3D model:\n";
+					models[i].traverseArtefactsByType('ThreeDModel', (model) => {
+						modelHierarchy += indentation + model.id + '\n';
+					}, {
+						beforeGoingIn() { indentation += "-- " },
+						beforeGoingOut() { indentation = indentation.slice(3) }
+					});
+					console.log(modelHierarchy);
+
+				}
+
 			});
+		}
 
 	});
 

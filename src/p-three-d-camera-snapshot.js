@@ -50,7 +50,7 @@ define(['jquery', './util/bacon-and-eggs.js', 'tweenjs'], function ($, Bacon, TW
 		var tweenUp       = Bacon.tween(from.up,              to.up,       easing);
 		var tweenTarget   = Bacon.tween(from.userData.target, to.target,   easing);
 
-		return Bacon.mergeAll([
+		Bacon.mergeAll([
 			tweenPosition.start(),
 			tweenRotation.start(),
 			tweenUp.start(),

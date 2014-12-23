@@ -12,24 +12,42 @@ define(['jquery', './util/misc.js'], function ($, U) {
 
 		// TODO: this should refer to tiles by artefact id, not by model id (somehow)
 
-		/* remember tiles that are visible */
+		/* remember 3D models that are visible */
 		if (this.options.threeDModelsVisible) {
 			this.object.threeDModelsVisible = {};
-			this.circuitboard.traverseArtefactsByType('Tile', (tile) => {
-				this.object.threeDModelsVisible[tile.model.id] = tile.currentThreeDModelID;
+			this.circuitboard.traverseArtefactsByType('ThreeDModel', (model) => {
+				if (model.visible) { this.object.threeDModelsVisible[model.id] = true }
+			});
+		}
+
+		/* remember 3D models that are hidden */
+		if (this.options.threeDModelsHidden) {
+			this.object.threeDModelsHidden = {};
+			this.circuitboard.traverseArtefactsByType('ThreeDModel', (model) => {
+				if (model.hidden) { this.object.threeDModelsHidden[model.id] = true }
 			});
 		}
 
 	}).insert('Snapshot.prototype.restore', function () {
 
-		/* restore tiles that are visible */
+		/* restore 3D models that are visible */
 		if (this.options.threeDModelsVisible) {
-			Object.keys(this.object.threeDModelsVisible).filter((id) => U.isDefined(this.object.threeDModelsVisible[id])).forEach((id) => {
-				this.circuitboard.tile(id).then((tile) => {
-					tile.showThreeDModel(this.object.threeDModelsVisible[tile.model.id]);
+			Object.keys(this.object.threeDModelsVisible).forEach((id) => {
+				this.circuitboard.artefactById(id).then((model) => {
+					model.visible = this.object.threeDModelsVisible[id];
 				});
 			});
 		}
+
+		/* restore 3D models that are hidden */
+		if (this.options.threeDModelsHidden) {
+			Object.keys(this.object.threeDModelsHidden).forEach((id) => {
+				this.circuitboard.artefactById(id).then((model) => {
+					model.hidden = this.object.threeDModelsHidden[id];
+				});
+			});
+		}
+
 
 	});
 

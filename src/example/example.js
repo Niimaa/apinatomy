@@ -101,7 +101,7 @@ $(document).ready(() => {
 			//		},
 			//		color: 0xE6E6B3,
 			//		animation: { duration: 1500 },
-			//		elevation: -10
+			//		elevation: 0
 			//	}
 			//},
 

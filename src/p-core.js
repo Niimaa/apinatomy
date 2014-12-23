@@ -19,7 +19,7 @@ define([
 	plugin.modify('Circuitboard.prototype')
 			.add('_registerTile', function _registerTile(tile) {
 
-				// called by the tile constructor
+				// called by the Tile constructor
 
 				U.getDef(this._p_circuitboardCore_tilesByModelId, tile.model.id, defer).resolve(tile);
 
@@ -40,6 +40,7 @@ define([
 			}).add('construct', function () {
 
 				this._p_circuitboardCore_tilesByModelId = {};
+				this._p_circuitboardCore_artefactsById = {};
 
 				// create the root tilemap
 				$('<div/>').appendTo(this.element)
@@ -133,9 +134,6 @@ define([
 
 				/* an element id for quick jQuery lookups */
 				this.element.attr('id', this.id);
-
-				/* inform circuitboard of new tile */
-				this.circuitboard._registerTile(this);
 
 			});
 

@@ -5,8 +5,9 @@ define([
 	'./util/bacon-signal-handler.js',
 	'./util/unique-id.js',
 	'./util/main-delta-model.js',
-	'./util/plugin.js'
-], function ($, P, U, BaconSignalHandler, uniqueID, dm, plugin) {
+	'./util/plugin.js',
+	'./util/defer.js'
+], function ($, P, U, BaconSignalHandler, uniqueID, dm, plugin, defer) {
 	'use strict';
 
 
@@ -45,6 +46,14 @@ define([
 
 			/* possibly wait for something before construction (like plugins)? */
 			this.beforeConstruction(beforeConstruction);
+
+			/* give the root artefact a way to register other artefacts by ID */
+			if (this.root === this) {
+				this._artefactsByID = {};
+				this._registerArtefact = function (artefact) {
+					U.getDef(this._artefactsByID, artefact.id, defer).resolve(artefact);
+				};
+			}
 
 		}, /** @lends Artefact.prototype */ {
 
@@ -96,6 +105,26 @@ define([
 			 */
 			get children() { return this._children },
 
+			/** {@public}{@property}
+			 *
+			 * @return {Artefact} - the root of the artefact hierarchy
+			 */
+			get root() {
+				if (!this._root) { this._root = this.parent ? this.parent.root : this }
+				return this._root;
+			},
+
+			/** {@public}{@method}
+			 *
+			 * Get a promise to an artefact given its ID.
+			 *
+			 * @param  id {String}   - the id of the required artefact
+			 * @return {P<Artefact>} - the promise to the artefact that has the given id
+			 */
+			artefactById(id) {
+				return U.getDef(this.root._artefactsByID, id, defer).promise;
+			},
+
 			/** {@public}{@method}
 			 *
 			 * Traverse the Artefact hierarchy with this as root.
@@ -124,9 +153,11 @@ define([
 				if (!order) { order = 'prefix' }
 
 				if (order === 'prefix' && this.type === type) { fn(this) }
+				if (options.beforeGoingIn) { options.beforeGoingIn(this) }
 				this.closestDescendantsByType(type).forEach((descendent) => {
 					descendent.traverseArtefactsByType(type, fn, options);
 				});
+				if (options.beforeGoingOut) { options.beforeGoingOut(this) }
 				if (order === 'postfix' && this.type === type) { fn(this) }
 			},
 
@@ -199,14 +230,20 @@ define([
 
 				/* then run the 'construct' method */
 				if (this.constructed) { // construct asynchronously
-					this.constructed.then(() => {
+					this.constructed = this.constructed.then(() => {
 						if ($.isFunction(this.construct)) {
-							this.beforeConstruction(this.construct(options));
+							return P.resolve(this.construct(options)).return(this);
 						}
+						return this;
 					});
 				} else if ($.isFunction(this.construct)) {
 					this.beforeConstruction(this.construct(options));
 				}
+
+				/* register this artefact to the circuitboard */
+				(this.constructed || P.resolve()).then(() => {
+					this.root._registerArtefact(this);
+				});
 
 			}, U.extend({}, prototype, {
 				get circuitboard() {

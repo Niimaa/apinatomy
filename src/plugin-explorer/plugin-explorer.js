@@ -28,9 +28,21 @@ require('../p-ppi.js');
 require('../p-three-d.js');
 require('../p-three-d-geometric-models.js');
 require('../p-three-d-geometric-models-stl.js');
+require('../p-three-d-geometric-models-obj.js');
+require('../p-three-d-geometric-models-json.js');
 require('../p-d3-three-d.js');
 require('../p-three-d-manual-controls.js');
 require('../p-three-d-auto-controls.js');
+require('../p-snapshot.js');
+require('../p-three-d-camera-snapshot.js');
+require('../p-tile-open-snapshot.js');
+require('../p-tile-buttons.js');
+require('../p-tile-button-to-hide.js');
+require('../p-tile-visible-snapshot.js');
+require('../p-tile-maximized-snapshot.js');
+require('../p-three-d-model-snapshot.js');
+require('../p-tile-button-to-maximize.js');
+require('../p-tile-button-to-swap-three-d-model.js');
 
 
 /* the application itself */
