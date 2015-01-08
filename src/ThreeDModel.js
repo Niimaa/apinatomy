@@ -26,8 +26,13 @@ define([
 	function calculateBoundingBox(obj) {
 		obj.userData.boundingBox = new THREE.Box3();
 		traverseGeometries(obj, (geometry) => {
-			geometry.morphTargets.concat([geometry]).forEach(({vertices}) => {
-				vertices.forEach((point) => {
+			if (geometry instanceof THREE.BufferGeometry) {
+				geometry.computeBoundingBox();
+				obj.userData.boundingBox.expandByPoint(geometry.boundingBox.min);
+				obj.userData.boundingBox.expandByPoint(geometry.boundingBox.min);
+			}
+			(geometry.morphTargets || []).concat([geometry]).forEach(({vertices}) => {
+				(vertices || []).forEach((point) => {
 					obj.userData.boundingBox.expandByPoint(point);
 				});
 			});
@@ -143,6 +148,11 @@ define([
 									var elevation = U.defOr(this.options.elevation, Math.min(size.width, size.height) / 4);
 									obj.position.z = 0.5 * ratio * obj.userData.boundingBox.size().z + elevation;
 
+									/* any custom 'rotation'? */
+									if (this.options.rotation) {
+										U.extend(obj.rotation, this.options.rotation);
+									}
+
 								});
 							})
 
@@ -167,7 +177,7 @@ define([
 				if (!this.geometryCorrection) { this.geometryCorrection = obj.userData.boundingBox.center().negate() }
 				traverseGeometries(obj, (geometry) => {
 					var matrix = new THREE.Matrix4().setPosition(this.geometryCorrection);
-					geometry.morphTargets.forEach(({vertices}) => {
+					(geometry.morphTargets || []).forEach(({vertices}) => {
 						vertices.forEach((point) => {
 							point.applyMatrix4(matrix);
 						});
