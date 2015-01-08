@@ -16,7 +16,6 @@ svg {
 		& > rect {
 			fill: transparentize(white, .3);
 			stroke: black;
-			stroke-dasharray: 5, 5;
 			stroke-width: 1.5px;
 		}
 
@@ -32,10 +31,38 @@ svg {
 		&.resolution {
 			& > rect {
 				stroke: lightgray;
+				stroke-dasharray: 5, 5;
 			}
 			& > text {
 				stroke: lightgray;
 				font-style: italic;
+			}
+		}
+
+		&.focus-connected {
+			&:not(.focus) > rect {
+				stroke: black !important;
+				stroke-width: 2px !important;
+			}
+			&:not(.focus) > text {
+				stroke: black !important;
+			}
+			&.focus > rect {
+				stroke: darkgreen;
+				stroke-width: 2px !important;
+			}
+			&.focus > text {
+				stroke: darkgreen;
+			}
+		}
+
+		&.not-focus-connected {
+			& > rect {
+				stroke: lightgray !important;
+				stroke-width: 1px !important;
+			}
+			& > text {
+				stroke: lightgray !important;
 			}
 		}
 	}
@@ -51,7 +78,20 @@ svg {
 
 		&.resolution {
 			stroke: lightgray;
+			stroke-dasharray: 5, 5;
 			marker-end: url(#gray-arrow-tip);
+		}
+
+		&.focus-connected {
+			stroke: black !important;
+			stroke-width: 2px !important;
+			marker-end: url(#arrow-tip) !important;
+		}
+
+		&.not-focus-connected {
+			stroke: lightgray !important;
+			stroke-width: 1px !important;
+			marker-end: url(#gray-arrow-tip) !important;
 		}
 	}
 }

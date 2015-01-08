@@ -1,4 +1,4 @@
-define(['jquery', 'd3', '../util/misc.js', './intersects.js'], function ($, d3, U) {
+define(['jquery', 'd3', '../util/misc.js', '../util/bacon-and-eggs.js', './intersects.js'], function ($, d3, U, Bacon) {
 	'use strict';
 
 	var NODE_MARGIN = 15;
@@ -11,16 +11,18 @@ define(['jquery', 'd3', '../util/misc.js', './intersects.js'], function ($, d3, 
 		var deltas = [];
 		var applicationOrder = [];
 
+		var mapNameToDelta = {};
 		transReductGraph.topologically((key) => {
-			var val = graph.vertexValue(key);
+			var val = { model: graph.vertexValue(key) };
 			val.show = true;
 			val.width = val.height = 0; // some initial value to avoid NaNs
 			deltas.push(val);
+			mapNameToDelta[val.model.name] = val;
 		});
 		transReductGraph.eachEdge((v1, v2) => {
 			applicationOrder.push({
-				source: graph.vertexValue(v2),
-				target: graph.vertexValue(v1)
+				source: mapNameToDelta[v2],
+				target: mapNameToDelta[v1]
 			});
 		});
 
@@ -30,7 +32,7 @@ define(['jquery', 'd3', '../util/misc.js', './intersects.js'], function ($, d3, 
 		/* create the force layout */
 		var force = d3.layout.force()
 				.gravity(0.08)
-				.charge((d) => (d.if === true ? -2000 : -1000)) // deltas that are always applied get greater repulsion
+				.charge((d) => (d.distanceFromFocus === null ? -500 : -800)) // deltas that are in the focus chain get lower repulsion
 				.linkDistance((d) => (d.source.width + d.target.width + 2 * (d.source.height + d.target.height)) / 3)
 				.linkStrength(0.1);
 
@@ -148,15 +150,18 @@ define(['jquery', 'd3', '../util/misc.js', './intersects.js'], function ($, d3, 
 			/* position deltas below their subordinates */
 			var k = 0.3 * (e ? e.alpha : 0);
 			shownOrder.forEach((order) => {
+				var factor = 1;
+				if (U.isDefined(order.source.distanceFromFocus)) { // target will also be defined
+					if ((order.source.distanceFromFocus === null) !== (order.target.distanceFromFocus === null)) { return }
+					if (order.source.distanceFromFocus !== null && order.target.distanceFromFocus !== null) {
+						factor = 2;
+					}
+				}
 				var dist = order.source.y - order.target.y -
 						1.25 * (order.source.height + order.target.height + 4 * NODE_MARGIN);
 				if (dist < 0) {
-					if (!order.source.dragging) {
-						order.source.y -= k * dist;
-					}
-					if (!order.target.dragging) {
-						order.target.y += k * dist;
-					}
+					if (!order.source.dragging) { order.source.y -= factor * k * dist }
+					if (!order.target.dragging) { order.target.y += factor * k * dist }
 				}
 			});
 
@@ -185,33 +190,22 @@ define(['jquery', 'd3', '../util/misc.js', './intersects.js'], function ($, d3, 
 				U.array(order.target, 'superiors').push(order.source);
 			});
 
-			shownDeltas.forEach((delta) => { delete delta._depth });
-
-			function deltaDepth(delta) {
-				if (U.isDefined(delta._depth)) { return delta._depth }
-				if (delta.inferiors.length === 0) { return delta._depth = 0 }
-				return delta._depth = delta.inferiors.map((inf) => deltaDepth(inf)).max() + 1;
-			}
-
-			shownDeltas.forEach((delta) => { delta.depth = () => deltaDepth(delta) });
-
 			// using the d3 general update pattern:
 			// http://bl.ocks.org/mbostock/3808218
 
 			/* restart the force */
-			force
-					.nodes(shownDeltas)
-					.links(shownOrder)
-					.start().alpha(0.2);
+			force.nodes(shownDeltas)
+			     .links(shownOrder)
+			     .start().alpha(0.2);
 
 
 			function makeNode(d) {
-				var element = $(
-						`<svg class="delta">        ` +
-						`    <rect />               ` +
-						`    <text >${d.name}</text>` +
-						`</svg>                     `
-				);
+				var element = $(`
+					<svg class="delta">
+						<rect />
+						<text>${d.model.name}</text>
+					</svg>
+				`);
 				d.element = element;
 				return element[0];
 			}
@@ -222,39 +216,43 @@ define(['jquery', 'd3', '../util/misc.js', './intersects.js'], function ($, d3, 
 				delta.width = bbox.width;
 				delta.height = bbox.height;
 
-				rect
-						.attr('width',  delta.width + NODE_MARGIN)
-						.attr('height', delta.height + NODE_MARGIN)
-						.attr('x',    -(delta.width + NODE_MARGIN)  / 2)
-						.attr('y',    -(delta.height + NODE_MARGIN) / 2);
+				rect.attr('width',  delta.width + NODE_MARGIN)
+				    .attr('height', delta.height + NODE_MARGIN)
+				    .attr('x',    -(delta.width + NODE_MARGIN)  / 2)
+				    .attr('y',    -(delta.height + NODE_MARGIN) / 2);
 
-				text
-						.attr('x', -delta.width / 2)
-						.attr('y', delta.height / 2 - 4);
+				text.attr('x', -delta.width / 2)
+				    .attr('y', delta.height / 2 - 4);
 			}
 
-			/* deltaNodes */
-			deltaNodes = svgCanvas.selectAll('.delta').data(shownDeltas.filter((d) => d.show), (d) => d.name);
+			/* new nodes */
+			deltaNodes = svgCanvas.selectAll('.delta').data(shownDeltas.filter((d) => d.show), (d) => d.model.name);
 			deltaNodes.enter()
 					.append(makeNode)
-					.classed('always', (d) => (d.if === true))
-					.classed('resolution', (d) => !d.manuallySelectable)
+					.classed('always', (d) => (d.model.if === true))
+					.classed('resolution', (d) => !d.model.manuallySelectable)
+					.on('click', (d) => {
+						if (d3.event.defaultPrevented) { return } // ignore drag
+						focus.set(d.distanceFromFocus === 0 ? null : d);
+					})
 					.call(force.drag);
-			deltaNodes.exit().remove();
-
-
-			/* set widths and heights */
-			shownDeltas.forEach(setNodeSizing);
-
 
 			/* orderArrows */
 			orderArrows = svgCanvas.selectAll('.application-order')
-					.data(shownOrder, (d) => `${d.source.name} - ${d.target.name}`);
+					.data(shownOrder, (d) => `${d.source.model.name} - ${d.target.model.name}`);
 			orderArrows.enter()
 					.append("line")
 					.classed('application-order', true)
-					.classed('resolution', (d) => (!d.source.manuallySelectable || !d.target.manuallySelectable));
+					.classed('resolution', (d) => (!d.source.model.manuallySelectable || !d.target.model.manuallySelectable));
 			orderArrows.exit().remove();
+
+			/* changes to all nodes and arrows */
+			shownDeltas.forEach(setNodeSizing);
+			deltaNodes.classed('focus', (d) => d.distanceFromFocus === 0);
+			deltaNodes.classed('focus-connected', (d) => U.isDefined(d.distanceFromFocus) && d.distanceFromFocus !== null);
+			orderArrows.classed('focus-connected', (d) => ((U.isDefined(d.source.distanceFromFocus) && d.source.distanceFromFocus !== null) && (U.isDefined(d.target.distanceFromFocus) && d.target.distanceFromFocus !== null)));
+			deltaNodes.classed('not-focus-connected', (d) => d.distanceFromFocus === null);
+			orderArrows.classed('not-focus-connected', (d) => (d.source.distanceFromFocus === null || d.target.distanceFromFocus === null));
 
 
 			/* define a nice visual z-order for the svg elements */
@@ -280,6 +278,51 @@ define(['jquery', 'd3', '../util/misc.js', './intersects.js'], function ($, d3, 
 		}
 		$(window).resize(onResize);
 		onResize();
+
+
+		/* keeping track of which delta has focus */
+		function visitInferiors(dd, fn, before = ()=>{}, after = ()=>{}, done = {}) {
+			if (done[dd.model.name]) { return }
+			done[dd.model.name] = true;
+			fn(dd);
+			before();
+			(dd.inferiors || []).forEach((inferior) => { visitInferiors(inferior, fn, before, after, done) });
+			after();
+		}
+		function visitSuperiors(dd, fn, before = ()=>{}, after = ()=>{}, done = {}) {
+			if (done[dd.model.name]) { return }
+			done[dd.model.name] = true;
+			fn(dd);
+			before();
+			(dd.superiors || []).forEach((superior) => { visitSuperiors(superior, fn, before, after, done) });
+			after();
+		}
+		var focus = new Bacon.Model(null);
+		focus.onValue((newD) => {
+			if (newD) {
+				deltas.forEach((d) => {
+					d.distanceFromFocus = null;
+				});
+				var i = 0;
+				visitInferiors(newD,
+						(d) => { d.distanceFromFocus = i },
+						() => {i--},
+						() => {i++}
+				);
+				visitSuperiors(newD,
+						(d) => { d.distanceFromFocus = i },
+						() => {i++},
+						() => {i--}
+				);
+			} else {
+				deltas.forEach((d) => {
+					delete d.distanceFromFocus;
+				});
+			}
+			updateDiagram();
+		});
+
+
 
 	};
 
