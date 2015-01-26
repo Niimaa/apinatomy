@@ -67,6 +67,9 @@ define([
 
 		var ThreeDModel = window._amy_ThreeDModel = Artefact.newSubclass('ThreeDModel', function ThreeDModel({visible}) {
 
+			/* check if this is a model part or the root */
+			this._isPart = this.parent.type === 'ThreeDModel';
+
 			/* the 'visible' and 'hidden' properties */
 			this.newProperty('visible', { initial: visible });
 			this.newProperty('hidden');
@@ -114,60 +117,7 @@ define([
 		}, {
 
 			get object3D() {
-				if (!this._object3D) {
-					this._object3D = this._load()
-
-						/* process the geometries and center them on (0, 0, 0) */
-							.tap(calculateBoundingBox)
-							.tap((obj) => { this._centerGeometries(obj) })
-
-						/* resize / rotate the object based on the shape of the tile */
-							.tap((obj) => {
-								this.p('visible').value(true).flatMap(() =>
-										this._tile.p('size').takeWhile(this.p('visible'))).onValue((size) => {
-
-									/* abbreviate 3D-object width and height */
-									var objWidth = obj.userData.boundingBox.size().x;
-									var objHeight = obj.userData.boundingBox.size().y;
-
-									/* rotate 90° on the z-axis if this gives a better fit */
-									if ((size.width < size.height) !== (objWidth < objHeight)) {
-										obj.rotation.z = 0.5 * Math.PI;
-										[objWidth, objHeight] = [objHeight, objWidth];
-									} else {
-										obj.rotation.z = 0;
-									}
-
-									/* determine the scale ratio */
-									var ratio = 0.8 * Math.min(size.width / objWidth, size.height / objHeight);
-
-									/* adjust size */
-									obj.scale.set(ratio, ratio, ratio);
-
-									/* adjust 'altitude' */
-									var elevation = U.defOr(this.options.elevation, Math.min(size.width, size.height) / 4);
-									obj.position.z = 0.5 * ratio * obj.userData.boundingBox.size().z + elevation;
-
-									/* any custom 'rotation'? */
-									if (this.options.rotation) {
-										U.extend(obj.rotation, this.options.rotation);
-									}
-
-								});
-							})
-
-						/* back-link the artefact to the object3D */
-							.tap((obj) => { obj.userData.artefact = this })
-
-						/* add this object to the scene */
-							.tap((obj) => {
-								this._tile.object3D.add(obj);
-							})
-
-						/* start the animation of this object, if applicable */
-							.tap(startThreeDAnimation);
-				}
-
+				if (!this._object3D) { this._object3D = this._load() }
 				return this._object3D;
 			},
 
@@ -188,8 +138,60 @@ define([
 
 
 			_load() {
-				if (U.isDefined(this.options.file)) { return this._loadFile() }
-				if (U.isDefined(this.options.parts)) { return this._loadParts() }
+				var result;
+				if (U.isDefined(this.options.file))  { result = this._loadFile()  }
+				if (U.isDefined(this.options.parts)) { result = this._loadParts() }
+
+				if (!this._isPart) {
+					result = result
+						/* process the geometries and center them on (0, 0, 0) */
+						.tap(calculateBoundingBox)
+						.tap((obj) => { this._centerGeometries(obj) })
+						/* resize / rotate the object based on the shape of the tile */
+						.tap((obj) => {
+							this.p('visible').value(true).flatMap(() =>
+								this._tile.p('size').takeWhile(this.p('visible'))).onValue((size) => {
+
+								/* abbreviate 3D-object width and height */
+								var objWidth = obj.userData.boundingBox.size().x;
+								var objHeight = obj.userData.boundingBox.size().y;
+
+								/* rotate 90° on the z-axis if this gives a better fit */
+								if ((size.width < size.height) !== (objWidth < objHeight)) {
+									obj.rotation.z = 0.5 * Math.PI;
+									[objWidth, objHeight] = [objHeight, objWidth];
+								} else {
+									obj.rotation.z = 0;
+								}
+
+								/* determine the scale ratio */
+								var ratio = 0.8 * Math.min(size.width / objWidth, size.height / objHeight);
+
+								/* adjust size */
+								obj.scale.set(ratio, ratio, ratio);
+
+								/* adjust 'altitude' */
+								var elevation = U.defOr(this.options.elevation, Math.min(size.width, size.height) / 4);
+								obj.position.z = 0.5 * ratio * obj.userData.boundingBox.size().z + elevation;
+
+								/* any custom 'rotation'? */
+								if (this.options.rotation) {
+									U.extend(obj.rotation, this.options.rotation);
+								}
+
+							});
+						})
+						/* back-link the artefact to the object3D */
+						.tap((obj) => { obj.userData.artefact = this })
+						/* add this object to the scene */
+						.tap((obj) => {
+							this._tile.object3D.add(obj);
+						})
+						/* start the animation of this object, if applicable */
+						.tap(startThreeDAnimation);
+				}
+
+				return result;
 			},
 
 			_loadFile() {
@@ -249,7 +251,7 @@ define([
 
 		}, {
 
-			visible: true
+			visible: false
 
 		});
 
