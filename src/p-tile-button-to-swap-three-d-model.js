@@ -14,7 +14,7 @@ define(['jquery'], function ($) {
 		var models = [null].concat(this.children.filter((child) => child.type === 'ThreeDModel'));
 
 		if (models.length > 1) {
-			this.addButton({ name: 'swap3dModel', icon: require('./util/icons/3d-white.png') }).onValue(() => {
+			this.addButton({ name: 'swap3dModel', icon: require('url!./util/icons/3d-white.png') }).onValue(() => {
 
 				// the button switches between the available 3D models on the top level of the tile
 

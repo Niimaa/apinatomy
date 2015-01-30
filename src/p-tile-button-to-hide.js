@@ -10,7 +10,7 @@ define(['jquery'], function ($) {
 
 	plugin.insert('construct', function () {
 
-		this.addButton({ name: 'hide', icon: require('./util/icons/resize-min-white.png') })
+		this.addButton({ name: 'hide', icon: require('url!./util/icons/resize-min-white.png') })
 			.onValue(() => {
 				this.hidden = !this.hidden;
 			});

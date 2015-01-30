@@ -10,7 +10,7 @@ define(['jquery'], function ($) {
 
 	plugin.insert('construct', function () {
 
-		this.addButton({ name: 'maximize', icon: require('./util/icons/resize-max-white.png') })
+		this.addButton({ name: 'maximize', icon: require('url!./util/icons/resize-max-white.png') })
 			.onValue(() => {
 				this.maximized = !this.maximized;
 			});
