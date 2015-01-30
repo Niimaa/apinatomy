@@ -29,7 +29,7 @@ define([
 			if (geometry instanceof THREE.BufferGeometry) {
 				geometry.computeBoundingBox();
 				obj.userData.boundingBox.expandByPoint(geometry.boundingBox.min);
-				obj.userData.boundingBox.expandByPoint(geometry.boundingBox.min);
+				obj.userData.boundingBox.expandByPoint(geometry.boundingBox.max);
 			}
 			(geometry.morphTargets || []).concat([geometry]).forEach(({vertices}) => {
 				(vertices || []).forEach((point) => {
