@@ -13,18 +13,16 @@ define([
 	});
 
 
-	/* to translate a 3D point description object to an Object3D */
-	function objToObject3D({ color, coordinates }) {
-		var object3D = new THREE.Object3D();
+	/* to translate a 3D point description object to a Geometry object */
+	function coordsToGeometry({coordinates}) {
+		var result = new THREE.Geometry();
 		coordinates.forEach((coords) => {
 			var geometry = new THREE.SphereGeometry(4, 32, 32);
 			geometry.applyMatrix(new THREE.Matrix4()
 					.setPosition(U.applyConstructor(THREE.Vector3, coords)));
-			var material = new THREE.MeshLambertMaterial({ color });
-			var mesh = new THREE.Mesh(geometry, material);
-			object3D.add(mesh);
+			result.merge(geometry);
 		});
-		return object3D;
+		return result;
 	}
 
 
@@ -40,11 +38,11 @@ define([
 				if (status === 200 || status === 0) {
 
 					/* generate the 3D object */
-					var object3D = objToObject3D(this.parse(response));
+					var geometry = coordsToGeometry(this.parse(response));
 
 					/* transmit that object in both supported ways */
-					this.dispatchEvent({ type: 'load', content: object3D });
-					if (callback) { callback(object3D) }
+					this.dispatchEvent({ type: 'load', content: geometry });
+					if (callback) { callback(geometry) }
 
 				} else {
 
