@@ -1,4 +1,4 @@
-define(['jquery', 'bluebird', './util/misc.js', './util/defer.js', './util/main-delta-model.js', './24tiles.json'], ($, P, U, defer, dm, tfTiles) => {
+define(['jquery', 'bluebird', './util/misc.js', './util/defer.js', './util/main-delta-model.js', './24tiles.JSON'], ($, P, U, defer, dm, tfTiles) => {
 	'use strict';
 
 
@@ -53,7 +53,7 @@ define(['jquery', 'bluebird', './util/misc.js', './util/defer.js', './util/main-
 				_getDeferred(id).promise.id = id;
 				_getDeferred(id).promise.type = 'fma';
 
-				if (id.substr(0, id.indexOf(':')-1) === '24tile') {
+				if (id.substr(0, id.indexOf(':')) === '24tile') {
 					/* immediately resolve */
 					_getDeferred(id).resolve(tfTiles[id]);
 				} else {
