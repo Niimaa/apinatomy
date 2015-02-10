@@ -640,10 +640,6 @@
 			},
 			{
 				"type": "seed",
-				"entity": null
-			},
-			{
-				"type": "seed",
 				"entity": {
 					"_id": "fma:69616"
 				}
@@ -2627,10 +2623,6 @@
 				"entity": {
 					"_id": "fma:6872"
 				}
-			},
-			{
-				"type": "seed",
-				"entity": null
 			},
 			{
 				"type": "seed",
