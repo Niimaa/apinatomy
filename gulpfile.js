@@ -108,7 +108,6 @@ INTERNAL_LIBRARIES.concat(APPLICATIONS).forEach(function (m) {
 		}
 
 		if (m.type === 'internal-library') {
-			console.log(m.var);
 			webpack(_.defaults({
 				entry: './src/' + m.file,
 				externals: EXTERNAL_LIBRARIES.map(function (lib) { return lib.webpackExternal }),
