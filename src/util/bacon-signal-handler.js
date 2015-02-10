@@ -1,28 +1,33 @@
 'use strict';
 
-define(['jquery', './misc.js', './bacon-and-eggs.js'], function ($, U, Bacon) {
+define(['jquery', './misc.js', './bacon-and-eggs.js'], function ($, U, Kefir) {
 
 
-	/** {@export}{@class BaconSignalHandler}
+	/** {@export}{@class KefirSignalHandler}
 	 * Use this as a subclass (or just mix it in) to provide support for
-	 * events and observable properties through Bacon.js.
+	 * events and observable properties through Kefir.js.
 	 */
-	var BaconSignalHandler = U.newClass(function BaconSignalHandler() {
+	var KefirSignalHandler = U.newClass(function KefirSignalHandler() {
 
 		this._events = {};
 		this._properties = {};
 		this._propertyBusses = {};
 
-	}, /** @lends BaconSignalHandler.prototype */ {
+	}, /** @lends KefirSignalHandler.prototype */ {
+
+
+
+
+		///////////////////////////// TODO: continue here
 
 
 		/** {@public}{@method}
 		 * Declares a new event stream for this object.
 		 *
-		 * @param  {String}             name    - the name of the event, used to trigger or subscribe to it
-		 * @param  {Bacon.EventStream} [source] - another event stream to automatically trigger this event
+		 * @param  {String}        name    - the name of the event, used to trigger or subscribe to it
+		 * @param  {Kefir.Stream} [source] - another event stream to automatically trigger this event
 		 *
-		 * @return {Bacon.Bus} - the created event stream
+		 * @return {Kefir.Bus} - the created event stream
 		 */
 		newEvent(name, {source} = {}) {
 
@@ -33,7 +38,7 @@ define(['jquery', './misc.js', './bacon-and-eggs.js'], function ($, U, Bacon) {
 					`There is already a property '${name}' on this object.`);
 
 			/* define the event stream */
-			var bus = new Bacon.Bus();
+			var bus = Kefir.bus();
 			if (source) { bus.plug(source) }
 			return this._events[name] = bus.name(name);
 
@@ -44,8 +49,8 @@ define(['jquery', './misc.js', './bacon-and-eggs.js'], function ($, U, Bacon) {
 		 * Retrieve an event stream by name. If the name of a property is given, a stream
 		 * based on changes to that property is returned.
 		 *
-		 * @param  {String}       name - the name of the event stream to retrieve
-		 * @return {Bacon.EventStream} - the event stream associated with the given name
+		 * @param  {String}  name - the name of the event stream to retrieve
+		 * @return {Kefir.Stream} - the event stream associated with the given name
 		 */
 		event(name) {
 

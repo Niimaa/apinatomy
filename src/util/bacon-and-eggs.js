@@ -1,10 +1,6 @@
 'use strict';
 
-define(['jquery', './misc.js', 'baconjs', 'tweenjs'], function ($, U, Bacon, TWEEN) {
-
-	require('bacon.model');
-	require('bacon.jquery');
-
+define(['jquery', './misc.js', 'kefir', 'tweenjs'], function ($, U, Kefir, TWEEN) {
 
 	/* EventStream generators *****************************************************************************************/
 
@@ -13,9 +9,9 @@ define(['jquery', './misc.js', 'baconjs', 'tweenjs'], function ($, U, Bacon, TWE
 	// that can be un-subscribed by setting the subscriber to `null`.
 	// This function is memoized, so only one subscription is taken,
 	// and the same stream for it returned for each request.
-	Bacon.fromOnNull = U.memoize(function fromOnNull(obj, eventName) {
-		return Bacon.fromBinder((sink) => {
-			obj.on(eventName, (v) => { sink(new Bacon.Next(v)) });
+	Kefir.fromOnNull = U.memoize(function fromOnNull(obj, eventName) {
+		return Kefir.fromBinder((emitter) => {
+			obj.on(eventName, emitter.emit);
 			return () => { obj.on(eventName, null) };
 		});
 	});
@@ -28,14 +24,14 @@ define(['jquery', './misc.js', 'baconjs', 'tweenjs'], function ($, U, Bacon, TWE
 			window.oRequestAnimationFrame      ||
 			window.msRequestAnimationFrame     ||
 			((f) => { window.setTimeout(f, 1000 / 60) });
-	Bacon.animationFrames = function animationFrames() {
-		return Bacon.fromBinder((sink) => {
+	Kefir.animationFrames = function animationFrames() {
+		return Kefir.fromBinder((emitter) => {
 
 			/* self-calling animation-frame loop */
 			var subscribed = true;
 			(function iterationFn() {
 				requestAnimationFrameFn(() => {
-					if (sink() === Bacon.noMore) { subscribed = false }
+					emitter.emit();
 					if (subscribed) { iterationFn() }
 				});
 			})();
@@ -47,13 +43,13 @@ define(['jquery', './misc.js', 'baconjs', 'tweenjs'], function ($, U, Bacon, TWE
 	};
 
 
-	Bacon.tween = function tween(objStart, objEnd, {duration, delay, easing}) {
+	Kefir.tween = function tween(objStart, objEnd, {duration, delay, easing}) {
 
 		/* the tween */
 		var tw = new TWEEN.Tween(objStart).to(objEnd, duration);
 
 		/* the returned bus */
-		var bus = new Bacon.Bus();
+		var bus = Kefir.bus();
 
 		/* a local function to plug in other streams, keeping track in order to 'end' the bus */
 		var addStream = (() => {
@@ -69,11 +65,11 @@ define(['jquery', './misc.js', 'baconjs', 'tweenjs'], function ($, U, Bacon, TWE
 		})();
 
 		/* main stream */
-		addStream(Bacon.fromBinder((sink) => {
+		addStream(Kefir.fromBinder((emitter) => {
 			if (easing) { tw.easing(easing) }
 			if (delay)  { tw.delay(delay) }
-			tw.onUpdate(function () { sink(new Bacon.Next(() => this)) });
-			tw.onComplete(() => { sink(new Bacon.End()) });
+			tw.onUpdate(function () { emitter.emit(this) });
+			tw.onComplete(emitter.end);
 		}));
 
 		/* adding tween-specific properties to the returned bus */
@@ -94,8 +90,24 @@ define(['jquery', './misc.js', 'baconjs', 'tweenjs'], function ($, U, Bacon, TWE
 	};
 
 
-	Bacon.keyPress = function keyPress(keycode) {
-		return $(window).asEventStream('keypress').filter((e) => e.keyCode === keycode);
+	Kefir.keyPress = function keyPress(keyCode) {
+		return $(window).asKefirStream('keypress').filter((e) => e.keyCode === keyCode);
+	};
+
+
+	Kefir.once = function once(value) {
+		return Kefir.fromBinder((emitter) => {
+			emitter.emit(value);
+			emitter.end();
+		});
+	};
+
+
+	Kefir.fromArray = function fromArray(array) {
+		return Kefir.fromBinder((emitter) => {
+			array.forEach(emitter.emit);
+			emitter.end();
+		});
 	};
 
 
@@ -108,24 +120,24 @@ define(['jquery', './misc.js', 'baconjs', 'tweenjs'], function ($, U, Bacon, TWE
 	// that should be called *once* in the place where other streams can do their
 	// thing. It returns a function used to wrap other streams. It does not
 	// return a stream.
-	Bacon.limiter = function limiter(pacing, handler = U.call) {
-		var wantedBus = new Bacon.Bus();
-		var open = new Bacon.Bus();
-		var close = new Bacon.Bus();
+	Kefir.limiter = function limiter(pacing, handler = U.call) {
+		var wantedBus = Kefir.bus();
+		var open =      Kefir.bus();
+		var close =     Kefir.bus();
 
 		/* takes 'this' stream as pacing for a window of opportunity for other streams */
 		pacing.filter(wantedBus.toProperty(false)).onValue(handler, () => {
-			open.push();
-			wantedBus.push(false);
-			close.push();
+			open.emit();
+			wantedBus.emit(false);
+			close.emit();
 		});
 
 		/* returns a function to wrap a stream in this wrapper */
 		return function (stream, {buffer} = {}) {
 			wantedBus.plug(stream.map(true));
-			return close.startWith(true).flatMapLatest(() => {
+			return Kefir.constant(true).take(1).concat(close).flatMapLatest(() => {
 				var accumulator = (arr, val) => (buffer ? arr.concat([val]) : [val]);
-				return stream.takeUntil(open).reduce([], accumulator).flatMap(Bacon.fromArray);
+				return stream.takeUntilBy(open).reduce(accumulator, []).flatMap(Kefir.fromArray);
 			});
 		};
 	};
@@ -134,23 +146,23 @@ define(['jquery', './misc.js', 'baconjs', 'tweenjs'], function ($, U, Bacon, TWE
 	// All its original events are now fired inside the provided window. Set `options.buffer`
 	// to `true` if all its events should be buffered and released inside the next window.
 	// Otherwise, only the last event is retained.
-	Bacon.Observable.prototype.limitedBy = function limitedBy(wrapper, options) {
+	Kefir.Observable.prototype.limitedBy = function limitedBy(wrapper, options) {
 		return wrapper(this, options);
 	};
 
 
 	// This is a cheap version of the limiter defined above. TODO: use the limiter where this is now used
-	Bacon.EventStream.prototype.holdUntil = function holdUntil(pacing) {
-		return Bacon.fromBinder((sink) => {
+	Kefir.Stream.prototype.holdUntil = function holdUntil(pacing) {
+		return Kefir.fromBinder((emitter) => {
 			var buffer = [];
 			var unsubscribeToThis = this.onValue((value) => {
-				buffer.push(new Bacon.Next(() => value));
+				buffer.push(value);
 			});
 			var unsubscribeToPacing = pacing.onValue(() => {
 				if (buffer.length > 0) {
 					var oldBuffer = buffer;
 					buffer = [];
-					sink(oldBuffer);
+					oldBuffer.forEach(emitter.emit);
 				}
 			});
 			return () => {
@@ -162,19 +174,21 @@ define(['jquery', './misc.js', 'baconjs', 'tweenjs'], function ($, U, Bacon, TWE
 	};
 
 	// This filters an observable to only let through values equal to the given value.
-	Bacon.Observable.prototype.value = function (value, comparator) {
+	Kefir.Observable.prototype.value = function (value, comparator) {
 		comparator = comparator || ((e) => e === value);
 		return this.skipDuplicates().filter(comparator);
 	};
 
 	// This makes a subscription to an observable that doesn't do anything
-	Bacon.Observable.prototype.run = function () {
-		return this.subscribe(()=>{});
+	Kefir.Observable.prototype.run = function () {
+		var doNothing = ()=>{};
+		this.onValue(doNothing);
+		return () => { this.offValue(doNothing) };
 	};
 
 	// This is a 'smart' .stopPropagation, marking events with a label
 	// and skipping those that already have that label.
-	Bacon.EventStream.prototype.skipPropagation = function (label) {
+	Kefir.Stream.prototype.skipPropagation = function (label) {
 		return this.filter((event) => {
 			return !U.array(event.originalEvent, '_onlyOnceFor')[label];
 		}).map((event) => {
@@ -183,17 +197,17 @@ define(['jquery', './misc.js', 'baconjs', 'tweenjs'], function ($, U, Bacon, TWE
 	};
 
 	// Filter events to only certain keys / buttons. Can be a predicate function or single number.
-	Bacon.EventStream.prototype.which = function (buttonId) {
+	Kefir.Stream.prototype.which = function (buttonId) {
 		var pred = (typeof buttonId === 'function') ? (buttonId) : (b => b === buttonId);
-		return this.filter(e => pred(e.which));
+		return this.filter((e) => pred(e.which));
 	};
 
 
 	/* EventStream generators *****************************************************************************************/
 
 	$.fn.mouseDrag = function mouseDrag({threshold} = {}) {
-		return $(this).asEventStream('mousedown').flatMap((mouseDownEvent) => {
-			var stream = $(document).asEventStream('mousemove');
+		return $(this).asKefirStream('mousedown').flatMap((mouseDownEvent) => {
+			var stream = $(document).asKefirStream('mousemove');
 			if (threshold) {
 				var crossed = false;
 				stream = stream.filter((mouseMoveEvent) => { // TODO: don't use 'filter', but something like 'skipUntil' or 'flatMap'
@@ -205,14 +219,14 @@ define(['jquery', './misc.js', 'baconjs', 'tweenjs'], function ($, U, Bacon, TWE
 				});
 			}
 			return stream
-					.takeUntil($(document).asEventStream('mouseup'))
+					.takeUntilBy($(document).asKefirStream('mouseup'))
 					.map((mouseMoveEvent) => ({ mouseDownEvent, mouseMoveEvent }));
 		});
 	};
 
 	$.fn.mouseClick = function mouseClick({threshold} = {}) {
-		return $(this).asEventStream('mousedown').flatMap((mouseDownEvent) => {
-			var untilStream = $(document).asEventStream('mousemove');
+		return $(this).asKefirStream('mousedown').flatMap((mouseDownEvent) => {
+			var untilStream = $(document).asKefirStream('mousemove');
 			if (threshold) {
 				var crossed = false;
 				untilStream = untilStream.filter((mouseMoveEvent) => {
@@ -223,17 +237,17 @@ define(['jquery', './misc.js', 'baconjs', 'tweenjs'], function ($, U, Bacon, TWE
 					return false;
 				});
 			}
-			return $(document).asEventStream('mouseup').take(1).takeUntil(untilStream);
+			return $(document).asKefirStream('mouseup').take(1).takeUntilBy(untilStream);
 		});
 	};
 
 
 	$.fn.mouseWheel = function mouseWheel() {
-		return $(this).asEventStream('mousewheel DOMMouseScroll');
+		return $(this).asKefirStream('mousewheel DOMMouseScroll');
 	};
 
 
-	return Bacon;
+	return Kefir;
 
 
 });
