@@ -125,7 +125,7 @@ define([
 					this.newEvent(event, { source: this.element.asEventStream(event) });
 				});
 				this.newEvent('click', {
-					source: this.element.mouseClick({ threshold: this.circuitboard.options.dragTheshold })
+					source: this.element.mouseClick({ threshold: this.circuitboard.options.dragThreshold })
 				});
 
 				/* a field to hold the innermost HTML content element still belonging to this tile */
