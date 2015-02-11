@@ -1,6 +1,6 @@
 'use strict';
 
-define(['jquery', './misc.js', './bacon-and-eggs.js'], function ($, U, Kefir) {
+define(['jquery', './misc.js', './kefir-and-eggs.js'], function ($, U, Kefir) {
 
 
 	/** {@export}{@class KefirSignalHandler}
@@ -14,12 +14,6 @@ define(['jquery', './misc.js', './bacon-and-eggs.js'], function ($, U, Kefir) {
 		this._propertyBusses = {};
 
 	}, /** @lends KefirSignalHandler.prototype */ {
-
-
-
-
-		///////////////////////////// TODO: continue here
-
 
 		/** {@public}{@method}
 		 * Declares a new event stream for this object.
@@ -40,7 +34,7 @@ define(['jquery', './misc.js', './bacon-and-eggs.js'], function ($, U, Kefir) {
 			/* define the event stream */
 			var bus = Kefir.bus();
 			if (source) { bus.plug(source) }
-			return this._events[name] = bus.name(name);
+			return this._events[name] = bus;
 
 		},
 
@@ -68,7 +62,7 @@ define(['jquery', './misc.js', './bacon-and-eggs.js'], function ($, U, Kefir) {
 		 * Retrieve a property by name.
 		 *
 		 * @param  {String} name - the name of the property to retrieve
-		 * @return {Bacon.Model} - the property associated with the given name
+		 * @return {Kefir.Property} - the property associated with the given name
 		 */
 		property(name) { return this._properties[name] },
 
@@ -84,7 +78,7 @@ define(['jquery', './misc.js', './bacon-and-eggs.js'], function ($, U, Kefir) {
 		 * @param  {*}                       [initial]       - the initial value of this property
 		 * @param  {function(*,*):Boolean}   [isEqual]       - a predicate function by which to test for duplicate values
 		 *
-		 * @return {Bacon.Model} - the property associated with the given name
+		 * @return {Kefir.Property} - the property associated with the given name
 		 */
 		newProperty(name, {settable, initial, isEqual} = {}) {
 
@@ -97,8 +91,17 @@ define(['jquery', './misc.js', './bacon-and-eggs.js'], function ($, U, Kefir) {
 			/* default value for 'settable' */
 			if (U.isUndefined(settable)) { settable = true }
 
-			/* define the Bacon.Model which stores the property */
-			var property = this._properties[name] = new Bacon.Model(initial, { isEqual });
+			/* define the bus which manages the property */
+			var bus = Kefir.bus();
+
+			/* define the property itself, and give it additional methods */
+			var property = this._properties[name] = bus.skipDuplicates(isEqual).toProperty(initial);
+			property.plug = bus.plug.bind(bus);
+			property.unplug = bus.unplug.bind(bus);
+			property.get = () => property._current;
+			if (settable) {
+				property.set = (value) => { bus.emit(value) };
+			}
 
 			/* add the property to the object interface */
 			Object.defineProperty(this, name, {
@@ -125,7 +128,7 @@ define(['jquery', './misc.js', './bacon-and-eggs.js'], function ($, U, Kefir) {
 					`There is no event '${name}' on this object.`);
 
 			/* push the value to the stream */
-			this._events[name].push(value);
+			this._events[name].emit(value); // TODO: Bacon migration - 'push' --> 'emit'
 
 		},
 
@@ -143,7 +146,7 @@ define(['jquery', './misc.js', './bacon-and-eggs.js'], function ($, U, Kefir) {
 		 * @param {Boolean}          [options.once=false]  - whether the stream ends after one event
 		 * @param {function(*):void} [callback]            - if provided, subscribes to this stream with the this callback
 		 *
-		 * @return {Bacon.Observable|function():undefined} - if no `callback` is provided, the specified event stream
+		 * @return {Kefir.Observable|function():undefined} - if no `callback` is provided, the specified event stream
 		 *                                                   or property; otherwise, a function to unsubscribe to said
 		 *                                                   stream or property
 		 */
@@ -153,25 +156,13 @@ define(['jquery', './misc.js', './bacon-and-eggs.js'], function ($, U, Kefir) {
 		},
 
 
-		/** {@public}{@method}
-		 * This method is a shorthand for the {@link on} method with the `once` option enabled.
-		 * In other words, any stream returned will send only one event, and any callback
-		 * provided will only fire once.
-		 */
-		one(name, expectedValue, options, callback) {
-			var argsObj = this._gatherOnArguments(name, expectedValue, options, callback);
-			U.object(argsObj, 'options').once = true;
-			return this._on(argsObj);
-		},
-
-
 		/** {@private}{@method}
-		 * This method does the main work for {@link on} or {@link one}, but accepts
+		 * This method does the main work for {@link on}, but accepts
 		 * the parameters as one object, so it doesn't have to deal with parameter ordering.
 		 *
-		 * @return {Bacon.Observable|function():void}
+		 * @return {Kefir.Observable|function():void}
 		 */
-		_on({name, expectedValue, options, callback}) {
+		_on({name, expectedValue, callback}) {
 			/* does an event or property by this name exist? */
 			U.assert(this._events[name] || this._properties[name],
 					`There is no event or property '${name}' on this object.`);
@@ -182,9 +173,6 @@ define(['jquery', './misc.js', './bacon-and-eggs.js'], function ($, U, Kefir) {
 			/* process expectedValue */
 			if (U.isDefined(expectedValue)) { result = result.filter((v) => v === expectedValue) }
 
-			/* process options.once */
-			if (options && options.once) { result = result.take(1) }
-
 			/* process callback */
 			if (callback) { result = result.onValue(callback) }
 
@@ -193,7 +181,7 @@ define(['jquery', './misc.js', './bacon-and-eggs.js'], function ($, U, Kefir) {
 
 
 		/** {@private}{@method}
-		 * Process the arguments accepted by {@link on} and {@link one}.
+		 * Process the arguments accepted by {@link on}.
 		 *
 		 * @return {Object}
 		 */
@@ -203,11 +191,6 @@ define(['jquery', './misc.js', './bacon-and-eggs.js'], function ($, U, Kefir) {
 			/* test for expected value argument */
 			if (U.isDefined(args[0]) && !U.isFunction(args[0]) && !U.isPlainObject(args[0])) {
 				result.expectedValue = args.shift();
-			}
-
-			/* test for options */
-			if (U.isDefined(args[0]) && U.isPlainObject(args[0])) {
-				result.options = args.shift();
 			}
 
 			/* test for callback function */
@@ -222,7 +205,7 @@ define(['jquery', './misc.js', './bacon-and-eggs.js'], function ($, U, Kefir) {
 	});
 
 
-	return BaconSignalHandler;
+	return KefirSignalHandler;
 
 
 });

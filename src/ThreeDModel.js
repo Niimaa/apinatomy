@@ -3,7 +3,7 @@ define([
 	'three-js',
 	'./util/misc.js',
 	'bluebird',
-	'./util/bacon-and-eggs.js',
+	'./util/kefir-and-eggs.js',
 	'./Artefact.js'
 ], function ($, THREE, U, P, Bacon, ArtefactP) {
 	'use strict';

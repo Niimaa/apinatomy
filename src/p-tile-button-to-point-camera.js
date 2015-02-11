@@ -1,4 +1,4 @@
-define(['jquery', './util/misc.js', './util/bacon-and-eggs.js', 'three-js'], function ($, U, Bacon, THREE) {
+define(['jquery', './util/misc.js', './util/kefir-and-eggs.js', 'three-js'], function ($, U, Bacon, THREE) {
 	'use strict';
 
 

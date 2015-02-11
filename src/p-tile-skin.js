@@ -2,7 +2,7 @@ define([
 	'jquery',
 	'chroma-js',
 	'./util/misc.js',
-	'./util/bacon-and-eggs.js',
+	'./util/kefir-and-eggs.js',
 	'./util/defaults.js',
 	'./util/put-css-rules.js',
 	'./p-tile-skin.scss'

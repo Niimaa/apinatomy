@@ -3,7 +3,7 @@ define([
 	'three-js',
 	'bluebird',
 	'./util/misc.js',
-	'./util/bacon-and-eggs.js',
+	'./util/kefir-and-eggs.js',
 	'./ThreeDModel.js'
 ], function ($, THREE, P, U, Bacon, ThreeDModelP) {
 	'use strict';

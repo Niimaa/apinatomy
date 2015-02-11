@@ -1,4 +1,4 @@
-define(['jquery', './util/bacon-and-eggs.js', './p-tile-skin-grow-when-open.scss'], function ($, Bacon) {
+define(['jquery', './util/kefir-and-eggs.js', './p-tile-skin-grow-when-open.scss'], function ($, Bacon) {
 	'use strict';
 
 

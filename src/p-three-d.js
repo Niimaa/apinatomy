@@ -2,7 +2,7 @@ define([
 	'jquery',
 	'three-js',
 	'./util/misc.js',
-	'./util/bacon-and-eggs.js',
+	'./util/kefir-and-eggs.js',
 	'./util/CSS3DRenderer.js',
 	'./p-three-d.scss'
 ], function ($, THREE, U, Bacon) {

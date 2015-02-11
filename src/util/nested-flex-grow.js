@@ -1,4 +1,4 @@
-define(['jquery', './bacon-and-eggs.js'], function ($, Bacon) {
+define(['jquery', './kefir-and-eggs.js'], function ($, Bacon) {
 	'use strict';
 
 	/*  This function plays with the `flex-grow` and `display` properties  */

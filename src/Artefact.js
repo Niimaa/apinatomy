@@ -2,7 +2,7 @@ define([
 	'jquery',
 	'bluebird',
 	'./util/misc.js',
-	'./util/bacon-signal-handler.js',
+	'./util/kefir-signal-handler.js',
 	'./util/unique-id.js',
 	'./util/main-delta-model.js',
 	'./util/plugin.js',

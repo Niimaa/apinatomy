@@ -3,7 +3,7 @@ define([
 	'./D3Group.js',
 	'./D3Vertex.js',
 	'./D3Edge.js',
-	'./util/bacon-and-eggs.js',
+	'./util/kefir-and-eggs.js',
 	'./p-ppi.scss'
 ], function ($, D3GroupP, D3VertexP, D3EdgeP, Bacon) {
 	'use strict';

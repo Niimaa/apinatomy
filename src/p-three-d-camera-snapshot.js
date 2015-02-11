@@ -1,4 +1,4 @@
-define(['jquery', 'bluebird', './util/misc.js', './util/bacon-and-eggs.js', 'tweenjs'], function ($, P, U, Bacon, TWEEN) {
+define(['jquery', 'bluebird', './util/misc.js', './util/kefir-and-eggs.js', 'tweenjs'], function ($, P, U, Bacon, TWEEN) {
 	'use strict';
 
 

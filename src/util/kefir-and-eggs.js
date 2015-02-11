@@ -96,10 +96,7 @@ define(['jquery', './misc.js', 'kefir', 'tweenjs'], function ($, U, Kefir, TWEEN
 
 
 	Kefir.once = function once(value) {
-		return Kefir.fromBinder((emitter) => {
-			emitter.emit(value);
-			emitter.end();
-		});
+		return Kefir.constant(value); // TODO: replace all 'once' calls with 'constant' calls; then remove 'once'
 	};
 
 

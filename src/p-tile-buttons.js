@@ -1,7 +1,7 @@
 define([
 	'jquery',
 	'./util/misc.js',
-	'./util/bacon-and-eggs.js',
+	'./util/kefir-and-eggs.js',
 	'./util/codes.js',
 	'./p-tile-buttons.scss'
 ], function ($, U, Bacon, {button}) {

@@ -1,6 +1,6 @@
 define([
 	'jquery',
-	'./util/bacon-and-eggs.js',
+	'./util/kefir-and-eggs.js',
 	'./util/misc.js'
 ], function ($, Bacon) {
 	'use strict';
