@@ -1,4 +1,4 @@
-define(['jquery', './util/misc.js', 'three-js', './util/kefir-and-eggs.js'], function ($, U, THREE, Bacon) {
+define(['jquery', './util/misc.js', 'three-js', './util/kefir-and-eggs.js'], function ($, U, THREE, Kefir) {
 	'use strict';
 
 
@@ -38,17 +38,17 @@ define(['jquery', './util/misc.js', 'three-js', './util/kefir-and-eggs.js'], fun
 			});
 			this.getMouseOnScreen = (pageX, pageY) => {
 				return new THREE.Vector2(
-						(pageX - this._screen.left) / this._screen.width,
-						(pageY - this._screen.top) / this._screen.height
+					(pageX - this._screen.left) / this._screen.width,
+					(pageY - this._screen.top) / this._screen.height
 				);
 			};
 
 
 			/* creating various event streams */
-			this.threeDCanvasElement.asEventStream('contextmenu').onValue('.preventDefault');
+			this.threeDCanvasElement.asKefirStream('contextmenu').onValue((event) => { event.preventDefault() });
 			var dragging = this.threeDCanvasElement.mouseDrag({ threshold: this.options.dragThreshold }).filter(() => this.threeDManualControlsEnabled);
-			var keydown = $(window).asEventStream('keydown').filter(() => this.threeDManualControlsEnabled);
-			var keyup = $(window).asEventStream('keyup');
+			var keydown = $(window).asKefirStream('keydown').filter(() => this.threeDManualControlsEnabled);
+			var keyup = $(window).asKefirStream('keyup');
 			var scrolling = this.threeDCanvasElement.mouseWheel().filter(() => this.threeDManualControlsEnabled);
 			var button = (b) => ({mouseDownEvent}) => (mouseDownEvent.which === b);
 			var key = (from, to) => (event) => (event.which >= from && event.which <= (to || from));
@@ -72,9 +72,9 @@ define(['jquery', './util/misc.js', 'three-js', './util/kefir-and-eggs.js'], fun
 			/* rotating with the keyboard */
 			this.newProperty('currentArrowKey', {
 				initial: false
-			}).addSource(keydown.filter(key(37, 40)).flatMapLatest((keydownEvent) => Bacon.mergeAll([
-				Bacon.once(keydownEvent.which),
-				keyup.filter(key(keydownEvent.which)).map(false).take(1)
+			}).plug(keydown.filter(key(37, 40)).flatMapLatest((keydownEvent) => Kefir.merge([
+				Kefir.once(keydownEvent.which),
+				keyup.filter(key(keydownEvent.which)).mapTo(false).take(1)
 			])));
 			this.on('currentArrowKey').onValue(() => { somethingChanged = true });
 
@@ -139,14 +139,14 @@ define(['jquery', './util/misc.js', 'three-js', './util/kefir-and-eggs.js'], fun
 			this._panSpeed = 1.0;
 			this._rotateSpeed = 1.0;
 			this.zoomSpeed = 1.0;
-			this.on('3d-render').takeWhile(this.on('threeDMode')).onValue(() => {
+			this.on('3d-render').takeWhileBy(this.p('threeDMode')).onValue(() => { // TODO: this doesn't reactivate when threeDMode is turned off and then on again!
 
 				if (somethingChanged || this.currentArrowKey) {
 					somethingChanged = false;
 
 
 					/* trigger event for manual controls used */
-					this.event('three-d-manual-controls-used').push();
+					this.event('three-d-manual-controls-used').emit();
 
 
 					/* setup */
@@ -263,9 +263,6 @@ define(['jquery', './util/misc.js', 'three-js', './util/kefir-and-eggs.js'], fun
 	});
 
 
-
-
-
 	plugin.add('Circuitboard.prototype.getMouseProjectionOnBall', function getMouseProjectionOnBall(pageX, pageY) {
 		var vector = new THREE.Vector3();
 		var objectUp = new THREE.Vector3();
@@ -293,62 +290,6 @@ define(['jquery', './util/misc.js', 'three-js', './util/kefir-and-eggs.js'], fun
 
 		return vector;
 	});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	//plugin.append('Circuitboard.prototype.construct', function () {
-	//	this.on('threeDMode', true).onValue(() => {
-	//
-	//
-	//
-	//		/* implementing the controls */
-	//		var controls = new THREE.TrackballControls(this.camera3D, this.threeDCanvasElement[0]);
-	//		U.extend(controls, {
-	//			rotateSpeed: 1.0,
-	//			zoomSpeed: 1.2,
-	//			panSpeed: 0.8
-	//		});
-	//		this.on('3d-render').takeWhile(this.on('threeDMode')).assign(controls, 'update');
-	//		this.on('size').takeWhile(this.on('threeDMode')).assign(controls, 'handleResize');
-	//		this.on('threeDControlsEnabled').takeWhile(this.on('threeDMode')).onValue((enabled) => { controls.enabled = enabled });
-	//
-	//	});
-	//});
 
 
 });

@@ -122,7 +122,7 @@ define([
 
 				/* support certain DOM-event subscriptions from the tile object itself */
 				['mouseover', 'mouseout', 'mouseenter', 'mouseleave'].forEach((event) => {
-					this.newEvent(event, { source: this.element.asEventStream(event) });
+					this.newEvent(event, { source: this.element.asKefirStream(event) });
 				});
 				this.newEvent('click', {
 					source: this.element.mouseClick({ threshold: this.circuitboard.options.dragThreshold })

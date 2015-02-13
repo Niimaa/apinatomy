@@ -12,8 +12,8 @@ define(['jquery', './p-tile-hidden.scss'], function ($) {
 		/* the 'visible' and 'hidden' properties */
 		this.newProperty('visible', { initial: true });
 		this.newProperty('hidden');
-		this.p('visible').addSource(this.property('hidden').not());
-		this.p('hidden').addSource(this.property('visible').not());
+		this.p('visible').plug(this.property('hidden').not());
+		this.p('hidden').plug(this.property('visible').not());
 
 		/* enact tile hiding on the DOM */
 		this.on('hidden').onValue((hidden) => {

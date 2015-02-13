@@ -2,8 +2,12 @@
 
 define(['jquery', './misc.js', 'kefir', 'tweenjs'], function ($, U, Kefir, TWEEN) {
 
-	/* EventStream generators *****************************************************************************************/
+	/* Kefir jQuery plugin ********************************************************************************************/
 
+		require('kefir-jquery').init(Kefir, $);
+
+
+	/* EventStream generators *****************************************************************************************/
 
 	// This method works with events that can have only one subscriber,
 	// that can be un-subscribed by setting the subscriber to `null`.
@@ -96,7 +100,11 @@ define(['jquery', './misc.js', 'kefir', 'tweenjs'], function ($, U, Kefir, TWEEN
 
 
 	Kefir.once = function once(value) {
-		return Kefir.constant(value); // TODO: replace all 'once' calls with 'constant' calls; then remove 'once'
+		return Kefir.fromBinder((emitter) => {
+			emitter.emit(value);
+			emitter.end();
+		});
+		//return Kefir.constant(value); // TODO: replace all 'once' calls with 'constant' calls; then remove 'once'
 	};
 
 
@@ -123,15 +131,17 @@ define(['jquery', './misc.js', 'kefir', 'tweenjs'], function ($, U, Kefir, TWEEN
 		var close =     Kefir.bus();
 
 		/* takes 'this' stream as pacing for a window of opportunity for other streams */
-		pacing.filter(wantedBus.toProperty(false)).onValue(handler, () => {
-			open.emit();
-			wantedBus.emit(false);
-			close.emit();
+		pacing.filterBy(wantedBus.toProperty(false)).onValue(() => {
+			handler(() => {
+				open.emit();
+				wantedBus.emit(false);
+				close.emit();
+			});
 		});
 
 		/* returns a function to wrap a stream in this wrapper */
 		return function (stream, {buffer} = {}) {
-			wantedBus.plug(stream.map(true));
+			wantedBus.plug(stream.mapTo(true));
 			return Kefir.constant(true).take(1).concat(close).flatMapLatest(() => {
 				var accumulator = (arr, val) => (buffer ? arr.concat([val]) : [val]);
 				return stream.takeUntilBy(open).reduce(accumulator, []).flatMap(Kefir.fromArray);

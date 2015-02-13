@@ -95,12 +95,12 @@ define(['jquery', './misc.js', './kefir-and-eggs.js'], function ($, U, Kefir) {
 			var bus = Kefir.bus();
 
 			/* define the property itself, and give it additional methods */
-			var property = this._properties[name] = bus.skipDuplicates(isEqual).toProperty(initial);
-			property.plug = bus.plug.bind(bus);
-			property.unplug = bus.unplug.bind(bus);
-			property.get = () => property._current;
+			var property = this._properties[name] = bus.toProperty(initial).skipDuplicates(isEqual);
+			property.plug   = (observable) => { bus.plug(observable);   return property };
+			property.unplug = (observable) => { bus.unplug(observable); return property };
+			property.get = () => property._current; // TODO: accessing private field of Kefir property; don't
 			if (settable) {
-				property.set = (value) => { bus.emit(value) };
+				property.set = (value) => { bus.emit(value); return property };
 			}
 
 			/* add the property to the object interface */
@@ -108,6 +108,10 @@ define(['jquery', './misc.js', './kefir-and-eggs.js'], function ($, U, Kefir) {
 				get: property.get,
 				set: settable ? property.set : undefined
 			});
+
+			/* make the property active; it doesn't work if this isn't done (the nature of Kefir.js) */
+			property.run();
+			this.event('destroy').onValue(() => { bus.end() });
 
 			/* return the property */
 			return property;
@@ -128,7 +132,7 @@ define(['jquery', './misc.js', './kefir-and-eggs.js'], function ($, U, Kefir) {
 					`There is no event '${name}' on this object.`);
 
 			/* push the value to the stream */
-			this._events[name].emit(value); // TODO: Bacon migration - 'push' --> 'emit'
+			this._events[name].emit(value);
 
 		},
 
@@ -137,7 +141,6 @@ define(['jquery', './misc.js', './kefir-and-eggs.js'], function ($, U, Kefir) {
 		 * This method selects an existing stream or property, and then
 		 * either returns it, or creates a subscription to it, depending
 		 * on whether a callback is provided.
-		 *
 		 *
 		 * @param {String}            name                 - the name of the event or property to subscribe to
 		 * @param {*}                [expectedValue]       - if provided, filters the stream by === equality with this value;

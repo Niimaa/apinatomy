@@ -5,7 +5,7 @@ define([
 	'bluebird',
 	'./util/kefir-and-eggs.js',
 	'./Artefact.js'
-], function ($, THREE, U, P, Bacon, ArtefactP) {
+], function ($, THREE, U, P, Kefir, ArtefactP) {
 	'use strict';
 
 
@@ -48,7 +48,7 @@ define([
 				morphObjs.push(subObj);
 			}
 		});
-		Bacon.animationFrames().onValue(() => {
+		Kefir.animationFrames().onValue(() => {
 			var dTime = clock.getDelta();
 			morphObjs.forEach((morphObj) => {
 				morphObj.updateAnimation(1000 * dTime);
@@ -73,19 +73,19 @@ define([
 			/* the 'visible' and 'hidden' properties */
 			this.newProperty('visible', { initial: visible });
 			this.newProperty('hidden');
-			this.p('visible').addSource(this.property('hidden').not());
-			this.p('hidden').addSource(this.property('visible').not());
+			this.p('visible').plug(this.property('hidden').not());
+			this.p('hidden').plug(this.property('visible').not());
 
 			/* manifest this visibility on the canvas */
-			this.p('visible').value(true).flatMap(this.p('visible')).onValue((visible) => {
+			this.p('visible').value(true).flatMap(() => this.p('visible')).onValue((visible) => {
 				this.object3D.then((obj) => { obj.visible = visible });
 			});
 
 			/* when the 3D model is destroyed, it is also hidden */
-			this.p('hidden').addSource(this.on('destroy').take(1).map(true));
+			this.p('hidden').plug(this.on('destroy').take(1).mapTo(true));
 
 			/* when the parent is hidden, hide this model too */
-			this.p('hidden').addSource(this.parent.p('hidden').value(true));
+			this.p('hidden').plug(this.parent.p('hidden').value(true));
 
 			/* grab a link to the closest ancestor tile */
 			// TODO: 3D models are now tied to a parent tile; this is not elegant
@@ -150,7 +150,7 @@ define([
 						/* resize / rotate the object based on the shape of the tile */
 						.tap((obj) => {
 							this.p('visible').value(true).flatMap(() =>
-								this._tile.p('size').takeWhile(this.p('visible'))).onValue((size) => {
+								this._tile.p('size').takeWhileBy(this.p('visible'))).onValue((size) => {
 
 								/* abbreviate 3D-object width and height */
 								var objWidth = obj.userData.boundingBox.size().x;

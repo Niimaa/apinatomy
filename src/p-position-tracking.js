@@ -1,4 +1,4 @@
-define(['jquery', './util/misc.js', './util/kefir-and-eggs.js'], function ($, U, Bacon) {
+define(['jquery', './util/misc.js', './util/kefir-and-eggs.js'], function ($, U, Kefir) {
 	'use strict';
 
 
@@ -19,34 +19,25 @@ define(['jquery', './util/misc.js', './util/kefir-and-eggs.js'], function ($, U,
 	/* a stream limiter, setting up a window for calculating element offsets */
 	plugin.add('Circuitboard.prototype._posTrackingWindow', function (window) { window() });
 	plugin.insert('Circuitboard.prototype.construct', function () {
-		this._posTrackingLimiter = Bacon.limiter(Bacon.mergeAll([
-			Bacon.once(),
-			Bacon.interval(100)
+		this._posTrackingLimiter = Kefir.limiter(Kefir.merge([
+			Kefir.once(),
+			Kefir.interval(100) // TODO---------------------------------------------------------------------------------
 		]), this._posTrackingWindow.bind(this));
 	});
 
 
 	/* the 'offset' observable */
-	function catchUp() {
-		return Bacon.once()
-				.concat(Bacon.later(10))
-				.concat(Bacon.later(50))
-				.concat(Bacon.later(100))
-				.concat(Bacon.later(500));
-	}
 	plugin.insert('Circuitboard.prototype.construct', function () {
 
 		this.newProperty('offset', {
 			settable: false,
 			isEqual: U.Position.equals,
 			initial: this.element.offset()
-		}).addSource(Bacon.mergeAll([
-			Bacon.once(),
-			Bacon.interval(1000)
+		}).plug(Kefir.merge([
+			Kefir.once(),
+			Kefir.interval(1000) // TODO---------------------------------------------------------------------------------
 			// TODO: allow outside stream to trigger this
-		]).flatMapLatest(catchUp)
-				.limitedBy(this._posTrackingLimiter)
-				.map(() => this.element.offset()));
+		]).limitedBy(this._posTrackingLimiter).map(() => this.element.offset()));
 
 	}).insert('Tilemap.prototype.construct', function () {
 
@@ -54,13 +45,11 @@ define(['jquery', './util/misc.js', './util/kefir-and-eggs.js'], function ($, U,
 			settable: false,
 			isEqual: U.Position.equals,
 			initial: this.element.offset()
-		}).addSource(Bacon.mergeAll([
-			Bacon.once(),
-			this.parent.on('size').changes(),
-			this.parent.on('offset').changes()
-		]).flatMapLatest(catchUp)
-				.limitedBy(this.circuitboard._posTrackingLimiter)
-				.map(() => this.element.offset()));
+		}).plug(Kefir.merge([
+			Kefir.once(),
+			this.parent.on('size').changes(), // TODO---------------------------------------------------------------------------------
+			this.parent.on('offset').changes() // TODO---------------------------------------------------------------------------------
+		]).limitedBy(this.circuitboard._posTrackingLimiter).map(() => this.element.offset()));
 
 	}).insert('Tile.prototype.construct', function () {
 
@@ -68,16 +57,14 @@ define(['jquery', './util/misc.js', './util/kefir-and-eggs.js'], function ($, U,
 			settable: false,
 			isEqual: U.Position.equals,
 			initial: this.element.offset()
-		}).addSource(Bacon.mergeAll([
-			Bacon.once(),
-			this.parent.on('size').changes(),
-			this.parent.on('offset').changes(),
-			this.parent.on('reorganize'),
-			this.on('weight').changes(),
-			this.on('reset-positioning')
-		]).flatMapLatest(catchUp)
-				.limitedBy(this.circuitboard._posTrackingLimiter)
-				.map(() => this.element.offset()));
+		}).plug(Kefir.merge([
+			Kefir.once(),
+			this.parent.on('size').changes(), // TODO---------------------------------------------------------------------------------
+			this.parent.on('offset').changes(), // TODO---------------------------------------------------------------------------------
+			this.parent.on('reorganize'), // TODO---------------------------------------------------------------------------------
+			this.on('weight').changes(), // TODO---------------------------------------------------------------------------------
+			this.on('reset-positioning') // TODO---------------------------------------------------------------------------------
+		]).limitedBy(this.circuitboard._posTrackingLimiter).map(() => this.element.offset()));
 
 	});
 
@@ -96,22 +83,22 @@ define(['jquery', './util/misc.js', './util/kefir-and-eggs.js'], function ($, U,
 		this.newProperty('position', {
 			settable: false,
 			isEqual: U.Position.equals
-		}).addSource(Bacon.mergeAll([
-			Bacon.once(),
-			this.on('offset').changes(),
-			this.circuitboard.on('offset').changes()
-		]).flatMapLatest(catchUp).map(() => U.Position.subtract(this.offset, this.circuitboard.offset)));
+		}).plug(Kefir.merge([
+			Kefir.once(),
+			this.on('offset').changes(), // TODO---------------------------------------------------------------------------------
+			this.circuitboard.on('offset').changes() // TODO---------------------------------------------------------------------------------
+		]).map(() => U.Position.subtract(this.offset, this.circuitboard.offset)));
 
 	}).insert('Tile.prototype.construct', function () {
 
 		this.newProperty('position', {
 			settable: false,
 			isEqual: U.Position.equals
-		}).addSource(Bacon.mergeAll([
-			Bacon.once(),
-			this.on('offset').changes(),
-			this.circuitboard.on('offset').changes()
-		]).flatMapLatest(catchUp).map(() => U.Position.subtract(this.offset, this.circuitboard.offset)));
+		}).plug(Kefir.merge([
+			Kefir.once(),
+			this.on('offset').changes(), // TODO---------------------------------------------------------------------------------
+			this.circuitboard.on('offset').changes() // TODO---------------------------------------------------------------------------------
+		]).map(() => U.Position.subtract(this.offset, this.circuitboard.offset)));
 
 	});
 
@@ -122,33 +109,33 @@ define(['jquery', './util/misc.js', './util/kefir-and-eggs.js'], function ($, U,
 		this.newProperty('size', {
 			settable: false,
 			isEqual: U.Size.equals
-		}).addSource(Bacon.mergeAll([
-			Bacon.once(),
-			this.options.resizeEvent || $(window).asEventStream('resize')
-		]).flatMapLatest(catchUp).map(() => new U.Size(this.element.height(), this.element.width())));
+		}).plug(Kefir.merge([
+			Kefir.once(),
+			this.options.resizeEvent || $(window).asKefirStream('resize') // TODO---------------------------------------------------------------------------------
+		]).map(() => new U.Size(this.element.height(), this.element.width())));
 
 	}).insert('Tilemap.prototype.construct', function () {
 
 		this.newProperty('size', {
 			settable: false,
 			isEqual: U.Size.equals
-		}).addSource(Bacon.mergeAll([
-			Bacon.once(),
-			this.parent.on('size').changes()
-		]).flatMapLatest(catchUp).map(() => new U.Size(this.element.height(), this.element.width())));
+		}).plug(Kefir.merge([
+			Kefir.once(),
+			this.parent.on('size').changes() // TODO---------------------------------------------------------------------------------
+		]).map(() => new U.Size(this.element.height(), this.element.width())));
 
 	}).insert('Tile.prototype.construct', function () {
 
 		this.newProperty('size', {
 			settable: false,
 			isEqual: U.Size.equals
-		}).addSource(Bacon.mergeAll([
-			Bacon.once(),
-			this.on('weight').changes(),
-			this.parent.on('size').changes(),
+		}).plug(Kefir.merge([
+			Kefir.once(),
+			this.on('weight').changes(), // TODO---------------------------------------------------------------------------------
+			this.parent.on('size').changes(), // TODO---------------------------------------------------------------------------------
 			this.parent.on('reorganize'),
 			this.on('reset-positioning')
-		]).flatMapLatest(catchUp).map(() => new U.Size(this.element.height(), this.element.width())));
+		]).map(() => new U.Size(this.element.height(), this.element.width())));
 
 	});
 

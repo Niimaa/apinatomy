@@ -1,4 +1,4 @@
-define(['jquery', './util/kefir-and-eggs.js', './p-tile-skin-grow-when-open.scss'], function ($, Bacon) {
+define(['jquery', './util/kefir-and-eggs.js', './p-tile-skin-grow-when-open.scss'], function ($, Kefir) {
 	'use strict';
 
 
@@ -13,11 +13,11 @@ define(['jquery', './util/kefir-and-eggs.js', './p-tile-skin-grow-when-open.scss
 	/*  to ensure smooth transition animation      */
 	plugin.insert('construct', function () {
 		var sectionElement = this.element.children('section');
-		this.on('open').onValue((open) => {
+		this.p('open').onValue((open) => {
 			if (open) {
 				setTimeout(() => {
 					sectionElement.css('opacity', 0);
-					this.element.asEventStream('transitionend webkitTransitionEnd').merge(Bacon.later(300)).take(1).onValue(() => {
+					this.element.asKefirStream('transitionend webkitTransitionEnd').merge(Kefir.later(300)).take(1).onValue(() => {
 						sectionElement.css('visibility', 'visible');
 						sectionElement.css('opacity', 1);
 					});

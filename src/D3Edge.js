@@ -27,9 +27,6 @@ define([
 				target.on('destroy')
 			]).take(1).onValue(() => { this.destroy() });
 
-			// TODO: Bacon migration - 'assign' --> 'onValue' (rewrite arguments if needed),
-			// TODO: Bacon migration - 'mergeAll' --> 'merge'
-
 		}, {
 
 			get source() { return this._source },

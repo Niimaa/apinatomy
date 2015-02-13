@@ -2,7 +2,7 @@ define([
 	'jquery',
 	'./util/kefir-and-eggs.js',
 	'./util/misc.js'
-], function ($, Bacon) {
+], function ($, Kefir) {
 	'use strict';
 
 
@@ -16,7 +16,7 @@ define([
 	plugin.insert('Tile.prototype.construct', function () {
 
 		this.on('weight').changes().flatMapLatest(
-			() => Bacon.animationFrames().takeUntil(this.element.asEventStream('transitionend webkitTransitionEnd').merge(Bacon.later(300)))
+			() => Kefir.animationFrames().takeUntilBy(this.element.asKefirStream('transitionend webkitTransitionEnd').merge(Kefir.later(300)))
 		).onValue(() => { this.trigger('reset-positioning') });
 
 	});

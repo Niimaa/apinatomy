@@ -5,7 +5,7 @@ define([
 	'./D3Edge.js',
 	'./util/kefir-and-eggs.js',
 	'./p-ppi.scss'
-], function ($, D3GroupP, D3VertexP, D3EdgeP, Bacon) {
+], function ($, D3GroupP, D3VertexP, D3EdgeP, Kefir) {
 	'use strict';
 
 
@@ -30,8 +30,8 @@ define([
 		});
 
 
-		Bacon.mergeAll([
-			Bacon.once(),
+		Kefir.merge([
+			Kefir.once(),
 			this.on('size').changes(),
 			this.on('position').changes()
 		]).onValue(() => {

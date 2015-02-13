@@ -16,7 +16,7 @@ define([
 	/* react to a tile opening or closing by changing its weight accordingly */
 	plugin.insert('construct', function () {
 
-		this.on('open').onValue((open) => {
+		this.p('open').onValue((open) => {
 			if (open) {
 				this.weight = this.weightWhenOpen();
 			} else if (this.weight !== 0) {

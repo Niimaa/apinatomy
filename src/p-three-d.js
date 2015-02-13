@@ -5,7 +5,7 @@ define([
 	'./util/kefir-and-eggs.js',
 	'./util/CSS3DRenderer.js',
 	'./p-three-d.scss'
-], function ($, THREE, U, Bacon) {
+], function ($, THREE, U, Kefir) {
 	'use strict';
 
 
@@ -36,14 +36,14 @@ define([
 
 		/* test for browser support */
 		if (!browserSupport()) {
-			console.warn("This browser doesn't seem to have WebGL support.");
+			console.warn("This browser doesn't seem to have WebGL support."); // TODO: add "ApiNATOMY will not be 3D"
 			return;
 		}
 
 
 		/* the 'threeDCanvasElement' property */
 		this.newProperty('threeDCanvasElement');
-		this.on('threeDCanvasElement').slidingWindow(2).map('.reverse').onValues((newCanvas, oldCanvas) => {
+		this.p('threeDCanvasElement').slidingWindow(2).map(a => a.reverse).onValue(([newCanvas, oldCanvas]) => { // TODO: use '.diff'
 			if (oldCanvas) { oldCanvas.removeClass('three-d-canvas') }
 			if (newCanvas) { newCanvas.addClass('three-d-canvas') }
 		});
@@ -53,6 +53,8 @@ define([
 		this.threeDCanvasElement = this.options.threeDCanvasElement;
 
 
+
+
 		/* the 'threeDMode' property */
 		this.newProperty('threeDMode', {
 			initial: U.isDefined(this.options.threeDCanvasElement)
@@ -60,26 +62,28 @@ define([
 
 
 		/* the 'threeDCanvasSize' observable */
-		this.newProperty('threeDCanvasSize').addSource(Bacon.mergeAll([
-			Bacon.once(),
-			( this.options.canvasResizeEvent || $(window).asEventStream('resize') )
-		]).map(() => this.threeDCanvasElement && new U.Size(
-				this.threeDCanvasElement.height(),
-				this.threeDCanvasElement.width()
-		)));
+		this.newProperty('threeDCanvasSize').plug(Kefir.merge([
+			Kefir.once(),
+			( this.options.canvasResizeEvent || $(window).asKefirStream('resize') )
+		]).map(() => {
+			if (this.threeDCanvasElement) {
+				return new U.Size(
+					this.threeDCanvasElement.height(),
+					this.threeDCanvasElement.width()
+				);
+			}
+		}));
 
 
-	});
-
-	/* the code to run every time 3D-ness is turned on */
-	plugin.insert('Circuitboard.prototype.construct', function () {
-
+		/* the render event that will be emitted at frame-rate */
 		this.newEvent('3d-render');
 
-		this.on('threeDMode').value(true).onValue(() => {
+
+		/* the code to run every time 3D-ness is turned on */
+		this.p('threeDMode').value(true).skipWhileBy(this.p('threeDCanvasSize').not()).onValue(() => {
 
 
-			// TODO: fix bug: when 3D mode is turned off, then on, tiles no longer respond to clicks
+			// TODO: fix bug: when 3D mode is turned off, then on, tiles no longer respond to clicks (SEE COMMENT BELOW: 'takeWhileBy' doesn't reactivate!!!)
 
 
 			/* a short notation for the event of 3D-mode being turned off */
@@ -96,7 +100,7 @@ define([
 			this.camera3D.userData.target = new THREE.Vector3().copy(this.camera3D.position).setZ(0);
 			this.camera3D.lookAt(this.camera3D.userData.target);
 			onThreeDModeOff.onValue(() => { delete this.camera3D });
-			this.on('threeDCanvasSize').takeWhile(this.on('threeDMode')).onValue((canvasSize) => {
+			this.p('threeDCanvasSize').takeWhileBy(this.p('threeDMode')).onValue((canvasSize) => {
 				this.camera3D.aspect = canvasSize.width / canvasSize.height;
 				if (this.camera3D.position.z === 0) { this.camera3D.position.z = 1 }
 				this.camera3D.position.normalize()
@@ -117,9 +121,9 @@ define([
 				/* WebGL renderer */
 				var webglRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
 				webglRenderer.sortObjects = false;
-				this.on('3d-render').takeWhile(this.on('threeDMode'))
+				this.on('3d-render').takeWhileBy(this.p('threeDMode'))
 						.onValue(() => { webglRenderer.render(this._p_threeD_scene, this.camera3D) });
-				this.on('threeDCanvasSize').takeWhile(this.on('threeDMode'))
+				this.on('threeDCanvasSize').takeWhileBy(this.p('threeDMode'))
 						.onValue((canvasSize) => { webglRenderer.setSize(canvasSize.width, canvasSize.height) });
 
 				/* CSS renderer */
@@ -128,28 +132,27 @@ define([
 				$(cssRenderer.domElement).append(webglRenderer.domElement);
 				this.threeDCanvasElement.append(cssRenderer.domElement);
 				onThreeDModeOff.onValue(() => { this.threeDCanvasElement.empty() });
-				this.on('3d-render').takeWhile(this.on('threeDMode'))
+				this.on('3d-render').takeWhileBy(this.p('threeDMode'))
 						.onValue(() => { cssRenderer.render(this._p_threeD_scene, this.camera3D) });
-				this.on('threeDCanvasSize').takeWhile(this.on('threeDMode'))
+				this.on('threeDCanvasSize').takeWhileBy(this.p('threeDMode'))
 						.onValue((canvasSize) => { cssRenderer.setSize(canvasSize.width, canvasSize.height) });
 			})();
 
 
 			/* render on size-change and every animation frame */
-			Bacon.mergeAll([
-				Bacon.animationFrames(),
+			Kefir.merge([
+				Kefir.animationFrames(),
 				this.on('size').changes()
-			]).takeWhile(this.on('threeDMode')).assign(this, 'trigger', '3d-render');
+			]).takeWhileBy(this.p('threeDMode')).onValue(() => { this.trigger('3d-render') }); // TODO: use '.plug'
 
 
 			/* the circuitboard floating in 3D space */
 			(({parent0, position0, margin0}) => {
 
 				/* the circuitboard itself */
-				var threeDCircuitboard = new THREE.CSS3DObject(this.element
-						.css({ left: 0, top: 0, bottom: 0, right: 0 })[0]);
+				var threeDCircuitboard = new THREE.CSS3DObject(this.element.css({ left: 0, top: 0, bottom: 0, right: 0 })[0]);
 				this._p_threeD_scene.add(threeDCircuitboard);
-				this.on('threeDCanvasSize').takeWhile(this.on('threeDMode')).onValue((canvasSize) => {
+				this.on('threeDCanvasSize').takeWhileBy(this.p('threeDMode')).onValue((canvasSize) => {
 					$(threeDCircuitboard.element).css({
 						width: canvasSize.width - margin0.left - margin0.right,
 						height: canvasSize.height - margin0.top - margin0.bottom
@@ -167,15 +170,15 @@ define([
 
 				/* webGL stand-in for the circuitboard */
 				var threeDCircuitboardMesh = new THREE.Mesh(
-						new THREE.PlaneBufferGeometry(1, 1),
-						new THREE.MeshBasicMaterial({
-							color: 'black',
-							opacity: 0,
-							blending: THREE.NoBlending
-						})
+					new THREE.PlaneBufferGeometry(1, 1),
+					new THREE.MeshBasicMaterial({
+						color: 'black',
+						opacity: 0,
+						blending: THREE.NoBlending
+					})
 				);
 				this._p_threeD_scene.add(threeDCircuitboardMesh);
-				this.on('threeDCanvasSize').takeWhile(this.on('threeDMode')).onValue((canvasSize) => {
+				this.on('threeDCanvasSize').takeWhileBy(this.p('threeDMode')).onValue((canvasSize) => {
 					threeDCircuitboardMesh.scale.x = canvasSize.width - margin0.left - margin0.right;
 					threeDCircuitboardMesh.scale.y = canvasSize.height - margin0.top - margin0.bottom;
 				});
@@ -190,24 +193,24 @@ define([
 					new THREE.Vector3(-0.5, -0.5, 0)
 				);
 				var backface = new THREE.Line(
-						backfaceGeometry,
-						new THREE.LineBasicMaterial({ color: 'black' })
+					backfaceGeometry,
+					new THREE.LineBasicMaterial({ color: 'black' })
 				);
 				backface.position.z -= 1;
 				this._p_threeD_scene.add(backface);
-				this.on('threeDCanvasSize').takeWhile(this.on('threeDMode')).onValue((canvasSize) => {
-					backface.scale.x = canvasSize.width - margin0.left - margin0.right - 1;
-					backface.scale.y = canvasSize.height - margin0.top - margin0.bottom - 1;
+				this.on('threeDCanvasSize').takeWhileBy(this.p('threeDMode')).onValue((canvasSize) => {
+					backface.scale.x = canvasSize.width  - margin0.left - margin0.right  - 1;
+					backface.scale.y = canvasSize.height - margin0.top  - margin0.bottom - 1;
 				});
 
 				/*  the object containing all 3D things co-located with the circuitboard */
 				this.object3D = new THREE.Object3D();
 				this._p_threeD_scene.add(this.object3D);
-				Bacon.mergeAll([
+				Kefir.merge([
 					this.on('threeDCanvasSize'),
 					this.on('size')
-				]).takeWhile(this.on('threeDMode')).onValue(() => {
-					this.object3D.position.x = 0.5 * (margin0.left - margin0.right) - this.size.width / 2 + 1;
+				]).takeWhileBy(this.p('threeDMode')).onValue(() => {
+					this.object3D.position.x = 0.5 * (margin0.left - margin0.right) - this.size.width  / 2 + 1;
 					this.object3D.position.y = 0.5 * (margin0.bottom - margin0.top) - this.size.height / 2 + 1;
 				});
 
@@ -270,7 +273,7 @@ define([
 			this.circuitboard.object3D.add(this.object3D);
 
 			/* position it always in the center of the tile */
-			Bacon.mergeAll(this.on('position'), this.on('size')).onValue(() => {
+			Kefir.merge(this.on('position'), this.on('size')).onValue(() => {
 				this.object3D.position.x = this.position.left + this.size.width / 2;
 				this.object3D.position.y = this.circuitboard.size.height - this.position.top - this.size.height / 2;
 			});
@@ -289,7 +292,7 @@ define([
 		this._originalCamera3D = new THREE.PerspectiveCamera(60, this.threeDCanvasSize.width / this.threeDCanvasSize.height, 1, 10000);
 		this._originalCamera3D.lookAt(new THREE.Vector3(0, 0, 0));
 		this.on('threeDMode').value(false).take(1).onValue(() => { delete this._originalCamera3D });
-		this.on('threeDCanvasSize').takeWhile(this.on('threeDMode')).onValue((canvasSize) => {
+		this.on('threeDCanvasSize').takeWhileBy(this.p('threeDMode')).onValue((canvasSize) => {
 			this._originalCamera3D.aspect = canvasSize.width / canvasSize.height;
 			if (this._originalCamera3D.position.z === 0) { this._originalCamera3D.position.z = 1 }
 			this._originalCamera3D.position.normalize()

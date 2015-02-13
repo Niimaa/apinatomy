@@ -1,10 +1,9 @@
 define([
 	'jquery',
 	'./util/misc.js',
-	'./util/kefir-and-eggs.js',
 	'./util/codes.js',
 	'./p-tile-buttons.scss'
-], function ($, U, Bacon, {button}) {
+], function ($, U, {button}) {
 	'use strict';
 
 
