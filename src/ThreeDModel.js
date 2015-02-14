@@ -65,133 +65,86 @@ define([
 		if (U.isDefined(window._amy_ThreeDModel)) { return window._amy_ThreeDModel }
 
 
-		var ThreeDModel = window._amy_ThreeDModel = Artefact.newSubclass('ThreeDModel', function ThreeDModel({visible}) {
-
-			/* check if this is a model part or the root */
-			this._isPart = this.parent.type === 'ThreeDModel';
+		/* create the class */
+		var ThreeDModel = window._amy_ThreeDModel = Artefact.newSubclass('ThreeDModel', function ThreeDModel({visible, parts}) {
 
 			/* the 'visible' and 'hidden' properties */
 			this.newProperty('visible', { initial: visible });
 			this.newProperty('hidden').plug(this.p('visible').not());
 			this.p('visible').plug(this.p('hidden').not());
 
-			/* manifest this visibility on the canvas */
-			this.p('visible').value(true).flatMap(() => this.p('visible')).onValue((visible) => {
-				this.object3D.then((obj) => { obj.visible = visible });
-			});
-
-			/* when the 3D model is destroyed, it is also hidden */
-			this.p('hidden').plug(this.on('destroy').take(1).mapTo(true));
-
-			/* when the parent is hidden, hide this model too */
-			this.p('hidden').plug(this.parent.p('hidden').value(true));
-
-			/* grab a link to the closest ancestor tile */
-			// TODO: 3D models are now tied to a parent tile; this is not elegant
-			this._tile = this.closestAncestorByType('Tile');
-
-
 			/* create all descendant ThreeDModel's (without necessarily loading their object3D) */
-			var INHERITED_OPTIONS = ['color', 'animation'];
-			Object.keys(this.options.parts || {}).forEach((id) => {
-
-				/* the options of the new ThreeDModel */
-				var part = this.options.parts[id];
+			Object.keys(parts|| {}).map((id) => {
 
 				/* define the options we want to pass to the corresponding child artefact */
-				var newChildOptions = U.extend({ id, parent: this }, part);
-				INHERITED_OPTIONS.forEach((prop) => {
+				var newChildOptions = U.extend({}, parts[id], {
+					id:      id,
+					parent:  this,
+					visible: visible
+				});
+				['color', 'animation'].forEach((prop) => {
 					if (U.isUndefined(newChildOptions[prop])) {
 						newChildOptions[prop] = this.options[prop];
 					}
 				});
 
-				/* construct the child ThreeDModel */
-				return new window._amy_ThreeDModel(newChildOptions);
+				/* construct the child ThreeDModel */// jshint -W031
+				new window._amy_ThreeDModel(newChildOptions);
 
 			});
 
-
-
 		}, {
 
+
 			get object3D() {
-				if (!this._object3D) { this._object3D = this._load() }
+				if (!this._object3D) {
+					/* create a promise to the Object3D */
+					this._object3D = new P((resolve, reject) => {
+						if (U.isDefined(this.options.file)) {
+
+							/* resolve this promise by loading the proper file */
+							this._loadFile()
+								.tap(calculateBoundingBox) // TODO: propagate bounding box
+								.tap((obj) => { // TODO: remove
+									this._centerGeometries(obj);
+								})
+								.then(resolve, reject);
+
+							// TODO: maybe, only load when model is first made visible
+
+						} else {
+
+							/* create base object3D for model parts */
+							var object = new THREE.Object3D();
+
+							/* whenever each part is loaded, add them as a child of the base object */
+							this.children.map((part) => part.object3D).forEach((partObjectP) => {
+								partObjectP.then((partObject) => { object.add(partObject) });
+							});
+
+							/* resolve this promise with the base object */
+							resolve(object);
+
+						}
+					}).tap((object3D) => {
+						/* manifest the visibility of this model on the object3D */
+						this.p('visible').onValue((visible) => { object3D.visible = visible });
+					});
+				}
 				return this._object3D;
 			},
 
 
-			_centerGeometries(obj) {
-				if (!this.geometryCorrection) { this.geometryCorrection = this.options.geometryCorrection }
-				if (!this.geometryCorrection) { this.geometryCorrection = obj.userData.boundingBox.center().negate() }
-				traverseGeometries(obj, (geometry) => {
-					var matrix = new THREE.Matrix4().setPosition(this.geometryCorrection);
-					(geometry.morphTargets || []).forEach(({vertices}) => {
-						vertices.forEach((point) => {
-							point.applyMatrix4(matrix);
-						});
-					});
-					geometry.applyMatrix(matrix);
-				});
+
+			adaptToSurfaceArea(size) {
+
+			},
+
+			adaptToTransformation() {
+
 			},
 
 
-			_load() {
-				var result;
-				if (U.isDefined(this.options.file))  { result = this._loadFile()  }
-				if (U.isDefined(this.options.parts)) { result = this._loadParts() }
-
-				if (!this._isPart) {
-					result = result
-						/* process the geometries and center them on (0, 0, 0) */
-						.tap(calculateBoundingBox)
-						.tap((obj) => { this._centerGeometries(obj) })
-						/* resize / rotate the object based on the shape of the tile */
-						.tap((obj) => {
-							this.p('visible').value(true).flatMap(() =>
-								this._tile.p('size').takeWhileBy(this.p('visible'))).onValue((size) => {
-
-								/* abbreviate 3D-object width and height */
-								var objWidth = obj.userData.boundingBox.size().x;
-								var objHeight = obj.userData.boundingBox.size().y;
-
-								/* rotate 90° on the z-axis if this gives a better fit */
-								if ((size.width < size.height) !== (objWidth < objHeight)) {
-									obj.rotation.z = 0.5 * Math.PI;
-									[objWidth, objHeight] = [objHeight, objWidth];
-								} else {
-									obj.rotation.z = 0;
-								}
-
-								/* determine the scale ratio */
-								var ratio = 0.8 * Math.min(size.width / objWidth, size.height / objHeight);
-
-								/* adjust size */
-								obj.scale.set(ratio, ratio, ratio);
-
-								/* adjust 'altitude' */
-								var elevation = U.defOr(this.options.elevation, Math.min(size.width, size.height) / 4);
-								obj.position.z = 0.5 * ratio * obj.userData.boundingBox.size().z + elevation;
-
-								/* any custom 'rotation'? */
-								if (this.options.rotation) {
-									U.extend(obj.rotation, this.options.rotation);
-								}
-
-							});
-						})
-						/* back-link the artefact to the object3D */
-						.tap((obj) => { obj.userData.artefact = this })
-						/* add this object to the scene */
-						.tap((obj) => {
-							this._tile.object3D.add(obj);
-						})
-						/* start the animation of this object, if applicable */
-						.tap(startThreeDAnimation);
-				}
-
-				return result;
-			},
 
 			_loadFile() {
 				var {file, color, animation} = this.options;
@@ -221,7 +174,7 @@ define([
 
 					/* for now, we only accept Geometry's and Object3D's from a loader */
 					U.assert(isGeometry(obj) || isObject3D(obj),
-							`The 3D model loader for the '${ext}' extension returned an unsupported value.`);
+						`The 3D model loader for the '${ext}' extension returned an unsupported value.`);
 
 					/* if a Geometry is returned, create an Object3D around it */
 					if (isGeometry(obj)) {
@@ -243,10 +196,75 @@ define([
 				});
 			},
 
-			_loadParts() {
-				return P.all(this.children).map((child) => (child._object3D = child._load()))
-						.reduce((parent, child) => { parent.add(child); return parent }, new THREE.Object3D());
-			}
+
+
+
+			//_load() {
+			//
+			//	var result = result
+			//		/* process the geometries and center them on (0, 0, 0) */
+			//		//.tap(calculateBoundingBox)
+			//		.tap((obj) => { this._centerGeometries(obj) })
+			//		/* resize / rotate the object based on the shape of the tile */
+			//		.tap((obj) => {
+			//			this.p('visible').value(true).flatMap(() =>
+			//				this._tile.p('size').takeWhileBy(this.p('visible'))).onValue((size) => {
+			//
+			//				/* abbreviate 3D-object width and height */
+			//				var objWidth = obj.userData.boundingBox.size().x;
+			//				var objHeight = obj.userData.boundingBox.size().y;
+			//
+			//				/* rotate 90° on the z-axis if this gives a better fit */
+			//				if ((size.width < size.height) !== (objWidth < objHeight)) {
+			//					obj.rotation.z = 0.5 * Math.PI;
+			//					[objWidth, objHeight] = [objHeight, objWidth];
+			//				} else {
+			//					obj.rotation.z = 0;
+			//				}
+			//
+			//				/* determine the scale ratio */
+			//				var ratio = 0.8 * Math.min(size.width / objWidth, size.height / objHeight);
+			//
+			//				/* adjust size */
+			//				obj.scale.set(ratio, ratio, ratio);
+			//
+			//				/* adjust 'altitude' */
+			//				var elevation = U.defOr(this.options.elevation, Math.min(size.width, size.height) / 4);
+			//				obj.position.z = 0.5 * ratio * obj.userData.boundingBox.size().z + elevation;
+			//
+			//				/* any custom 'rotation'? */
+			//				if (this.options.rotation) {
+			//					U.extend(obj.rotation, this.options.rotation);
+			//				}
+			//
+			//			});
+			//		})
+			//		/* back-link the artefact to the object3D */
+			//		.tap((obj) => { obj.userData.artefact = this })
+			//		/* add this object to the scene */
+			//		.tap((obj) => {
+			//			this._tile.object3D.add(obj);
+			//		})
+			//		/* start the animation of this object, if applicable */
+			//		.tap(startThreeDAnimation);
+			//
+			//	return result;
+			//},
+
+
+			_centerGeometries(obj) {
+				if (!this.geometryCorrection) { this.geometryCorrection = this.options.geometryCorrection }
+				if (!this.geometryCorrection) { this.geometryCorrection = obj.userData.boundingBox.center().negate() }
+				traverseGeometries(obj, (geometry) => {
+					var matrix = new THREE.Matrix4().setPosition(this.geometryCorrection);
+					(geometry.morphTargets || []).forEach(({vertices}) => {
+						vertices.forEach((point) => {
+							point.applyMatrix4(matrix);
+						});
+					});
+					geometry.applyMatrix(matrix);
+				});
+			},
 
 		}, {
 
@@ -264,6 +282,50 @@ define([
 
 
 	}).tap((c) => { $.circuitboard.ThreeDModel = c });
+
+
+
+	//return ArtefactP.then((Artefact) => {
+	//
+	//	/* however (often) this is loaded, create the class only once */
+	//	if (U.isDefined(window._amy_ThreeDModel)) { return window._amy_ThreeDModel }
+	//
+	//	var ThreeDModel = window._amy_ThreeDModel = Artefact.newSubclass('ThreeDModel', function ThreeDModel({descriptor, visible, surfaceArea, transformation}) {
+	//
+	//
+	//
+	//
+	//		/* define the basic 3D object */
+	//		this.object3D = new THREE.Object3D();
+	//
+	//
+	//		/* the 'visible' and 'hidden' properties */
+	//		this.newProperty('visible', { initial: visible });
+	//		this.newProperty('hidden').plug(this.p('visible').not());
+	//		this.p('visible').plug(this.p('hidden').not());
+	//
+	//
+	//		/* link model visibility to Object3D visibility */
+	//		this.p('visible').onValue((visible) => { this.object3D.visible = visible });
+	//
+	//
+	//		/*  */
+	//
+	//
+	//
+	//
+	//
+	//	}, {
+	//
+	//
+	//
+	//	});
+	//
+	//	return window._amy_ThreeDModel;
+	//
+	//});
+
+
 
 
 });

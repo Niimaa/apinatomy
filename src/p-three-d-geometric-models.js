@@ -29,23 +29,37 @@ define([
 
 			this.threeDModels = {};
 
-			var ThreeDModel = ThreeDModelP.value(); // TODO: Is it certain the promise is resolved at this point?
+			var ThreeDModel = ThreeDModelP.value(); // TODO: Is it certain the promise is always resolved at this point?
 
 			Object.keys(threeDModels[this.model.id]).forEach((modelID) => {
 
-				this.threeDModels[modelID] = new ThreeDModel(U.extend({
+				this.threeDModels[modelID] = new ThreeDModel(U.extend({}, threeDModels[this.model.id][modelID], {
 					id: modelID,
 					parent: this,
-					visible: false
-				}, threeDModels[this.model.id][modelID]));
+					visible: true
+				}));
+
+
+				// TODO: keep surfaceArea of models up to date
+
+
+				// TESTING; TODO: finish code
+				this.threeDModels[modelID].object3D.then((object) => {
+
+					this.object3D.add(object);
+
+				});
+
 
 			});
 
-			this.newProperty('currentThreeDModelID', {
+			this.newProperty('currentThreeDModelID', { // TODO: do we want to keep doing it this way?
 				initial: null
 			});
 
 		}
+
+
 
 	});
 

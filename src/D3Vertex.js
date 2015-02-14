@@ -28,8 +28,8 @@ define([
 			/* enact vertex hiding on the DOM */
 			this.on('hidden').onValue((h) => { this.element.toggleClass('hidden', h) });
 
-			/* when the tile is destroyed, it is also hidden */
-			this.on('destroy').take(1).onValue(() => { this.hidden = true });
+			///* when the tile is destroyed, it is also hidden */ // TODO: we don't need this, right?
+			//this.on('destroy').take(1).onValue(() => { this.hidden = true });
 
 		}, {
 

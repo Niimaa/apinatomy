@@ -17,7 +17,7 @@ define([
 
 
 	/* test for browser 3D support */
-	function browserSupport() {
+	function browserSupport() { // TODO: use THREE.js function for this that already exists
 		var canvas;
 		try {
 			canvas = $('<canvas>');
@@ -43,7 +43,7 @@ define([
 
 		/* the 'threeDCanvasElement' property */
 		this.newProperty('threeDCanvasElement');
-		this.p('threeDCanvasElement').slidingWindow(2).map(a => a.reverse).onValue(([newCanvas, oldCanvas]) => { // TODO: use '.diff'
+		this.p('threeDCanvasElement').diff().onValue(([oldCanvas, newCanvas]) => { // TODO: use '.diff'
 			if (oldCanvas) { oldCanvas.removeClass('three-d-canvas') }
 			if (newCanvas) { newCanvas.addClass('three-d-canvas') }
 		});
@@ -121,10 +121,10 @@ define([
 				/* WebGL renderer */
 				var webglRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
 				webglRenderer.sortObjects = false;
+				this.p('threeDCanvasSize').takeWhileBy(this.p('threeDMode'))
+					.onValue((canvasSize) => { webglRenderer.setSize(canvasSize.width, canvasSize.height) });
 				this.on('3d-render').takeWhileBy(this.p('threeDMode'))
 						.onValue(() => { webglRenderer.render(this._p_threeD_scene, this.camera3D) });
-				this.on('threeDCanvasSize').takeWhileBy(this.p('threeDMode'))
-						.onValue((canvasSize) => { webglRenderer.setSize(canvasSize.width, canvasSize.height) });
 
 				/* CSS renderer */
 				var cssRenderer = new THREE.CSS3DRenderer();
@@ -132,18 +132,15 @@ define([
 				$(cssRenderer.domElement).append(webglRenderer.domElement);
 				this.threeDCanvasElement.append(cssRenderer.domElement);
 				onThreeDModeOff.onValue(() => { this.threeDCanvasElement.empty() });
+				this.p('threeDCanvasSize').takeWhileBy(this.p('threeDMode'))
+					.onValue((canvasSize) => { cssRenderer.setSize(canvasSize.width, canvasSize.height) });
 				this.on('3d-render').takeWhileBy(this.p('threeDMode'))
 						.onValue(() => { cssRenderer.render(this._p_threeD_scene, this.camera3D) });
-				this.on('threeDCanvasSize').takeWhileBy(this.p('threeDMode'))
-						.onValue((canvasSize) => { cssRenderer.setSize(canvasSize.width, canvasSize.height) });
 			})();
 
 
-			/* render on size-change and every animation frame */
-			Kefir.merge([
-				Kefir.animationFrames(),
-				this.on('size').changes()
-			]).takeWhileBy(this.p('threeDMode')).onValue(() => { this.trigger('3d-render') }); // TODO: use '.plug'
+			/* render on every animation frame */
+			this.event('3d-render').plug(Kefir.animationFrames().takeWhileBy(this.p('threeDMode')));
 
 
 			/* the circuitboard floating in 3D space */
@@ -196,7 +193,7 @@ define([
 					backfaceGeometry,
 					new THREE.LineBasicMaterial({ color: 'black' })
 				);
-				backface.position.z -= 1;
+				backface.position.z -= 0.1;
 				this._p_threeD_scene.add(backface);
 				this.on('threeDCanvasSize').takeWhileBy(this.p('threeDMode')).onValue((canvasSize) => {
 					backface.scale.x = canvasSize.width  - margin0.left - margin0.right  - 1;
@@ -273,7 +270,7 @@ define([
 			this.circuitboard.object3D.add(this.object3D);
 
 			/* position it always in the center of the tile */
-			Kefir.merge(this.on('position'), this.on('size')).onValue(() => {
+			Kefir.combine([ this.p('position'), this.p('size') ]).onValue(() => {
 				this.object3D.position.x = this.position.left + this.size.width / 2;
 				this.object3D.position.y = this.circuitboard.size.height - this.position.top - this.size.height / 2;
 			});
@@ -288,7 +285,7 @@ define([
 	/* necessary setup and breakdown for querying an element's 'offset' */
 	plugin.append('Circuitboard.prototype.construct', function () {
 
-		/* setup another camera that always stays at a circuitboard-looks-not-3D position */
+		/* set up another camera that always stays at a circuitboard-looks-not-3D position */
 		this._originalCamera3D = new THREE.PerspectiveCamera(60, this.threeDCanvasSize.width / this.threeDCanvasSize.height, 1, 10000);
 		this._originalCamera3D.lookAt(new THREE.Vector3(0, 0, 0));
 		this.on('threeDMode').value(false).take(1).onValue(() => { delete this._originalCamera3D });
