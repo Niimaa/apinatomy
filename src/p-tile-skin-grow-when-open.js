@@ -13,15 +13,13 @@ define(['jquery', './util/kefir-and-eggs.js', './p-tile-skin-grow-when-open.scss
 	/*  to ensure smooth transition animation      */
 	plugin.insert('construct', function () {
 		var sectionElement = this.element.children('section');
-		this.p('open').onValue((open) => {
+		this.p('open').value(true).onValue(() => {
+			sectionElement.css('opacity', 0);
+		});
+		this.p('fullyOpen').onValue((open) => {
 			if (open) {
-				setTimeout(() => {
-					sectionElement.css('opacity', 0);
-					this.element.asKefirStream('transitionend webkitTransitionEnd').merge(Kefir.later(300)).take(1).onValue(() => {
-						sectionElement.css('visibility', 'visible');
-						sectionElement.css('opacity', 1);
-					});
-				});
+				sectionElement.css('visibility', 'visible');
+				sectionElement.css('opacity', 1);
 			} else {
 				sectionElement.css('visibility', 'hidden');
 				sectionElement.css('opacity', 0);

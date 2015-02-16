@@ -4,7 +4,7 @@ define(['jquery', './util/misc.js', './util/kefir-and-eggs.js'], function ($, U,
 
 	var plugin = $.circuitboard.plugin({
 		name: 'position-tracking',
-		expects: ['core', 'tile-weight']
+		expects: ['core', 'tile-weight', 'tile-grow-when-open', 'tile-grow-when-maximized']
 	});
 
 
@@ -47,8 +47,8 @@ define(['jquery', './util/misc.js', './util/kefir-and-eggs.js'], function ($, U,
 			initial: this.element.offset()
 		}).plug(Kefir.merge([
 			Kefir.once(),
-			this.parent.on('size').changes(), // TODO---------------------------------------------------------------------------------
-			this.parent.on('offset').changes() // TODO---------------------------------------------------------------------------------
+			this.parent.p('size').changes(), // TODO---------------------------------------------------------------------------------
+			this.parent.p('offset').changes() // TODO---------------------------------------------------------------------------------
 		]).limitedBy(this.circuitboard._posTrackingLimiter).map(() => this.element.offset()));
 
 	}).insert('Tile.prototype.construct', function () {
@@ -59,10 +59,15 @@ define(['jquery', './util/misc.js', './util/kefir-and-eggs.js'], function ($, U,
 			initial: this.element.offset()
 		}).plug(Kefir.merge([
 			Kefir.once(),
-			this.parent.on('size').changes(), // TODO---------------------------------------------------------------------------------
-			this.parent.on('offset').changes(), // TODO---------------------------------------------------------------------------------
+			this.parent.p('size').changes(), // TODO---------------------------------------------------------------------------------
+			this.parent.p('offset').changes(), // TODO---------------------------------------------------------------------------------
 			this.parent.on('reorganize'), // TODO---------------------------------------------------------------------------------
-			this.on('weight').changes(), // TODO---------------------------------------------------------------------------------
+			this.p('weight').changes(), // TODO---------------------------------------------------------------------------------
+			this.p('fullyOpen').changes(),
+			this.p('fullyClosed').changes(),
+			this.p('fullyMaximized').changes(),
+			this.p('fullyNotMaximized').changes(),
+			//Kefir.interval(100),
 			this.on('reset-positioning') // TODO---------------------------------------------------------------------------------
 		]).limitedBy(this.circuitboard._posTrackingLimiter).map(() => this.element.offset()));
 
@@ -85,8 +90,8 @@ define(['jquery', './util/misc.js', './util/kefir-and-eggs.js'], function ($, U,
 			isEqual: U.Position.equals
 		}).plug(Kefir.merge([
 			Kefir.once(),
-			this.on('offset').changes(), // TODO---------------------------------------------------------------------------------
-			this.circuitboard.on('offset').changes() // TODO---------------------------------------------------------------------------------
+			this.p('offset').changes(), // TODO---------------------------------------------------------------------------------
+			this.circuitboard.p('offset').changes() // TODO---------------------------------------------------------------------------------
 		]).map(() => U.Position.subtract(this.offset, this.circuitboard.offset)));
 
 	}).insert('Tile.prototype.construct', function () {
@@ -96,8 +101,9 @@ define(['jquery', './util/misc.js', './util/kefir-and-eggs.js'], function ($, U,
 			isEqual: U.Position.equals
 		}).plug(Kefir.merge([
 			Kefir.once(),
-			this.on('offset').changes(), // TODO---------------------------------------------------------------------------------
-			this.circuitboard.on('offset').changes() // TODO---------------------------------------------------------------------------------
+			//Kefir.interval(100),
+			this.p('offset').changes(), // TODO---------------------------------------------------------------------------------
+			this.circuitboard.p('offset').changes() // TODO---------------------------------------------------------------------------------
 		]).map(() => U.Position.subtract(this.offset, this.circuitboard.offset)));
 
 	});
@@ -121,7 +127,7 @@ define(['jquery', './util/misc.js', './util/kefir-and-eggs.js'], function ($, U,
 			isEqual: U.Size.equals
 		}).plug(Kefir.merge([
 			Kefir.once(),
-			this.parent.on('size').changes() // TODO---------------------------------------------------------------------------------
+			this.parent.p('size').changes() // TODO---------------------------------------------------------------------------------
 		]).map(() => new U.Size(this.element.height(), this.element.width())));
 
 	}).insert('Tile.prototype.construct', function () {
@@ -131,8 +137,13 @@ define(['jquery', './util/misc.js', './util/kefir-and-eggs.js'], function ($, U,
 			isEqual: U.Size.equals
 		}).plug(Kefir.merge([
 			Kefir.once(),
-			this.on('weight').changes(), // TODO---------------------------------------------------------------------------------
-			this.parent.on('size').changes(), // TODO---------------------------------------------------------------------------------
+			this.p('weight').changes(), // TODO---------------------------------------------------------------------------------
+			this.p('fullyOpen').changes(),
+			this.p('fullyClosed').changes(),
+			this.p('fullyMaximized').changes(),
+			this.p('fullyNotMaximized').changes(),
+			//Kefir.interval(100),
+			this.parent.p('size').changes(), // TODO---------------------------------------------------------------------------------
 			this.parent.on('reorganize'),
 			this.on('reset-positioning')
 		]).map(() => new U.Size(this.element.height(), this.element.width())));
@@ -148,7 +159,7 @@ define(['jquery', './util/misc.js', './util/kefir-and-eggs.js'], function ($, U,
 
 	}).insert('Tile.prototype.construct', function () {
 
-		this.on('size').onValue(() => { this.parent.trigger('reorganize') });
+		this.p('size').onValue(() => { this.parent.trigger('reorganize') });
 
 	});
 

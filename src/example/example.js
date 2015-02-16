@@ -15,6 +15,7 @@ require('../p-tile-weight.js');
 require('../p-tile-active.js');
 require('../p-tile-open.js');
 require('../p-tile-grow-when-open.js');
+require('../p-tile-grow-when-maximized.js');
 require('../p-tile-open-active.js');
 require('../p-tile-skin-grow-when-open.js');
 require('../p-position-tracking.js');
@@ -50,6 +51,7 @@ circuitboard.plugin([
 	'tile-skin',
 	'tile-click-to-open',
 	'tile-grow-when-open',
+	'tile-grow-when-maximized',
 	'tile-middleclick-to-maximize',
 	'tile-spacing',
 	'tile-active',

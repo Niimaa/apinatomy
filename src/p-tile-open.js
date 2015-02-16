@@ -22,8 +22,7 @@ define(['jquery'], function ($) {
 
 		/* if this tile closes, all its children close */
 		this.p('open').value(false).onValue(() => {
-			this.closestDescendantsByType('Tile')
-						.forEach((tile) => { tile.open = false });
+			this.closestDescendantsByType('Tile').forEach((tile) => { tile.open = false });
 		});
 
 	});

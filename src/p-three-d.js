@@ -270,13 +270,22 @@ define([
 			this.circuitboard.object3D.add(this.object3D);
 
 			/* position it always in the center of the tile */
-			Kefir.combine([ this.p('position'), this.p('size') ]).onValue(() => {
-				this.object3D.position.x = this.position.left + this.size.width / 2;
-				this.object3D.position.y = this.circuitboard.size.height - this.position.top - this.size.height / 2;
+			Kefir.combine([ this.p('position'), this.p('size') ]).onValue(([position, size]) => {
+				this.object3D.position.x = position.left + size.width / 2;
+				this.object3D.position.y = this.circuitboard.size.height - position.top - size.height / 2;
 			});
 
 			/* hide it when the tile is hidden */
 			this.p('visible').onValue((v) => { this.object3D.visible = v });
+
+
+			// DEBUGGING CODE
+			//(()=>{
+			//	var geometry = new THREE.SphereGeometry( 5, 32, 32 );
+			//	var material = new THREE.MeshPhongMaterial( {color: 0xff0000} );
+			//	var sphere = new THREE.Mesh( geometry, material );
+			//	this.object3D.add( sphere );
+			//})();
 
 		});
 	});
