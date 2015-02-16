@@ -26,12 +26,12 @@ define(['jquery', './p-tile-hidden.scss'], function ($) {
 			}
 		});
 
-		///* when the tile is destroyed, it is also hidden */ // TODO: we don't need this, right?
-		//this.on('destroy').take(1).onValue(() => { this.hidden = true });
+		/* when the tile is destroyed, it is also hidden */
+		this.p('hidden').plug(this.on('destroy').take(1).mapTo(true));
 
-		///* when the parent tile is closed, this tile is hidden */ // TODO: we don't need this, right?
-		//var parentTile = this.closestAncestorByType('Tile');
-		//if (parentTile) { parentTile.on('open').onValue((open) => { this.hidden = !open }) }
+		/* when the parent tile is closed, this tile is hidden */
+		var parentTile = this.closestAncestorByType('Tile');
+		if (parentTile) { this.p('visible').plug(parentTile.p('open')) }
 
 	});
 });

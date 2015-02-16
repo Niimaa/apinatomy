@@ -2,9 +2,10 @@ define([
 	'jquery',
 	'three-js',
 	'bluebird',
+	'./util/kefir-and-eggs.js',
 	'./util/misc.js',
 	'./ThreeDModel.js'
-], function ($, THREE, P, U, ThreeDModelP) {
+], function ($, THREE, P, Kefir, U, ThreeDModelP) {
 	'use strict';
 
 
@@ -27,39 +28,32 @@ define([
 		var threeDModels = this.circuitboard.options.threeDModels;
 		if (threeDModels && threeDModels[this.model.id]) {
 
+			this.newProperty('currentThreeDModelID', { initial: null });
+
 			this.threeDModels = {};
 
-			var ThreeDModel = ThreeDModelP.value(); // TODO: Is it certain the promise is always resolved at this point?
+			ThreeDModelP.then((ThreeDModel) => {
 
-			Object.keys(threeDModels[this.model.id]).forEach((modelID) => {
+				Object.keys(threeDModels[this.model.id]).forEach((modelID) => {
 
-				this.threeDModels[modelID] = new ThreeDModel(U.extend({}, threeDModels[this.model.id][modelID], {
-					id: modelID,
-					parent: this,
-					visible: true
-				}));
+					var clock = new THREE.Clock(); // TODO: at some point, we change this to a more global clock
 
+					this.threeDModels[modelID] = new ThreeDModel(U.extend({}, threeDModels[this.model.id][modelID], {
+						id: modelID,
+						parent: this,
+						clock: Kefir.animationFrames().map(() => clock.getElapsedTime())
+					}));
 
-				// TODO: keep surfaceArea of models up to date
-
-
-				// TESTING; TODO: finish code
-				this.threeDModels[modelID].object3D.then((object) => {
-
-					this.object3D.add(object);
+					this.threeDModels[modelID].object3D.then((object) => {
+						this.object3D.add(object);
+						this.p('size').onValue((size) => { this.threeDModels[modelID].adaptToSurfaceArea(size) });
+					});
 
 				});
 
-
-			});
-
-			this.newProperty('currentThreeDModelID', { // TODO: do we want to keep doing it this way?
-				initial: null
 			});
 
 		}
-
-
 
 	});
 

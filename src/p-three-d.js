@@ -276,13 +276,13 @@ define([
 			});
 
 			/* hide it when the tile is hidden */
-			this.on('visible').onValue((visible) => { this.object3D.visible = visible });
+			this.p('visible').onValue((v) => { this.object3D.visible = v });
 
 		});
 	});
 
 
-	/* necessary setup and breakdown for querying an element's 'offset' */
+	/* necessary setup and breakdown for querying an element's 'offset' in the context of a 3D environment */
 	plugin.append('Circuitboard.prototype.construct', function () {
 
 		/* set up another camera that always stays at a circuitboard-looks-not-3D position */

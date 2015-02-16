@@ -26,10 +26,13 @@ define([
 			this.p('visible').plug(this.p('hidden').not());
 
 			/* enact vertex hiding on the DOM */
-			this.on('hidden').onValue((h) => { this.element.toggleClass('hidden', h) });
+			this.on('hidden').onValue((h) => {
+				this.element.toggleClass('hidden',   h)
+				            .toggleClass('visible', !h);
+			});
 
-			///* when the tile is destroyed, it is also hidden */ // TODO: we don't need this, right?
-			//this.on('destroy').take(1).onValue(() => { this.hidden = true });
+			/* when the artefact is destroyed, it is also hidden */
+			this.p('hidden').plug(this.on('destroy').take(1).mapTo(true));
 
 		}, {
 
