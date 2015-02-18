@@ -1,52 +1,73 @@
 define([
 	'jquery',
+	'bluebird',
 	'./util/kefir-and-eggs.js',
-	'./p-tile-grow-when-open.scss'
-], function ($, Kefir) {
+	'velocity',
+	//'./p-tile-grow-when-open.scss'
+], function ($, P, Kefir) {
 	'use strict';
 
 	var plugin = $.circuitboard.plugin({
 		name: 'tile-grow-when-open',
-		requires: ['tile-open', 'tile-weight']
+		requires: ['tile-open']
 	}).modify('Tile.prototype');
 
 	/* default weights for open / closed tiles */
-	plugin.add('weightWhenOpen', function () { return this.circuitboard.options.weightWhenOpen || 2 });
-	plugin.add('weightWhenClosed', () => 1);
+	plugin.modify('Tile.prototype')
+		.add('weightWhenOpen', function () { return this.circuitboard.options.weightWhenOpen || 2 })
+		.add('weightWhenClosed', () => 1);
+
+	/* default DOM manipulation */
+	plugin.add('Tile.prototype.growWhenOpen', function (open) {
+		var flexGrowFrom = parseFloat(this.element.data('amyFlexGrowTarget') || 1);
+		var flexGrowTo = open ? this.weightWhenOpen() : this.weightWhenClosed();
+		this.element.data('amyFlexGrowTarget', flexGrowTo);
+		var rowFlexGrowTo = 0;
+		this.element.parent().children().each(function () {
+			rowFlexGrowTo += parseFloat($(this).data('amyFlexGrowTarget') || 1);
+		});
+		var rowFlexGrowFrom = rowFlexGrowTo - flexGrowTo + flexGrowFrom;
+		return P.all([
+			new P((resolve) => {
+				this.element.velocity(
+					{ flexGrow: [flexGrowTo, flexGrowFrom] },
+					{ complete: resolve, duration: 300 }
+				);
+			}), new P((resolve) => {
+				this.element.parent().velocity(
+					{ flexGrow: [rowFlexGrowTo, rowFlexGrowFrom] },
+					{ complete: resolve, duration: 300 }
+				);
+			})
+		]);
+	});
 
 	/* react to a tile opening or closing by changing its weight accordingly */
-	plugin.insert('construct', function () {
+	plugin.insert('Tile.prototype.construct', function () {
 
 		/* make the tile grow/shrink based on open-ness */
-		this.p('open').onValue((open) => {
-			if (open) {
-				this.weight = this.weightWhenOpen();
-			} else if (this.weight !== 0) {
-				this.weight = this.weightWhenClosed();
-			}
+		this.p('open').changes().onValue((open) => {
+			this.growWhenOpen(open).then(() => {
+				if (open) {
+					finishedOpeningBus.emit();
+				} else {
+					finishedClosingBus.emit();
+				}
+			});
 		});
+
+		var finishedOpeningBus = Kefir.bus();
+		var finishedClosingBus = Kefir.bus();
 
 		/* create a property that tells if a tile is 'fully open', i.e., also the animation is done */
 		this.newProperty('fullyOpen', { settable: false })
 			.plug(this.p('open').value(false))
-			.plug(this.p('open').flatMapLatest((open) => {
-				if (!open) { return Kefir.never() }
-				return this.element
-					.asKefirStream('transitionend webkitTransitionEnd') // after an opening transition
-					.merge(Kefir.later(500))                            // fallback after 500ms
-					.take(1).mapTo(true);
-			}));
+			.plug(finishedOpeningBus.mapTo(true));
 
 		/* create a property that tells if a tile is 'fully open', i.e., also the animation is done */
 		this.newProperty('fullyClosed', { settable: false })
 			.plug(this.p('open').not().value(false))
-			.plug(this.p('open').not().flatMapLatest((closed) => {
-				if (!closed) { return Kefir.never() }
-				return this.element
-					.asKefirStream('transitionend webkitTransitionEnd') // after an opening transition
-					.merge(Kefir.later(500))                            // fallback after 500ms
-					.take(1).mapTo(true);
-			}));
+			.plug(finishedClosingBus.mapTo(true));
 
 	});
 });

@@ -1,13 +1,14 @@
 define([
 	'jquery',
 	'./util/kefir-and-eggs.js',
-	'./p-tile-grow-when-maximized.scss'
+	'velocity',
+	//'./p-tile-grow-when-maximized.scss'
 ], function ($, Kefir) {
 	'use strict';
 
 	var plugin = $.circuitboard.plugin({
 		name: 'tile-grow-when-maximized',
-		requires: ['tile-maximized', 'tile-weight']
+		requires: ['tile-maximized']
 	}).modify('Tile.prototype');
 
 	/* react to a tile opening or closing by changing its weight accordingly */

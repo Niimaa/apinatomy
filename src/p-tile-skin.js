@@ -29,7 +29,7 @@ define([
 		'& > icon-btn': {
 			backgroundColor: " `['&'].backgroundColor` "
 		}
-	}, { color: color });
+	}, { color });
 
 
 	/* make tiles look nice, with a header, content section, and CSS styling derived from the model */

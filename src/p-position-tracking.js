@@ -4,15 +4,7 @@ define(['jquery', './util/misc.js', './util/kefir-and-eggs.js'], function ($, U,
 
 	var plugin = $.circuitboard.plugin({
 		name: 'position-tracking',
-		expects: ['core', 'tile-weight', 'tile-grow-when-open', 'tile-grow-when-maximized']
-	});
-
-
-	/* a tile method to programmatically trigger position/size recheck */
-	plugin.insert('Tile.prototype.construct', function () {
-
-		this.newEvent('reset-positioning');
-
+		expects: ['core', 'tile-grow-when-open', 'tile-grow-when-maximized']
 	});
 
 
@@ -62,13 +54,12 @@ define(['jquery', './util/misc.js', './util/kefir-and-eggs.js'], function ($, U,
 			this.parent.p('size').changes(),
 			this.parent.p('offset').changes(),
 			this.parent.on('reorganize'),
-			this.p('weight').changes(),
+			//this.p('weight').changes(),
 			this.p('fullyOpen').changes(),
 			this.p('fullyClosed').changes(),
 			this.p('fullyMaximized').changes(),
 			this.p('fullyNotMaximized').changes(),
-			//Kefir.interval(100),
-			this.on('reset-positioning')
+			//Kefir.interval(100)
 		]).limitedBy(this.circuitboard._posTrackingLimiter).map(() => this.element.offset()));
 
 	});
@@ -137,15 +128,14 @@ define(['jquery', './util/misc.js', './util/kefir-and-eggs.js'], function ($, U,
 			isEqual: U.Size.equals
 		}).plug(Kefir.merge([
 			Kefir.once(),
-			this.p('weight').changes(),
+			//this.p('weight').changes(),
 			this.p('fullyOpen').changes(),
 			this.p('fullyClosed').changes(),
 			this.p('fullyMaximized').changes(),
 			this.p('fullyNotMaximized').changes(),
 			//Kefir.interval(100),
 			this.parent.p('size').changes(),
-			this.parent.on('reorganize'),
-			this.on('reset-positioning')
+			this.parent.on('reorganize')
 		]).map(() => new U.Size(this.element.height(), this.element.width())));
 
 	});

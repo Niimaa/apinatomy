@@ -15,9 +15,11 @@ define([
 	/* make sure that positioning is updated during CSS3 transition animations */
 	plugin.insert('Tile.prototype.construct', function () {
 
-		this.on('weight').changes().flatMapLatest(
-			() => Kefir.animationFrames().takeUntilBy(this.element.asKefirStream('transitionend webkitTransitionEnd').merge(Kefir.later(300)))
-		).onValue(() => { this.trigger('reset-positioning') });
+		// TODO: maybe just remove this whole delta
+
+		//this.on('weight').changes().flatMapLatest(
+		//	() => Kefir.animationFrames().takeUntilBy(this.element.asKefirStream('transitionend webkitTransitionEnd').merge(Kefir.later(300)))
+		//).onValue(() => { this.trigger('reset-positioning') });
 
 	});
 

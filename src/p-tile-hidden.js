@@ -3,7 +3,7 @@ define(['jquery', './p-tile-hidden.scss'], function ($) {
 
 	var plugin = $.circuitboard.plugin({
 		name: 'tile-hidden',
-		requires: ['tile-open', 'tile-weight']
+		requires: ['tile-open']
 	}).modify('Tile.prototype');
 
 	/* allows a tile to be `hidden` */
@@ -19,10 +19,10 @@ define(['jquery', './p-tile-hidden.scss'], function ($) {
 			this.open = false;
 			if (hidden) {
 				this.element.addClass('hidden');
-				this.weight = 0;
+				//this.weight = 0;  // TODO: do we need to put something in this place, now that we're using 'velocity'?
 			} else {
 				this.element.removeClass('hidden');
-				this.weight = this.weightWhenClosed();
+				//this.weight = this.weightWhenClosed();
 			}
 		});
 
