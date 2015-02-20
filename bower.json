@@ -23,7 +23,8 @@
     "delta.js": "~0.5.0",
     "tweenjs": "*",
     "kefir": "~1.0.0",
-    "kefir-jquery": "~1.0.0"
+    "kefir-jquery": "~1.0.0",
+    "velocity": "~1.2.2"
   },
   "devDependencies": {
     "requirejs-domready": "~2.0.1",
