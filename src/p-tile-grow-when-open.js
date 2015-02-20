@@ -13,12 +13,12 @@ define([
 	}).modify('Tile.prototype');
 
 	/* default weights for open / closed tiles */
-	plugin.modify('Tile.prototype')
+	plugin
 		.add('weightWhenOpen', function () { return this.circuitboard.options.weightWhenOpen || 2 })
 		.add('weightWhenClosed', () => 1);
 
 	/* default DOM manipulation */
-	plugin.add('Tile.prototype.growWhenOpen', function (open) {
+	plugin.add('growWhenOpen', function (open) {
 		var flexGrowFrom = parseFloat(this.element.data('amyFlexGrowTarget') || 1);
 		var flexGrowTo = open ? this.weightWhenOpen() : this.weightWhenClosed();
 		this.element.data('amyFlexGrowTarget', flexGrowTo);
@@ -43,7 +43,7 @@ define([
 	});
 
 	/* react to a tile opening or closing by changing its weight accordingly */
-	plugin.insert('Tile.prototype.construct', function () {
+	plugin.insert('construct', function () {
 
 		/* make the tile grow/shrink based on open-ness */
 		this.p('open').changes().onValue((open) => {
