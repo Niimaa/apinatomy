@@ -69,23 +69,6 @@ define([
 			.plug(this.p('open').not().value(false))
 			.plug(finishedClosingBus.mapTo(true));
 
-
-
-		///* make the tile grow/shrink based on open-ness */
-		//var animationFinishedStream = this.p('open').changes()
-		//	.flatMapLatest((open) => Kefir.fromPromise(this.growWhenOpen(open).then(open)));
-		//
-		///* create a property that tells if a tile is 'fully open', i.e., also the animation is done */
-		//this.newProperty('fullyOpen', { settable: false })
-		//	.plug(this.p('open').value(false))
-		//	.plug(animationFinishedStream.value(true));
-		//
-		///* create a property that tells if a tile is 'fully open', i.e., also the animation is done */
-		//this.newProperty('fullyClosed', { settable: false })
-		//	.plug(this.p('open').value(true).mapTo(false))
-		//	.plug(animationFinishedStream.value(false).mapTo(true));
-
-
 	});
 
 
