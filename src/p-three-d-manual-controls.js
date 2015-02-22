@@ -73,7 +73,7 @@ define(['jquery', './util/misc.js', 'three-js', './util/kefir-and-eggs.js'], fun
 			this.newProperty('currentArrowKey', {
 				initial: false
 			}).plug(keydown.filter(key(37, 40)).flatMapLatest((keydownEvent) => Kefir.merge([
-				Kefir.once(keydownEvent.which),
+				Kefir.once(keydownEvent),
 				keyup.filter(key(keydownEvent.which)).mapTo(false).take(1)
 			])));
 			this.on('currentArrowKey').onValue(() => { somethingChanged = true });
@@ -114,8 +114,6 @@ define(['jquery', './util/misc.js', 'three-js', './util/kefir-and-eggs.js'], fun
 				this._zoomStart.y += diff * 0.01;
 
 			});
-
-
 
 
 			/* panning with the right mouse button */
@@ -200,20 +198,34 @@ define(['jquery', './util/misc.js', 'three-js', './util/kefir-and-eggs.js'], fun
 					/* rotating by keyboard */
 					(() => {
 						if (this.currentArrowKey) {
-							var quaternion = new THREE.Quaternion();
-							var axis = new THREE.Vector3(
-									+(this.currentArrowKey === 38 || this.currentArrowKey === 40), // x
-									+(this.currentArrowKey === 37 || this.currentArrowKey === 39)  // y
-							);
+							var {which, ctrlKey} = this.currentArrowKey;
+							var axis = new THREE.Vector3();
+							     if ((which === 38 || which === 40) && !ctrlKey) { axis.set(1, 0, 0) } // x: up,down
+							else if ((which === 37 || which === 39) && !ctrlKey) { axis.set(0, 1, 0) } // y: left,right
+							else if ((which === 37 || which === 39) &&  ctrlKey) { axis.set(0, 0, 1) } // z: ctrl+left,right
+							else { return }
 							var angle = 0.015 * Math.PI * this._rotateSpeed;
-							if (this.currentArrowKey === 39 || this.currentArrowKey === 40) { angle *= -1 }
+							if (which === 39 || which === 40) { angle *= -1 }
 
+							var quaternion = new THREE.Quaternion();
 							quaternion.setFromAxisAngle(axis, -angle);
 							this._eye.applyQuaternion(quaternion);
 							this.camera3D.up.applyQuaternion(quaternion);
 						}
 					})();
-					/* zooming */
+					/* zooming by keyboard */
+					// leave this before the 'zooming by mouse' section
+					(() => {
+						if (this.currentArrowKey) {
+							var {which, ctrlKey} = this.currentArrowKey;
+							if (which === 38 && ctrlKey) { // ctrl+up
+								this._zoomStart.y += 0.02;
+							} else if (which === 40 && ctrlKey) { // ctrl+down
+								this._zoomStart.y -= 0.02;
+							}
+						}
+					})();
+					/* zooming by mouse */
 					(() => {
 						//if (this._state === STATE.TOUCH_ZOOM_PAN) {
 						//	this._touchZoomDistanceStart = this._touchZoomDistanceEnd;
