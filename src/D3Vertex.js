@@ -21,18 +21,15 @@ define([
 			this.newProperty('y', { initial: 10 });
 
 			/* the 'visible' and 'hidden' properties */
-			this.newProperty('visible', { initial: true });
+			this.newProperty('visible', { initial: visible });
 			this.newProperty('hidden').plug(this.p('visible').not());
 			this.p('visible').plug(this.p('hidden').not());
 
 			/* enact vertex hiding on the DOM */
-			this.on('hidden').onValue((h) => {
+			this.p('hidden').merge(this.on('destroy').mapTo(true)).onValue((h) => {
 				this.element.toggleClass('hidden',   h)
 				            .toggleClass('visible', !h);
 			});
-
-			/* when the artefact is destroyed, it is also hidden */
-			this.p('hidden').plug(this.on('destroy').take(1).mapTo(true));
 
 		}, {
 

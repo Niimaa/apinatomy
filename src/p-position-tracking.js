@@ -4,7 +4,7 @@ define(['jquery', './util/misc.js', './util/kefir-and-eggs.js'], function ($, U,
 
 	var plugin = $.circuitboard.plugin({
 		name: 'position-tracking',
-		expects: ['core', 'tile-grow-when-open', 'tile-grow-when-maximized']
+		expects: ['core', 'tile-grow-when-open', 'tile-grow-when-maximized', 'tile-shrink-when-hidden']
 	});
 
 
@@ -15,6 +15,18 @@ define(['jquery', './util/misc.js', './util/kefir-and-eggs.js'], function ($, U,
 			Kefir.once(),
 			Kefir.interval(100)
 		]), this._posTrackingWindow.bind(this));
+	});
+
+
+	plugin.insert('Tile.prototype.construct', function () {
+
+		this.newProperty('animationIdle', { settable: false, initial: true })
+			.plug(Kefir.and([
+				this.p('fullyOpen').or(this.p('fullyClosed')),
+				this.p('fullyHidden').or(this.p('fullyVisible')),
+				this.p('fullyMaximized').or(this.p('fullyNotMaximized'))
+			]));
+
 	});
 
 
@@ -54,13 +66,16 @@ define(['jquery', './util/misc.js', './util/kefir-and-eggs.js'], function ($, U,
 			this.parent.p('size').changes(),
 			this.parent.p('offset').changes(),
 			this.parent.on('reorganize'),
-			//this.p('weight').changes(),
-			this.p('fullyOpen').changes(),
-			this.p('fullyClosed').changes(),
-			this.p('fullyMaximized').changes(),
-			this.p('fullyNotMaximized').changes(),
-			//Kefir.interval(100)
-		]).limitedBy(this.circuitboard._posTrackingLimiter).map(() => this.element.offset()));
+			this.p('animationIdle').value(true),
+			Kefir.interval(1000).filterBy(this.p('animationIdle')) // backup timer
+		]).filter(() => !this._offsetUpdated).limitedBy(this.circuitboard._posTrackingLimiter).map(() => {
+			this._offsetUpdated = true;
+			return this.element.offset();
+		}));
+
+		/* making sure size is only updated once every 100ms, to keep things fast */
+		this._offsetUpdated = false; // TODO: write Kefir modifier to do this more easily; using .throttle doesn't work
+		Kefir.interval(100).onValue(() => { this._offsetUpdated = false });
 
 	});
 
@@ -92,10 +107,18 @@ define(['jquery', './util/misc.js', './util/kefir-and-eggs.js'], function ($, U,
 			isEqual: U.Position.equals
 		}).plug(Kefir.merge([
 			Kefir.once(),
-			//Kefir.interval(100),
 			this.p('offset').changes(),
-			this.circuitboard.p('offset').changes()
-		]).map(() => U.Position.subtract(this.offset, this.circuitboard.offset)));
+			this.circuitboard.p('offset').changes(),
+			this.p('animationIdle').value(true),
+			Kefir.interval(1000).filterBy(this.p('animationIdle')) // backup timer
+		]).filter(() => !this._positionUpdated).map(() => {
+			this._positionUpdated = true;
+			return U.Position.subtract(this.offset, this.circuitboard.offset);
+		}));
+
+		/* making sure size is only updated once every 100ms, to keep things fast */
+		this._positionUpdated = false; // TODO: write Kefir modifier to do this more easily; using .throttle doesn't work
+		Kefir.interval(100).onValue(() => { this._positionUpdated = false });
 
 	});
 
@@ -128,15 +151,18 @@ define(['jquery', './util/misc.js', './util/kefir-and-eggs.js'], function ($, U,
 			isEqual: U.Size.equals
 		}).plug(Kefir.merge([
 			Kefir.once(),
-			//this.p('weight').changes(),
-			this.p('fullyOpen').changes(),
-			this.p('fullyClosed').changes(),
-			this.p('fullyMaximized').changes(),
-			this.p('fullyNotMaximized').changes(),
-			//Kefir.interval(100),
 			this.parent.p('size').changes(),
-			this.parent.on('reorganize')
-		]).map(() => new U.Size(this.element.height(), this.element.width())));
+			this.parent.on('reorganize'),
+			this.p('animationIdle').value(true),
+			Kefir.interval(1000).filterBy(this.p('animationIdle')) // backup timer
+		]).filter(() => !this._sizeUpdated).map(() => {
+			this._sizeUpdated = true;
+			return new U.Size(this.element.height(), this.element.width());
+		}));
+
+		/* making sure size is only updated once every 100ms, to keep things fast */
+		this._sizeUpdated = false; // TODO: write Kefir modifier to do this more easily; using .throttle doesn't work
+		Kefir.interval(100).onValue(() => { this._sizeUpdated = false });
 
 	});
 

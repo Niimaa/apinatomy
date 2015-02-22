@@ -12,7 +12,7 @@ define([
 	/* the plugin */
 	var plugin = $.circuitboard.plugin({
 		name: 'three-d',
-		requires: ['position-tracking', 'tile-hidden']
+		requires: ['position-tracking', 'tile-shrink-when-hidden']
 	});
 
 
@@ -276,8 +276,13 @@ define([
 			});
 
 			/* hide it when the tile is hidden */
-			this.p('visible').onValue((v) => { this.object3D.visible = v });
-
+			this.p('fullyVisible').onValue((v) => { this.object3D.visible = v });
+			var parentTile = this.closestAncestorByType('Tile');
+			if (parentTile) {
+				parentTile.p('open').onValue((v) => {
+					this.object3D.visible = v && this.fullyVisible;
+				});
+			}
 
 			// DEBUGGING CODE
 			//(()=>{

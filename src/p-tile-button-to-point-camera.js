@@ -18,7 +18,8 @@ define(['jquery', './util/misc.js', './util/kefir-and-eggs.js'], function ($, U,
 
 		/* un-target tile when targeted tile is hidden */
 		this.p('cameraTargetTile').plug(newTileTarget.flatMapLatest((tile) => {
-			return tile.p('hidden').value(true).takeUntilBy(this.p('cameraTargetTile').value(null));
+			return tile.p('hidden').value(true).merge(this.on('destroy'))
+				.takeUntilBy(this.p('cameraTargetTile').value(null));
 		}).mapTo(null));
 
 

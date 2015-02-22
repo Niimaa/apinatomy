@@ -15,23 +15,9 @@ define(['jquery', './p-tile-hidden.scss'], function ($) {
 		this.p('visible').plug(this.p('hidden').not());
 
 		/* enact tile hiding on the DOM */
-		this.on('hidden').onValue((hidden) => {
-			this.open = false;
-			if (hidden) {
-				this.element.addClass('hidden');
-				//this.weight = 0;  // TODO: do we need to put something in this place, now that we're using 'velocity'?
-			} else {
-				this.element.removeClass('hidden');
-				//this.weight = this.weightWhenClosed();
-			}
+		this.p('hidden').merge(this.on('destroy').mapTo(true)).onValue((hidden) => {
+			this.element.toggleClass('hidden', hidden);
 		});
-
-		/* when the tile is destroyed, it is also hidden */
-		this.p('hidden').plug(this.on('destroy').take(1).mapTo(true));
-
-		/* when the parent tile is closed, this tile is hidden */
-		var parentTile = this.closestAncestorByType('Tile');
-		if (parentTile) { this.p('visible').plug(parentTile.p('open')) }
 
 	});
 });

@@ -12,7 +12,7 @@ define([
 	/* the plugin */
 	var plugin = $.circuitboard.plugin({
 		name: 'three-d-geometric-models',
-		requires: ['three-d', 'tile-hidden']
+		requires: ['three-d']
 	});
 
 

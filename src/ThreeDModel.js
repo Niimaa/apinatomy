@@ -76,7 +76,8 @@ define([
 
 			/* manifest the visibility of this model on the object3D */
 			this.object3D.then((object3D) => {
-				this.p('visible').onValue((visible) => { object3D.visible = visible });
+				this.p('visible').merge(this.on('destroy').mapTo(false))
+					.onValue((visible) => { object3D.visible = visible });
 			});
 
 
