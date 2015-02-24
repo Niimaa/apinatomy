@@ -33,14 +33,24 @@ define([
 					(sibling.open ? sibling.weightWhenOpen() :
 						sibling.weightWhenClosed()));
 			sibling.element.data('amyFlexGrowTarget', flexGrowTo);
-			if (flexGrowTo > 0) { sibling.element.css('display', 'flex') }
+			if (flexGrowTo > 0) {
+				sibling.element.css({
+					display: 'flex',
+					marginRight: '1px'
+				});
+			}
 			promises.push(new P((resolve) => {
 				sibling.element.velocity(
 					{ flexGrow: [flexGrowTo, flexGrowFrom] },
 					{ complete: resolve, duration: 300 }
 				);
 			}).tap(() => {
-				if (flexGrowTo === 0) { sibling.element.css('display', 'none') }
+				if (flexGrowTo === 0) {
+					sibling.element.css({
+						display: 'none',
+						marginRight: '0'
+					});
+				}
 			}));
 		});
 
@@ -51,15 +61,35 @@ define([
 				rowFlexGrowTo += parseFloat(U.defOr($(e).data('amyFlexGrowTarget'), 1));
 			});
 			var rowFlexGrowFrom = $(rowElement).data('amyPrevFlexGrow');
+			if (rowFlexGrowTo > 0) {
+				$(rowElement).css('display', 'flex');
+			}
+			if (!maximized) {
+				$(rowElement).css('marginBottom', '1px');
+			}
 			promises.push(new P((resolve) => {
 				$(rowElement).velocity(
 					{ flexGrow: [rowFlexGrowTo, rowFlexGrowFrom] },
 					{ complete: resolve, duration: 300 }
 				);
+			}).tap(() => {
+				if (rowFlexGrowTo === 0) {
+					$(rowElement).css('display', 'none');
+				}
+				if (maximized) {
+					$(rowElement).css('marginBottom', '0');
+				}
 			}));
 		});
 
-		return P.all(promises);
+		if (!maximized) {
+			this.element.css('marginRight', '1px');
+		}
+		return P.all(promises).tap(() => {
+			if (maximized) {
+				this.element.css('marginRight', '0');
+			}
+		});
 	});
 
 
