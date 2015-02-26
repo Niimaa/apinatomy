@@ -31,6 +31,7 @@ require('../p-three-d-geometric-models.js');
 require('../p-three-d-geometric-models-stl.js');
 require('../p-three-d-geometric-models-obj.js');
 require('../p-three-d-geometric-models-json.js');
+require('../p-three-d-spinner.js');
 require('../p-d3-three-d.js');
 require('../p-three-d-manual-controls.js');
 require('../p-three-d-auto-controls.js');
