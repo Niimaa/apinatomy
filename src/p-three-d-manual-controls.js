@@ -57,15 +57,16 @@ define(['jquery', './util/misc.js', 'three-js', './util/kefir-and-eggs.js'], fun
 			/* rotating with the left mouse button */
 			this._rotateStart = new THREE.Vector3();
 			this._rotateEnd = new THREE.Vector3();
+			var canvasOffset = this.threeDCanvasElement.offset();
 			dragging.filter(button(MOUSE_BUTTON.LEFT)).onValue(({mouseDownEvent, mouseMoveEvent}) => { // TODO: touch
 
 				somethingChanged = true;
 
 				if (!mouseDownEvent._pastFirst) {
 					mouseDownEvent._pastFirst = true;
-					this._rotateStart.copy(this.getMouseProjectionOnBall(mouseDownEvent.pageX, mouseDownEvent.pageY));
+					this._rotateStart.copy(this.getMouseProjectionOnBall(mouseDownEvent.pageX - canvasOffset.left, mouseDownEvent.pageY - canvasOffset.top));
 				}
-				this._rotateEnd.copy(this.getMouseProjectionOnBall(mouseMoveEvent.pageX, mouseMoveEvent.pageY));
+				this._rotateEnd.copy(this.getMouseProjectionOnBall(mouseMoveEvent.pageX - canvasOffset.left, mouseMoveEvent.pageY - canvasOffset.top));
 
 			});
 
