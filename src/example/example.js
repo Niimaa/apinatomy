@@ -95,7 +95,7 @@ $(document).ready(() => {
 				'walking-legs': {
 					parts: {
 						'left_femur_1':    { file: require('./3d-models/walking-legs/left_femur_1.json') },
-						'left_fibula_1':   { file: require('./3d-models/walking-legs/left_fibula_1.json') },
+						'left_fibula_1':   { file: require('./3d-models/walking-legs/left_fibula_1.json') }, // TODO: uncomment
 						'left_foot_1':     { file: require('./3d-models/walking-legs/left_foot_1.json') },
 						'left_hip_1':      { file: require('./3d-models/walking-legs/left_hip_1.json') },
 						'left_patella_1':  { file: require('./3d-models/walking-legs/left_patella_1.json') },

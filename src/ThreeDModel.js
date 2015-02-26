@@ -4,9 +4,39 @@ define([
 	'./util/misc.js',
 	'bluebird',
 	'./util/kefir-and-eggs.js',
-	'./Artefact.js'
-], function ($, THREE, U, P, Kefir, ArtefactP) {
+	'./Artefact.js',
+	'bonobo'
+], function ($, THREE, U, P, Kefir, ArtefactP, Bonobo) {
 	'use strict';
+
+
+	/* the worker to load and process 3D models */
+	var worker = new Bonobo('three-d-model-loader');
+	var workerP = P.resolve(worker.require(require('file!three-js'))
+		.hoist(() => {
+			function isGeometry(v) { return v instanceof THREE.Geometry || v instanceof THREE.BufferGeometry }
+		}).define('loadGeometryFromJSON', function ({file}) {
+
+			var loader = new THREE.JSONLoader();
+			loader.load(`http://localhost:61234/apinatomy-core/dist/example/${file}`, (geometry) => {
+
+				/* if an Object3D is returned, take only its geometry */
+				if (!isGeometry(geometry)) { geometry = geometry.geometry || geometry.children[0].geometry }
+
+				var result;
+
+				var tmpScene = new THREE.Scene();
+				var tmpCamera = new THREE.Camera(); // TODO: maybe need a specific kind of camera
+
+
+
+
+
+				Bonobo.done(result);
+
+			});
+
+		}).compile());
 
 
 	/* convenience predicate functions */
@@ -236,41 +266,81 @@ define([
 
 			_loadGeometryFromFile() {
 
-				/* select the longest extension that fits the filename */
-				// e.g., "points.json" has priority over "json"
-				var {file} = this.options;
-				var ext = '';
-				Object.keys($.circuitboard.Circuitboard.threeJsLoaders).forEach((extension) => {
-					if (extension.length > ext.length) {
-						if (endsWith(file, `.${extension}`)) {
-							ext = extension;
-						}
-					}
-				});
+				///* select the longest extension that fits the filename */
+				//// e.g., "points.json" has priority over "json"
+				//var {file} = this.options;
+				//var ext = '';
+				//Object.keys($.circuitboard.Circuitboard.threeJsLoaders).forEach((extension) => {
+				//	if (extension.length > ext.length) {
+				//		if (endsWith(file, `.${extension}`)) {
+				//			ext = extension;
+				//		}
+				//	}
+				//});
+				//
+				///* was an extension found? */
+				//U.assert(ext.length > 0, `The file '${file}' is not recognized as a 3D model.`);
+				//
+				///* fetch the loader for that file extension */
+				//var Loader = $.circuitboard.Circuitboard.threeJsLoaders[ext];
+				//
+				///* sanity check */
+				//U.assert(U.isDefined(Loader), `Something went wrong retrieving the 3D model loader.`);
+				//
+				///* return a promise to the 3D object */
+				//return U.promisify(new Loader(), 'load')(file).then((geometry) => {
+				//
+				//	/* for now, we only accept Geometry's and Object3D's from a loader */
+				//	U.assert(isGeometry(geometry) || isObject3D(geometry),
+				//		`The 3D model loader for the '${ext}' extension returned an unsupported value.`);
+				//
+				//	/* if an Object3D is returned, take only its geometry */
+				//	if (!isGeometry(geometry)) { geometry = geometry.geometry || geometry.children[0].geometry }
+				//
+				//	/* return the object */
+				//	return geometry;
+				//
+				//});
 
-				/* was an extension found? */
-				U.assert(ext.length > 0, `The file '${file}' is not recognized as a 3D model.`);
 
-				/* fetch the loader for that file extension */
-				var Loader = $.circuitboard.Circuitboard.threeJsLoaders[ext];
 
-				/* sanity check */
-				U.assert(U.isDefined(Loader), `Something went wrong retrieving the 3D model loader.`);
+				//var loader = new THREE.JSONLoader();
+				//loader.load(`http://localhost:61234/apinatomy-core/dist/example/${this.options.file}`, (geometry) => {
+				//
+				//	/* if an Object3D is returned, take only its geometry */
+				//	if (!isGeometry(geometry)) { geometry = geometry.geometry || geometry.children[0].geometry }
+				//
+				//	var bufferG = new THREE.BufferGeometry();
+				//	bufferG.fromGeometry(geometry);
+				//
+				//	console.log(`(1)(${this.options.file})`, bufferG);
+				//
+				//});
 
-				/* return a promise to the 3D object */
-				return U.promisify(new Loader(), 'load')(file).then((geometry) => {
 
-					/* for now, we only accept Geometry's and Object3D's from a loader */
-					U.assert(isGeometry(geometry) || isObject3D(geometry),
-						`The 3D model loader for the '${ext}' extension returned an unsupported value.`);
+				return workerP.then(() => {
+					return new P((resolve) => {
+						worker.run('loadGeometryFromJSON', { file: this.options.file });
+						worker.done(resolve);
+					});
+				}).then((json) => {
+					var geometry = new THREE.BufferGeometryLoader().parse(json);
 
-					/* if an Object3D is returned, take only its geometry */
-					if (!isGeometry(geometry)) { geometry = geometry.geometry || geometry.children[0].geometry }
 
-					/* return the object */
+
+
+
+
+
+
+
 					return geometry;
-
 				});
+
+
+
+
+
 			},
 
 

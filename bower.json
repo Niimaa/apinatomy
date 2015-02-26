@@ -24,7 +24,8 @@
     "tweenjs": "*",
     "kefir": "~1.0.0",
     "kefir-jquery": "~1.0.0",
-    "velocity": "~1.2.2"
+    "velocity": "~1.2.2",
+    "bonobo": "0be4e978f69e39976014c21f50b96e713a987318"
   },
   "devDependencies": {
     "requirejs-domready": "~2.0.1",
