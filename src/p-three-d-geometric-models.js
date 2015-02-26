@@ -29,13 +29,15 @@ define([
 				Object.keys(threeDModels[this.model.id]).forEach((modelID) => {
 
 					/* create a simple clock for animated models */
-					var clock = new THREE.Clock(); // TODO: at some point, we change this to a more global clock
+					// TODO: at some point, we change this to a more global clock
+					var clock = new THREE.Clock();
+					var clockStream = Kefir.animationFrames().map(() => clock.getElapsedTime());
 
 					/* create the model artefact */
 					var model = this.threeDModels[modelID] = new ThreeDModel(U.extend({}, threeDModels[this.model.id][modelID], {
 						id: modelID,
 						parent: this,
-						clock: Kefir.animationFrames().map(() => clock.getElapsedTime()),
+						clock: clockStream,
 						visible: false
 					}));
 
