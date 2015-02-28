@@ -44,8 +44,11 @@ define(['jquery', './util/misc.js', 'three-js', './util/kefir-and-eggs.js'], fun
 			};
 
 
-			/* creating various event streams */
+			/* disable context menu on right-click */
 			this.threeDCanvasElement.asKefirStream('contextmenu').onValue((event) => { event.preventDefault() });
+
+
+			/* creating various event streams */
 			var dragging = this.threeDCanvasElement.mouseDrag({ threshold: this.options.dragThreshold }).filter(() => this.threeDManualControlsEnabled);
 			var keydown = $(window).asKefirStream('keydown').filter(() => this.threeDManualControlsEnabled);
 			var keyup = $(window).asKefirStream('keyup');
