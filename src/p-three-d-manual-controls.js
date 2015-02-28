@@ -44,8 +44,11 @@ define(['jquery', './util/misc.js', 'three-js', './util/kefir-and-eggs.js'], fun
 			};
 
 
-			/* creating various event streams */
+			/* disable context menu on right-click */
 			this.threeDCanvasElement.asKefirStream('contextmenu').onValue((event) => { event.preventDefault() });
+
+
+			/* creating various event streams */
 			var dragging = this.threeDCanvasElement.mouseDrag({ threshold: this.options.dragThreshold }).filter(() => this.threeDManualControlsEnabled);
 			var keydown = $(window).asKefirStream('keydown').filter(() => this.threeDManualControlsEnabled);
 			var keyup = $(window).asKefirStream('keyup');
@@ -57,15 +60,16 @@ define(['jquery', './util/misc.js', 'three-js', './util/kefir-and-eggs.js'], fun
 			/* rotating with the left mouse button */
 			this._rotateStart = new THREE.Vector3();
 			this._rotateEnd = new THREE.Vector3();
+			var canvasOffset = this.threeDCanvasElement.offset();
 			dragging.filter(button(MOUSE_BUTTON.LEFT)).onValue(({mouseDownEvent, mouseMoveEvent}) => { // TODO: touch
 
 				somethingChanged = true;
 
 				if (!mouseDownEvent._pastFirst) {
 					mouseDownEvent._pastFirst = true;
-					this._rotateStart.copy(this.getMouseProjectionOnBall(mouseDownEvent.pageX, mouseDownEvent.pageY));
+					this._rotateStart.copy(this.getMouseProjectionOnBall(mouseDownEvent.pageX - canvasOffset.left, mouseDownEvent.pageY - canvasOffset.top));
 				}
-				this._rotateEnd.copy(this.getMouseProjectionOnBall(mouseMoveEvent.pageX, mouseMoveEvent.pageY));
+				this._rotateEnd.copy(this.getMouseProjectionOnBall(mouseMoveEvent.pageX - canvasOffset.left, mouseMoveEvent.pageY - canvasOffset.top));
 
 			});
 
@@ -76,7 +80,7 @@ define(['jquery', './util/misc.js', 'three-js', './util/kefir-and-eggs.js'], fun
 				Kefir.once(keydownEvent),
 				keyup.filter(key(keydownEvent.which)).mapTo(false).take(1)
 			])));
-			this.on('currentArrowKey').onValue(() => { somethingChanged = true });
+			this.on('currentArrowKey').changes().onValue(() => { somethingChanged = true });
 
 
 			/* zooming with the middle mouse button */
@@ -142,18 +146,14 @@ define(['jquery', './util/misc.js', 'three-js', './util/kefir-and-eggs.js'], fun
 				if (somethingChanged || this.currentArrowKey) {
 					somethingChanged = false;
 
-
 					/* trigger event for manual controls used */
 					this.event('three-d-manual-controls-used').emit();
-
 
 					/* setup */
 					this._eye.subVectors(this.camera3D.position, this.camera3D.userData.target);
 
-
 					/* panning */
 					(() => {
-
 							var mouseChange = new THREE.Vector2();
 							var objectUp = new THREE.Vector3();
 							var pan = new THREE.Vector3();
@@ -170,8 +170,8 @@ define(['jquery', './util/misc.js', 'three-js', './util/kefir-and-eggs.js'], fun
 								}
 								this._panStart.copy(this._panEnd);
 							}
-
 					})();
+
 					/* rotating by mouse */
 					(() => {
 						var axis = new THREE.Vector3();
@@ -190,11 +190,11 @@ define(['jquery', './util/misc.js', 'three-js', './util/kefir-and-eggs.js'], fun
 
 							this._eye.applyQuaternion(quaternion);
 							this.camera3D.up.applyQuaternion(quaternion);
-
 							this._rotateEnd.applyQuaternion(quaternion);
 							this._rotateStart.copy(this._rotateEnd);
 						}
 					})();
+
 					/* rotating by keyboard */
 					(() => {
 						if (this.currentArrowKey) {
@@ -213,6 +213,7 @@ define(['jquery', './util/misc.js', 'three-js', './util/kefir-and-eggs.js'], fun
 							this.camera3D.up.applyQuaternion(quaternion);
 						}
 					})();
+
 					/* zooming by keyboard */
 					// leave this before the 'zooming by mouse' section
 					(() => {
@@ -225,6 +226,7 @@ define(['jquery', './util/misc.js', 'three-js', './util/kefir-and-eggs.js'], fun
 							}
 						}
 					})();
+
 					/* zooming by mouse */
 					(() => {
 						//if (this._state === STATE.TOUCH_ZOOM_PAN) {
@@ -241,7 +243,17 @@ define(['jquery', './util/misc.js', 'three-js', './util/kefir-and-eggs.js'], fun
 
 					})();
 
-
+					/* z-axis restriction */
+					if (this.options.forbidSubZeroZ) {
+						var eyeLength = this._eye.length();
+						if (this.camera3D.userData.target.z < 0) {
+							this.camera3D.userData.target.z = 0;
+						}
+						if (this._eye.z < 0) {
+							this._eye.z = 0;
+						}
+						this._eye.setLength(eyeLength);
+					}
 
 					/* breakdown */
 					this.camera3D.position.addVectors(this.camera3D.userData.target, this._eye);
@@ -249,10 +261,6 @@ define(['jquery', './util/misc.js', 'three-js', './util/kefir-and-eggs.js'], fun
 				}
 
 				this.camera3D.lookAt(this.camera3D.userData.target);
-
-
-
-
 
 			});
 
