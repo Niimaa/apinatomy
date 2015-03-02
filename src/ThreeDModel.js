@@ -23,16 +23,17 @@ define([
 				/* if an Object3D is returned, take only its geometry */
 				if (!isGeometry(geometry)) { geometry = geometry.geometry || geometry.children[0].geometry }
 
-				var result;
-
-				var tmpScene = new THREE.Scene();
-				var tmpCamera = new THREE.Camera(); // TODO: maybe need a specific kind of camera
+				var result = {};
 
 
+				//console.log(Object.keys(geometry));
+				result.vertices     = geometry.vertices;
+				result.faces        = geometry.faces;
+				result.morphTargets = geometry.morphTargets;
 
+				//Bonobo.log(JSON.stringify(result, null, '  '));
 
-
-				Bonobo.done(result);
+				Bonobo.done(JSON.stringify(result));
 
 			});
 
@@ -323,8 +324,12 @@ define([
 						worker.run('loadGeometryFromJSON', { file: this.options.file });
 						worker.done(resolve);
 					});
-				}).then((json) => {
-					var geometry = new THREE.BufferGeometryLoader().parse(json);
+				}).then((geometryData) => {
+
+					console.log('DATA:', JSON.parse(geometryData));
+
+					//var geometry = new THREE.Geometry();
+					//U.extend(geometry, geometryData);
 
 
 
@@ -332,9 +337,7 @@ define([
 
 
 
-
-
-					return geometry;
+					//return geometry;
 				});
 
 

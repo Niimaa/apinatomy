@@ -18,14 +18,14 @@ define([
 
 	/* test for browser 3D support */
 	function browserSupport() { // TODO: use THREE.js function for this that already exists
-		var canvas;
+		var tmpCanvas;
 		try {
-			canvas = $('<canvas>');
-			return !!(canvas[0].getContext('webgl') || canvas[0].getContext('experimental-webgl'));
+			tmpCanvas = $('<canvas>');
+			return !!(tmpCanvas[0].getContext('webgl') || tmpCanvas[0].getContext('experimental-webgl'));
 		} catch (__) {
 			return false;
 		} finally {
-			canvas = undefined;
+			tmpCanvas = undefined;
 		}
 	}
 
@@ -51,8 +51,6 @@ define([
 
 		/* was a canvas given through the options? */
 		this.threeDCanvasElement = this.options.threeDCanvasElement;
-
-
 
 
 		/* the 'threeDMode' property */
