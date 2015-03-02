@@ -25,7 +25,7 @@
     "kefir": "~1.0.0",
     "kefir-jquery": "~1.0.0",
     "velocity": "~1.2.2",
-    "bonobo": "0be4e978f69e39976014c21f50b96e713a987318"
+    "bonobo": "bd76904f611aba9323c2571bdb9e881b4e77b945"
   },
   "devDependencies": {
     "requirejs-domready": "~2.0.1",

@@ -10,35 +10,6 @@ define([
 	'use strict';
 
 
-	/* the worker to load and process 3D models */
-	var worker = new Bonobo('three-d-model-loader');
-	var workerP = P.resolve(worker.require(require('file!three-js'))
-		.hoist(() => {
-			function isGeometry(v) { return v instanceof THREE.Geometry || v instanceof THREE.BufferGeometry }
-		}).define('loadGeometryFromJSON', function ({file}) {
-
-			var loader = new THREE.JSONLoader();
-			loader.load(`http://localhost:61234/apinatomy-core/dist/example/${file}`, (geometry) => {
-
-				/* if an Object3D is returned, take only its geometry */
-				if (!isGeometry(geometry)) { geometry = geometry.geometry || geometry.children[0].geometry }
-
-				var result = {};
-
-
-				//console.log(Object.keys(geometry));
-				result.vertices     = geometry.vertices;
-				result.faces        = geometry.faces;
-				result.morphTargets = geometry.morphTargets;
-
-				//Bonobo.log(JSON.stringify(result, null, '  '));
-
-				Bonobo.done(JSON.stringify(result));
-
-			});
-
-		}).compile());
-
 
 	/* convenience predicate functions */
 	function isGeometry(v) { return v instanceof THREE.Geometry || v instanceof THREE.BufferGeometry }
@@ -105,6 +76,16 @@ define([
 			});
 
 
+			if (this.rootThreeDModel === this) {
+				this.p('visible').value(true).take(1).onValue(() => {
+					this._loadWorker.then(() => {
+						this._loadWorker.worker.run('allFilesRequested'); // TODO: ARE all files requested?
+					});
+				});
+			}
+
+
+
 			/* manifest the visibility of this model on the object3D */
 			this.object3D.then((object3D) => {
 				this.p('visible').merge(this.on('destroy').mapTo(false))
@@ -135,51 +116,18 @@ define([
 
 
 			get originalBoundingBox() {
-				if (!this._originalBoundingBox) {
-					this._originalBoundingBox = new P((resolve, reject) => {
-						if (U.isDefined(this.options.file)) {
-							this.geometry3D.then((geometry) => {
-								var boxFromFile = new THREE.Box3();
-								if (geometry instanceof THREE.BufferGeometry) {
-									geometry.computeBoundingBox();
-									boxFromFile.expandByPoint(geometry.boundingBox.min);
-									boxFromFile.expandByPoint(geometry.boundingBox.max);
-								}
-								(geometry.morphTargets || []).concat([geometry]).forEach(({vertices}) => {
-									(vertices || []).forEach((point) => {
-										boxFromFile.expandByPoint(point);
-									});
-								});
-								return boxFromFile;
-							}).then(resolve, reject);
-						} else if (U.isDefined(this.options.parts)) {
-							P.all(this.children).map(part => part.originalBoundingBox).reduce((result, bbox) => {
-								return result.expandByPoint(bbox.min).expandByPoint(bbox.max);
-							}, new THREE.Box3()).then(resolve, reject);
-						}
-					});
-				}
 				return this._originalBoundingBox;
 			},
 
 
 			get object3D() {
 				if (!this._object3D) {
-					this._object3D = this.geometry3D.then((geometry3D) => {
+					this._object3D = new P((resolve, reject) => {
 
-						if (geometry3D) { // we have loaded a file
 
-							return this.rootThreeDModel.originalBoundingBox.then((originalBoundingBox) => {
+						if (U.isDefined(this.options.file)) { // we have loaded a file
 
-								/* center the geometry based on the root model's bounding box */
-								var correction = originalBoundingBox.center().negate();
-								var correctionMatrix = new THREE.Matrix4().setPosition(correction);
-								(geometry3D.morphTargets || []).forEach(({vertices}) => {
-									vertices.forEach((point) => {
-										point.applyMatrix4(correctionMatrix);
-									});
-								});
-								geometry3D.applyMatrix(correctionMatrix);
+							this.geometry3D.then((geometry3D) => {
 
 								/* create material */
 								var {animation, color} = this.options;
@@ -193,7 +141,7 @@ define([
 									object = new THREE.MorphAnimMesh(geometry3D, material);
 									object.duration = animation.duration;
 									material.morphTargets = true;
-									geometry3D.computeMorphNormals();
+									//geometry3D.computeMorphNormals(); // TODO: can this be removed? Can we expect the morph-normals to be part of the geometry already?
 
 									/* subscribe to the clock */
 									var {clock} = this.options;
@@ -208,7 +156,7 @@ define([
 								}
 								return object;
 
-							});
+							}).then(resolve, reject);
 
 						} else { // this is a group with parts
 
@@ -221,13 +169,30 @@ define([
 							});
 
 							/* resolve this promise with the base object */
-							return P.all(this.children.map((part) => part.object3D)).each((subObject) => {
+							P.all(this.children.map((part) => part.object3D)).each((subObject) => {
 								object.add(subObject);
-							}).return(object);
+							}).return(object).then(resolve, reject);
 
 						}
 
 					});
+
+
+
+
+
+
+					if (this.rootThreeDModel === this) {
+						this.p('visible').value(true).take(1).onValue(() => {
+							console.profile('start');
+							this._object3D.then(() => {
+								console.profileEnd();
+							});
+						});
+					}
+
+
+
 				}
 				return this._object3D;
 			},
@@ -304,46 +269,126 @@ define([
 				//});
 
 
-
-				//var loader = new THREE.JSONLoader();
-				//loader.load(`http://localhost:61234/apinatomy-core/dist/example/${this.options.file}`, (geometry) => {
-				//
-				//	/* if an Object3D is returned, take only its geometry */
-				//	if (!isGeometry(geometry)) { geometry = geometry.geometry || geometry.children[0].geometry }
-				//
-				//	var bufferG = new THREE.BufferGeometry();
-				//	bufferG.fromGeometry(geometry);
-				//
-				//	console.log(`(1)(${this.options.file})`, bufferG);
-				//
-				//});
-
-
-				return workerP.then(() => {
+				return this._loadWorker.then(() => {
 					return new P((resolve) => {
-						worker.run('loadGeometryFromJSON', { file: this.options.file });
-						worker.done(resolve);
+						this._loadWorker.worker.run('loadGeometryFromJSON', { file: this.options.file });
+						this._loadWorker.worker.on(this.options.file, resolve);
 					});
-				}).then((geometryData) => {
-
-					console.log('DATA:', JSON.parse(geometryData));
-
-					//var geometry = new THREE.Geometry();
-					//U.extend(geometry, geometryData);
-
-
-
-
-
-
-
-					//return geometry;
+				}).then((geometryObj) => {
+					var geometry = (new THREE.JSONLoader()).parse(geometryObj).geometry;
+					return geometry;
 				});
 
 
 
 
 
+			},
+
+			get _loadWorker() {
+				if (this !== this.rootThreeDModel) {
+					return this.rootThreeDModel._loadWorker;
+				}
+				if (U.isUndefined(this.__loadWorker)) {
+					var worker = new Bonobo('three-d-model-loader:'+this.id);
+					this.__loadWorker = P.resolve(worker
+						.require(require('file!three-js'))
+						.require(require('file!bluebird'))
+						.hoist(() => {
+							// jshint ignore:start
+
+							//noinspection JSUnusedLocalSymbols
+							var geometryPs = {}; // file -> P<geometry>
+							//noinspection JSUnusedLocalSymbols
+							var bbox = {
+								min: [ Infinity,  Infinity,  Infinity],
+								max: [-Infinity, -Infinity, -Infinity]
+							};
+
+							// jshint ignore:end
+						}).define('loadGeometryFromJSON', function ({file}) {
+							// jshint ignore:start
+
+							//Bonobo.log('loadGeometryFromJSON:', file);
+
+							geometryPs[file] = new P((resolve, reject) => {
+								var url = `http://localhost:61234/apinatomy-core/dist/example/${file}`;
+								var xhr = new XMLHttpRequest();
+								xhr.onreadystatechange = function () {
+									if ( xhr.readyState === xhr.DONE ) {
+										if ( xhr.status === 200 || xhr.status === 0 ) {
+											resolve(JSON.parse(xhr.responseText));
+										} else {
+											reject(`Couldn't load "${url}" (${xhr.status})`);
+										}
+									}
+								};
+								xhr.open( 'GET', url, true );
+								xhr.withCredentials = this.withCredentials;
+								xhr.send( null );
+							}).tap((geometry) => {
+								/* expand the bounding box */
+								for (var i = 0; i < geometry.vertices.length; i += 1) {
+									if (geometry.vertices[i] < bbox.min[i%3]) { bbox.min[i%3] = geometry.vertices[i] }
+									if (geometry.vertices[i] > bbox.max[i%3]) { bbox.max[i%3] = geometry.vertices[i] }
+								}
+								geometry.morphTargets.forEach((morphTarget) => {
+									for (var i = 0; i < morphTarget.vertices.length; i += 1) {
+										if (morphTarget.vertices[i] < bbox.min[i%3]) { bbox.min[i%3] = morphTarget.vertices[i] }
+										if (morphTarget.vertices[i] > bbox.max[i%3]) { bbox.max[i%3] = morphTarget.vertices[i] }
+									}
+								});
+							});
+
+							// jshint ignore:end
+						}).define('allFilesRequested', function () {
+							// jshint ignore:start
+
+							//Bonobo.log('allFilesRequested');
+
+							P.props(geometryPs).then((geometries) => {
+								var center = [
+									0.5 * (bbox.min[0] + bbox.max[0]),
+									0.5 * (bbox.min[1] + bbox.max[1]),
+									0.5 * (bbox.min[2] + bbox.max[2])
+								];
+								Object.keys(geometries).forEach((file) => {
+									var float32ArrayVertices = new Float32Array(geometries[file].vertices.length);
+									for (var j = 0; j < geometries[file].vertices.length; j += 1) {
+										float32ArrayVertices[j] = geometries[file].vertices[j] - center[j%3];
+										//geometries[file].vertices[j] -= center[j%3];
+									}
+									geometries[file].vertices = float32ArrayVertices;
+									geometries[file].morphTargets.forEach((morphTarget) => {
+										var float32ArrayVertices = new Float32Array(morphTarget.vertices.length);
+										for (var k = 0; k < morphTarget.vertices.length; k += 1) {
+											float32ArrayVertices[j] = morphTarget.vertices[j] - center[j%3];
+											morphTarget.vertices[k] -= center[k%3];
+										}
+										morphTarget.vertices = float32ArrayVertices;
+									});
+									Bonobo.emit(file, geometries[file]);
+								});
+
+								Bonobo.emit('bounding-box', bbox);
+							});
+
+							// jshint ignore:end
+						}).compile());
+					this.__loadWorker.worker = worker;
+
+					this._originalBoundingBox = new P((resolve/*, reject*/) => {
+						this._loadWorker.worker.on('bounding-box', resolve);
+					}).then((bbox) => {
+							console.log(bbox);
+						return new THREE.Box3(
+							new THREE.Vector3(bbox.min[0], bbox.min[1], bbox.min[2]),
+							new THREE.Vector3(bbox.max[0], bbox.max[1], bbox.max[2])
+						);
+					});
+
+				}
+				return this.__loadWorker;
 			},
 
 
