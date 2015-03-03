@@ -232,6 +232,7 @@ define([
 
 			_loadGeometryFromFile() {
 
+				////////// OLD: Extension-based loader selection; TODO: put back
 				///* select the longest extension that fits the filename */
 				//// e.g., "points.json" has priority over "json"
 				//var {file} = this.options;
