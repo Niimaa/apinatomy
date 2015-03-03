@@ -1,10 +1,10 @@
 'use strict';
 
-define(['jquery', './misc.js', 'kefir', 'tweenjs'], function ($, U, Kefir, TWEEN) {
+define(['jquery', './misc.js', 'kefir', 'tweenjs', 'kefir-jquery'], function ($, U, Kefir, TWEEN, KefirJQuery) {
 
 	/* Kefir jQuery plugin ********************************************************************************************/
 
-		require('kefir-jquery').init(Kefir, $);
+	KefirJQuery.init(Kefir, $);
 
 
 	/* EventStream generators *****************************************************************************************/
