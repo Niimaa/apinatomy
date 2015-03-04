@@ -10,27 +10,6 @@ define([
 	'use strict';
 
 
-
-	/* convenience predicate functions */
-	function isGeometry(v) { return v instanceof THREE.Geometry || v instanceof THREE.BufferGeometry }
-	function isObject3D(v) { return v instanceof THREE.Object3D }
-	function endsWith(str, suffix) { return str.indexOf(suffix, str.length - suffix.length) !== -1 }
-
-
-	///* convenience function to visit all geometries in an Object3D */ // TODO: remove or use?
-	//function traverseGeometries(obj, fn) {
-	//	obj.traverse((subObj) => {
-	//		if (U.isUndefined(subObj.geometry)) { return }
-	//		fn(subObj.geometry);
-	//	});
-	//}
-	//function traverseMeshes(obj, fn) {
-	//	obj.traverse((subObj) => {
-	//		if (U.isDefined(subObj.geometry)) { fn(subObj) }
-	//	});
-	//}
-
-
 	/* a promise to the new ThreeDModel class */
 	return ArtefactP.then((Artefact) => {
 
@@ -116,6 +95,18 @@ define([
 
 
 			get originalBoundingBox() {
+				if (U.isUndefined(this._originalBoundingBox)) {
+					this._originalBoundingBox = this._loadWorker.then((worker) => {
+						return new P((resolve/*, reject*/) => {
+							worker.on('bounding-box', resolve);
+						}).then((bbox) => {
+							return new THREE.Box3(
+								new THREE.Vector3(bbox.min[0], bbox.min[1], bbox.min[2]),
+								new THREE.Vector3(bbox.max[0], bbox.max[1], bbox.max[2])
+							);
+						});
+					});
+				}
 				return this._originalBoundingBox;
 			},
 
@@ -123,8 +114,6 @@ define([
 			get object3D() {
 				if (!this._object3D) {
 					this._object3D = new P((resolve, reject) => {
-
-
 						if (U.isDefined(this.options.file)) { // we have loaded a file
 
 							this.geometry3D.then((geometry3D) => {
@@ -174,25 +163,7 @@ define([
 							}).return(object).then(resolve, reject);
 
 						}
-
 					});
-
-
-
-
-
-
-					if (this.rootThreeDModel === this) {
-						this.p('visible').value(true).take(1).onValue(() => {
-							console.profile('start');
-							this._object3D.then(() => {
-								console.profileEnd();
-							});
-						});
-					}
-
-
-
 				}
 				return this._object3D;
 			},
@@ -231,59 +202,18 @@ define([
 
 
 			_loadGeometryFromFile() {
-
-				////////// OLD: Extension-based loader selection; TODO: put back
-				///* select the longest extension that fits the filename */
-				//// e.g., "points.json" has priority over "json"
-				//var {file} = this.options;
-				//var ext = '';
-				//Object.keys($.circuitboard.Circuitboard.threeJsLoaders).forEach((extension) => {
-				//	if (extension.length > ext.length) {
-				//		if (endsWith(file, `.${extension}`)) {
-				//			ext = extension;
-				//		}
-				//	}
-				//});
-				//
-				///* was an extension found? */
-				//U.assert(ext.length > 0, `The file '${file}' is not recognized as a 3D model.`);
-				//
-				///* fetch the loader for that file extension */
-				//var Loader = $.circuitboard.Circuitboard.threeJsLoaders[ext];
-				//
-				///* sanity check */
-				//U.assert(U.isDefined(Loader), `Something went wrong retrieving the 3D model loader.`);
-				//
-				///* return a promise to the 3D object */
-				//return U.promisify(new Loader(), 'load')(file).then((geometry) => {
-				//
-				//	/* for now, we only accept Geometry's and Object3D's from a loader */
-				//	U.assert(isGeometry(geometry) || isObject3D(geometry),
-				//		`The 3D model loader for the '${ext}' extension returned an unsupported value.`);
-				//
-				//	/* if an Object3D is returned, take only its geometry */
-				//	if (!isGeometry(geometry)) { geometry = geometry.geometry || geometry.children[0].geometry }
-				//
-				//	/* return the object */
-				//	return geometry;
-				//
-				//});
-
-
-				return this._loadWorker.then(() => {
+				return this._loadWorker.then((worker) => { // TODO:
 					return new P((resolve) => {
-						this._loadWorker.worker.run('loadGeometryFromJSON', { file: this.options.file });
-						this._loadWorker.worker.on(this.options.file, resolve);
+
+						// TODO: listen to all the signals from the web-worker
+						//worker.on(this.options.file, resolve);
+
+						worker.run('loadGeometryFromJSON', { file: this.options.file });
 					});
 				}).then((geometryObj) => {
 					var geometry = (new THREE.JSONLoader()).parse(geometryObj).geometry;
 					return geometry;
 				});
-
-
-
-
-
 			},
 
 			get _loadWorker() {
@@ -298,22 +228,14 @@ define([
 						.hoist(() => {
 							// jshint ignore:start
 
-							//noinspection JSUnusedLocalSymbols
 							var geometryPs = {}; // file -> P<geometry>
-							//noinspection JSUnusedLocalSymbols
-							var bbox = {
-								min: [ Infinity,  Infinity,  Infinity],
-								max: [-Infinity, -Infinity, -Infinity]
-							};
 
 							// jshint ignore:end
 						}).define('loadGeometryFromJSON', function ({file}) {
 							// jshint ignore:start
 
-							//Bonobo.log('loadGeometryFromJSON:', file);
-
 							geometryPs[file] = new P((resolve, reject) => {
-								var url = `http://localhost:61234/apinatomy-core/dist/example/${file}`;
+								var url = `http://localhost:61234/apinatomy-core/dist/example/${file}`; // TODO: pass this URL in here somehow
 								var xhr = new XMLHttpRequest();
 								xhr.onreadystatechange = function () {
 									if ( xhr.readyState === xhr.DONE ) {
@@ -327,73 +249,96 @@ define([
 								xhr.open( 'GET', url, true );
 								xhr.withCredentials = this.withCredentials;
 								xhr.send( null );
-							}).tap((geometry) => {
-								/* expand the bounding box */
-								for (var i = 0; i < geometry.vertices.length; i += 1) {
-									if (geometry.vertices[i] < bbox.min[i%3]) { bbox.min[i%3] = geometry.vertices[i] }
-									if (geometry.vertices[i] > bbox.max[i%3]) { bbox.max[i%3] = geometry.vertices[i] }
-								}
-								geometry.morphTargets.forEach((morphTarget) => {
-									for (var i = 0; i < morphTarget.vertices.length; i += 1) {
-										if (morphTarget.vertices[i] < bbox.min[i%3]) { bbox.min[i%3] = morphTarget.vertices[i] }
-										if (morphTarget.vertices[i] > bbox.max[i%3]) { bbox.max[i%3] = morphTarget.vertices[i] }
-									}
-								});
 							});
 
 							// jshint ignore:end
 						}).define('allFilesRequested', function () {
 							// jshint ignore:start
 
-							//Bonobo.log('allFilesRequested');
-
+							/* get model structure */
 							P.props(geometryPs).then((geometries) => {
+								var structure = {};
+								Object.keys(geometries).forEach((file) => {
+									structure[file] = {
+										morphTargetCount: geometries[file].morphTargets.length
+									};
+								});
+								Bonobo.emit('model-structure', structure);
+							});
+
+							// jshint ignore:end
+						}).define('createBuffers', function () {
+							// jshint ignore:start
+
+							/* initialize the bounding box */
+							P.props(geometryPs).then((geometries) => {
+
+								/* create the bounding-box */
+								var bbox = {
+									min: [ Infinity,  Infinity,  Infinity],
+									max: [-Infinity, -Infinity, -Infinity]
+								};
+								Object.keys(geometries).forEach((file) => {
+									for (var i = 0; i < geometries[file].vertices.length; i += 1) {
+										if (geometries[file].vertices[i] < bbox.min[i%3]) { bbox.min[i%3] = geometries[file].vertices[i] }
+										if (geometries[file].vertices[i] > bbox.max[i%3]) { bbox.max[i%3] = geometries[file].vertices[i] }
+									}
+									geometries[file].morphTargets.forEach((morphTarget) => {
+										for (var i = 0; i < morphTarget.vertices.length; i += 1) {
+											if (morphTarget.vertices[i] < bbox.min[i%3]) { bbox.min[i%3] = morphTarget.vertices[i] }
+											if (morphTarget.vertices[i] > bbox.max[i%3]) { bbox.max[i%3] = morphTarget.vertices[i] }
+										}
+									});
+								});
+								Bonobo.emit('bounding-box', bbox);
+
+								/* calculate the center */
 								var center = [
 									0.5 * (bbox.min[0] + bbox.max[0]),
 									0.5 * (bbox.min[1] + bbox.max[1]),
 									0.5 * (bbox.min[2] + bbox.max[2])
 								];
+
+								/* create and emit (center-corrected) buffers */
 								Object.keys(geometries).forEach((file) => {
-									var float32ArrayVertices = new Float32Array(geometries[file].vertices.length);
+									/* vertices buffer */
+									var vertices = new Float32Array(geometries[file].vertices.length);
 									for (var j = 0; j < geometries[file].vertices.length; j += 1) {
-										float32ArrayVertices[j] = geometries[file].vertices[j] - center[j%3];
-										//geometries[file].vertices[j] -= center[j%3];
+										vertices[j] = geometries[file].vertices[j] - center[j%3];
 									}
-									geometries[file].vertices = float32ArrayVertices;
-									geometries[file].morphTargets.forEach((morphTarget) => {
-										var float32ArrayVertices = new Float32Array(morphTarget.vertices.length);
+									Bonobo.emit(`${file}-vertices`, vertices.buffer);
+
+									/* normals buffer */
+									var normals = new Float32Array(geometries[file].normals);
+									Bonobo.emit(`${file}-normals`, normals.buffer);
+
+									/* morph-target vertices buffers */
+									geometries[file].morphTargets.forEach((morphTarget, mt) => {
+										var vertices = new Float32Array(morphTarget.vertices.length);
 										for (var k = 0; k < morphTarget.vertices.length; k += 1) {
-											float32ArrayVertices[j] = morphTarget.vertices[j] - center[j%3];
-											morphTarget.vertices[k] -= center[k%3];
+											vertices[j] = morphTarget.vertices[j] - center[j%3];
 										}
-										morphTarget.vertices = float32ArrayVertices;
+										Bonobo.emit(`${file}-morph-${mt}-vertices`, vertices.buffer);
 									});
-									Bonobo.emit(file, geometries[file]);
+
+									/* morph-target normals buffers */
+									geometries[file].morphNormals.forEach((morphNormal, mt) => {
+										var normals = new Float32Array(morphNormal.normals);
+										Bonobo.emit(`${file}-morph-${mt}-normals`, normals.buffer);
+									});
 								});
 
-								Bonobo.emit('bounding-box', bbox);
 							});
 
 							// jshint ignore:end
-						}).compile());
-					this.__loadWorker.worker = worker;
-
-					this._originalBoundingBox = new P((resolve/*, reject*/) => {
-						this._loadWorker.worker.on('bounding-box', resolve);
-					}).then((bbox) => {
-							console.log(bbox);
-						return new THREE.Box3(
-							new THREE.Vector3(bbox.min[0], bbox.min[1], bbox.min[2]),
-							new THREE.Vector3(bbox.max[0], bbox.max[1], bbox.max[2])
-						);
-					});
+						}).compile()).return(worker);
 
 				}
 				return this.__loadWorker;
 			},
 
 
-			// UNCOMMENT THIS FOR HELP DEBUGGING OBJECT PLACEMENT
+			/* UNCOMMENT THIS FOR HELP DEBUGGING OBJECT PLACEMENT */
 			//_showVisibleBoundingBox() {
 			//	if (this.rootThreeDModel === this) {
 			//		var geometry = new THREE.BoxGeometry(1, 1, 1);
@@ -432,3 +377,62 @@ define([
 
 
 });
+
+
+
+///* convenience predicate functions */
+//function isGeometry(v) { return v instanceof THREE.Geometry || v instanceof THREE.BufferGeometry }
+//function isObject3D(v) { return v instanceof THREE.Object3D }
+//function endsWith(str, suffix) { return str.indexOf(suffix, str.length - suffix.length) !== -1 }
+
+
+///* convenience function to visit all geometries in an Object3D */ // TODO: remove or use?
+//function traverseGeometries(obj, fn) {
+//	obj.traverse((subObj) => {
+//		if (U.isUndefined(subObj.geometry)) { return }
+//		fn(subObj.geometry);
+//	});
+//}
+//function traverseMeshes(obj, fn) {
+//	obj.traverse((subObj) => {
+//		if (U.isDefined(subObj.geometry)) { fn(subObj) }
+//	});
+//}
+
+
+////////// OLD: Extension-based loader selection; TODO: put back
+///* select the longest extension that fits the filename */
+//// e.g., "points.json" has priority over "json"
+//var {file} = this.options;
+//var ext = '';
+//Object.keys($.circuitboard.Circuitboard.threeJsLoaders).forEach((extension) => {
+//	if (extension.length > ext.length) {
+//		if (endsWith(file, `.${extension}`)) {
+//			ext = extension;
+//		}
+//	}
+//});
+//
+///* was an extension found? */
+//U.assert(ext.length > 0, `The file '${file}' is not recognized as a 3D model.`);
+//
+///* fetch the loader for that file extension */
+//var Loader = $.circuitboard.Circuitboard.threeJsLoaders[ext];
+//
+///* sanity check */
+//U.assert(U.isDefined(Loader), `Something went wrong retrieving the 3D model loader.`);
+//
+///* return a promise to the 3D object */
+//return U.promisify(new Loader(), 'load')(file).then((geometry) => {
+//
+//	/* for now, we only accept Geometry's and Object3D's from a loader */
+//	U.assert(isGeometry(geometry) || isObject3D(geometry),
+//		`The 3D model loader for the '${ext}' extension returned an unsupported value.`);
+//
+//	/* if an Object3D is returned, take only its geometry */
+//	if (!isGeometry(geometry)) { geometry = geometry.geometry || geometry.children[0].geometry }
+//
+//	/* return the object */
+//	return geometry;
+//
+//});
