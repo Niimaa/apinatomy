@@ -1,7 +1,7 @@
 {
 	"type": "external-library",
 	"name": "three-js",
-	"dir": "three.js",
+	"dir": "three.js/build",
 	"file": "three.js",
 	"var": "THREE"
 }

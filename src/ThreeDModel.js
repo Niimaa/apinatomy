@@ -5,8 +5,8 @@ define([
 	'bluebird',
 	'./util/kefir-and-eggs.js',
 	'./Artefact.js',
-	'bonobo'
-], function ($, THREE, U, P, Kefir, ArtefactP, Bonobo) {
+	'./util/defer.js'
+], function ($, THREE, U, P, Kefir, ArtefactP, defer) {
 	'use strict';
 
 
@@ -34,7 +34,7 @@ define([
 
 
 			/* create any ThreeDModels parts (without (yet) loading their object3D) */
-			Object.keys(parts|| {}).map((id) => {
+			Object.keys(parts || {}).map((id) => {
 
 				/* define the options we want to pass to the corresponding child artefact */
 				var newChildOptions = U.extend({}, parts[id], {
@@ -49,20 +49,48 @@ define([
 					}
 				});
 
-				/* construct the child ThreeDModel */// jshint -W031
-				new window._amy_ThreeDModel(newChildOptions);
+				/* construct the child ThreeDModel */
+				var part = new window._amy_ThreeDModel(newChildOptions);
+
+				/* add a  */
+
 
 			});
 
 
+			/* when the root model is made visible, get the 3D model from a web worker */
 			if (this.rootThreeDModel === this) {
 				this.p('visible').value(true).take(1).onValue(() => {
-					this._loadWorker.then(() => {
-						this._loadWorker.worker.run('allFilesRequested'); // TODO: ARE all files requested?
+					var worker = new Worker(require('file!./ThreeDModel-worker.js'));
+					worker.postMessage({
+						type:      'filenames',
+						filenames: Object.keys(this._fileNamesToArtefacts())
+					});
+					worker.addEventListener('message', ({data:{ file, type, buffers, boundingBox, center }}) => {
+
+						var artefact = this._fileNamesToArtefacts()[file];
+						if (!artefact._geometry) { artefact._geometry = new THREE.BufferGeometry() }
+						var geometry = artefact._geometry;
+
+						switch (type) {
+							case 'vertices':       {
+								geometry.morphTargets.push({
+									name:     `${file}:${type}:${geometry.morphTargets.length}`,
+									vertices
+								});
+							} break;
+							case 'normals':        {  } break;
+							case 'faces':          {  } break;
+							case 'morph-vertices': {  } break;
+							case 'morph-normals':  {  } break;
+						}
+
+
+						this._geometry3DDeferred.resolve(geometry);
+
 					});
 				});
 			}
-
 
 
 			/* manifest the visibility of this model on the object3D */
@@ -74,42 +102,33 @@ define([
 
 		}, {
 
+			_fileNamesToArtefacts() {
+				var result = {};
+				if (U.isDefined(this.options.file)) {
+					result[this.options.file] = this;
+				}
+				this.children.forEach((child) => {
+					U.extend(result, child._fileNamesToArtefacts());
+				});
+				return result;
+			},
+
+			get _geometry3DDeferred() {
+				if (!this.__geometry3DDeferred) {
+					this.__geometry3DDeferred = defer();
+				}
+				return this.__geometry3DDeferred;
+			},
+
 			get geometry3D() {
 				if (!this._geometry3D) {
-					this._geometry3D = new P((resolve, reject) => {
-						if (U.isDefined(this.options.file)) {
-							this.rootThreeDModel.p('visible').value(true).take(1).onValue(() => {
-
-								/* resolve this promise by loading the proper file, when the root model first becomes visible */
-								this._loadGeometryFromFile().then(resolve, reject);
-
-							});
-						} else {
-							/* this ThreeDModel has no geometry */
-							resolve(null);
-						}
-					});
+					this._geometry3D = this._geometry3DDeferred.promise;
+					if (!U.isDefined(this.options.file)) {
+						this._geometry3DDeferred.resolve(null);
+					}
 				}
 				return this._geometry3D;
 			},
-
-
-			get originalBoundingBox() {
-				if (U.isUndefined(this._originalBoundingBox)) {
-					this._originalBoundingBox = this._loadWorker.then((worker) => {
-						return new P((resolve/*, reject*/) => {
-							worker.on('bounding-box', resolve);
-						}).then((bbox) => {
-							return new THREE.Box3(
-								new THREE.Vector3(bbox.min[0], bbox.min[1], bbox.min[2]),
-								new THREE.Vector3(bbox.max[0], bbox.max[1], bbox.max[2])
-							);
-						});
-					});
-				}
-				return this._originalBoundingBox;
-			},
-
 
 			get object3D() {
 				if (!this._object3D) {
@@ -169,18 +188,21 @@ define([
 			},
 
 
-			adaptToSurfaceArea(size) {
+			adaptToSurfaceArea(surfaceSize) {
 
 				U.assert(this.rootThreeDModel === this,
 					`The 'adaptToSurfaceArea' method should only be called on a root ThreeDModel.`);
 
-				P.all([this.object3D, this.originalBoundingBox]).spread((obj, boundingBox) => {
+				this.object3D.then((obj) => {
+					/* retrieve bounding box */
+					var boundingBox = obj.userData.boundingBox;
+
 					/* abbreviate 3D-object width and height */
-					var objWidth = boundingBox.size().x;
+					var objWidth  = boundingBox.size().x;
 					var objHeight = boundingBox.size().y;
 
 					/* rotate 90° on the z-axis if this gives a better fit */
-					if ((size.width < size.height) !== (objWidth < objHeight)) {
+					if ((surfaceSize.width < surfaceSize.height) !== (objWidth < objHeight)) {
 						obj.rotation.z = 0.5 * Math.PI;
 						[objWidth, objHeight] = [objHeight, objWidth];
 					} else {
@@ -188,13 +210,13 @@ define([
 					}
 
 					/* determine the scale ratio */
-					var ratio = 0.8 * Math.min(size.width / objWidth, size.height / objHeight);
+					var ratio = 0.8 * Math.min(surfaceSize.width / objWidth, surfaceSize.height / objHeight);
 
 					/* adjust size */
 					obj.scale.set(ratio, ratio, ratio);
 
 					/* any custom 'elevation' */
-					var elevation = U.defOr(this.options.elevation, Math.min(size.width, size.height) / 4);
+					var elevation = U.defOr(this.options.elevation, Math.min(surfaceSize.width, surfaceSize.height) / 4);
 					obj.position.z = 0.5 * ratio * boundingBox.size().z + elevation;
 				});
 
@@ -202,140 +224,30 @@ define([
 
 
 			_loadGeometryFromFile() {
-				return this._loadWorker.then((worker) => { // TODO:
-					return new P((resolve) => {
-
-						// TODO: listen to all the signals from the web-worker
-						//worker.on(this.options.file, resolve);
-
-						worker.run('loadGeometryFromJSON', { file: this.options.file });
-					});
-				}).then((geometryObj) => {
-					var geometry = (new THREE.JSONLoader()).parse(geometryObj).geometry;
-					return geometry;
-				});
+				//return this._loadWorker.then((worker) => { // TODO:
+				//	return new P((resolve) => {
+				//
+				//		// TODO: listen to all the signals from the web-worker
+				//		//worker.on(this.options.file, resolve);
+				//
+				//		worker.run('loadGeometryFromJSON', { file: this.options.file });
+				//	});
+				//}).then((geometryObj) => {
+				//	var geometry = (new THREE.JSONLoader()).parse(geometryObj).geometry;
+				//	return geometry;
+				//});
+				return new P(()=>{}); // TODO: remove? return old code?
 			},
 
-			get _loadWorker() {
-				if (this !== this.rootThreeDModel) {
-					return this.rootThreeDModel._loadWorker;
-				}
-				if (U.isUndefined(this.__loadWorker)) {
-					var worker = new Bonobo('three-d-model-loader:'+this.id);
-					this.__loadWorker = P.resolve(worker
-						.require(require('file!three-js'))
-						.require(require('file!bluebird'))
-						.hoist(() => {
-							// jshint ignore:start
-
-							var geometryPs = {}; // file -> P<geometry>
-
-							// jshint ignore:end
-						}).define('loadGeometryFromJSON', function ({file}) {
-							// jshint ignore:start
-
-							geometryPs[file] = new P((resolve, reject) => {
-								var url = `http://localhost:61234/apinatomy-core/dist/example/${file}`; // TODO: pass this URL in here somehow
-								var xhr = new XMLHttpRequest();
-								xhr.onreadystatechange = function () {
-									if ( xhr.readyState === xhr.DONE ) {
-										if ( xhr.status === 200 || xhr.status === 0 ) {
-											resolve(JSON.parse(xhr.responseText));
-										} else {
-											reject(`Couldn't load "${url}" (${xhr.status})`);
-										}
-									}
-								};
-								xhr.open( 'GET', url, true );
-								xhr.withCredentials = this.withCredentials;
-								xhr.send( null );
-							});
-
-							// jshint ignore:end
-						}).define('allFilesRequested', function () {
-							// jshint ignore:start
-
-							/* get model structure */
-							P.props(geometryPs).then((geometries) => {
-								var structure = {};
-								Object.keys(geometries).forEach((file) => {
-									structure[file] = {
-										morphTargetCount: geometries[file].morphTargets.length
-									};
-								});
-								Bonobo.emit('model-structure', structure);
-							});
-
-							// jshint ignore:end
-						}).define('createBuffers', function () {
-							// jshint ignore:start
-
-							/* initialize the bounding box */
-							P.props(geometryPs).then((geometries) => {
-
-								/* create the bounding-box */
-								var bbox = {
-									min: [ Infinity,  Infinity,  Infinity],
-									max: [-Infinity, -Infinity, -Infinity]
-								};
-								Object.keys(geometries).forEach((file) => {
-									for (var i = 0; i < geometries[file].vertices.length; i += 1) {
-										if (geometries[file].vertices[i] < bbox.min[i%3]) { bbox.min[i%3] = geometries[file].vertices[i] }
-										if (geometries[file].vertices[i] > bbox.max[i%3]) { bbox.max[i%3] = geometries[file].vertices[i] }
-									}
-									geometries[file].morphTargets.forEach((morphTarget) => {
-										for (var i = 0; i < morphTarget.vertices.length; i += 1) {
-											if (morphTarget.vertices[i] < bbox.min[i%3]) { bbox.min[i%3] = morphTarget.vertices[i] }
-											if (morphTarget.vertices[i] > bbox.max[i%3]) { bbox.max[i%3] = morphTarget.vertices[i] }
-										}
-									});
-								});
-								Bonobo.emit('bounding-box', bbox);
-
-								/* calculate the center */
-								var center = [
-									0.5 * (bbox.min[0] + bbox.max[0]),
-									0.5 * (bbox.min[1] + bbox.max[1]),
-									0.5 * (bbox.min[2] + bbox.max[2])
-								];
-
-								/* create and emit (center-corrected) buffers */
-								Object.keys(geometries).forEach((file) => {
-									/* vertices buffer */
-									var vertices = new Float32Array(geometries[file].vertices.length);
-									for (var j = 0; j < geometries[file].vertices.length; j += 1) {
-										vertices[j] = geometries[file].vertices[j] - center[j%3];
-									}
-									Bonobo.emit(`${file}-vertices`, vertices.buffer);
-
-									/* normals buffer */
-									var normals = new Float32Array(geometries[file].normals);
-									Bonobo.emit(`${file}-normals`, normals.buffer);
-
-									/* morph-target vertices buffers */
-									geometries[file].morphTargets.forEach((morphTarget, mt) => {
-										var vertices = new Float32Array(morphTarget.vertices.length);
-										for (var k = 0; k < morphTarget.vertices.length; k += 1) {
-											vertices[j] = morphTarget.vertices[j] - center[j%3];
-										}
-										Bonobo.emit(`${file}-morph-${mt}-vertices`, vertices.buffer);
-									});
-
-									/* morph-target normals buffers */
-									geometries[file].morphNormals.forEach((morphNormal, mt) => {
-										var normals = new Float32Array(morphNormal.normals);
-										Bonobo.emit(`${file}-morph-${mt}-normals`, normals.buffer);
-									});
-								});
-
-							});
-
-							// jshint ignore:end
-						}).compile()).return(worker);
-
-				}
-				return this.__loadWorker;
-			},
+			//get _loadWorker() {
+			//	if (this !== this.rootThreeDModel) {
+			//		return this.rootThreeDModel._loadWorker;
+			//	}
+			//	if (U.isUndefined(this.__loadWorker)) {
+			//		this.__loadWorker = ;
+			//	}
+			//	return this.__loadWorker;
+			//},
 
 
 			/* UNCOMMENT THIS FOR HELP DEBUGGING OBJECT PLACEMENT */
@@ -345,14 +257,14 @@ define([
 			//		var material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
 			//		var box = new THREE.Mesh(geometry, material);
 			//		this.object3D.then((object3D) => { object3D.add(box) });
-			//		this.originalBoundingBox.then((bb) => {
-			//			if (bb.empty()) { return }
-			//			box.position.x = 0.5 * (bb.max.x + bb.min.x);
-			//			box.position.y = 0.5 * (bb.max.y + bb.min.y);
-			//			box.position.z = 0.5 * (bb.max.z + bb.min.z);
-			//			box.scale.x = (bb.max.x - bb.min.x);
-			//			box.scale.y = (bb.max.y - bb.min.y);
-			//			box.scale.z = (bb.max.z - bb.min.z);
+			//		this.object3D.then(({userData:{ boundingBox }}) => {
+			//			if (boundingBox.empty()) { return }
+			//			box.position.x = 0.5 * (boundingBox.max.x + boundingBox.min.x);
+			//			box.position.y = 0.5 * (boundingBox.max.y + boundingBox.min.y);
+			//			box.position.z = 0.5 * (boundingBox.max.z + boundingBox.min.z);
+			//			box.scale.x = (boundingBox.max.x - boundingBox.min.x);
+			//			box.scale.y = (boundingBox.max.y - boundingBox.min.y);
+			//			box.scale.z = (boundingBox.max.z - boundingBox.min.z);
 			//		});
 			//	}
 			//},

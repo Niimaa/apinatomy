@@ -19,17 +19,14 @@
     "bluebird": "~2.3.2",
     "chroma-js": "~0.5.8",
     "d3": "~3.4.11",
-    "three.js": "*",
+    "three.js": "https://github.com/satori99/three.js.git#551b88a5dbc9941e7407cde1627849e73f38f38d",
     "delta.js": "~0.5.0",
     "tweenjs": "*",
     "kefir": "~1.0.0",
     "kefir-jquery": "~1.0.0",
-    "velocity": "~1.2.2",
-    "bonobo": "bd76904f611aba9323c2571bdb9e881b4e77b945"
+    "velocity": "~1.2.2"
   },
   "devDependencies": {
-    "requirejs-domready": "~2.0.1",
-    "requirejs": "~2.1.14",
     "traceur": "~0.0.58",
     "spin.js": "~2.0.1",
     "d3": "~3.4.12"
