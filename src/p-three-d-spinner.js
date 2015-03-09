@@ -20,6 +20,8 @@ define([
 		var geometry = new THREE.SphereGeometry(7, 32, 32);
 		var material = new THREE.MeshLambertMaterial({ color: 0xffffff });
 		var result = new THREE.Mesh(geometry, material);
+		result.receiveShadow = false;
+		result.castShadow = true;
 		result.position.z = 25;
 		return result;
 	})();
