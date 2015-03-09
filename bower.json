@@ -19,7 +19,7 @@
     "bluebird": "~2.3.2",
     "chroma-js": "~0.5.8",
     "d3": "~3.4.11",
-    "three.js": "https://github.com/satori99/three.js.git#551b88a5dbc9941e7407cde1627849e73f38f38d",
+    "three.js": "https://github.com/mhelvens/three.js.git#dbfd5a7540ee3d2898a60424b28882a2ca294d74",
     "delta.js": "~0.5.0",
     "tweenjs": "*",
     "kefir": "~1.0.0",
@@ -36,6 +36,6 @@
     "biojs"
   ],
   "resolutions": {
-    "three.js": "551b88a5dbc9941e7407cde1627849e73f38f38d"
+    "three.js": "dbfd5a7540ee3d2898a60424b28882a2ca294d74"
   }
 }
