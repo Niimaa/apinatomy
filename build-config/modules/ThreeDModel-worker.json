@@ -1,0 +1,6 @@
+{
+    "type": "internal-library",
+	"name": "ThreeDModel-worker",
+	"file": "ThreeDModel-worker.js"
+
+}

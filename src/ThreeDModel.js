@@ -72,18 +72,18 @@ define([
 						if (!artefact._geometry) { artefact._geometry = new THREE.BufferGeometry() }
 						var geometry = artefact._geometry;
 
-						switch (type) {
-							case 'vertices':       {
-								geometry.morphTargets.push({
-									name:     `${file}:${type}:${geometry.morphTargets.length}`,
-									vertices
-								});
-							} break;
-							case 'normals':        {  } break;
-							case 'faces':          {  } break;
-							case 'morph-vertices': {  } break;
-							case 'morph-normals':  {  } break;
-						}
+						//switch (type) {
+						//	case 'vertices':       {
+						//		geometry.morphTargets.push({
+						//			name:     `${file}:${type}:${geometry.morphTargets.length}`,
+						//			vertices
+						//		});
+						//	} break;
+						//	case 'normals':        {  } break;
+						//	case 'faces':          {  } break;
+						//	case 'morph-vertices': {  } break;
+						//	case 'morph-normals':  {  } break;
+						//}
 
 
 						this._geometry3DDeferred.resolve(geometry);

@@ -34,5 +34,8 @@
   "keywords": [
     "apinatomy",
     "biojs"
-  ]
+  ],
+  "resolutions": {
+    "three.js": "551b88a5dbc9941e7407cde1627849e73f38f38d"
+  }
 }

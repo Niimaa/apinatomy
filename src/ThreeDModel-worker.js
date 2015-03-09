@@ -17,16 +17,20 @@ addEventListener('message', ({ data }) => { // jshint ignore:line
 function loadGeometryFiles(filenames) {
 	P.all(filenames).map((filename) => new P((resolve, reject) => {
 
-		var loader = new THREE.BufferGeometryLoader();
-		loader.load(`${BASE}/${filename}`, (bufferGeometry) => {
-			bufferGeometry.computeVertexNormals();
-			bufferGeometry.computeMorphNormals();
-			resolve(bufferGeometry);
+		var loader = new THREE.JSONLoader();
+		loader.load(`${BASE}/${filename}`, (geometry) => {
+
+			resolve(geometry);
+
 		});
 
-	})).then((bufferGeometries) => {
+	})).map((geometry) => {
 
-		// TODO: rewrite based on already having buffergeometries
+		var bufferGeometry = new THREE.BufferGeometry();
+
+		// TODO: use 'fromGeometry'
+
+	}).then((geometries) => {
 
 		var message = {
 			type:        'geometryBuffers',
