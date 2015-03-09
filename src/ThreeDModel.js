@@ -61,33 +61,17 @@ define([
 			/* when the root model is made visible, get the 3D model from a web worker */
 			if (this.rootThreeDModel === this) {
 				this.p('visible').value(true).take(1).onValue(() => {
+					var filenamesToArtefacts = this._fileNamesToArtefacts();
+
 					var worker = new Worker(require('file!./ThreeDModel-worker.js'));
-					worker.postMessage({
-						type:      'filenames',
-						filenames: Object.keys(this._fileNamesToArtefacts())
+					worker.addEventListener('message', ({data:{ geometries }}) => {
+						geometries.forEach((geometry) => {
+							THREE.EventDispatcher.prototype.apply(geometry);
+							filenamesToArtefacts[geometry.originalFilename]._geometry3DDeferred.resolve(geometry);
+						});
 					});
-					worker.addEventListener('message', ({data:{ file, type, buffers, boundingBox, center }}) => {
-
-						var artefact = this._fileNamesToArtefacts()[file];
-						if (!artefact._geometry) { artefact._geometry = new THREE.BufferGeometry() }
-						var geometry = artefact._geometry;
-
-						//switch (type) {
-						//	case 'vertices':       {
-						//		geometry.morphTargets.push({
-						//			name:     `${file}:${type}:${geometry.morphTargets.length}`,
-						//			vertices
-						//		});
-						//	} break;
-						//	case 'normals':        {  } break;
-						//	case 'faces':          {  } break;
-						//	case 'morph-vertices': {  } break;
-						//	case 'morph-normals':  {  } break;
-						//}
-
-
-						this._geometry3DDeferred.resolve(geometry);
-
+					worker.postMessage({
+						filenames: Object.keys(filenamesToArtefacts)
 					});
 				});
 			}
@@ -146,18 +130,18 @@ define([
 								var object;
 								if (animation) {
 									/* create a mesh that can be animated */
-									object = new THREE.MorphAnimMesh(geometry3D, material);
+									object = new THREE.Mesh(geometry3D, material);
 									object.duration = animation.duration;
 									material.morphTargets = true;
 									//geometry3D.computeMorphNormals(); // TODO: can this be removed? Can we expect the morph-normals to be part of the geometry already?
 
-									/* subscribe to the clock */
-									var {clock} = this.options;
-									var lastTime = 0;
-									clock.takeUntilBy(this.event('destroy')).onValue((time) => {
-										object.updateAnimation(1000 * (time - lastTime));
-										lastTime = time;
-									});
+									///* subscribe to the clock */
+									//var {clock} = this.options;
+									//var lastTime = 0;
+									//clock.takeUntilBy(this.event('destroy')).onValue((time) => {
+									//	object.updateAnimation(1000 * (time - lastTime));
+									//	lastTime = time;
+									//});
 								} else {
 									/* simple, static mesh */
 									object = new THREE.Mesh(geometry3D, material);
