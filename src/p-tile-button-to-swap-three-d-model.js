@@ -1,4 +1,4 @@
-define(['jquery', './ThreeDModel.js'], function ($, ThreeDModelP) {
+define(['jquery'], function ($) {
 	'use strict';
 
 
@@ -7,8 +7,8 @@ define(['jquery', './ThreeDModel.js'], function ($, ThreeDModelP) {
 	});
 
 
-	plugin.append('Tile.prototype.construct', function () {
-		ThreeDModelP.then(() => {
+	plugin.update('Tile.prototype.loadThreeDModels', (old) => function () {
+		old.call(this).then(() => {
 
 			/* an array containing null, and each 3D model artefact */
 			var models = [null].concat(this.children.filter((child) => child.type === 'ThreeDModel'));
