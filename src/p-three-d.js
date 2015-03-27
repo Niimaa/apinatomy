@@ -10,8 +10,7 @@ define([
 
 
 	/* the plugin */
-	var plugin = $.circuitboard.plugin({
-		name: 'three-d',
+	var plugin = $.circuitboard.plugin.do('three-d', {
 		requires: ['position-tracking', 'tile-shrink-when-hidden']
 	});
 
@@ -31,7 +30,7 @@ define([
 
 
 	/* the constructor is run once to initialize potential 3D-ness */
-	plugin.insert('Circuitboard.prototype.construct', function () {
+	plugin.append('Circuitboard.prototype.construct', function () {
 
 
 		/* test for browser support */
@@ -310,7 +309,7 @@ define([
 
 
 	/* artefact-specific object3D objects */
-	plugin.insert('Tile.prototype.construct', function () {
+	plugin.append('Tile.prototype.construct', function () {
 		this.circuitboard.on('threeDMode').value(true).onValue(() => {
 
 			/* create the 3D object for this tile */

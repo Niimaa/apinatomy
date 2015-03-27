@@ -10,8 +10,7 @@ define([
 	'use strict';
 
 
-	var plugin = $.circuitboard.plugin({
-		name: 'tile-skin',
+	var plugin = $.circuitboard.plugin.do('tile-skin', {
 		requires: ['tile-open', 'position-tracking']
 	}).modify('Tile.prototype');
 
@@ -33,7 +32,7 @@ define([
 
 
 	/* make tiles look nice, with a header, content section, and CSS styling derived from the model */
-	plugin.insert('construct', function () {
+	plugin.append('construct', function () {
 
 		/*  create the header and content elements, and reroute the  */
 		/* 'dom' property to the new content element                 */

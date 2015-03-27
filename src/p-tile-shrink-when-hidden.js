@@ -8,8 +8,7 @@ define([
 	'use strict';
 
 
-	var plugin = $.circuitboard.plugin({
-		name: 'tile-shrink-when-hidden',
+	var plugin = $.circuitboard.plugin.do('tile-shrink-when-hidden', {
 		requires: ['tile-hidden']
 	}).modify('Tile.prototype');
 
@@ -45,7 +44,7 @@ define([
 
 
 	/* react to a tile opening or closing by changing its weight accordingly */
-	plugin.insert('construct', function () {
+	plugin.append('construct', function () {
 
 		/* make the tile grow/shrink based on hidden-ness */
 		this.p('hidden').changes().onValue((hidden) => {

@@ -2,8 +2,7 @@ define(['jquery', './util/kefir-and-eggs.js', './p-tile-skin-grow-when-maximized
 	'use strict';
 
 
-	var plugin = $.circuitboard.plugin({
-		name: 'tile-skin-grow-when-maximized',
+	var plugin = $.circuitboard.plugin.do('tile-skin-grow-when-maximized', {
 		resolves: ['tile-skin', 'tile-grow-when-maximized']
 	}).modify('Tile.prototype');
 
@@ -11,7 +10,7 @@ define(['jquery', './util/kefir-and-eggs.js', './p-tile-skin-grow-when-maximized
 	/*  react to a tile maximizing or un-maximizing by  */
 	/*  timely showing/hiding the content section       */
 	/*  to ensure smooth transition animation           */
-	plugin.insert('construct', function () {
+	plugin.append('construct', function () {
 		var sectionElement = this.element.children('section');
 		this.p('maximized').onValue(() => {
 			sectionElement.css('opacity', 0);

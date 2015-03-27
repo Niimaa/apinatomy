@@ -2,8 +2,7 @@ define(['jquery', './ThreeDModel.js'], function ($, ThreeDModelP) {
 	'use strict';
 
 
-	var plugin = $.circuitboard.plugin({
-		name: 'tile-button-to-swap-three-d-model',
+	var plugin = $.circuitboard.plugin.do('tile-button-to-swap-three-d-model', {
 		requires: ['tile-buttons', 'three-d-geometric-models']
 	});
 

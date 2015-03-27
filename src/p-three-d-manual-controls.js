@@ -2,8 +2,7 @@ define(['jquery', './util/misc.js', 'three-js', './util/kefir-and-eggs.js'], fun
 	'use strict';
 
 
-	var plugin = $.circuitboard.plugin({
-		name: 'three-d-manual-controls',
+	var plugin = $.circuitboard.plugin.do('three-d-manual-controls', {
 		requires: ['three-d']
 	});
 

@@ -9,8 +9,7 @@ define([
 
 
 	/* the plugin */
-	var plugin = $.circuitboard.plugin({
-		name: 'three-d-spinner',
+	var plugin = $.circuitboard.plugin.do('three-d-spinner', {
 		requires: ['three-d']
 	}).modify('Tile.prototype');
 

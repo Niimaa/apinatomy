@@ -8,8 +8,7 @@ define([
 	'use strict';
 
 
-	var plugin = $.circuitboard.plugin({
-		name: 'tile-grow-when-maximized',
+	var plugin = $.circuitboard.plugin.do('tile-grow-when-maximized', {
 		requires: ['tile-maximized']
 	}).modify('Tile.prototype');
 
@@ -93,7 +92,7 @@ define([
 	});
 
 
-	plugin.insert('construct', function () {
+	plugin.append('construct', function () {
 		/* make the tile grow/shrink based on maximized-ness */
 		this.p('maximized').changes().onValue((maximized) => {
 			this.growWhenMaximized(maximized).then(() => {

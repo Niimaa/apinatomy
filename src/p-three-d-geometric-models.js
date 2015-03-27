@@ -10,8 +10,7 @@ define([
 
 
 	/* the plugin */
-	var plugin = $.circuitboard.plugin({
-		name: 'three-d-geometric-models',
+	var plugin = $.circuitboard.plugin.do('three-d-geometric-models', {
 		requires: ['three-d', 'three-d-spinner']
 	});
 
@@ -21,7 +20,7 @@ define([
 
 
 	/* load any 3D models associated with a tile */
-	plugin.insert('Tile.prototype.construct', function () {
+	plugin.append('Tile.prototype.construct', function () {
 		var threeDModels = this.circuitboard.options.threeDModels;
 		if (threeDModels && threeDModels[this.model.id]) {
 			this.threeDModels = {};
