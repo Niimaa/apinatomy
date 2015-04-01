@@ -44,7 +44,6 @@
     <file url="file://$PROJECT_DIR$/src/util/misc.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/util/nested-flex-grow.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/util/newWidgetType.js" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/util/plugin.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/util/put-css-rules.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/util/traverse-dag.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/util/unique-id.js" charset="UTF-8" />

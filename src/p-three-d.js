@@ -110,8 +110,9 @@ define([
 
 			/* lighting */
 			this._p_threeD_scene.add(new THREE.AmbientLight(0x101030))
+				.add(new THREE.DirectionalLight(0xffeedd).translateX(-1).translateY(1).translateZ(1))
 				.add(new THREE.DirectionalLight(0xffeedd).translateX(1).translateY(-1).translateZ(1))
-				.add(new THREE.DirectionalLight(0xffeedd).translateX(-1).translateY(1).translateZ(-1));
+				.add(new THREE.DirectionalLight(0xffeedd).translateX(1).translateY(-1).translateZ(-1));
 
 
 			/* renderers */
@@ -214,15 +215,15 @@ define([
 					light.position.set(0, 0, 1000);
 					light.castShadow = true;
 					light.onlyShadow = true;
-					light.shadowMapWidth  = 10000;
-					light.shadowMapHeight = 10000;
+					light.shadowMapWidth  = 6000;
+					light.shadowMapHeight = 6000;
 					light.shadowCameraFar    =  1001;
 					// The shadow camera should always be larger than the circuitboard.
-					// Unfortunately, lights cannot be updated at runtime, so 10000x10000 it is.
-					light.shadowCameraLeft   = -5000;
-					light.shadowCameraRight  =  5000;
-					light.shadowCameraTop    = -5000;
-					light.shadowCameraBottom =  5000;
+					// Unfortunately, lights cannot be updated at runtime, so 6000x6000 it is.
+					light.shadowCameraLeft   = -3000;
+					light.shadowCameraRight  =  3000;
+					light.shadowCameraTop    = -3000;
+					light.shadowCameraBottom =  3000;
 					return light;
 				})());
 
