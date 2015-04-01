@@ -64,6 +64,7 @@ define(['jquery', './util/misc.js', 'bluebird', 'three-js', './util/kefir-and-eg
 					end  .clone().add(new THREE.Vector3(0, 0, c2 * dist)),
 					end
 				];
+				tube.geometry.dispose();
 				tube.geometry = this._tubeGeometry(V);
 			};
 
