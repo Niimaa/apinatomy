@@ -70,7 +70,7 @@ define(['jquery', './util/misc.js', 'bluebird', 'three-js', './util/kefir-and-eg
 			var tube = this._newTube(color);
 			this.object3D.add(tube);
 
-			/* create a simple clock for animated models */
+			/* subtly animate the tubes */
 			// TODO: at some point, we change this to a more global clock
 			var clock = new THREE.Clock();
 			var clockStream = Kefir.animationFrames().map(() => clock.getElapsedTime());
