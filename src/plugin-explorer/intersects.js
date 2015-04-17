@@ -1,4 +1,4 @@
-define(['jquery', '../util/misc.js'], function ($, U) {
+define(['jquery', '../util/misc.es6.js'], function ($, U) {
 	'use strict';
 
 	// based on http://jsfiddle.net/justin_c_rounds/Gd2S2/light/
