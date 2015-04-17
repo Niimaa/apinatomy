@@ -38,7 +38,7 @@ module.exports = {
 		loaders: [
 			{ test: /\.es6\.js$/,    loader: 'babel'                       },
 			{ test: /\.(scss|css)$/, loader: 'style!css!autoprefixer!sass' },
-			{ test: /\.(png|jpg)$/,  loader: 'url'                         },
+			{ test: /\.(png|jpg)$/,  loader: 'file'                        },
 			{ test: /\.obj$/,        loader: 'file'                        },
 			{ test: /\.json$/,       loader: 'file'                        }
 		]

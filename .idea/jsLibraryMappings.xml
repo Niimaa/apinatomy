@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavaScriptLibraryMappings">
-    <file url="PROJECT" libraries="{bower_components, jQuery-2.0.0, lodash-DefinitelyTyped, node_modules, requirejs-DefinitelyTyped}" />
+    <file url="PROJECT" libraries="{bower_components, node_modules}" />
+    <includedPredefinedLibrary name="ECMAScript 6" />
     <includedPredefinedLibrary name="Node.js Globals" />
   </component>
 </project>

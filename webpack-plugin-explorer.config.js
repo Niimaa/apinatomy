@@ -4,9 +4,9 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
 	devtool: 'source-map',
-	entry: { 'example': ['./src/example/example.es6.js'] },
+	entry: { 'plugin-explorer': ['./src/plugin-explorer/plugin-explorer.es6.js'] },
 	output: {
-		path: './dist/example',
+		path: './dist/plugin-explorer',
 		filename: '[name].js',
 		sourceMapFilename: '[file].map'
 	},
@@ -37,8 +37,8 @@ module.exports = {
 			new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin("bower.json", ["main"])
 		),
 		new HtmlWebpackPlugin({
-			template: './src/example/example.html',
-			filename: 'example.html'
+			template: './src/plugin-explorer/plugin-explorer.html',
+			filename: 'plugin-explorer.html'
 		})
 	]
 };

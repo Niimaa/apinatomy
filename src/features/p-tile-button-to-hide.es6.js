@@ -9,7 +9,7 @@ define(['jquery'], function ($) {
 
 	plugin.append('construct', function () {
 
-		this.addButton({ name: 'hide', icon: require('url!../util/icons/resize-min-white.png') }).onValue(() => {
+		this.addButton({ name: 'hide', icon: require('../util/icons/resize-min-white.png') }).onValue(() => {
 			this.maximized = false;
 			this.p('fullyNotMaximized').value(true).onValue(() => {
 				this.hidden = !this.hidden;

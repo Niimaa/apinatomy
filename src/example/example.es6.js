@@ -61,20 +61,18 @@ circuitboard.plugin.select(
 	'tile-middleclick-to-maximize',
 	'tile-spacing',
 	'tile-active',
-	'three-d',
-	'three-d-manual-controls',
-	'three-d-auto-controls',
-	'three-d-geometric-models',
-	'three-d-geometric-models-obj',
-	'three-d-geometric-models-json',
-	'snapshot',
+	//'three-d',
+	//'three-d-manual-controls',
+	//'three-d-auto-controls',
+	//'three-d-geometric-models-obj',
+	//'three-d-geometric-models-json',
+	//'snapshot',
 	'tile-buttons',
 	'tile-button-to-hide',
 	'tile-button-to-maximize',
-	'tile-button-to-swap-three-d-model',
-	'tile-button-to-point-camera',
-	'three-d-tubes'
-	//'ppi',
+	//'tile-button-to-swap-three-d-model',
+	'tile-button-to-point-camera'//,
+	//'three-d-tubes'
 );
 
 

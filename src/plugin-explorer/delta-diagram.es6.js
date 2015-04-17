@@ -1,4 +1,4 @@
-define(['jquery', 'd3', '../util/misc.es6.js', '../util/kefir-and-eggs.es6.js', './intersects.es6.js'], function ($, d3, U, Bacon) {
+define(['jquery', 'd3', '../util/misc.es6.js', '../util/kefir-and-eggs.es6.js', './intersects.es6.js'], function ($, d3, U, Kefir) {
 	'use strict';
 
 	var NODE_MARGIN = 15;
@@ -12,19 +12,25 @@ define(['jquery', 'd3', '../util/misc.es6.js', '../util/kefir-and-eggs.es6.js', 
 		var applicationOrder = [];
 
 		var mapNameToDelta = {};
-		transReductGraph.topologically((key) => {
-			var val = { model: graph.vertexValue(key) };
+		//for (let [v1, v2] of transReductGraph.edges()) {
+		//	console.log(v1, '   ', v2);
+		//}
+		for (let [key] of transReductGraph.vertices_topologically()) {
+			let val = { model: graph.vertexValue(key) };
+			val.model.name = key;
 			val.show = true;
 			val.width = val.height = 0; // some initial value to avoid NaNs
 			deltas.push(val);
-			mapNameToDelta[val.model.name] = val;
-		});
-		transReductGraph.eachEdge((v1, v2) => {
+			//console.log(key);
+			//console.log('    ', graph.vertexValue(key));
+			mapNameToDelta[key] = val;
+		}
+		for (let [v1, v2] of transReductGraph.edges()) {
 			applicationOrder.push({
 				source: mapNameToDelta[v2],
 				target: mapNameToDelta[v1]
 			});
-		});
+		}
 
 
 		//////////////////// creating the graph ////////////////////////////////////////////////////////
@@ -210,6 +216,9 @@ define(['jquery', 'd3', '../util/misc.es6.js', '../util/kefir-and-eggs.es6.js', 
 				return element[0];
 			}
 			function setNodeSizing(delta) {
+				//if (!delta.element) {
+				//	makeNode(delta);
+				//}
 				var rect = delta.element.find('rect');
 				var text = delta.element.find('text');
 				var bbox = text[0].getBBox();
@@ -229,11 +238,11 @@ define(['jquery', 'd3', '../util/misc.es6.js', '../util/kefir-and-eggs.es6.js', 
 			deltaNodes = svgCanvas.selectAll('.delta').data(shownDeltas.filter((d) => d.show), (d) => d.model.name);
 			deltaNodes.enter()
 					.append(makeNode)
-					.classed('always', (d) => (d.model.if === true))
-					.classed('resolution', (d) => !d.model.manuallySelectable)
+					.classed('always', (d) => (d.model.applicationCondition.options.if === true))
+					.classed('resolution', (d) => !d.model.applicationCondition.options.feature)
 					.on('click', (d) => {
 						if (d3.event.defaultPrevented) { return } // ignore drag
-						focus.set(d.distanceFromFocus === 0 ? null : d);
+						focus.emit(d.distanceFromFocus === 0 ? null : d);
 					})
 					.call(force.drag);
 
@@ -243,7 +252,7 @@ define(['jquery', 'd3', '../util/misc.es6.js', '../util/kefir-and-eggs.es6.js', 
 			orderArrows.enter()
 					.append("line")
 					.classed('application-order', true)
-					.classed('resolution', (d) => (!d.source.model.manuallySelectable || !d.target.model.manuallySelectable));
+					.classed('resolution', (d) => (!d.source.model.applicationCondition.options.feature || !d.target.model.applicationCondition.options.feature));
 			orderArrows.exit().remove();
 
 			/* changes to all nodes and arrows */
@@ -297,30 +306,31 @@ define(['jquery', 'd3', '../util/misc.es6.js', '../util/kefir-and-eggs.es6.js', 
 			(dd.superiors || []).forEach((superior) => { visitSuperiors(superior, fn, before, after, done) });
 			after();
 		}
-		//var focus = new Bacon.Model(null); // TODO: Is this model ever used?
-		//focus.onValue((newD) => {
-		//	if (newD) {
-		//		deltas.forEach((d) => {
-		//			d.distanceFromFocus = null;
-		//		});
-		//		var i = 0;
-		//		visitInferiors(newD,
-		//				(d) => { d.distanceFromFocus = i },
-		//				() => {i--},
-		//				() => {i++}
-		//		);
-		//		visitSuperiors(newD,
-		//				(d) => { d.distanceFromFocus = i },
-		//				() => {i++},
-		//				() => {i--}
-		//		);
-		//	} else {
-		//		deltas.forEach((d) => {
-		//			delete d.distanceFromFocus;
-		//		});
-		//	}
-		//	updateDiagram();
-		//});
+		var focus = Kefir.bus();
+		focus.onValue((newD) => {
+			if (newD) {
+				deltas.forEach((d) => {
+					d.distanceFromFocus = null;
+				});
+				var i = 0;
+				visitInferiors(newD,
+						(d) => { d.distanceFromFocus = i },
+						() => {i--},
+						() => {i++}
+				);
+				visitSuperiors(newD,
+						(d) => { d.distanceFromFocus = i },
+						() => {i++},
+						() => {i--}
+				);
+			} else {
+				deltas.forEach((d) => {
+					delete d.distanceFromFocus;
+				});
+			}
+			updateDiagram();
+		});
+		focus.emit(null);
 
 
 
