@@ -3,7 +3,7 @@
   "version": "0.32.1",
   "description": "the core component (widget) of the ApiNATOMY circuit-board",
   "main": "apinatomy.js",
-  "repository": "https://github.com/mhelvens/apinatomy-core.git",
+  "repository": "https://github.com/mhelvens/apinatomy.git",
   "contributors": [
     {
       "name": "Michiel Helvensteijn",
