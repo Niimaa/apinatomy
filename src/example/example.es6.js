@@ -27,6 +27,7 @@ import '../features/p-tile-hidden.es6.js';
 import '../features/p-tile-maximized.es6.js';
 import '../features/p-tile-middleclick-to-maximize.es6.js';
 import '../features/p-d3.es6.js';
+import '../features/p-connectivity.es6.js';
 import '../features/p-ppi.es6.js';
 import '../features/p-three-d.es6.js';
 import '../features/p-three-d-geometric-models.es6.js';
@@ -70,9 +71,11 @@ circuitboard.plugin.select(
 	'tile-button-to-maximize',
 	'tile-button-to-swap-three-d-model',
 	'tile-button-to-point-camera',
-	'three-d-tubes'
+	//'three-d-tubes',
+	'connectivity'
 );
 
+$(document).ready(() => {
 
 	$('#circuitboard').circuitboard({
 		model: getFmaModels(['24tile:60000000'])[0],

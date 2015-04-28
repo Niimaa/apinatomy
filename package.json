@@ -23,6 +23,7 @@
     "eyes.selenium": "0.0.24",
     "file-loader": "^0.8.1",
     "generator-mhelvens-library": "^0.6.0",
+    "graph.js": "^1.9.0",
     "gulp": "^3.8.7",
     "gulp-babel": "^5.1.0",
     "gulp-bump": "^0.1.11",
@@ -59,8 +60,8 @@
     "test": "gulp test",
     "install": "bower install",
     "update": "bower update",
-	"build": "webpack",
-	"build-example": "webpack --config ./webpack-example.config.js"
+    "build": "webpack",
+    "build-example": "webpack --config ./webpack-example.config.js"
   },
   "dependencies": {
     "url-loader": "^0.5.5"

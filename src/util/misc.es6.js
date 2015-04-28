@@ -1,4 +1,4 @@
-define(['bluebird'], (P) => {
+define(['bluebird', './defer.es6.js'], (P, defer) => {
 	'use strict';
 
 	var U = {

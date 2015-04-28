@@ -78,11 +78,11 @@
 	
 	/* styling */
 	
-	__webpack_require__(44);
+	__webpack_require__(45);
 	
 	/* libraries */
 	
-	var _$ = __webpack_require__(60);
+	var _$ = __webpack_require__(61);
 	
 	var _$2 = _interopRequireDefault(_$);
 	
@@ -176,10 +176,13 @@
 	
 	__webpack_require__(43);
 	
-	/* select plugins to activate them  (note that these must already be *loaded* at this point) */
-	_circuitboard2['default'].plugin.select('tile-skin', 'tile-click-to-open', 'tile-grow-when-open', 'tile-shrink-when-hidden', 'tile-grow-when-maximized', 'tile-middleclick-to-maximize', 'tile-spacing', 'tile-active', 'three-d-manual-controls', 'three-d-auto-controls', 'three-d-geometric-models-obj', 'three-d-geometric-models-json', 'snapshot', 'tile-button-to-hide', 'tile-button-to-maximize', 'tile-button-to-swap-three-d-model', 'tile-button-to-point-camera', 'three-d-tubes');
+	__webpack_require__(44);
 	
-	/* use the $.fn.circuitboard method to instantiate the circuit-board */
+	/* select plugins to activate them  (note that these must already be *loaded* at this point) */
+	_circuitboard2['default'].plugin.select('tile-skin', 'tile-click-to-open', 'tile-grow-when-open', 'tile-shrink-when-hidden', 'tile-grow-when-maximized', 'tile-middleclick-to-maximize', 'tile-spacing', 'tile-active', 'three-d-manual-controls', 'three-d-auto-controls', 'three-d-geometric-models-obj', 'three-d-geometric-models-json', 'snapshot', 'tile-button-to-hide', 'tile-button-to-maximize', 'tile-button-to-swap-three-d-model', 'tile-button-to-point-camera',
+	//'three-d-tubes',
+	'connectivity');
+	
 	_$2['default'](document).ready(function () {
 	
 		_$2['default']('#circuitboard').circuitboard({
@@ -192,26 +195,26 @@
 	
 				'fma:7148': {
 					stomach: {
-						file: __webpack_require__(46),
+						file: __webpack_require__(47),
 						color: 8331034
 					} },
 	
 				'fma:7187': {
 					'walking-legs': {
 						parts: {
-							left_femur_1: { file: __webpack_require__(47) },
-							left_fibula_1: { file: __webpack_require__(48) },
-							left_foot_1: { file: __webpack_require__(49) },
-							left_hip_1: { file: __webpack_require__(50) },
-							left_patella_1: { file: __webpack_require__(51) },
-							left_tibia_1: { file: __webpack_require__(52) },
-							muscles_1: { file: __webpack_require__(53), color: 8331034 },
-							right_femur_1: { file: __webpack_require__(54) },
-							right_fibula_1: { file: __webpack_require__(55) },
-							right_foot_1: { file: __webpack_require__(56) },
-							right_hip_1: { file: __webpack_require__(57) },
-							right_patella_1: { file: __webpack_require__(58) },
-							right_tibia_1: { file: __webpack_require__(59) }
+							left_femur_1: { file: __webpack_require__(48) },
+							left_fibula_1: { file: __webpack_require__(49) },
+							left_foot_1: { file: __webpack_require__(50) },
+							left_hip_1: { file: __webpack_require__(51) },
+							left_patella_1: { file: __webpack_require__(52) },
+							left_tibia_1: { file: __webpack_require__(53) },
+							muscles_1: { file: __webpack_require__(54), color: 8331034 },
+							right_femur_1: { file: __webpack_require__(55) },
+							right_fibula_1: { file: __webpack_require__(56) },
+							right_foot_1: { file: __webpack_require__(57) },
+							right_hip_1: { file: __webpack_require__(58) },
+							right_patella_1: { file: __webpack_require__(59) },
+							right_tibia_1: { file: __webpack_require__(60) }
 						},
 						color: 15132339,
 						animation: { duration: 1500 },
@@ -235,7 +238,7 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(109), __webpack_require__(62), __webpack_require__(63)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, newWidgetType, deltaJs) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(114), __webpack_require__(63), __webpack_require__(64)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, newWidgetType, deltaJs) {
 		'use strict';
 	
 		/* create $.circuitboard object if it doesn't exist */
@@ -281,7 +284,7 @@
 	
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(109), __webpack_require__(64), __webpack_require__(63), __webpack_require__(100)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, defer, dm, tfTiles) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(114), __webpack_require__(65), __webpack_require__(64), __webpack_require__(104)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, defer, dm, tfTiles) {
 		'use strict';
 	
 		// This module implements an interface to the FMA database on the old prototype
@@ -416,7 +419,7 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(109), __webpack_require__(70), __webpack_require__(64), __webpack_require__(71), __webpack_require__(72)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, U, defer) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(114), __webpack_require__(71), __webpack_require__(65), __webpack_require__(72), __webpack_require__(73)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, U, defer) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('core', {
@@ -549,7 +552,7 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(101), __webpack_require__(70), __webpack_require__(74), __webpack_require__(75), __webpack_require__(76), __webpack_require__(77)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, color, U, Kefir, defaults) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(105), __webpack_require__(71), __webpack_require__(75), __webpack_require__(76), __webpack_require__(77), __webpack_require__(78)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, color, U, Kefir, defaults) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('tile-skin', {
@@ -622,7 +625,7 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('tile-spacing', {
@@ -649,7 +652,7 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(79), __webpack_require__(74)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, _ref) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(80), __webpack_require__(75)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, _ref) {
 		'use strict';
 	
 		var button = _ref.button;
@@ -674,7 +677,7 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('tile-weight', {
@@ -700,7 +703,7 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(70)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(71)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('tile-active', {
@@ -763,7 +766,7 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('tile-open', {
@@ -802,7 +805,7 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(109), __webpack_require__(74), __webpack_require__(99)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, Kefir) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(114), __webpack_require__(75), __webpack_require__(103)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, Kefir) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('tile-grow-when-open', {
@@ -865,7 +868,7 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(109), __webpack_require__(74), __webpack_require__(70), __webpack_require__(99)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, Kefir, U) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(114), __webpack_require__(75), __webpack_require__(71), __webpack_require__(103)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, Kefir, U) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('tile-shrink-when-hidden', {
@@ -936,7 +939,7 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(109), __webpack_require__(74), __webpack_require__(70), __webpack_require__(99)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, Kefir, U) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(114), __webpack_require__(75), __webpack_require__(71), __webpack_require__(103)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, Kefir, U) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('tile-grow-when-maximized', {
@@ -1047,7 +1050,7 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(70)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(71)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('tile-open-active', {
@@ -1081,7 +1084,7 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(109), __webpack_require__(80)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(114), __webpack_require__(81)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('tile-skin-grow-when-open', {
@@ -1158,7 +1161,7 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(70), __webpack_require__(74)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(71), __webpack_require__(75)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('position-tracking', {
@@ -1321,7 +1324,7 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(74), __webpack_require__(70)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, Kefir) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(75), __webpack_require__(71)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, Kefir) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('transition-position-tracking', {
@@ -1344,7 +1347,7 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(82)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(83)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('tile-hidden', {
@@ -1373,7 +1376,7 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(84)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(85)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('tile-maximized', {
@@ -1394,7 +1397,7 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(79), __webpack_require__(74)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, _ref) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(80), __webpack_require__(75)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, _ref) {
 		'use strict';
 	
 		var button = _ref.button;
@@ -1419,7 +1422,7 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(65), __webpack_require__(70), __webpack_require__(74), __webpack_require__(86)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, d3, U, Kefir) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(66), __webpack_require__(71), __webpack_require__(75), __webpack_require__(87)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, d3, U, Kefir) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('d3', {
@@ -1555,7 +1558,448 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(88), __webpack_require__(89), __webpack_require__(90), __webpack_require__(74), __webpack_require__(91)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, D3GroupP, D3VertexP, D3EdgeP, Kefir) {
+	var _slicedToArray = function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } };
+	
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(114), __webpack_require__(75), __webpack_require__(106), __webpack_require__(71), __webpack_require__(89), __webpack_require__(90), __webpack_require__(91), __webpack_require__(94), __webpack_require__(92), __webpack_require__(95)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, Kefir, Graph, U, D3GroupP, D3VertexP, D3EdgeP, PathModel) {
+		'use strict';
+	
+		var plugin = $.circuitboard.plugin['do']('connectivity', {
+			requires: ['d3']
+		});
+	
+		////////////////////////////////////////////////////////////////////////////////////////////////
+	
+		plugin.insert('Circuitboard.prototype.construct', function () {
+			var _this = this;
+	
+			D3GroupP.then(function (D3Group) {
+				/* create the circuitboard-wide graph-group */
+				_this._p_connectivity_d3group = new D3Group({
+					parent: _this,
+					chargeFactor: 0.1,
+					linkDistanceFactor: 0.04
+				});
+				Kefir.merge([Kefir.once(), _this.on('size').changes(), _this.on('position').changes()]).onValue(function () {
+					var AREA_MARGIN = 5;
+					_this._p_connectivity_d3group.setRegion({
+						top: _this.position.top + AREA_MARGIN,
+						left: _this.position.left + AREA_MARGIN,
+						height: _this.size.height - 2 * AREA_MARGIN,
+						width: _this.size.width - 2 * AREA_MARGIN
+					});
+				});
+	
+				/* declare bookkeeping properties */
+				_this._p_connectivity_activeTiles = {}; // tileId -> tile
+				_this._p_connectivity_graphs = {}; // type -> graph
+			});
+		}).insert('Tile.prototype.construct', function () {
+			var _this2 = this;
+	
+			D3GroupP.then(function (D3Group) {
+				/* create the tile-specific graph group */
+				if (!_this2._p_connectivity_d3group) {
+					_this2._p_connectivity_d3group = new D3Group({
+						parent: _this2
+					});
+					(function (setGraphGroupRegion) {
+						setGraphGroupRegion();
+						_this2.on('headerSize', setGraphGroupRegion);
+						_this2.on('headerPosition', setGraphGroupRegion);
+					})(function () {
+						var AREA_MARGIN = 5;
+						_this2._p_connectivity_d3group.setRegion({
+							top: _this2.headerPosition.top + AREA_MARGIN,
+							left: _this2.headerPosition.left + AREA_MARGIN,
+							height: _this2.headerSize.height - 2 * AREA_MARGIN,
+							width: _this2.headerSize.width - 2 * AREA_MARGIN
+						});
+					});
+				}
+	
+				/* active tiles are eligible to participate in the graph */
+				_this2.on('active').onValue(function (active) {
+					if (active) {
+						_this2.circuitboard._p_connectivity_activeTiles[_this2.model.id] = _this2;
+					} else {
+						delete _this2.circuitboard._p_connectivity_activeTiles[_this2.model.id];
+					}
+				});
+	
+				/* when the 'active' property changes, initiate a graph update */
+				_this2.on('active').onValue(function () {
+					_this2.circuitboard._p_connectivity_fetchPaths();
+				});
+			});
+		}).add('Circuitboard.prototype._p_connectivity_registerType', function (type) {
+			var _this3 = this;
+	
+			return P.all([D3VertexP, D3EdgeP]).then(function (_ref) {
+				var _ref2 = _slicedToArray(_ref, 2);
+	
+				var D3Vertex = _ref2[0];
+				var D3Edge = _ref2[1];
+	
+				/* only proceed if the type has not been registered before */
+				if (_this3._p_connectivity_graphs[type]) {
+					return;
+				}
+	
+				/* create a new graph for this type */
+				_this3._p_connectivity_graphs[type] = new Graph();
+				var graph = _this3._p_connectivity_graphs[type]; // abbreviation
+	
+				// The blocks below react to changes to the stored graph,
+				// to reflect those changes to the visible (d3) graph.
+	
+				/* reflect tile-based vertices */
+				graph.onAddVertex(function (id, info) {
+	
+					console.log(id, info, _this3._p_connectivity_activeTiles[id]); // TODO
+	
+					if (info.location === 'tile') {
+						var tile = _this3._p_connectivity_activeTiles[id]; // abbreviation
+						//console.log(id, tile);
+						info.d3Object = new D3Vertex({
+							parent: tile,
+							radius: 5,
+							cssClass: type
+						});
+						tile._p_connectivity_d3group.addVertex(info.d3Object);
+						graph.onRemoveVertex(function (removedId) {
+							if (removedId !== id) {
+								return;
+							}
+							tile._p_connectivity_d3group.removeVertex(info.d3Object);
+							delete info.d3Object;
+						});
+					}
+				});
+	
+				/* reflect inter-tile junctions */
+				graph.onAddVertex(function (id, info) {
+					if (info.location === 'inter-tile') {
+						info.d3Object = new D3Vertex({
+							parent: _this3,
+							radius: 3,
+							cssClass: '' + type + ' inter-tile'
+						});
+						_this3._p_connectivity_d3group.addVertex(info.d3Object);
+						graph.onRemoveVertex(function (removedId) {
+							if (removedId !== id) {
+								return;
+							}
+							_this3._p_connectivity_d3group.removeVertex(info.d3Object);
+							delete info.d3Object;
+						});
+					}
+				});
+	
+				/* reflect edges */
+				graph.onAddEdge(function (from, to, info) {
+					info.d3Object = new D3Edge({
+						parent: _this3,
+						source: _this3._p_connectivity_graphs[type].vertexValue(from).d3Object,
+						target: _this3._p_connectivity_graphs[type].vertexValue(to).d3Object,
+						cssClass: type // TODO: arterial / venous
+					});
+					_this3._p_connectivity_d3group.addEdge(info.d3Object);
+					graph.onRemoveEdge(function (removedFrom, removedTo) {
+						if (removedFrom !== from || removedTo !== to) {
+							return;
+						}
+						_this3._p_connectivity_d3group.removeEdge(info.d3Object);
+					});
+				});
+			});
+		}).insert('Circuitboard.prototype.construct', function () {}).add('Circuitboard.prototype._p_connectivity_fetchPaths', U.debounce(function () {
+			var _this4 = this;
+	
+			PathModel.fetchPathsFor(Object.keys(this._p_connectivity_activeTiles)).then(function () {
+				// get paths (async)
+				Object.keys(PathModel.paths).forEach(function (type) {
+					// for all connectivity types
+					_this4._p_connectivity_registerType(type).then(function () {
+	
+						/* register the type and abbreviate the graph */
+						var graph = _this4._p_connectivity_graphs[type]; // abbreviation
+	
+						/* a convenient way to cycle through the paths */
+						var forAllPaths = function forAllPaths(cb, options) {
+							options = options || {};
+							Object.keys(PathModel.paths[type]).forEach(function (from) {
+								if (options.skipInactiveTiles && !_this4._p_connectivity_activeTiles[from]) {
+									return;
+								}
+								Object.keys(PathModel.paths[type][from]).forEach(function (to) {
+									if (options.skipInactiveTiles && !_this4._p_connectivity_activeTiles[to]) {
+										return;
+									}
+									cb(from, to, PathModel.paths[type][from][to].path);
+								});
+							});
+						};
+	
+						/* analyze the inner junctions, so we can hide linear ones */
+						var junctionsToTiles = {}; // junction/tile -> tile/junction -> true
+						forAllPaths(function (from, to, pathArray) {
+							U.object(junctionsToTiles, from)[pathArray[1]] = true;
+							for (var i = 1; i < pathArray.length - 1; ++i) {
+								U.object(junctionsToTiles, pathArray[i])[pathArray[i - 1]] = true;
+								U.object(junctionsToTiles, pathArray[i])[pathArray[i + 1]] = true;
+							}
+							U.object(junctionsToTiles, pathArray[i])[to] = true;
+						}, { skipInactiveTiles: true });
+	
+						/* to query the number of connections of a junction */
+						function degree(id) {
+							return Object.keys(junctionsToTiles[id]).length;
+						}
+	
+						/* now (re)build the graph */
+						forAllPaths(function (from, to, pathArray) {
+	
+							/* add or remove 'from' tile */
+							if (degree(from) >= 1) {
+								graph.ensureVertex(from, { location: 'tile' });
+							}
+	
+							var junction1 = from,
+							    junction2;
+	
+							/* add or remove inter-tile vertices and edges */
+							for (var i = 1; i < pathArray.length - 1; ++i) {
+								junction2 = pathArray[i];
+								if (degree(junction2) >= 3) {
+									// a split/branch; show
+									graph.ensureVertex(junction2, { location: 'inter-tile', cause: {} });
+									graph.addEdge(junction1, junction2, {});
+									junction1 = junction2;
+								}
+							}
+	
+							/* add or remove 'to' tile */
+							if (degree(to) >= 1) {
+								graph.ensureVertex(to, { location: 'tile' });
+								graph.addEdge(junction1, to, {});
+							}
+						});
+					});
+				});
+	
+				//this.trigger('-p-connectivity-new-paths-fetched', this._p_connectivity_graphs);
+			});
+		}, 50));
+	
+		////////////////////////////////////////////////////////////////////////////////////////////////
+		//
+		//
+		//plugin.append('Circuitboard.prototype.construct', function () {
+		//
+		//
+		//	///* create the circuitboard-wide graph-group */
+		//	//this._p_connectivity_d3group = new D3Group({
+		//	//	parent: this,
+		//	//	chargeFactor: 0.1,
+		//	//	linkDistanceFactor: 0.04
+		//	//});
+		//	//((setGraphGroupRegion) => {
+		//	//	setGraphGroupRegion();
+		//	//	this.on('size', setGraphGroupRegion);
+		//	//	this.on('position', setGraphGroupRegion);
+		//	//})(() => {
+		//	//	var AREA_MARGIN = 5;
+		//	//	this._p_connectivity_d3group.setRegion({
+		//	//		top: this.position.top + AREA_MARGIN,
+		//	//		left: this.position.left + AREA_MARGIN,
+		//	//		height: this.size.height - 2 * AREA_MARGIN,
+		//	//		width: this.size.width - 2 * AREA_MARGIN
+		//	//	});
+		//	//});
+		//
+		//
+		//	///* storage of edges and vertices */
+		//	//this._p_connectivity_registeredEdges = {};    // type -> id -> otherId -> edge
+		//	//this._p_connectivity_registeredVertices = {}; // type -> id -> vertex
+		//
+		//
+		//	/* to add inner junctions and edges */
+		//	var createInnerGraph = U.debounce(() => {
+		//		Object.keys(this._p_connectivity_graphs).forEach((type) => {
+		//			var graph = this._p_connectivity_graphs[type];
+		//
+		//			/* add the d3 inter-tile junctions */
+		//			graph.eachVertex((id, info) => {
+		//
+		//				/* only handle inter-tile junctions */
+		//				if (info.location !== 'inter-tile') { return }
+		//
+		//				/* do nothing if the d3 junction is already there */
+		//				if (this._p_connectivity_registeredVertices[type][id]) { return }
+		//
+		//				/* create the d3 junction */
+		//				var vertex = new D3Vertex({
+		//					parent: this,
+		//					radius: 3,
+		//					cssClass: `${type} inter-tile`
+		//				});
+		//				this._p_connectivity_d3group.addVertex(vertex);
+		//				this.circuitboard._p_connectivity_registerVertex(model.id, type, vertex);
+		//
+		//				this.oneValue('visible', false, () => {
+		//					this.circuitboard._p_connectivity_deregisterVertex(model.id, type, vertex);
+		//					this._p_connectivity_d3group.removeVertex(vertex);
+		//				});
+		//
+		//			});
+		//
+		//
+		//
+		//			/* add the d3 edges */
+		//			graph.eachEdge((from, to) => {
+		//
+		//				/* do nothing if the d3 edge is already there */
+		//				if (this._p_connectivity_registeredEdges[type][from][to]) { return }
+		//
+		//
+		//				/* create the edge */
+		//				var edge = new D3Edge({
+		//					parent: this,
+		//					source: this._p_connectivity_registeredVertices[type][from],
+		//					target: this._p_connectivity_registeredVertices[type][to],
+		//					cssClass: type // TODO: arterial / venous
+		//				});
+		//
+		//				U.object(this._p_connectivity_registeredEdges[type], from)[to] = edge;
+		//				U.object(this._p_connectivity_registeredEdges[type], to)[from] = edge;
+		//				this._p_connectivity_d3group.addEdge(edge);
+		//
+		//
+		//			});
+		//
+		//
+		//		});
+		//	}, 50);
+		//
+		//
+		//	/* for tiles to register new vertices */
+		//	this._p_connectivity_registerVertex = function (id, type, vertex) {
+		//
+		//		/* register the tile-vertex itself */
+		//		U.object(this._p_connectivity_registeredVertices, type)[id] = vertex;
+		//
+		//
+		//		/* then create the inter-tile edges and junctions */
+		//		createInnerGraph();
+		//
+		//
+		//
+		//		//Object.keys(PathModel.paths[type][id]).forEach((otherId) => {
+		//		//	if (this._p_connectivity_registeredVertices[type][otherId]) {
+		//		//		var edge = new D3Edge({
+		//		//			parent: this,
+		//		//			source: this._p_connectivity_registeredVertices[type][id],
+		//		//			target: this._p_connectivity_registeredVertices[type][otherId],
+		//		//			cssClass: type // TODO: arterial / venous
+		//		//		});
+		//		//
+		//		//		if (!this._p_connectivity_registeredEdges[type][id]) { this._p_connectivity_registeredEdges[type][id] = {} }
+		//		//		if (!this._p_connectivity_registeredEdges[type][otherId]) { this._p_connectivity_registeredEdges[type][otherId] = {} }
+		//		//		this._p_connectivity_registeredEdges[type][id][otherId] = edge;
+		//		//		this._p_connectivity_registeredEdges[type][otherId][id] = edge;
+		//		//		graphGroup.addEdge(edge);
+		//		//	}
+		//		//});
+		//	};
+		//
+		//
+		//	/* for tiles to deregister vertices */
+		//	this._p_connectivity_deregisterVertex = function (id, type, vertex) {
+		//		delete this._p_connectivity_registeredVertices[type][id];
+		//
+		//		this._p_connectivity_graphs[type].destroyVertex(id);
+		//
+		//		//Object.keys(PathModel.paths[type][id]).forEach((otherId) => { // TODO: remove proper path-parts
+		//		//	if (this._p_connectivity_registeredVertices[type][otherId]) {
+		//		//		graphGroup.removeEdge(this._p_connectivity_registeredEdges[type][id][otherId]);
+		//		//		delete this._p_connectivity_registeredEdges[type][id][otherId];
+		//		//		delete this._p_connectivity_registeredEdges[type][otherId][id];
+		//		//	}
+		//		//});
+		//		createInnerGraph();
+		//	};
+		//
+		//
+		//});
+		//
+		//
+		//plugin.append('Tile.prototype.construct', function () {
+		//	if (!this.model) { return }
+		//
+		//	this.circuitboard.on('-p-connectivity-new-paths-fetched', (graphs) => {
+		//
+		//
+		//		/* find the types of connections this tile has */
+		//		if (!this._p_connectivity_handledTypes) { this._p_connectivity_handledTypes = {} }
+		//		var types = Object.keys(graphs)
+		//				.filter((t) => graphs[t].hasVertex(this.model.id))
+		//				.filter((t) => !this._p_connectivity_handledTypes[t]);
+		//		if (types.length === 0) { return }
+		//		types.forEach((type) => { this._p_connectivity_handledTypes[type] = true });
+		//
+		//
+		//		///* create the tile-specific graph group */
+		//		//if (!this._p_connectivity_d3group) {
+		//		//	this._p_connectivity_d3group = new D3Group({
+		//		//		parent: this
+		//		//	});
+		//		//	((setGraphGroupRegion) => {
+		//		//		setGraphGroupRegion();
+		//		//		this.on('headerSize', setGraphGroupRegion);
+		//		//		this.on('headerPosition', setGraphGroupRegion);
+		//		//	})(() => {
+		//		//		var AREA_MARGIN = 5;
+		//		//		this._p_connectivity_d3group.setRegion({
+		//		//			top: this.headerPosition.top + AREA_MARGIN,
+		//		//			left: this.headerPosition.left + AREA_MARGIN,
+		//		//			height: this.headerSize.height - 2 * AREA_MARGIN,
+		//		//			width: this.headerSize.width - 2 * AREA_MARGIN
+		//		//		});
+		//		//	});
+		//		//}
+		//
+		//
+		//		///* when tile becomes visible, add the vertex and notify the circuitboard */
+		//		//types.forEach((type) => {
+		//		//	this.observeValue('visible', true, () => {
+		//		//		var vertex = new D3Vertex({
+		//		//			parent: this,
+		//		//			cssClass: type
+		//		//		});
+		//		//		this._p_connectivity_d3group.addVertex(vertex);
+		//		//		this.circuitboard._p_connectivity_registerVertex(this.model.id, type, vertex);
+		//		//
+		//		//		this.oneValue('visible', false, () => {
+		//		//			this.circuitboard._p_connectivity_deregisterVertex(this.model.id, type, vertex);
+		//		//			this._p_connectivity_d3group.removeVertex(vertex);
+		//		//		});
+		//		//	});
+		//		//});
+		//
+		//
+		//	});
+		//});
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	
+	// TODO: remove?
+
+/***/ },
+/* 23 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
+	
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(89), __webpack_require__(90), __webpack_require__(91), __webpack_require__(75), __webpack_require__(92)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, D3GroupP, D3VertexP, D3EdgeP, Kefir) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('ppi', {
@@ -1613,14 +2057,14 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
 	var _slicedToArray = function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } };
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(102), __webpack_require__(70), __webpack_require__(74), __webpack_require__(66), __webpack_require__(93)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, THREE, U, Kefir) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(107), __webpack_require__(71), __webpack_require__(75), __webpack_require__(67), __webpack_require__(97)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, THREE, U, Kefir) {
 		'use strict';
 	
 		/* the plugin */
@@ -1946,12 +2390,12 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(102), __webpack_require__(109), __webpack_require__(74), __webpack_require__(70), __webpack_require__(95)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, THREE, P, Kefir, U, ThreeDModelP) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(107), __webpack_require__(114), __webpack_require__(75), __webpack_require__(71), __webpack_require__(99)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, THREE, P, Kefir, U, ThreeDModelP) {
 		'use strict';
 	
 		/* the plugin */
@@ -2015,12 +2459,12 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(102), __webpack_require__(67)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, THREE) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(107), __webpack_require__(68)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, THREE) {
 		'use strict';
 	
 		/* the plugin */
@@ -2033,12 +2477,12 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(102), __webpack_require__(68)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, THREE) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(107), __webpack_require__(69)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, THREE) {
 		'use strict';
 	
 		/* the plugin */
@@ -2051,12 +2495,12 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(102)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, THREE) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(107)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, THREE) {
 		'use strict';
 	
 		/* the plugin */
@@ -2069,12 +2513,12 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(102), __webpack_require__(109), __webpack_require__(74), __webpack_require__(70)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, THREE, P, Kefir, U) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(107), __webpack_require__(114), __webpack_require__(75), __webpack_require__(71)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, THREE, P, Kefir, U) {
 		'use strict';
 	
 		/* the plugin */
@@ -2134,12 +2578,12 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('d3-three-d', {
@@ -2162,12 +2606,12 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(70), __webpack_require__(102), __webpack_require__(74)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, THREE, Kefir) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(71), __webpack_require__(107), __webpack_require__(75)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, THREE, Kefir) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('three-d-manual-controls', {
@@ -2494,12 +2938,12 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(70), __webpack_require__(109), __webpack_require__(102), __webpack_require__(103)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, P, THREE, TWEEN) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(71), __webpack_require__(114), __webpack_require__(107), __webpack_require__(108)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, P, THREE, TWEEN) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('three-d-auto-controls', {
@@ -2552,12 +2996,12 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(70), __webpack_require__(96)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, SnapshotP) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(71), __webpack_require__(100)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, SnapshotP) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('snapshot', {
@@ -2581,12 +3025,12 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(109), __webpack_require__(70), __webpack_require__(74), __webpack_require__(103)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, U, Kefir, TWEEN) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(114), __webpack_require__(71), __webpack_require__(75), __webpack_require__(108)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, U, Kefir, TWEEN) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('three-d-camera-snapshot', {
@@ -2674,12 +3118,12 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('tile-open-snapshot', {
@@ -2738,12 +3182,12 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(70), __webpack_require__(79), __webpack_require__(97)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, _ref) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(71), __webpack_require__(80), __webpack_require__(101)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, _ref) {
 		'use strict';
 	
 		var button = _ref.button;
@@ -2776,12 +3220,12 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('tile-visible-snapshot', {
@@ -2840,12 +3284,12 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('tile-maximized-snapshot', {
@@ -2904,14 +3348,14 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
 	var _slicedToArray = function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } };
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(70), __webpack_require__(109), __webpack_require__(102), __webpack_require__(74)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, P, THREE, Kefir) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(71), __webpack_require__(114), __webpack_require__(107), __webpack_require__(75)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, P, THREE, Kefir) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('three-d-tubes', {
@@ -2998,12 +3442,12 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 39 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(70)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(71)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('three-d-model-snapshot', {
@@ -3058,12 +3502,12 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 40 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('tile-button-to-hide', {
@@ -3073,35 +3517,10 @@
 		plugin.append('construct', function () {
 			var _this = this;
 	
-			this.addButton({ name: 'hide', icon: __webpack_require__(104) }).onValue(function () {
+			this.addButton({ name: 'hide', icon: __webpack_require__(109) }).onValue(function () {
 				_this.maximized = false;
 				_this.p('fullyNotMaximized').value(true).onValue(function () {
 					_this.hidden = !_this.hidden;
-				});
-			});
-		});
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ },
-/* 41 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
-	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
-		'use strict';
-	
-		var plugin = $.circuitboard.plugin['do']('tile-button-to-maximize', {
-			requires: ['tile-buttons', 'tile-grow-when-maximized', 'tile-shrink-when-hidden']
-		}).modify('Tile.prototype');
-	
-		plugin.append('construct', function () {
-			var _this = this;
-	
-			this.addButton({ name: 'maximize', icon: __webpack_require__(105) }).onValue(function () {
-				_this.hidden = false;
-				_this.p('fullyVisible').value(true).onValue(function () {
-					_this.maximized = !_this.maximized;
 				});
 			});
 		});
@@ -3113,7 +3532,32 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
+		'use strict';
+	
+		var plugin = $.circuitboard.plugin['do']('tile-button-to-maximize', {
+			requires: ['tile-buttons', 'tile-grow-when-maximized', 'tile-shrink-when-hidden']
+		}).modify('Tile.prototype');
+	
+		plugin.append('construct', function () {
+			var _this = this;
+	
+			this.addButton({ name: 'maximize', icon: __webpack_require__(110) }).onValue(function () {
+				_this.hidden = false;
+				_this.p('fullyVisible').value(true).onValue(function () {
+					_this.maximized = !_this.maximized;
+				});
+			});
+		});
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ },
+/* 43 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
+	
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('tile-button-to-swap-three-d-model', {
@@ -3132,7 +3576,7 @@
 					}));
 	
 					if (models.length > 1) {
-						_this.addButton({ name: 'swap3dModel', icon: __webpack_require__(106) }).onValue(function () {
+						_this.addButton({ name: 'swap3dModel', icon: __webpack_require__(111) }).onValue(function () {
 	
 							// the button switches between the available 3D models on the top level of the tile
 	
@@ -3174,14 +3618,14 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 43 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
 	var _slicedToArray = function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } };
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(70), __webpack_require__(74)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(71), __webpack_require__(75)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('tile-button-to-point-camera', {
@@ -3232,19 +3676,19 @@
 				// TODO: use '.diff'
 				if (newTarget) {
 					newTarget.element.find('> .tile-button-holder > .tile-button.pointCamera').css({
-						backgroundImage: 'url(' + __webpack_require__(107) + ')'
+						backgroundImage: 'url(' + __webpack_require__(112) + ')'
 					});
 				}
 				if (oldTarget) {
 					oldTarget.element.find('> .tile-button-holder > .tile-button.pointCamera').css({
-						backgroundImage: 'url(' + __webpack_require__(108) + ')'
+						backgroundImage: 'url(' + __webpack_require__(113) + ')'
 					});
 				}
 			});
 		}).append('Tile.prototype.construct', function () {
 			var _this2 = this;
 	
-			this.addButton({ name: 'pointCamera', icon: __webpack_require__(108) }).onValue(function () {
+			this.addButton({ name: 'pointCamera', icon: __webpack_require__(113) }).onValue(function () {
 	
 				if (_this2.circuitboard.cameraTargetTile === _this2) {
 					_this2.circuitboard.cameraTargetTile = null;
@@ -3256,16 +3700,16 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 44 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(45);
+	var content = __webpack_require__(46);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(69)(content, {});
+	var update = __webpack_require__(70)(content, {});
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
@@ -3279,105 +3723,105 @@
 	}
 
 /***/ },
-/* 45 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(110)();
-	exports.push([module.id, "html,body{position:absolute;width:100%;height:100%;margin:0;padding:0;}body{position:absolute;overflow:hidden;}#circuitboard{position:absolute;top:20px;left:20px;right:20px;bottom:20px;z-index:1;}#three-d-canvas{position:absolute;top:0;left:0;right:0;bottom:0;margin:0;padding:0;z-index:0;}.tile{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;cursor:pointer;text-align:center;overflow:hidden;border:solid 1px;}.tile>header{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-webkit-justify-content:center;-ms-flex-pack:center;justify-content:center;font-weight:bold;border-width:1px;}.tile.open>header{height:26px;border-style:none none solid none;line-height:26px;font-size:20.8px;white-space:nowrap;overflow:hidden;}.tile:not(.open)>header{border-style:none;}.tile:not(.active){border-style:dotted !important;}.tile>section{-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;user-select:text;}.tile:not(.open)>section{display:none;}.tile.hidden-header>header{display:none !important;}", ""]);
-
-/***/ },
 /* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "61c751a133434a868409cd77a0702066.obj"
+	exports = module.exports = __webpack_require__(115)();
+	exports.push([module.id, "html,body{position:absolute;width:100%;height:100%;margin:0;padding:0;}body{position:absolute;overflow:hidden;}#circuitboard{position:absolute;top:20px;left:20px;right:20px;bottom:20px;z-index:1;}#three-d-canvas{position:absolute;top:0;left:0;right:0;bottom:0;margin:0;padding:0;z-index:0;}.tile{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;cursor:pointer;text-align:center;overflow:hidden;border:solid 1px;}.tile>header{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-webkit-justify-content:center;-ms-flex-pack:center;justify-content:center;font-weight:bold;border-width:1px;}.tile.open>header{height:26px;border-style:none none solid none;line-height:26px;font-size:20.8px;white-space:nowrap;overflow:hidden;}.tile:not(.open)>header{border-style:none;}.tile:not(.active){border-style:dotted !important;}.tile>section{-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;user-select:text;}.tile:not(.open)>section{display:none;}.tile.hidden-header>header{display:none !important;}", ""]);
 
 /***/ },
 /* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "0fb5039e2e3fd1a17a7d7621027d4c4a.json"
+	module.exports = __webpack_require__.p + "61c751a133434a868409cd77a0702066.obj"
 
 /***/ },
 /* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "f22ef0c021e35d8abf782d07e8a2dba5.json"
+	module.exports = __webpack_require__.p + "0fb5039e2e3fd1a17a7d7621027d4c4a.json"
 
 /***/ },
 /* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "3cd3738ff56c59874cdc57313f777a4e.json"
+	module.exports = __webpack_require__.p + "f22ef0c021e35d8abf782d07e8a2dba5.json"
 
 /***/ },
 /* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "e4e16df8bdfb34f7e94aece6dec45d12.json"
+	module.exports = __webpack_require__.p + "3cd3738ff56c59874cdc57313f777a4e.json"
 
 /***/ },
 /* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "518763800c5ce86580c5d95090a1a6a5.json"
+	module.exports = __webpack_require__.p + "e4e16df8bdfb34f7e94aece6dec45d12.json"
 
 /***/ },
 /* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "cc2c2e02bcbe3f94430e76acb0f011b3.json"
+	module.exports = __webpack_require__.p + "518763800c5ce86580c5d95090a1a6a5.json"
 
 /***/ },
 /* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "a64e977e5ccc687401f0030d6b024124.json"
+	module.exports = __webpack_require__.p + "cc2c2e02bcbe3f94430e76acb0f011b3.json"
 
 /***/ },
 /* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "1bdd905a88f591e7e16bbee172b8dd6d.json"
+	module.exports = __webpack_require__.p + "a64e977e5ccc687401f0030d6b024124.json"
 
 /***/ },
 /* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "6adcbc9a0a6c6f68776e6f1895cd421e.json"
+	module.exports = __webpack_require__.p + "1bdd905a88f591e7e16bbee172b8dd6d.json"
 
 /***/ },
 /* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "404b5b4b1a9d60d35f24c9011df6a1b8.json"
+	module.exports = __webpack_require__.p + "6adcbc9a0a6c6f68776e6f1895cd421e.json"
 
 /***/ },
 /* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "62610a5b3953045a7a17bb93b57fee31.json"
+	module.exports = __webpack_require__.p + "404b5b4b1a9d60d35f24c9011df6a1b8.json"
 
 /***/ },
 /* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "d66802b016ceef08d5cd1b5400c84662.json"
+	module.exports = __webpack_require__.p + "62610a5b3953045a7a17bb93b57fee31.json"
 
 /***/ },
 /* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "21ef34b00392090e7385c4894550a1a7.json"
+	module.exports = __webpack_require__.p + "d66802b016ceef08d5cd1b5400c84662.json"
 
 /***/ },
 /* 60 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {module.exports = global["jQuery"] = __webpack_require__(61);
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+	module.exports = __webpack_require__.p + "21ef34b00392090e7385c4894550a1a7.json"
 
 /***/ },
 /* 61 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(global) {module.exports = global["jQuery"] = __webpack_require__(62);
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -12588,12 +13032,12 @@
 
 
 /***/ },
-/* 62 */
+/* 63 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(109), __webpack_require__(70), __webpack_require__(111), __webpack_require__(74)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, U, ArtefactP) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(114), __webpack_require__(71), __webpack_require__(116), __webpack_require__(75)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, U, ArtefactP) {
 		'use strict';
 	
 		/*  a function to create an apinatomy component (widget)          */
@@ -12669,12 +13113,12 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 63 */
+/* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(109), __webpack_require__(116), __webpack_require__(64)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, DeltaJs, defer) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(114), __webpack_require__(121), __webpack_require__(65)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, DeltaJs, defer) {
 		'use strict';
 	
 		/* already cached? */
@@ -12701,12 +13145,12 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 64 */
+/* 65 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(109)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(114)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P) {
 		'use strict';
 	
 		return function defer() {
@@ -12725,7 +13169,7 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 65 */
+/* 66 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;!function() {
@@ -21945,10 +22389,10 @@
 	}();
 
 /***/ },
-/* 66 */
+/* 67 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(102)], __WEBPACK_AMD_DEFINE_RESULT__ = function (THREE) {
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(107)], __WEBPACK_AMD_DEFINE_RESULT__ = function (THREE) {
 		'use strict';
 	
 		/**
@@ -22200,7 +22644,7 @@
 
 
 /***/ },
-/* 67 */
+/* 68 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -22239,7 +22683,7 @@
 	
 	/* jshint ignore:start */
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(102)], __WEBPACK_AMD_DEFINE_RESULT__ = function (THREE) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(107)], __WEBPACK_AMD_DEFINE_RESULT__ = function (THREE) {
 	
 	
 		THREE.STLLoader = function () {};
@@ -22666,7 +23110,7 @@
 
 
 /***/ },
-/* 68 */
+/* 69 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -22676,7 +23120,7 @@
 	
 	/* jshint ignore:start */
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(102)], __WEBPACK_AMD_DEFINE_RESULT__ = function (THREE) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(107)], __WEBPACK_AMD_DEFINE_RESULT__ = function (THREE) {
 	
 	
 		THREE.OBJLoader = function (manager) {
@@ -23010,7 +23454,7 @@
 
 
 /***/ },
-/* 69 */
+/* 70 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -23206,14 +23650,14 @@
 
 
 /***/ },
-/* 70 */
+/* 71 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
 	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(109)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(114), __webpack_require__(65)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, defer) {
 		'use strict';
 	
 		var U = {
@@ -23395,9 +23839,10 @@
 	
 			// Returns a function, that, as long as it continues to be invoked, will not
 			// be triggered. The function will be called after it stops being called for
-			// N milliseconds.
+			// N milliseconds. Every invocation returns a promise to the eventual result.
 			debounce: function debounce(func, wait, context) {
 				var timeout;
+				var deferred = defer();
 				return function () {
 					var _this = this;
 	
@@ -23407,10 +23852,12 @@
 	
 					var laterFn = function laterFn() {
 						timeout = null;
-						func.apply(context || _this, args);
+						deferred.resolve(func.apply(context || _this, args));
+						deferred = defer();
 					};
 					clearTimeout(timeout);
 					timeout = setTimeout(laterFn, wait);
+					return deferred.promise;
 				};
 			},
 	
@@ -23581,12 +24028,12 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 71 */
+/* 72 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(74)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, Kefir) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(75)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, Kefir) {
 		'use strict';
 	
 		/*  This function plays with the `flex-grow` and `display` properties  */
@@ -23637,16 +24084,16 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 72 */
+/* 73 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(73);
+	var content = __webpack_require__(74);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(69)(content, {});
+	var update = __webpack_require__(70)(content, {});
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
@@ -23660,19 +24107,19 @@
 	}
 
 /***/ },
-/* 73 */
+/* 74 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(110)();
+	exports = module.exports = __webpack_require__(115)();
 	exports.push([module.id, ".circuitboard{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:stretch;-webkit-align-items:stretch;-ms-flex-align:stretch;align-items:stretch;padding:0;}.circuitboard .tilemap{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column;-webkit-box-pack:justify;-webkit-justify-content:space-between;-ms-flex-pack:justify;justify-content:space-between;}.circuitboard .tilemap>.tilerow{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-orient:horizontal;-webkit-box-direction:normal;-webkit-flex-direction:row;-ms-flex-direction:row;flex-direction:row;-webkit-box-pack:justify;-webkit-justify-content:space-between;-ms-flex-pack:justify;justify-content:space-between;margin:0;padding:0;height:0;}.circuitboard .tilemap>.tilerow>.tile{width:0;margin:0;padding:0;}.circuitboard .tilemap>.tilerow>.tile:last-child{margin-right:0 !important;}.circuitboard .tilemap>.tilerow:last-child{margin-bottom:0 !important;}", ""]);
 
 /***/ },
-/* 74 */
+/* 75 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(70), __webpack_require__(119), __webpack_require__(103), __webpack_require__(120)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir, TWEEN, KefirJQuery) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(71), __webpack_require__(124), __webpack_require__(108), __webpack_require__(125)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir, TWEEN, KefirJQuery) {
 	
 		/* Kefir jQuery plugin ********************************************************************************************/
 	
@@ -23968,12 +24415,12 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 75 */
+/* 76 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(70)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(71)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U) {
 		'use strict';
 	
 		function deepTransform(val, fn) {
@@ -24053,12 +24500,12 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 76 */
+/* 77 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
 		'use strict';
 	
 		//
@@ -24085,16 +24532,16 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 77 */
+/* 78 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(78);
+	var content = __webpack_require__(79);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(69)(content, {});
+	var update = __webpack_require__(70)(content, {});
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
@@ -24108,14 +24555,14 @@
 	}
 
 /***/ },
-/* 78 */
+/* 79 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(110)();
+	exports = module.exports = __webpack_require__(115)();
 	exports.push([module.id, ".skinned-tile{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-box-orient:vertical;-webkit-box-direction:normal;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column;}.skinned-tile>header{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-webkit-justify-content:center;-ms-flex-pack:center;justify-content:center;font-weight:bold;border-width:1px;overflow:hidden;}.skinned-tile.open>header{height:26px;border-style:none none solid none;line-height:26px;font-size:19.5px !important;white-space:nowrap;}.skinned-tile:not(.open)>header{-webkit-box-flex:1;-webkit-flex-grow:1;-ms-flex-positive:1;flex-grow:1;padding:0 5px;}.skinned-tile>section{-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;user-select:text;}.skinned-tile.open>section{-webkit-box-flex:1;-webkit-flex-grow:1;-ms-flex-positive:1;flex-grow:1;opacity:1;}.skinned-tile:not(.open)>section{opacity:0;}", ""]);
 
 /***/ },
-/* 79 */
+/* 80 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -24233,16 +24680,16 @@
 	});
 
 /***/ },
-/* 80 */
+/* 81 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(81);
+	var content = __webpack_require__(82);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(69)(content, {});
+	var update = __webpack_require__(70)(content, {});
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
@@ -24256,23 +24703,23 @@
 	}
 
 /***/ },
-/* 81 */
+/* 82 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(110)();
+	exports = module.exports = __webpack_require__(115)();
 	exports.push([module.id, ".tilemap .tile>section{opacity:0;visibility:hidden;}", ""]);
 
 /***/ },
-/* 82 */
+/* 83 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(83);
+	var content = __webpack_require__(84);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(69)(content, {});
+	var update = __webpack_require__(70)(content, {});
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
@@ -24286,23 +24733,23 @@
 	}
 
 /***/ },
-/* 83 */
+/* 84 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(110)();
+	exports = module.exports = __webpack_require__(115)();
 	exports.push([module.id, ".circuitboard .tilemap>.tilerow>.tile:last-of-type(:not(.hidden)){margin-right:0 !important;}.circuitboard .tilemap>.tilerow:last-of-type(:not(.hidden)){margin-bottom:0 !important;}", ""]);
 
 /***/ },
-/* 84 */
+/* 85 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(85);
+	var content = __webpack_require__(86);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(69)(content, {});
+	var update = __webpack_require__(70)(content, {});
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
@@ -24316,23 +24763,23 @@
 	}
 
 /***/ },
-/* 85 */
+/* 86 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(110)();
+	exports = module.exports = __webpack_require__(115)();
 	exports.push([module.id, ".circuitboard .tilemap>.tilerow>.tile.maximized{margin-right:0 !important;}.circuitboard .tilemap>.tilerow.maximized{margin-bottom:0 !important;}", ""]);
 
 /***/ },
-/* 86 */
+/* 87 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(87);
+	var content = __webpack_require__(88);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(69)(content, {});
+	var update = __webpack_require__(70)(content, {});
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
@@ -24346,19 +24793,19 @@
 	}
 
 /***/ },
-/* 87 */
+/* 88 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(110)();
+	exports = module.exports = __webpack_require__(115)();
 	exports.push([module.id, ".circuitboard>svg.d3{display:block;position:absolute;left:0;top:0;height:100%;width:100%;padding:0;margin:0;pointer-events:none;}.circuitboard>svg.d3 svg.vertex{overflow:visible;cursor:pointer;}.circuitboard>svg.d3.dragging-vertex{pointer-events:all;cursor:-webkit-grabbing;cursor:grabbing;}", ""]);
 
 /***/ },
-/* 88 */
+/* 89 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(70), __webpack_require__(111)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, ArtefactP) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(71), __webpack_require__(116)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, ArtefactP) {
 		'use strict';
 	
 		return ArtefactP.then(function (Artefact) {
@@ -24509,12 +24956,12 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 89 */
+/* 90 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(70), __webpack_require__(111), __webpack_require__(112)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, ArtefactP) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(71), __webpack_require__(116), __webpack_require__(119)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, ArtefactP) {
 		'use strict';
 	
 		return ArtefactP.then(function (Artefact) {
@@ -24574,12 +25021,12 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 90 */
+/* 91 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(70), __webpack_require__(74), __webpack_require__(111), __webpack_require__(114)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir, ArtefactP) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(71), __webpack_require__(75), __webpack_require__(116), __webpack_require__(117)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir, ArtefactP) {
 		'use strict';
 	
 		return ArtefactP.then(function (Artefact) {
@@ -24648,16 +25095,16 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 91 */
+/* 92 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(92);
+	var content = __webpack_require__(93);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(69)(content, {});
+	var update = __webpack_require__(70)(content, {});
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
@@ -24671,23 +25118,108 @@
 	}
 
 /***/ },
-/* 92 */
+/* 93 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(110)();
+	exports = module.exports = __webpack_require__(115)();
 	exports.push([module.id, ".circuitboard>svg.d3 .example.vertex>.core{pointer-events:visiblePainted;fill:#e600e6;stroke:purple;}.circuitboard>svg.d3 .example.edge{pointer-events:visiblePainted;cursor:pointer;stroke:purple;stroke-width:2px;stroke-linecap:round;}", ""]);
 
 /***/ },
-/* 93 */
+/* 94 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
+	
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(114)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P) {
+		'use strict';
+	
+		/* storing and retrieving path models */
+		var paths = {};
+		function _setPath(type, from, to, path) {
+			if (!paths[type]) {
+				paths[type] = {};
+			}
+			if (!paths[type][from]) {
+				paths[type][from] = {};
+			}
+			if (!paths[type][to]) {
+				paths[type][to] = {};
+			}
+			if (!paths[type][from][to]) {
+				paths[type][from][to] = paths[type][to][from] = path;
+			}
+		}
+	
+		/* to retrieve the path models relating to the given ids from the server and fill the path cache */
+		function fetchPathsFor(ids) {
+	
+			/* if nothing is requested, return nothing */
+			if (ids.length === 0) {
+				return [];
+			}
+	
+			// TODO: proper caching to save on network requests?
+	
+			/* request and build the model objects belonging to those ids */
+			return P.resolve($.ajax({
+				url: 'http://95.85.58.17:8766/resources/paths/' + ids.join(','), // TODO: Oi... when will we be rid of this server?
+				dataType: 'jsonp'
+			})).each(function (path) {
+	
+				/* disregard paths that start and end in the same tile */
+				if (path.from === path.to) {
+					return;
+				}
+	
+				/* record the path */
+				_setPath(path.type, path.from, path.to, path);
+			});
+		}
+	
+		return { fetchPathsFor: fetchPathsFor, paths: paths };
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ },
+/* 95 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(94);
+	var content = __webpack_require__(96);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(69)(content, {});
+	var update = __webpack_require__(70)(content, {});
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		module.hot.accept("!!/home/mhelvens/Projects/apinatomy-core/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy-core/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy-core/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy-core/src/features/p-connectivity.scss", function() {
+			var newContent = require("!!/home/mhelvens/Projects/apinatomy-core/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy-core/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy-core/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy-core/src/features/p-connectivity.scss");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 96 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(115)();
+	exports.push([module.id, ".circuitboard>svg.d3 .vascular.vertex>.core{pointer-events:visiblePainted;fill:#ff6666;stroke:red;}.circuitboard>svg.d3 .vascular.edge{pointer-events:visiblePainted;cursor:pointer;stroke:red;stroke-width:2px;stroke-linecap:round;}", ""]);
+
+/***/ },
+/* 97 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(98);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(70)(content, {});
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
@@ -24701,19 +25233,19 @@
 	}
 
 /***/ },
-/* 94 */
+/* 98 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(110)();
+	exports = module.exports = __webpack_require__(115)();
 	exports.push([module.id, ".three-d-canvas>div>div{z-index:0;}.three-d-canvas>div>canvas{z-index:1;}.three-d-canvas>div>canvas,.three-d-canvas>div>div{display:block;position:absolute;top:0;left:0;right:0;bottom:0;margin:0;pointer-events:none;}.three-d-canvas>div>canvas>.circuitboard,.three-d-canvas>div>div>.circuitboard{pointer-events:visible;-webkit-backface-visibility:hidden;backface-visibility:hidden;}", ""]);
 
 /***/ },
-/* 95 */
+/* 99 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(102), __webpack_require__(70), __webpack_require__(109), __webpack_require__(74), __webpack_require__(111)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, THREE, U, P, Kefir, ArtefactP) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(107), __webpack_require__(71), __webpack_require__(114), __webpack_require__(75), __webpack_require__(116)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, THREE, U, P, Kefir, ArtefactP) {
 		'use strict';
 	
 		/* convenience predicate functions */
@@ -25051,12 +25583,12 @@
 	//},
 
 /***/ },
-/* 96 */
+/* 100 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(111), __webpack_require__(70)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, ArtefactP, U) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(116), __webpack_require__(71)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, ArtefactP, U) {
 		'use strict';
 	
 		return ArtefactP.then(function (Artefact) {
@@ -25104,16 +25636,16 @@
 	/*options*/
 
 /***/ },
-/* 97 */
+/* 101 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(98);
+	var content = __webpack_require__(102);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(69)(content, {});
+	var update = __webpack_require__(70)(content, {});
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
@@ -25127,14 +25659,14 @@
 	}
 
 /***/ },
-/* 98 */
+/* 102 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(110)();
+	exports = module.exports = __webpack_require__(115)();
 	exports.push([module.id, ".tile>.tile-button-holder{position:absolute;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-orient:horizontal;-webkit-box-direction:normal;-webkit-flex-direction:row;-ms-flex-direction:row;flex-direction:row;top:2px;right:2px;margin:0;padding:0;}.tile>.tile-button-holder>.tile-button{display:block;background-size:18px;background-repeat:no-repeat;background-position:center;width:20px;height:20px;margin-left:2px;border:solid 1px transparent;}.tile>.tile-button-holder>.tile-button:hover{border:dotted 1px white;}.tile:not(:hover)>.tile-button-holder{display:none;}", ""]);
 
 /***/ },
-/* 99 */
+/* 103 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*! VelocityJS.org (1.2.2). (C) 2014 Julian Shapiro. MIT @license: en.wikipedia.org/wiki/MIT_License */
@@ -29007,7 +29539,7 @@
 	will produce an inaccurate conversion value. The same issue exists with the cx/cy attributes of SVG circles and ellipses. */
 
 /***/ },
-/* 100 */
+/* 104 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = {
@@ -34438,7 +34970,7 @@
 	}
 
 /***/ },
-/* 101 */
+/* 105 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module) {// Generated by CoffeeScript 1.6.2
@@ -36305,10 +36837,2258 @@
 	
 	}).call(this);
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(123)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(128)(module)))
 
 /***/ },
-/* 102 */
+/* 106 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var _slicedToArray = function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } };
+	
+	var _toConsumableArray = function (arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } };
+	
+	var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+	
+	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	"use strict";
+	
+	//  ////////////////////////////////////////////////////////////////////////////////////////////////
+	//  // Graph class /////////////////////////////////////////////////////////////////////////////////
+	//  ////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * @public
+	 * @class Graph
+	 * @classdesc The main class of this library, to be used for representing a mathematical (di)graph.
+	 */
+	
+	var Graph = (function () {
+		function Graph() {
+			_classCallCheck(this, Graph);
+	
+			this._vertices = new Map(); // Map.< string, * >
+			this._edges = new Map(); // Map.< string, Map.<string, *> >
+			this._reverseEdges = new Map(); // Map.< string, Set.<*> >
+			this._vertexCount = 0;
+			this._edgeCount = 0;
+		}
+	
+		_createClass(Graph, [{
+			key: "addNewVertex",
+	
+			//////////////////////////////
+			////////// Vertices //////////
+			//////////////////////////////
+	
+			////////// creating them //////////
+	
+			/**
+	   * Add a new vertex to this graph.
+	   * @throws {Graph.VertexExistsError} if a vertex with this key already exists
+	   * @param  key    {string} the key with which to refer to this new vertex
+	   * @param [value] {*}      the value to store in this new vertex
+	   */
+			value: function addNewVertex(key, value) {
+				if (this.hasVertex(key)) {
+					throw new Graph.VertexExistsError(key, this._vertices.get(key));
+				}
+				this._vertices.set(key, value);
+				this._edges.set(key, new Map());
+				this._reverseEdges.set(key, new Set());
+				this._vertexCount += 1;
+			}
+		}, {
+			key: "setVertex",
+	
+			/**
+	   * Set the value of an existing vertex in this graph.
+	   * @throws {Graph.VertexNotExistsError} if a vertex with this key does not exist
+	   * @param  key    {string} the key belonging to the vertex
+	   * @param [value] {*}      the value to store in this vertex
+	   */
+			value: function setVertex(key, value) {
+				if (!this.hasVertex(key)) {
+					throw new Graph.VertexNotExistsError(key);
+				}
+				this._vertices.set(key, value);
+			}
+		}, {
+			key: "ensureVertex",
+	
+			/**
+	   * Make sure a vertex with a specific key exists in this graph. If it already exists, nothing is done.
+	   * If it does not yet exist, a new vertex is added with the given value.
+	   * @param  key    {string} the key for the vertex
+	   * @param [value] {*}      the value to store if a new vertex is added
+	   */
+			value: function ensureVertex(key, value) {
+				if (!this.hasVertex(key)) {
+					this.addNewVertex(key, value);
+				}
+			}
+		}, {
+			key: "addVertex",
+	
+			/**
+	   * Add a new vertex to this graph. If a vertex with this key already exists,
+	   * the value of that vertex is overwritten.
+	   * @param  key    {string} the key with which to refer to this new vertex
+	   * @param [value] {*}      the value to store in this new vertex
+	   */
+			value: function addVertex(key, value) {
+				if (this.hasVertex(key)) {
+					this.setVertex(key, value);
+				} else {
+					this.addNewVertex(key, value);
+				}
+			}
+		}, {
+			key: "removeExistingVertex",
+	
+			////////// removing them //////////
+	
+			/**
+	   * Remove an existing vertex from this graph.
+	   * @throws {Graph.VertexNotExistsError} if a vertex with this key does not exist
+	   * @throws {Graph.HasConnectedEdgesError} if there are still edges connected to this vertex
+	   * @param key {string} the key of the vertex to remove
+	   */
+			value: function removeExistingVertex(key) {
+				if (!this.hasVertex(key)) {
+					throw new Graph.VertexNotExistsError(key);
+				}
+				if (this._edges.get(key).size > 0 || this._reverseEdges.get(key).size > 0) {
+					throw new Graph.HasConnectedEdgesError(key);
+				}
+				this._vertices["delete"](key);
+				this._vertexCount -= 1;
+			}
+		}, {
+			key: "destroyExistingVertex",
+	
+			/**
+	   * Remove an existing vertex from this graph, as well as all edges connected to it.
+	   * @throws {Graph.VertexNotExistsError} if a vertex with this key does not exist
+	   * @param key {string} the key of the vertex to remove
+	   */
+			value: function destroyExistingVertex(key) {
+				if (!this.hasVertex(key)) {
+					throw new Graph.VertexNotExistsError(key);
+				}
+				var _iteratorNormalCompletion = true;
+				var _didIteratorError = false;
+				var _iteratorError = undefined;
+	
+				try {
+					for (var _iterator = this.verticesFrom(key)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+						var _step$value = _slicedToArray(_step.value, 1);
+	
+						var to = _step$value[0];
+	
+						this.removeEdge(key, to);
+					}
+				} catch (err) {
+					_didIteratorError = true;
+					_iteratorError = err;
+				} finally {
+					try {
+						if (!_iteratorNormalCompletion && _iterator["return"]) {
+							_iterator["return"]();
+						}
+					} finally {
+						if (_didIteratorError) {
+							throw _iteratorError;
+						}
+					}
+				}
+	
+				var _iteratorNormalCompletion2 = true;
+				var _didIteratorError2 = false;
+				var _iteratorError2 = undefined;
+	
+				try {
+					for (var _iterator2 = this.verticesTo(key)[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+						var _step2$value = _slicedToArray(_step2.value, 1);
+	
+						var from = _step2$value[0];
+	
+						this.removeEdge(from, key);
+					}
+				} catch (err) {
+					_didIteratorError2 = true;
+					_iteratorError2 = err;
+				} finally {
+					try {
+						if (!_iteratorNormalCompletion2 && _iterator2["return"]) {
+							_iterator2["return"]();
+						}
+					} finally {
+						if (_didIteratorError2) {
+							throw _iteratorError2;
+						}
+					}
+				}
+	
+				this.removeExistingVertex(key);
+			}
+		}, {
+			key: "removeVertex",
+	
+			/**
+	   * Remove an existing vertex from this graph.
+	   * If a vertex with this key does not exist, nothing happens.
+	   * @throws {Graph.HasConnectedEdgesError} if there are still edges connected to this vertex
+	   * @param key {string} the key of the vertex to remove
+	   */
+			value: function removeVertex(key) {
+				if (this.hasVertex(key)) {
+					this.removeExistingVertex(key);
+				}
+			}
+		}, {
+			key: "destroyVertex",
+	
+			/**
+	   * Remove a vertex from this graph, as well as all edges connected to it.
+	   * If a vertex with this key does not exist, nothing happens.
+	   * @param key {string} the key of the vertex to remove
+	   */
+			value: function destroyVertex(key) {
+				if (this.hasVertex(key)) {
+					this.destroyExistingVertex(key);
+				}
+			}
+		}, {
+			key: "vertexCount",
+	
+			////////// querying them //////////
+	
+			/**
+	   * @returns {number} the number of vertices in the whole graph
+	   */
+			value: function vertexCount() {
+				return this._vertexCount;
+			}
+		}, {
+			key: "hasVertex",
+	
+			/**
+	   * Ask whether a vertex with a given key exists.
+	   * @param key {string} the key to query
+	   * @returns {boolean} whether there is a vertex with the given key
+	   */
+			value: function hasVertex(key) {
+				return this._vertices.has(key);
+			}
+		}, {
+			key: "vertexValue",
+	
+			/**
+	   * Get the value associated with the vertex of a given key.
+	   * @param key {string} the key to query
+	   * @returns {*} the value associated with the vertex of the given key.
+	   * Note that a return value of `undefined` can mean
+	   *
+	   * 1. that there is no such vertex, or
+	   * 2. that the stored value is actually `undefined`.
+	   *
+	   * Use {@link Graph#hasVertex} to distinguish these cases.
+	   */
+			value: function vertexValue(key) {
+				return this._vertices.get(key);
+			}
+		}, {
+			key: "addNewEdge",
+	
+			///////////////////////////
+			////////// Edges //////////
+			///////////////////////////
+	
+			////////// adding them //////////
+	
+			/**
+	   * Add a new edge to this graph.
+	   * @throws {Graph.EdgeExistsError} if an edge between `from` and `to` already exists
+	   * @throws {Graph.VertexNotExistsError} if the `from` and/or `to` vertices do not yet exist in the graph
+	   * @param  from   {string} the key for the originating vertex
+	   * @param  to     {string} the key for the terminating vertex
+	   * @param [value] {*}      the value to store in this new edge
+	   */
+			value: function addNewEdge(from, to, value) {
+				if (this.hasEdge(from, to)) {
+					throw new Graph.EdgeExistsError(from, to, this.edgeValue(from, to));
+				}
+				if (!this.hasVertex(from)) {
+					if (this.hasVertex(to)) {
+						throw new Graph.VertexNotExistsError(from);
+					} else {
+						throw new Graph.VertexNotExistsError(from).v(to);
+					}
+				} else if (!this.hasVertex(to)) {
+					throw new Graph.VertexNotExistsError(to);
+				}
+				this._edges.get(from).set(to, value);
+				this._reverseEdges.get(to).add(from);
+				this._edgeCount += 1;
+			}
+		}, {
+			key: "createNewEdge",
+	
+			/**
+	   * Add a new edge to this graph. If the `from` and/or `to` vertices do not yet exist
+	   * in the graph, they are implicitly added with an `undefined` value.
+	   * @throws {Graph.EdgeExistsError} if an edge between `from` and `to` already exists
+	   * @param  from   {string} the key for the originating vertex
+	   * @param  to     {string} the key for the terminating vertex
+	   * @param [value] {*}      the value to store in this new edge
+	   */
+			value: function createNewEdge(from, to, value) {
+				if (this.hasEdge(from, to)) {
+					throw new Graph.EdgeExistsError(from, to, this.edgeValue(from, to));
+				}
+				this.ensureVertex(from);
+				this.ensureVertex(to);
+				this.addNewEdge(from, to, value);
+			}
+		}, {
+			key: "setEdge",
+	
+			/**
+	   * Set the value of an existing edge in this graph.
+	   * @throws {Graph.EdgeNotExistsError} if an edge between `from` and `to` does not yet exist
+	   * @param  from   {string} the key for the originating vertex
+	   * @param  to     {string} the key for the terminating vertex
+	   * @param [value] {*}      the value to store in this edge
+	   */
+			value: function setEdge(from, to, value) {
+				if (!this.hasEdge(from, to)) {
+					throw new Graph.EdgeNotExistsError(from, to);
+				}
+				this._edges.get(from).set(to, value);
+			}
+		}, {
+			key: "spanEdge",
+	
+			/**
+	   * Make sure an edge between the `from` and `to` vertices in this graph.
+	   * If one already exists, nothing is done.
+	   * If one does not yet exist, a new edge is added with the given value.
+	   * @throws {Graph.VertexNotExistsError} if the `from` and/or `to` vertices do not yet exist in the graph
+	   * @param  from   {string} the key for the originating vertex
+	   * @param  to     {string} the key for the terminating vertex
+	   * @param [value] {*}      the value to store if a new edge is added
+	   */
+			value: function spanEdge(from, to, value) {
+				if (!this.hasVertex(from)) {
+					if (this.hasVertex(to)) {
+						throw new Graph.VertexNotExistsError(from);
+					} else {
+						throw new Graph.VertexNotExistsError(from).v(to);
+					}
+				} else if (!this.hasVertex(to)) {
+					throw new Graph.VertexNotExistsError(to);
+				}
+				if (!this.hasEdge(from, to)) {
+					this.addNewEdge(from, to, value);
+				}
+			}
+		}, {
+			key: "addEdge",
+	
+			/**
+	   * Add a new edge to this graph. If an edge between `from` and `to` already exists,
+	   * the value of that edge is overwritten.
+	   * @throws {Graph.VertexNotExistsError} if the `from` and/or `to` vertices do not yet exist in the graph
+	   * @param  from   {string} the key for the originating vertex
+	   * @param  to     {string} the key for the terminating vertex
+	   * @param [value] {*}      the value to store in this new edge
+	   */
+			value: function addEdge(from, to, value) {
+				if (this.hasEdge(from, to)) {
+					this.setEdge(from, to, value);
+				} else {
+					this.addNewEdge(from, to, value);
+				}
+			}
+		}, {
+			key: "ensureEdge",
+	
+			/**
+	   * Make sure an edge between the `from` and `to` vertices exists in this graph.
+	   * If it already exists, nothing is done.
+	   * If it does not yet exist, a new edge is added with the given value.
+	   * If the `from` and/or `to` vertices do not yet exist
+	   * in the graph, they are implicitly added with an `undefined` value.
+	   * @param  from   {string} the key for the originating vertex
+	   * @param  to     {string} the key for the terminating vertex
+	   * @param [value] {*}      the value to store if a new edge is added
+	   */
+			value: function ensureEdge(from, to, value) {
+				if (!this.hasEdge(from, to)) {
+					this.createNewEdge(from, to, value);
+				}
+			}
+		}, {
+			key: "createEdge",
+	
+			/**
+	   * Add a new edge to this graph. If an edge between the `from` and `to`
+	   * vertices already exists, the value of that edge is overwritten.
+	   * If the `from` and/or `to` vertices do not yet exist
+	   * in the graph, they are implicitly added with an `undefined` value.
+	   * @param  from   {string} the key for the originating vertex
+	   * @param  to     {string} the key for the terminating vertex
+	   * @param [value] {*}      the value to store if a new edge is added
+	   */
+			value: function createEdge(from, to, value) {
+				if (this.hasEdge(from, to)) {
+					this.setEdge(from, to, value);
+				} else {
+					this.createNewEdge(from, to, value);
+				}
+			}
+		}, {
+			key: "removeExistingEdge",
+	
+			////////// removing them //////////
+	
+			/**
+	   * Remove an existing edge from this graph.
+	   * @throws {Graph.EdgeNotExistsError} if an edge between the `from` and `to` vertices doesn't exist
+	   * @param from {string} the key for the originating vertex
+	   * @param to   {string} the key for the terminating vertex
+	   */
+			value: function removeExistingEdge(from, to) {
+				if (!this.hasEdge(from, to)) {
+					throw new Graph.EdgeNotExistsError(from, to);
+				}
+				this._edges.get(from)["delete"](to);
+				this._reverseEdges.get(to)["delete"](from);
+				this._edgeCount -= 1;
+			}
+		}, {
+			key: "removeEdge",
+	
+			/**
+	   * Remove an edge from this graph.
+	   * If an edge between the `from` and `to` vertices doesn't exist, nothing happens.
+	   * @param from {string} the key for the originating vertex
+	   * @param to   {string} the key for the terminating vertex
+	   */
+			value: function removeEdge(from, to) {
+				if (this.hasEdge(from, to)) {
+					this.removeExistingEdge(from, to);
+				}
+			}
+		}, {
+			key: "edgeCount",
+	
+			////////// querying them //////////
+	
+			/**
+	   * @returns {number} the number of edges in the whole graph
+	   */
+			value: function edgeCount() {
+				return this._edgeCount;
+			}
+		}, {
+			key: "hasEdge",
+	
+			/**
+	   * Ask whether an edge between given `from` and `to` vertices exist.
+	   * @param from {string} the key for the originating vertex
+	   * @param to   {string} the key for the terminating vertex
+	   * @returns {boolean} whether there is an edge between the given `from` and `to` vertices
+	   */
+			value: function hasEdge(from, to) {
+				return this.hasVertex(from) && this.hasVertex(to) && this._edges.has(from) && this._edges.get(from).has(to);
+			}
+		}, {
+			key: "edgeValue",
+	
+			/**
+	   * Get the value associated with the edge between given `from` and `to` vertices.
+	   * @param from {string} the key for the originating vertex
+	   * @param to   {string} the key for the terminating vertex
+	   * @returns {*} the value associated with the edge between the given `from` and `to` vertices
+	   * Note that a return value of `undefined` can mean
+	   *
+	   * 1. that there is no such edge, or
+	   * 2. that the stored value is actually `undefined`.
+	   *
+	   * Use {@link Graph#hasEdge} to distinguish these cases.
+	   */
+			value: function edgeValue(from, to) {
+				return this.hasEdge(from, to) ? this._edges.get(from).get(to) : undefined;
+			}
+		}, {
+			key: "vertices",
+	
+			///////////////////////////////////////////////
+			//////////// ES6 Iterable interfaces //////////
+			///////////////////////////////////////////////
+	
+			/**
+	   * Iterate over all vertices of the graph, in no particular order.
+	   * @returns { Iterator.<string, *> } an object conforming to the {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#The_iterator_protocol|ES6 iterator protocol}
+	   * @example
+	   * for (var it = graph.vertices(), keyVal = it.next(); !it.done;) {
+	   *     var key   = keyVal[0],
+	   *         value = keyVal[1];
+	   *     // iterates over all vertices of the graph
+	   * }
+	   * @example
+	   * // in ECMAScript 6, you can use a for..of loop
+	   * for (let [key, value] of graph.vertices()) {
+	   *     // iterates over all vertices of the graph
+	   * }
+	   * @see {@link Graph#@@iterator}
+	   */
+			value: regeneratorRuntime.mark(function vertices() {
+				var done, _iteratorNormalCompletion3, _didIteratorError3, _iteratorError3, _iterator3, _step3, _step3$value, key, value;
+	
+				return regeneratorRuntime.wrap(function vertices$(context$2$0) {
+					while (1) switch (context$2$0.prev = context$2$0.next) {
+						case 0:
+							done = new Set();
+							_iteratorNormalCompletion3 = true;
+							_didIteratorError3 = false;
+							_iteratorError3 = undefined;
+							context$2$0.prev = 4;
+							_iterator3 = this._vertices[Symbol.iterator]();
+	
+						case 6:
+							if (_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done) {
+								context$2$0.next = 17;
+								break;
+							}
+	
+							_step3$value = _slicedToArray(_step3.value, 2);
+							key = _step3$value[0];
+							value = _step3$value[1];
+	
+							if (!(this.hasVertex(key) && !done.has(key))) {
+								context$2$0.next = 14;
+								break;
+							}
+	
+							done.add(key);
+							context$2$0.next = 14;
+							return [key, value];
+	
+						case 14:
+							_iteratorNormalCompletion3 = true;
+							context$2$0.next = 6;
+							break;
+	
+						case 17:
+							context$2$0.next = 23;
+							break;
+	
+						case 19:
+							context$2$0.prev = 19;
+							context$2$0.t0 = context$2$0["catch"](4);
+							_didIteratorError3 = true;
+							_iteratorError3 = context$2$0.t0;
+	
+						case 23:
+							context$2$0.prev = 23;
+							context$2$0.prev = 24;
+	
+							if (!_iteratorNormalCompletion3 && _iterator3["return"]) {
+								_iterator3["return"]();
+							}
+	
+						case 26:
+							context$2$0.prev = 26;
+	
+							if (!_didIteratorError3) {
+								context$2$0.next = 29;
+								break;
+							}
+	
+							throw _iteratorError3;
+	
+						case 29:
+							return context$2$0.finish(26);
+	
+						case 30:
+							return context$2$0.finish(23);
+	
+						case 31:
+						case "end":
+							return context$2$0.stop();
+					}
+				}, vertices, this, [[4, 19, 23, 31], [24,, 26, 30]]);
+			})
+		}, {
+			key: Symbol.iterator,
+	
+			/**
+	   * A {@link Graph} object is itself {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#The_iterable_protocol|iterable},
+	   * and serves as a short notation in ECMAScript 6 to iterate over all vertices in the graph, in no particular order.
+	   * @method Graph#@@iterator
+	   * @returns { Iterator.<string, *> } an object conforming to the {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#The_iterator_protocol|ES6 iterator protocol}
+	   * @example
+	   * for (let [key, value] of graph) {
+	   *     // iterates over all vertices of the graph
+	   * }
+	   * @see {@link Graph#vertices}
+	   */
+			value: function () {
+				return this.vertices();
+			}
+		}, {
+			key: "edges",
+	
+			/**
+	   * Iterate over all edges of the graph, in no particular order.
+	   * @returns { Iterator.<string, string, *> } an object conforming to the {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#The_iterator_protocol|ES6 iterator protocol}
+	   * @example
+	   * for (var it = graph.edges(), fromToVal = it.next(); !it.done;) {
+	   *     var from  = fromToVal[0],
+	   *         to    = fromToVal[1],
+	   *         value = fromToVal[2];
+	   *     // iterates over all edges of the graph
+	   * }
+	   * @example
+	   * // in ECMAScript 6, you can use a for..of loop
+	   * for (let [from, to, value] of graph.edges()) {
+	   *     // iterates over all vertices of the graph
+	   * }
+	   */
+			value: regeneratorRuntime.mark(function edges() {
+				var done, _iteratorNormalCompletion4, _didIteratorError4, _iteratorError4, _iterator4, _step4, from, _iteratorNormalCompletion5, _didIteratorError5, _iteratorError5, _iterator5, _step5, to;
+	
+				return regeneratorRuntime.wrap(function edges$(context$2$0) {
+					while (1) switch (context$2$0.prev = context$2$0.next) {
+						case 0:
+							done = new Map();
+							_iteratorNormalCompletion4 = true;
+							_didIteratorError4 = false;
+							_iteratorError4 = undefined;
+							context$2$0.prev = 4;
+							_iterator4 = this._edges.keys()[Symbol.iterator]();
+	
+						case 6:
+							if (_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done) {
+								context$2$0.next = 40;
+								break;
+							}
+	
+							from = _step4.value;
+	
+							if (!done.has(from)) {
+								done.set(from, new Set());
+							}
+							_iteratorNormalCompletion5 = true;
+							_didIteratorError5 = false;
+							_iteratorError5 = undefined;
+							context$2$0.prev = 12;
+							_iterator5 = this._edges.get(from).keys()[Symbol.iterator]();
+	
+						case 14:
+							if (_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done) {
+								context$2$0.next = 23;
+								break;
+							}
+	
+							to = _step5.value;
+	
+							if (!(this.hasEdge(from, to) && !done.get(from).has(to))) {
+								context$2$0.next = 20;
+								break;
+							}
+	
+							done.get(from).add(to);
+							context$2$0.next = 20;
+							return [from, to, this._edges.get(from).get(to)];
+	
+						case 20:
+							_iteratorNormalCompletion5 = true;
+							context$2$0.next = 14;
+							break;
+	
+						case 23:
+							context$2$0.next = 29;
+							break;
+	
+						case 25:
+							context$2$0.prev = 25;
+							context$2$0.t1 = context$2$0["catch"](12);
+							_didIteratorError5 = true;
+							_iteratorError5 = context$2$0.t1;
+	
+						case 29:
+							context$2$0.prev = 29;
+							context$2$0.prev = 30;
+	
+							if (!_iteratorNormalCompletion5 && _iterator5["return"]) {
+								_iterator5["return"]();
+							}
+	
+						case 32:
+							context$2$0.prev = 32;
+	
+							if (!_didIteratorError5) {
+								context$2$0.next = 35;
+								break;
+							}
+	
+							throw _iteratorError5;
+	
+						case 35:
+							return context$2$0.finish(32);
+	
+						case 36:
+							return context$2$0.finish(29);
+	
+						case 37:
+							_iteratorNormalCompletion4 = true;
+							context$2$0.next = 6;
+							break;
+	
+						case 40:
+							context$2$0.next = 46;
+							break;
+	
+						case 42:
+							context$2$0.prev = 42;
+							context$2$0.t2 = context$2$0["catch"](4);
+							_didIteratorError4 = true;
+							_iteratorError4 = context$2$0.t2;
+	
+						case 46:
+							context$2$0.prev = 46;
+							context$2$0.prev = 47;
+	
+							if (!_iteratorNormalCompletion4 && _iterator4["return"]) {
+								_iterator4["return"]();
+							}
+	
+						case 49:
+							context$2$0.prev = 49;
+	
+							if (!_didIteratorError4) {
+								context$2$0.next = 52;
+								break;
+							}
+	
+							throw _iteratorError4;
+	
+						case 52:
+							return context$2$0.finish(49);
+	
+						case 53:
+							return context$2$0.finish(46);
+	
+						case 54:
+						case "end":
+							return context$2$0.stop();
+					}
+				}, edges, this, [[4, 42, 46, 54], [12, 25, 29, 37], [30,, 32, 36], [47,, 49, 53]]);
+			})
+		}, {
+			key: "verticesFrom",
+	
+			/**
+	   * Iterate over the outgoing edges of a given vertex in the graph, in no particular order.
+	   * @throws {Graph.VertexNotExistsError} if a vertex with the given `from` key does not exist
+	   * @param from {string} the key of the vertex to take the outgoing edges from
+	   * @returns { Iterator.<string, *, *> } an object conforming to the {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#The_iterator_protocol|ES6 iterator protocol}
+	   * @example
+	   * for (var it = graph.verticesFrom(from), toVertexEdge = it.next(); !it.done;) {
+	   *     var to          = toVertexEdge[0],
+	   *         vertexValue = toVertexEdge[1],
+	   *         edgeValue   = toVertexEdge[2];
+	   *     // iterates over all outgoing vertices of the `from` vertex
+	   * }
+	   * @example
+	   * // in ECMAScript 6, you can use a for..of loop
+	   * for (let [to, vertexValue, edgeValue] of graph.verticesFrom(from)) {
+	   *     // iterates over all outgoing edges of the `from` vertex
+	   * }
+	   */
+			value: function verticesFrom(from) {
+				if (!this.hasVertex(from)) {
+					throw new Graph.VertexNotExistsError(from);
+				}
+				return this._verticesFrom(from);
+			}
+		}, {
+			key: "_verticesFrom",
+			value: regeneratorRuntime.mark(function _verticesFrom(from) {
+				var done, _iteratorNormalCompletion6, _didIteratorError6, _iteratorError6, _iterator6, _step6, to;
+	
+				return regeneratorRuntime.wrap(function _verticesFrom$(context$2$0) {
+					while (1) switch (context$2$0.prev = context$2$0.next) {
+						case 0:
+							done = new Set();
+							_iteratorNormalCompletion6 = true;
+							_didIteratorError6 = false;
+							_iteratorError6 = undefined;
+							context$2$0.prev = 4;
+							_iterator6 = this._edges.get(from).keys()[Symbol.iterator]();
+	
+						case 6:
+							if (_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done) {
+								context$2$0.next = 15;
+								break;
+							}
+	
+							to = _step6.value;
+	
+							if (!(this.hasEdge(from, to) && !done.has(to))) {
+								context$2$0.next = 12;
+								break;
+							}
+	
+							done.add(to);
+							context$2$0.next = 12;
+							return [to, this._vertices.get(to), this._edges.get(from).get(to)];
+	
+						case 12:
+							_iteratorNormalCompletion6 = true;
+							context$2$0.next = 6;
+							break;
+	
+						case 15:
+							context$2$0.next = 21;
+							break;
+	
+						case 17:
+							context$2$0.prev = 17;
+							context$2$0.t3 = context$2$0["catch"](4);
+							_didIteratorError6 = true;
+							_iteratorError6 = context$2$0.t3;
+	
+						case 21:
+							context$2$0.prev = 21;
+							context$2$0.prev = 22;
+	
+							if (!_iteratorNormalCompletion6 && _iterator6["return"]) {
+								_iterator6["return"]();
+							}
+	
+						case 24:
+							context$2$0.prev = 24;
+	
+							if (!_didIteratorError6) {
+								context$2$0.next = 27;
+								break;
+							}
+	
+							throw _iteratorError6;
+	
+						case 27:
+							return context$2$0.finish(24);
+	
+						case 28:
+							return context$2$0.finish(21);
+	
+						case 29:
+						case "end":
+							return context$2$0.stop();
+					}
+				}, _verticesFrom, this, [[4, 17, 21, 29], [22,, 24, 28]]);
+			})
+		}, {
+			key: "verticesTo",
+	
+			/**
+	   * Iterate over the incoming edges of a given vertex in the graph, in no particular order.
+	   * @throws {Graph.VertexNotExistsError} if a vertex with the given `to` key does not exist
+	   * @param to {string} the key of the vertex to take the incoming edges from
+	   * @returns { Iterator.<string, *, *> } an object conforming to the {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#The_iterator_protocol|ES6 iterator protocol}
+	   * @example
+	   * for (var it = graph.verticesTo(to), fromVertexEdge = it.next(); !it.done;) {
+	   *     var from        = fromVertexEdge[0],
+	   *         vertexValue = fromVertexEdge[1],
+	   *         edgeValue   = fromVertexEdge[2];
+	   *     // iterates over all outgoing vertices of the `from` vertex
+	   * }
+	   * @example
+	   * // in ECMAScript 6, you can use a for..of loop
+	   * for (let [from, vertexValue, edgeValue] of graph.verticesTo(to)) {
+	   *     // iterates over all incoming edges of the `to` vertex
+	   * }
+	   */
+			value: function verticesTo(to) {
+				if (!this.hasVertex(to)) {
+					throw new Graph.VertexNotExistsError(to);
+				}
+				return this._verticesTo(to);
+			}
+		}, {
+			key: "_verticesTo",
+			value: regeneratorRuntime.mark(function _verticesTo(to) {
+				var done, _iteratorNormalCompletion7, _didIteratorError7, _iteratorError7, _iterator7, _step7, from;
+	
+				return regeneratorRuntime.wrap(function _verticesTo$(context$2$0) {
+					while (1) switch (context$2$0.prev = context$2$0.next) {
+						case 0:
+							done = new Set();
+							_iteratorNormalCompletion7 = true;
+							_didIteratorError7 = false;
+							_iteratorError7 = undefined;
+							context$2$0.prev = 4;
+							_iterator7 = this._reverseEdges.get(to)[Symbol.iterator]();
+	
+						case 6:
+							if (_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done) {
+								context$2$0.next = 15;
+								break;
+							}
+	
+							from = _step7.value;
+	
+							if (!(this.hasEdge(from, to) && !done.has(from))) {
+								context$2$0.next = 12;
+								break;
+							}
+	
+							done.add(from);
+							context$2$0.next = 12;
+							return [from, this._vertices.get(from), this._edges.get(from).get(to)];
+	
+						case 12:
+							_iteratorNormalCompletion7 = true;
+							context$2$0.next = 6;
+							break;
+	
+						case 15:
+							context$2$0.next = 21;
+							break;
+	
+						case 17:
+							context$2$0.prev = 17;
+							context$2$0.t4 = context$2$0["catch"](4);
+							_didIteratorError7 = true;
+							_iteratorError7 = context$2$0.t4;
+	
+						case 21:
+							context$2$0.prev = 21;
+							context$2$0.prev = 22;
+	
+							if (!_iteratorNormalCompletion7 && _iterator7["return"]) {
+								_iterator7["return"]();
+							}
+	
+						case 24:
+							context$2$0.prev = 24;
+	
+							if (!_didIteratorError7) {
+								context$2$0.next = 27;
+								break;
+							}
+	
+							throw _iteratorError7;
+	
+						case 27:
+							return context$2$0.finish(24);
+	
+						case 28:
+							return context$2$0.finish(21);
+	
+						case 29:
+						case "end":
+							return context$2$0.stop();
+					}
+				}, _verticesTo, this, [[4, 17, 21, 29], [22,, 24, 28]]);
+			})
+		}, {
+			key: "verticesWithPathFrom",
+	
+			/**
+	   * Iterate over all vertices reachable from a given vertex in the graph, in no particular order.
+	   * @throws {Graph.VertexNotExistsError} if a vertex with the given `from` key does not exist
+	   * @param from {string} the key of the vertex to take the reachable vertices from
+	   * @returns { Iterator.<string, *> } an object conforming to the {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#The_iterator_protocol|ES6 iterator protocol}
+	   * @example
+	   * for (var it = graph.verticesWithPathFrom(from), keyValue = it.next(); !it.done;) {
+	   *     var key   = keyValue[0],
+	   *         value = keyValue[1];
+	   *     // iterates over all vertices reachable from `from`
+	   * }
+	   * @example
+	   * // in ECMAScript 6, you can use a for..of loop
+	   * for (let [key, value] of graph.verticesWithPathFrom(from)) {
+	   *     // iterates over all vertices reachable from `from`
+	   * }
+	   */
+			value: function verticesWithPathFrom(from) {
+				if (!this.hasVertex(from)) {
+					throw new Graph.VertexNotExistsError(from);
+				}
+				return this._verticesWithPathFrom(from, new Set());
+			}
+		}, {
+			key: "_verticesWithPathFrom",
+			value: regeneratorRuntime.mark(function _verticesWithPathFrom(from, done) {
+				var _iteratorNormalCompletion8, _didIteratorError8, _iteratorError8, _iterator8, _step8, to;
+	
+				return regeneratorRuntime.wrap(function _verticesWithPathFrom$(context$2$0) {
+					while (1) switch (context$2$0.prev = context$2$0.next) {
+						case 0:
+							_iteratorNormalCompletion8 = true;
+							_didIteratorError8 = false;
+							_iteratorError8 = undefined;
+							context$2$0.prev = 3;
+							_iterator8 = this._edges.get(from).keys()[Symbol.iterator]();
+	
+						case 5:
+							if (_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done) {
+								context$2$0.next = 15;
+								break;
+							}
+	
+							to = _step8.value;
+	
+							if (!(this.hasEdge(from, to) && !done.has(to))) {
+								context$2$0.next = 12;
+								break;
+							}
+	
+							done.add(to);
+							context$2$0.next = 11;
+							return [to, this._vertices.get(to)];
+	
+						case 11:
+							return context$2$0.delegateYield(this._verticesWithPathFrom(to, done), "t5", 12);
+	
+						case 12:
+							_iteratorNormalCompletion8 = true;
+							context$2$0.next = 5;
+							break;
+	
+						case 15:
+							context$2$0.next = 21;
+							break;
+	
+						case 17:
+							context$2$0.prev = 17;
+							context$2$0.t6 = context$2$0["catch"](3);
+							_didIteratorError8 = true;
+							_iteratorError8 = context$2$0.t6;
+	
+						case 21:
+							context$2$0.prev = 21;
+							context$2$0.prev = 22;
+	
+							if (!_iteratorNormalCompletion8 && _iterator8["return"]) {
+								_iterator8["return"]();
+							}
+	
+						case 24:
+							context$2$0.prev = 24;
+	
+							if (!_didIteratorError8) {
+								context$2$0.next = 27;
+								break;
+							}
+	
+							throw _iteratorError8;
+	
+						case 27:
+							return context$2$0.finish(24);
+	
+						case 28:
+							return context$2$0.finish(21);
+	
+						case 29:
+						case "end":
+							return context$2$0.stop();
+					}
+				}, _verticesWithPathFrom, this, [[3, 17, 21, 29], [22,, 24, 28]]);
+			})
+		}, {
+			key: "verticesWithPathTo",
+	
+			/**
+	   * Iterate over all vertices from which a given vertex in the graph can be reached, in no particular order.
+	   * @throws {Graph.VertexNotExistsError} if a vertex with the given `to` key does not exist
+	   * @param to {string} the key of the vertex to take the reachable vertices from
+	   * @returns { Iterator.<string, *> } an object conforming to the {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#The_iterator_protocol|ES6 iterator protocol}
+	   * @example
+	   * for (var it = graph.verticesWithPathTo(to), keyValue = it.next(); !it.done;) {
+	   *     var key   = keyValue[0],
+	   *         value = keyValue[1];
+	   *     // iterates over all vertices from which `to` can be reached
+	   * }
+	   * @example
+	   * // in ECMAScript 6, you can use a for..of loop
+	   * for (let [key, value] of graph.verticesWithPathTo(to)) {
+	   *     // iterates over all vertices from which `to` can be reached
+	   * }
+	   */
+			value: function verticesWithPathTo(to) {
+				if (!this.hasVertex(to)) {
+					throw new Graph.VertexNotExistsError(to);
+				}
+				return this._verticesWithPathTo(to, new Set());
+			}
+		}, {
+			key: "_verticesWithPathTo",
+			value: regeneratorRuntime.mark(function _verticesWithPathTo(to, done) {
+				var _iteratorNormalCompletion9, _didIteratorError9, _iteratorError9, _iterator9, _step9, from;
+	
+				return regeneratorRuntime.wrap(function _verticesWithPathTo$(context$2$0) {
+					while (1) switch (context$2$0.prev = context$2$0.next) {
+						case 0:
+							_iteratorNormalCompletion9 = true;
+							_didIteratorError9 = false;
+							_iteratorError9 = undefined;
+							context$2$0.prev = 3;
+							_iterator9 = this._reverseEdges.get(to)[Symbol.iterator]();
+	
+						case 5:
+							if (_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done) {
+								context$2$0.next = 15;
+								break;
+							}
+	
+							from = _step9.value;
+	
+							if (!(this.hasEdge(from, to) && !done.has(from))) {
+								context$2$0.next = 12;
+								break;
+							}
+	
+							done.add(from);
+							context$2$0.next = 11;
+							return [from, this._vertices.get(from)];
+	
+						case 11:
+							return context$2$0.delegateYield(this._verticesWithPathTo(from, done), "t7", 12);
+	
+						case 12:
+							_iteratorNormalCompletion9 = true;
+							context$2$0.next = 5;
+							break;
+	
+						case 15:
+							context$2$0.next = 21;
+							break;
+	
+						case 17:
+							context$2$0.prev = 17;
+							context$2$0.t8 = context$2$0["catch"](3);
+							_didIteratorError9 = true;
+							_iteratorError9 = context$2$0.t8;
+	
+						case 21:
+							context$2$0.prev = 21;
+							context$2$0.prev = 22;
+	
+							if (!_iteratorNormalCompletion9 && _iterator9["return"]) {
+								_iterator9["return"]();
+							}
+	
+						case 24:
+							context$2$0.prev = 24;
+	
+							if (!_didIteratorError9) {
+								context$2$0.next = 27;
+								break;
+							}
+	
+							throw _iteratorError9;
+	
+						case 27:
+							return context$2$0.finish(24);
+	
+						case 28:
+							return context$2$0.finish(21);
+	
+						case 29:
+						case "end":
+							return context$2$0.stop();
+					}
+				}, _verticesWithPathTo, this, [[3, 17, 21, 29], [22,, 24, 28]]);
+			})
+		}, {
+			key: "vertices_topologically",
+	
+			/**
+	   * Iterate over all vertices of the graph in topological order.
+	   * @returns { Iterator.<string, *> } an object conforming to the {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#The_iterator_protocol|ES6 iterator protocol}
+	   * @example
+	   * for (var it = graph.vertices_topologically(), keyVal = it.next(); !it.done;) {
+	   *     var key   = keyVal[0],
+	   *         value = keyVal[1];
+	   *     // iterates over all vertices of the graph in topological order
+	   * }
+	   * @example
+	   * // in ECMAScript 6, you can use a for..of loop
+	   * for (let [key, value] of graph.vertices_topologically()) {
+	   *     // iterates over all vertices of the graph in topological order
+	   * }
+	   */
+			value: regeneratorRuntime.mark(function vertices_topologically() {
+				var marked2$0, visited, handled, _this, visit, _iteratorNormalCompletion11, _didIteratorError11, _iteratorError11, _iterator11, _step11, _step11$value, a;
+	
+				return regeneratorRuntime.wrap(function vertices_topologically$(context$2$0) {
+					while (1) switch (context$2$0.prev = context$2$0.next) {
+						case 0:
+							visit = function visit(a) {
+								var i, cycle, _iteratorNormalCompletion10, _didIteratorError10, _iteratorError10, _iterator10, _step10, _step10$value, b;
+	
+								return regeneratorRuntime.wrap(function visit$(context$3$0) {
+									while (1) switch (context$3$0.prev = context$3$0.next) {
+										case 0:
+											visited.push(a);
+											i = visited.indexOf(a);
+	
+											if (!(i !== visited.length - 1)) {
+												context$3$0.next = 5;
+												break;
+											}
+	
+											cycle = visited.slice(i + 1).reverse();
+											throw new Graph.CycleError(cycle);
+	
+										case 5:
+											if (handled.has(a)) {
+												context$3$0.next = 36;
+												break;
+											}
+	
+											_iteratorNormalCompletion10 = true;
+											_didIteratorError10 = false;
+											_iteratorError10 = undefined;
+											context$3$0.prev = 9;
+											_iterator10 = _this.verticesTo(a)[Symbol.iterator]();
+	
+										case 11:
+											if (_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done) {
+												context$3$0.next = 18;
+												break;
+											}
+	
+											_step10$value = _slicedToArray(_step10.value, 1);
+											b = _step10$value[0];
+											return context$3$0.delegateYield(visit(b), "t9", 15);
+	
+										case 15:
+											_iteratorNormalCompletion10 = true;
+											context$3$0.next = 11;
+											break;
+	
+										case 18:
+											context$3$0.next = 24;
+											break;
+	
+										case 20:
+											context$3$0.prev = 20;
+											context$3$0.t10 = context$3$0["catch"](9);
+											_didIteratorError10 = true;
+											_iteratorError10 = context$3$0.t10;
+	
+										case 24:
+											context$3$0.prev = 24;
+											context$3$0.prev = 25;
+	
+											if (!_iteratorNormalCompletion10 && _iterator10["return"]) {
+												_iterator10["return"]();
+											}
+	
+										case 27:
+											context$3$0.prev = 27;
+	
+											if (!_didIteratorError10) {
+												context$3$0.next = 30;
+												break;
+											}
+	
+											throw _iteratorError10;
+	
+										case 30:
+											return context$3$0.finish(27);
+	
+										case 31:
+											return context$3$0.finish(24);
+	
+										case 32:
+											if (!_this.hasVertex(a)) {
+												context$3$0.next = 35;
+												break;
+											}
+	
+											context$3$0.next = 35;
+											return [a, _this._vertices.get(a)];
+	
+										case 35:
+											handled.add(a);
+	
+										case 36:
+											visited.pop();
+	
+										case 37:
+										case "end":
+											return context$3$0.stop();
+									}
+								}, marked2$0[0], this, [[9, 20, 24, 32], [25,, 27, 31]]);
+							};
+	
+							marked2$0 = [visit].map(regeneratorRuntime.mark);
+							visited = [];
+							handled = new Set();
+							_this = this;
+							_iteratorNormalCompletion11 = true;
+							_didIteratorError11 = false;
+							_iteratorError11 = undefined;
+							context$2$0.prev = 8;
+							_iterator11 = this.vertices()[Symbol.iterator]();
+	
+						case 10:
+							if (_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done) {
+								context$2$0.next = 18;
+								break;
+							}
+	
+							_step11$value = _slicedToArray(_step11.value, 1);
+							a = _step11$value[0];
+	
+							if (handled.has(a)) {
+								context$2$0.next = 15;
+								break;
+							}
+	
+							return context$2$0.delegateYield(visit(a), "t11", 15);
+	
+						case 15:
+							_iteratorNormalCompletion11 = true;
+							context$2$0.next = 10;
+							break;
+	
+						case 18:
+							context$2$0.next = 24;
+							break;
+	
+						case 20:
+							context$2$0.prev = 20;
+							context$2$0.t12 = context$2$0["catch"](8);
+							_didIteratorError11 = true;
+							_iteratorError11 = context$2$0.t12;
+	
+						case 24:
+							context$2$0.prev = 24;
+							context$2$0.prev = 25;
+	
+							if (!_iteratorNormalCompletion11 && _iterator11["return"]) {
+								_iterator11["return"]();
+							}
+	
+						case 27:
+							context$2$0.prev = 27;
+	
+							if (!_didIteratorError11) {
+								context$2$0.next = 30;
+								break;
+							}
+	
+							throw _iteratorError11;
+	
+						case 30:
+							return context$2$0.finish(27);
+	
+						case 31:
+							return context$2$0.finish(24);
+	
+						case 32:
+						case "end":
+							return context$2$0.stop();
+					}
+				}, vertices_topologically, this, [[8, 20, 24, 32], [25,, 27, 31]]);
+			})
+		}, {
+			key: "clearEdges",
+	
+			//////////////////////////////
+			////////// Clearing //////////
+			//////////////////////////////
+	
+			/**
+	   * Remove all edges from the graph, but leave the vertices intact.
+	   */
+			value: function clearEdges() {
+				var _iteratorNormalCompletion12 = true;
+				var _didIteratorError12 = false;
+				var _iteratorError12 = undefined;
+	
+				try {
+					for (var _iterator12 = this.edges()[Symbol.iterator](), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {
+						var _step12$value = _slicedToArray(_step12.value, 2);
+	
+						var from = _step12$value[0];
+						var to = _step12$value[1];
+						this.removeEdge(from, to);
+					}
+				} catch (err) {
+					_didIteratorError12 = true;
+					_iteratorError12 = err;
+				} finally {
+					try {
+						if (!_iteratorNormalCompletion12 && _iterator12["return"]) {
+							_iterator12["return"]();
+						}
+					} finally {
+						if (_didIteratorError12) {
+							throw _iteratorError12;
+						}
+					}
+				}
+			}
+		}, {
+			key: "clear",
+	
+			/**
+	   * Remove all edges and vertices from the graph, putting it back in its initial state.
+	   */
+			value: function clear() {
+				var _iteratorNormalCompletion13 = true;
+				var _didIteratorError13 = false;
+				var _iteratorError13 = undefined;
+	
+				try {
+					for (var _iterator13 = this.vertices()[Symbol.iterator](), _step13; !(_iteratorNormalCompletion13 = (_step13 = _iterator13.next()).done); _iteratorNormalCompletion13 = true) {
+						var _step13$value = _slicedToArray(_step13.value, 1);
+	
+						var v = _step13$value[0];
+						this.destroyVertex(v);
+					}
+				} catch (err) {
+					_didIteratorError13 = true;
+					_iteratorError13 = err;
+				} finally {
+					try {
+						if (!_iteratorNormalCompletion13 && _iterator13["return"]) {
+							_iterator13["return"]();
+						}
+					} finally {
+						if (_didIteratorError13) {
+							throw _iteratorError13;
+						}
+					}
+				}
+			}
+		}, {
+			key: "equals",
+	
+			////////////////////////////////////////
+			////////// (Advanced) Queries //////////
+			////////////////////////////////////////
+	
+			/**
+	   * Ask whether this graph and another graph are equal.
+	   * Two graphs are equal if they have the same vertices and the same edges.
+	   * @param other {Graph} the other graph to compare this one to
+	   * @param [eq] {function(*, *, string, ?string): boolean}
+	   *     a custom equality function for stored values; defaults to `===`
+	   *     comparison; The first two arguments are the two values to compare.
+	   *     If they are vertex values, the third argument is the vertex key.
+	   *     If they are edge values, the third and fourth argument are the
+	   *     `from` and `to` keys respectively. (So you can test the fourth
+	   *     argument to distinguish the two cases.)
+	   * @returns {boolean} `true` if the two graphs are equal; `false` otherwise
+	   */
+			value: function equals() {
+				var other = arguments[0] === undefined ? undefined : arguments[0];
+				var eq = arguments[1] === undefined ? function (x, y, from, to) {
+					return x === y;
+				} : arguments[1];
+	
+				if (!(other instanceof Graph)) {
+					return false;
+				}
+				if (this.vertexCount() !== other.vertexCount()) {
+					return false;
+				}
+				if (this.edgeCount() !== other.edgeCount()) {
+					return false;
+				}
+				var _iteratorNormalCompletion14 = true;
+				var _didIteratorError14 = false;
+				var _iteratorError14 = undefined;
+	
+				try {
+					for (var _iterator14 = this.vertices()[Symbol.iterator](), _step14; !(_iteratorNormalCompletion14 = (_step14 = _iterator14.next()).done); _iteratorNormalCompletion14 = true) {
+						var _step14$value = _slicedToArray(_step14.value, 2);
+	
+						var key = _step14$value[0];
+						var value = _step14$value[1];
+	
+						if (!other.hasVertex(key)) {
+							return false;
+						}
+						if (!eq(value, other.vertexValue(key), key)) {
+							return false;
+						}
+					}
+				} catch (err) {
+					_didIteratorError14 = true;
+					_iteratorError14 = err;
+				} finally {
+					try {
+						if (!_iteratorNormalCompletion14 && _iterator14["return"]) {
+							_iterator14["return"]();
+						}
+					} finally {
+						if (_didIteratorError14) {
+							throw _iteratorError14;
+						}
+					}
+				}
+	
+				var _iteratorNormalCompletion15 = true;
+				var _didIteratorError15 = false;
+				var _iteratorError15 = undefined;
+	
+				try {
+					for (var _iterator15 = this.edges()[Symbol.iterator](), _step15; !(_iteratorNormalCompletion15 = (_step15 = _iterator15.next()).done); _iteratorNormalCompletion15 = true) {
+						var _step15$value = _slicedToArray(_step15.value, 3);
+	
+						var from = _step15$value[0];
+						var to = _step15$value[1];
+						var value = _step15$value[2];
+	
+						if (!other.hasEdge(from, to)) {
+							return false;
+						}
+						if (!eq(value, other.edgeValue(from, to), from, to)) {
+							return false;
+						}
+					}
+				} catch (err) {
+					_didIteratorError15 = true;
+					_iteratorError15 = err;
+				} finally {
+					try {
+						if (!_iteratorNormalCompletion15 && _iterator15["return"]) {
+							_iterator15["return"]();
+						}
+					} finally {
+						if (_didIteratorError15) {
+							throw _iteratorError15;
+						}
+					}
+				}
+	
+				return true;
+			}
+		}, {
+			key: "cycle",
+	
+			/**
+	   * Find any directed cycle in this graph.
+	   * @returns {?array} an array with the keys of a cycle in order;
+	   *                   `null`, if there is no cycle
+	   */
+			value: function cycle() {
+				var _this7 = this;
+	
+				var visited = []; // stack
+				var handled = new Set();
+	
+				var visit = (function (_visit) {
+					function visit(_x) {
+						return _visit.apply(this, arguments);
+					}
+	
+					visit.toString = function () {
+						return _visit.toString();
+					};
+	
+					return visit;
+				})(function (a) {
+					/* if a cycle is found, record it and return */
+					var i = visited.indexOf(a);
+					if (i >= 0) {
+						return visited.slice(i);
+					}
+	
+					/* if this vertex was already handled, no cycle can be found here */
+					if (handled.has(a)) {
+						return null;
+					}
+					handled.add(a);
+	
+					/* recursively visit successors to check for cycles */
+					visited.push(a);
+					var _iteratorNormalCompletion16 = true;
+					var _didIteratorError16 = false;
+					var _iteratorError16 = undefined;
+	
+					try {
+						for (var _iterator16 = _this7.verticesFrom(a)[Symbol.iterator](), _step16; !(_iteratorNormalCompletion16 = (_step16 = _iterator16.next()).done); _iteratorNormalCompletion16 = true) {
+							var _step16$value = _slicedToArray(_step16.value, 1);
+	
+							var b = _step16$value[0];
+	
+							var result = visit(b);
+							if (result) {
+								return result;
+							}
+						}
+					} catch (err) {
+						_didIteratorError16 = true;
+						_iteratorError16 = err;
+					} finally {
+						try {
+							if (!_iteratorNormalCompletion16 && _iterator16["return"]) {
+								_iterator16["return"]();
+							}
+						} finally {
+							if (_didIteratorError16) {
+								throw _iteratorError16;
+							}
+						}
+					}
+	
+					visited.pop();
+				});
+	
+				var _iteratorNormalCompletion17 = true;
+				var _didIteratorError17 = false;
+				var _iteratorError17 = undefined;
+	
+				try {
+					for (var _iterator17 = this.vertices()[Symbol.iterator](), _step17; !(_iteratorNormalCompletion17 = (_step17 = _iterator17.next()).done); _iteratorNormalCompletion17 = true) {
+						var _step17$value = _slicedToArray(_step17.value, 1);
+	
+						var a = _step17$value[0];
+	
+						var result = visit(a);
+						if (result) {
+							return result;
+						}
+					}
+				} catch (err) {
+					_didIteratorError17 = true;
+					_iteratorError17 = err;
+				} finally {
+					try {
+						if (!_iteratorNormalCompletion17 && _iterator17["return"]) {
+							_iterator17["return"]();
+						}
+					} finally {
+						if (_didIteratorError17) {
+							throw _iteratorError17;
+						}
+					}
+				}
+	
+				return null;
+			}
+		}, {
+			key: "hasCycle",
+	
+			/**
+	   * Test whether this graph contains a directed cycle.
+	   * @returns {boolean} whether this graph contains a directed cycle
+	   */
+			value: function hasCycle() {
+				return !!this.cycle();
+			}
+		}, {
+			key: "path",
+	
+			/**
+	   * Find any path between a given pair of keys.
+	   * @param from {string} the originating vertex
+	   * @param to   {string} the terminating vertex
+	   * @returns {?array} an array with the keys of the path found between the two vertices,
+	   *                   including those two vertices themselves; `null` if no such path exists
+	   */
+			value: function path(from, to) {
+				var _this8 = this;
+	
+				if (!this.hasVertex(from) || !this.hasVertex(to)) {
+					return null;
+				}
+	
+				var visited = [];
+	
+				/* recursive auxiliary function: find a path from 'current' to 'to' */
+				var hasPathAux = (function (_hasPathAux) {
+					function hasPathAux(_x2) {
+						return _hasPathAux.apply(this, arguments);
+					}
+	
+					hasPathAux.toString = function () {
+						return _hasPathAux.toString();
+					};
+	
+					return hasPathAux;
+				})(function (current) {
+					visited.push(current);
+					if (_this8.hasEdge(current, to)) {
+						return [].concat(visited, [to]);
+					}
+					var _iteratorNormalCompletion18 = true;
+					var _didIteratorError18 = false;
+					var _iteratorError18 = undefined;
+	
+					try {
+						for (var _iterator18 = _this8.verticesFrom(current)[Symbol.iterator](), _step18; !(_iteratorNormalCompletion18 = (_step18 = _iterator18.next()).done); _iteratorNormalCompletion18 = true) {
+							var _step18$value = _slicedToArray(_step18.value, 1);
+	
+							var next = _step18$value[0];
+	
+							if (visited.indexOf(next) === -1) {
+								var result = hasPathAux(next);
+								if (result) {
+									return result;
+								}
+							}
+						}
+					} catch (err) {
+						_didIteratorError18 = true;
+						_iteratorError18 = err;
+					} finally {
+						try {
+							if (!_iteratorNormalCompletion18 && _iterator18["return"]) {
+								_iterator18["return"]();
+							}
+						} finally {
+							if (_didIteratorError18) {
+								throw _iteratorError18;
+							}
+						}
+					}
+	
+					visited.pop();
+					return null;
+				});
+	
+				return hasPathAux(from);
+			}
+		}, {
+			key: "hasPath",
+	
+			/**
+	   * Test whether there is a directed path between a given pair of keys.
+	   * @param from {string} the originating vertex
+	   * @param to   {string} the terminating vertex
+	   * @returns {boolean} whether such a path exists
+	   */
+			value: function hasPath(from, to) {
+				return !!this.path(from, to);
+			}
+		}, {
+			key: "clone",
+	
+			/////////////////////////////
+			////////// Cloning //////////
+			/////////////////////////////
+	
+			/**
+	   * Create a clone of this graph.
+	   * @param [tr] {function(*, string, ?string): *}
+	   *     a custom transformation function for stored values; defaults to
+	   *     the identity function; The first argument is the value to clone.
+	   *     If it is a vertex value, the third argument is the vertex key.
+	   *     If it is an edge value, the third and fourth argument are the
+	   *     `from` and `to` keys respectively. (So you can test the fourth
+	   *     argument to distinguish the two cases.)
+	   * @returns {Graph} a clone of this graph
+	   */
+			value: function clone() {
+				var tr = arguments[0] === undefined ? function (v) {
+					return v;
+				} : arguments[0];
+	
+				var result = new Graph();
+				var _iteratorNormalCompletion19 = true;
+				var _didIteratorError19 = false;
+				var _iteratorError19 = undefined;
+	
+				try {
+					for (var _iterator19 = this.vertices()[Symbol.iterator](), _step19; !(_iteratorNormalCompletion19 = (_step19 = _iterator19.next()).done); _iteratorNormalCompletion19 = true) {
+						var _step19$value = _slicedToArray(_step19.value, 2);
+	
+						var key = _step19$value[0];
+						var val = _step19$value[1];
+	
+						result.addVertex(key, tr(val, key));
+					}
+				} catch (err) {
+					_didIteratorError19 = true;
+					_iteratorError19 = err;
+				} finally {
+					try {
+						if (!_iteratorNormalCompletion19 && _iterator19["return"]) {
+							_iterator19["return"]();
+						}
+					} finally {
+						if (_didIteratorError19) {
+							throw _iteratorError19;
+						}
+					}
+				}
+	
+				var _iteratorNormalCompletion20 = true;
+				var _didIteratorError20 = false;
+				var _iteratorError20 = undefined;
+	
+				try {
+					for (var _iterator20 = this.edges()[Symbol.iterator](), _step20; !(_iteratorNormalCompletion20 = (_step20 = _iterator20.next()).done); _iteratorNormalCompletion20 = true) {
+						var _step20$value = _slicedToArray(_step20.value, 3);
+	
+						var from = _step20$value[0];
+						var to = _step20$value[1];
+						var val = _step20$value[2];
+	
+						result.addEdge(from, to, tr(val, from, to));
+					}
+				} catch (err) {
+					_didIteratorError20 = true;
+					_iteratorError20 = err;
+				} finally {
+					try {
+						if (!_iteratorNormalCompletion20 && _iterator20["return"]) {
+							_iterator20["return"]();
+						}
+					} finally {
+						if (_didIteratorError20) {
+							throw _iteratorError20;
+						}
+					}
+				}
+	
+				return result;
+			}
+		}, {
+			key: "transitiveReduction",
+	
+			/**
+	   * Create a clone of this graph, but without any transitive edges.
+	   * @param [tr] {function(*, string, ?string): *}
+	   *     a custom transformation function for stored values; defaults to
+	   *     the identity function; The first argument is the value to clone.
+	   *     If it is a vertex value, the third argument is the vertex key.
+	   *     If it is an edge value, the third and fourth argument are the
+	   *     `from` and `to` keys respectively. (So you can test the fourth
+	   *     argument to distinguish the two cases.)
+	   * @returns {Graph} a clone of this graph
+	   */
+			value: function transitiveReduction() {
+				var tr = arguments[0] === undefined ? function (v) {
+					return v;
+				} : arguments[0];
+	
+				var result = this.clone(tr);
+				var _iteratorNormalCompletion21 = true;
+				var _didIteratorError21 = false;
+				var _iteratorError21 = undefined;
+	
+				try {
+					for (var _iterator21 = this.vertices()[Symbol.iterator](), _step21; !(_iteratorNormalCompletion21 = (_step21 = _iterator21.next()).done); _iteratorNormalCompletion21 = true) {
+						var _step21$value = _slicedToArray(_step21.value, 1);
+	
+						var x = _step21$value[0];
+						var _iteratorNormalCompletion22 = true;
+						var _didIteratorError22 = false;
+						var _iteratorError22 = undefined;
+	
+						try {
+							for (var _iterator22 = this.vertices()[Symbol.iterator](), _step22; !(_iteratorNormalCompletion22 = (_step22 = _iterator22.next()).done); _iteratorNormalCompletion22 = true) {
+								var _step22$value = _slicedToArray(_step22.value, 1);
+	
+								var y = _step22$value[0];
+	
+								if (result.hasEdge(x, y)) {
+									var _iteratorNormalCompletion23 = true;
+									var _didIteratorError23 = false;
+									var _iteratorError23 = undefined;
+	
+									try {
+										for (var _iterator23 = this.vertices()[Symbol.iterator](), _step23; !(_iteratorNormalCompletion23 = (_step23 = _iterator23.next()).done); _iteratorNormalCompletion23 = true) {
+											var _step23$value = _slicedToArray(_step23.value, 1);
+	
+											var z = _step23$value[0];
+	
+											if (result.hasPath(y, z)) {
+												result.removeEdge(x, z);
+											}
+										}
+									} catch (err) {
+										_didIteratorError23 = true;
+										_iteratorError23 = err;
+									} finally {
+										try {
+											if (!_iteratorNormalCompletion23 && _iterator23["return"]) {
+												_iterator23["return"]();
+											}
+										} finally {
+											if (_didIteratorError23) {
+												throw _iteratorError23;
+											}
+										}
+									}
+								}
+							}
+						} catch (err) {
+							_didIteratorError22 = true;
+							_iteratorError22 = err;
+						} finally {
+							try {
+								if (!_iteratorNormalCompletion22 && _iterator22["return"]) {
+									_iterator22["return"]();
+								}
+							} finally {
+								if (_didIteratorError22) {
+									throw _iteratorError22;
+								}
+							}
+						}
+					}
+				} catch (err) {
+					_didIteratorError21 = true;
+					_iteratorError21 = err;
+				} finally {
+					try {
+						if (!_iteratorNormalCompletion21 && _iterator21["return"]) {
+							_iterator21["return"]();
+						}
+					} finally {
+						if (_didIteratorError21) {
+							throw _iteratorError21;
+						}
+					}
+				}
+	
+				return result;
+			}
+		}]);
+	
+		return Graph;
+	})();
+	
+	exports["default"] = Graph;
+	
+	//  ////////////////////////////////////////////////////////////////////////////////////////////////
+	//  // Errors //////////////////////////////////////////////////////////////////////////////////////
+	//  ////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * @class
+	 * @classdesc This type of error is thrown when specific vertices are expected not to exist, but do.
+	 * @extends Error
+	 */
+	Graph.VertexExistsError = (function (_Error) {
+		function VertexExistsError(key, value) {
+			_classCallCheck(this, VertexExistsError);
+	
+			var _this = new _Error();
+	
+			_this.__proto__ = VertexExistsError.prototype;
+	
+			/**
+	   * the set of relevant vertices
+	   * @public
+	   * @constant vertices
+	   * @memberof Graph.VertexExistsError
+	   * @instance
+	   * @type {Set.<{ key: string, value }>}
+	   */
+			_this.vertices = new Set();
+			_this.v(key, value);
+			return _this;
+		}
+	
+		_inherits(VertexExistsError, _Error);
+	
+		_createClass(VertexExistsError, [{
+			key: "v",
+			value: function v(key, value) {
+				this.vertices.add({ key: key, value: value });
+				this._refreshMessage();
+				return this;
+			}
+		}, {
+			key: "_refreshMessage",
+			value: function _refreshMessage() {
+				var aVertices = this.vertices.size === 1 ? "a vertex" : "vertices";
+				this.message = "This graph has " + aVertices + " '" + [].concat(_toConsumableArray(this.vertices)).map(function (v) {
+					return v.key;
+				}).join("', '") + "'";
+			}
+		}]);
+	
+		return VertexExistsError;
+	})(Error);
+	
+	/**
+	 * @class
+	 * @classdesc This type of error is thrown when specific vertices are expected to exist, but don't.
+	 * @extends Error
+	 */
+	Graph.VertexNotExistsError = (function (_Error2) {
+		function VertexNotExistError(key) {
+			_classCallCheck(this, VertexNotExistError);
+	
+			var _this2 = new _Error2();
+	
+			_this2.__proto__ = VertexNotExistError.prototype;
+	
+			/**
+	   * the set of relevant vertices
+	   * @public
+	   * @constant vertices
+	   * @memberof Graph.VertexNotExistsError
+	   * @instance
+	   * @type {Set.<{ key: string }>}
+	   */
+			_this2.vertices = new Set();
+			_this2.v(key);
+			return _this2;
+		}
+	
+		_inherits(VertexNotExistError, _Error2);
+	
+		_createClass(VertexNotExistError, [{
+			key: "v",
+			value: function v(key) {
+				this.vertices.add({ key: key });
+				this._refreshMessage();
+				return this;
+			}
+		}, {
+			key: "_refreshMessage",
+			value: function _refreshMessage() {
+				var aVertices = this.vertices.size === 1 ? "a vertex" : "vertices";
+				this.message = "This graph does not have " + aVertices + " '" + [].concat(_toConsumableArray(this.vertices)).map(function (v) {
+					return v.key;
+				}).join("', '") + "'";
+			}
+		}]);
+	
+		return VertexNotExistError;
+	})(Error);
+	
+	/**
+	 * @class
+	 * @classdesc This type of error is thrown when specific edges are expected not to exist, but do.
+	 * @extends Error
+	 */
+	Graph.EdgeExistsError = (function (_Error3) {
+		function EdgeExistsError(from, to, value) {
+			_classCallCheck(this, EdgeExistsError);
+	
+			var _this3 = new _Error3();
+	
+			_this3.__proto__ = EdgeExistsError.prototype;
+	
+			/**
+	   * the set of relevant edges
+	   * @public
+	   * @constant edges
+	   * @memberof Graph.EdgeExistsError
+	   * @instance
+	   * @type {Set.<{ from: string, to: string, value }>}
+	   */
+			_this3.edges = new Set();
+			_this3.e(from, to, value);
+			return _this3;
+		}
+	
+		_inherits(EdgeExistsError, _Error3);
+	
+		_createClass(EdgeExistsError, [{
+			key: "e",
+			value: function e(from, to, value) {
+				this.edges.add({ from: from, to: to, value: value });
+				this._refreshMessage();
+				return this;
+			}
+		}, {
+			key: "_refreshMessage",
+			value: function _refreshMessage() {
+				var edges = [];
+				var _iteratorNormalCompletion24 = true;
+				var _didIteratorError24 = false;
+				var _iteratorError24 = undefined;
+	
+				try {
+					for (var _iterator24 = this.edges[Symbol.iterator](), _step24; !(_iteratorNormalCompletion24 = (_step24 = _iterator24.next()).done); _iteratorNormalCompletion24 = true) {
+						var _step24$value = _step24.value;
+						var from = _step24$value.from;
+						var to = _step24$value.to;
+	
+						edges.push("('" + from + "', '" + to + "')");
+					}
+				} catch (err) {
+					_didIteratorError24 = true;
+					_iteratorError24 = err;
+				} finally {
+					try {
+						if (!_iteratorNormalCompletion24 && _iterator24["return"]) {
+							_iterator24["return"]();
+						}
+					} finally {
+						if (_didIteratorError24) {
+							throw _iteratorError24;
+						}
+					}
+				}
+	
+				var anEdges = edges.length === 1 ? "an edge" : "edges";
+				this.message = "This graph has " + anEdges + " " + edges.join(", ");
+			}
+		}]);
+	
+		return EdgeExistsError;
+	})(Error);
+	
+	/**
+	 * @class
+	 * @classdesc This type of error is thrown when specific edges are expected to exist, but don't.
+	 * @extends Error
+	 */
+	Graph.EdgeNotExistsError = (function (_Error4) {
+		function EdgeNotExistsError(from, to) {
+			_classCallCheck(this, EdgeNotExistsError);
+	
+			var _this4 = new _Error4();
+	
+			_this4.__proto__ = EdgeNotExistsError.prototype;
+	
+			/**
+	   * the set of relevant edges
+	   * @public
+	   * @constant edges
+	   * @memberof Graph.EdgeNotExistsError
+	   * @instance
+	   * @type {Set.<{ from: string, to: string }>}
+	   */
+			_this4.edges = new Set();
+			_this4.e(from, to);
+			return _this4;
+		}
+	
+		_inherits(EdgeNotExistsError, _Error4);
+	
+		_createClass(EdgeNotExistsError, [{
+			key: "e",
+			value: function e(from, to) {
+				this.edges.add({ from: from, to: to });
+				this._refreshMessage();
+				return this;
+			}
+		}, {
+			key: "_refreshMessage",
+			value: function _refreshMessage() {
+				var edges = [];
+				var _iteratorNormalCompletion25 = true;
+				var _didIteratorError25 = false;
+				var _iteratorError25 = undefined;
+	
+				try {
+					for (var _iterator25 = this.edges[Symbol.iterator](), _step25; !(_iteratorNormalCompletion25 = (_step25 = _iterator25.next()).done); _iteratorNormalCompletion25 = true) {
+						var _step25$value = _step25.value;
+						var from = _step25$value.from;
+						var to = _step25$value.to;
+	
+						edges.push("('" + from + "', '" + to + "')");
+					}
+				} catch (err) {
+					_didIteratorError25 = true;
+					_iteratorError25 = err;
+				} finally {
+					try {
+						if (!_iteratorNormalCompletion25 && _iterator25["return"]) {
+							_iterator25["return"]();
+						}
+					} finally {
+						if (_didIteratorError25) {
+							throw _iteratorError25;
+						}
+					}
+				}
+	
+				var anEdges = edges.length === 1 ? "an edge" : "edges";
+				this.message = "This graph does not have " + anEdges + " " + edges.join(", ");
+			}
+		}]);
+	
+		return EdgeNotExistsError;
+	})(Error);
+	
+	/**
+	 * @class
+	 * @classdesc This type of error is thrown when a vertex is expected not to have connected edges, but does.
+	 * @extends Error
+	 */
+	Graph.HasConnectedEdgesError = (function (_Error5) {
+		function HasConnectedEdgesError(key) {
+			_classCallCheck(this, HasConnectedEdgesError);
+	
+			var _this5 = new _Error5();
+	
+			_this5.__proto__ = HasConnectedEdgesError.prototype;
+	
+			/**
+	   * the key of the relevant vertex
+	   * @public
+	   * @constant key
+	   * @memberof Graph.HasConnectedEdgesError
+	   * @instance
+	   * @type {string}
+	   */
+			_this5.key = key;
+			_this5.message = "The '" + key + "' vertex has connected edges";
+			return _this5;
+		}
+	
+		_inherits(HasConnectedEdgesError, _Error5);
+	
+		return HasConnectedEdgesError;
+	})(Error);
+	
+	/**
+	 * @class
+	 * @classdesc This type of error is thrown when a graph is expected not to have a directed cycle, but does.
+	 * @extends Error
+	 */
+	Graph.CycleError = (function (_Error6) {
+		function CycleError(cycle) {
+			_classCallCheck(this, CycleError);
+	
+			var _this6 = new _Error6();
+	
+			_this6.__proto__ = CycleError.prototype;
+	
+			/**
+	   * the vertices involved in the cycle
+	   * @public
+	   * @constant cycle
+	   * @memberof Graph.CycleError
+	   * @instance
+	   * @type {Array.<string>}
+	   */
+			_this6.cycle = cycle;
+			_this6.message = "This graph contains a cycle: " + cycle;
+			return _this6;
+		}
+	
+		_inherits(CycleError, _Error6);
+	
+		return CycleError;
+	})(Error);
+	module.exports = exports["default"];
+	// stack
+
+/***/ },
+/* 107 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// threejs.org/license
@@ -37135,7 +39915,7 @@
 
 
 /***/ },
-/* 103 */
+/* 108 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -37932,37 +40712,37 @@
 
 
 /***/ },
-/* 104 */
+/* 109 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = "data:image/png;base64,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"
 
 /***/ },
-/* 105 */
+/* 110 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = "data:image/png;base64,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"
 
 /***/ },
-/* 106 */
+/* 111 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = "data:image/png;base64,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"
 
 /***/ },
-/* 107 */
+/* 112 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = "data:image/png;base64,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"
 
 /***/ },
-/* 108 */
+/* 113 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = "data:image/png;base64,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"
 
 /***/ },
-/* 109 */
+/* 114 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process, global, setImmediate) {/* @preserve
@@ -43062,10 +45842,10 @@
 	
 	},{}]},{},[4])(4)
 	});                    ;if (typeof window !== 'undefined' && window !== null) {                               window.P = window.Promise;                                                     } else if (typeof self !== 'undefined' && self !== null) {                             self.P = self.Promise;                                                         }
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(122), (function() { return this; }()), __webpack_require__(121).setImmediate))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(126), (function() { return this; }()), __webpack_require__(127).setImmediate))
 
 /***/ },
-/* 110 */
+/* 115 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = function() {
@@ -43086,12 +45866,12 @@
 	}
 
 /***/ },
-/* 111 */
+/* 116 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(109), __webpack_require__(70), __webpack_require__(117), __webpack_require__(118), __webpack_require__(63), __webpack_require__(64)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, U, KefirSignalHandler, uniqueID, deltaJs, defer) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(114), __webpack_require__(71), __webpack_require__(122), __webpack_require__(123), __webpack_require__(64), __webpack_require__(65)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, U, KefirSignalHandler, uniqueID, deltaJs, defer) {
 		'use strict';
 	
 		return deltaJs.selected.then(function () {
@@ -43434,46 +46214,16 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 112 */
+/* 117 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(113);
+	var content = __webpack_require__(118);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(69)(content, {});
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		module.hot.accept("!!/home/mhelvens/Projects/apinatomy-core/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy-core/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy-core/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy-core/src/D3Vertex.scss", function() {
-			var newContent = require("!!/home/mhelvens/Projects/apinatomy-core/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy-core/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy-core/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy-core/src/D3Vertex.scss");
-			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-			update(newContent);
-		});
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 113 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(110)();
-	exports.push([module.id, "", ""]);
-
-/***/ },
-/* 114 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(115);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(69)(content, {});
+	var update = __webpack_require__(70)(content, {});
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
@@ -43487,9 +46237,39 @@
 	}
 
 /***/ },
-/* 115 */
-113,
-/* 116 */
+/* 118 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(115)();
+	exports.push([module.id, "", ""]);
+
+/***/ },
+/* 119 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(120);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(70)(content, {});
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		module.hot.accept("!!/home/mhelvens/Projects/apinatomy-core/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy-core/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy-core/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy-core/src/D3Vertex.scss", function() {
+			var newContent = require("!!/home/mhelvens/Projects/apinatomy-core/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy-core/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy-core/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy-core/src/D3Vertex.scss");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 120 */
+118,
+/* 121 */
 /***/ function(module, exports, __webpack_require__) {
 
 	(function e(t,r){if(true)module.exports=r();else if(typeof define==="function"&&define.amd)define(r);else if(typeof exports==="object")exports["DeltaJs"]=r();else t["DeltaJs"]=r()})(this,function(){return function(e){var t={};function r(n){if(t[n])return t[n].exports;var i=t[n]={exports:{},id:n,loaded:false};e[n].call(i.exports,i,i.exports,r);i.loaded=true;return i.exports}r.m=e;r.c=t;r.p="";return r(0)}([function(e,t,r){r(1);e.exports=r(2)},function(e,t,r){e.exports=r(8)},function(e,t,r){"use strict";var n=function(e){return e&&e.__esModule?e:{"default":e}};Object.defineProperty(t,"__esModule",{value:true});var i=r(3);var a=r(4);var o=n(a);var u=r(5);var s=r(6);var f=n(s);var l=r(7);i.extend(o["default"],{ReadableTarget:u.ReadableTarget,WritableTarget:u.WritableTarget});i.extend(o["default"],{Path:f["default"]});i.extend(o["default"],{ApplicationError:l.ApplicationError,PreconditionFailure:l.PreconditionFailure,MultipleOverloadsApplicationError:l.MultipleOverloadsApplicationError,NoOverloadsApplicationError:l.NoOverloadsApplicationError,CompositionError:l.CompositionError,MultipleOverloadsCompositionError:l.MultipleOverloadsCompositionError,ConstraintFailure:l.ConstraintFailure,ApplicationOrderCycle:l.ApplicationOrderCycle,UnresolvedDeltaConflict:l.UnresolvedDeltaConflict,MultipleActiveProxiesError:l.MultipleActiveProxiesError});t["default"]=o["default"];e.exports=t["default"]},function(e,t,r){"use strict";var n=function(e){if(Array.isArray(e)){for(var t=0,r=Array(e.length);t<e.length;t++)r[t]=e[t];return r}else{return Array.from(e)}};Object.defineProperty(t,"__esModule",{value:true});t.extend=i;t.o=o;t.a=u;t.m=s;t.s=f;t.assert=l;t.isUndefined=c;t.isDefined=v;t.repeat=d;t.indent=h;t.oncePer=y;t.mapEqual=w;t.customIndexOf=b;t.arraysEqual=x;t.arraysHaveSameElements=_;t.swapLastTwo=O;function i(e){for(var t=arguments.length,r=Array(t>1?t-1:0),n=1;n<t;n++){r[n-1]=arguments[n]}var i=true;var a=false;var o=undefined;try{for(var u=r[Symbol.iterator](),s;!(i=(s=u.next()).done);i=true){var f=s.value;var l=true;var c=false;var v=undefined;try{for(var d=Object.keys(f)[Symbol.iterator](),h;!(l=(h=d.next()).done);l=true){var p=h.value;Object.defineProperty(e,p,Object.getOwnPropertyDescriptor(f,p))}}catch(y){c=true;v=y}finally{try{if(!l&&d["return"]){d["return"]()}}finally{if(c){throw v}}}}}catch(y){a=true;o=y}finally{try{if(!i&&u["return"]){u["return"]()}}finally{if(a){throw o}}}return e}var a=function P(e){return function(t){for(var r=arguments.length,i=Array(r>1?r-1:0),a=1;a<r;a++){i[a-1]=arguments[a]}var o=i.slice(0,-1);var u=i[i.length-1];if(o.length===0){return t}var s=e.apply(undefined,[t].concat(n(o.slice(0,-1))));if(s instanceof Map){if(c(s.get(o[o.length-1]))){s.set(o[o.length-1],u)}return s.get(o[o.length-1])}else{if(c(s[o[o.length-1]])){s[o[o.length-1]]=u}return s[o[o.length-1]]}}};function o(e){for(var t=arguments.length,r=Array(t>1?t-1:0),n=1;n<t;n++){r[n-1]=arguments[n]}return a(o).apply(undefined,[e].concat(r,[{}]))}function u(e){for(var t=arguments.length,r=Array(t>1?t-1:0),n=1;n<t;n++){r[n-1]=arguments[n]}return a(o).apply(undefined,[e].concat(r,[[]]))}function s(e){for(var t=arguments.length,r=Array(t>1?t-1:0),n=1;n<t;n++){r[n-1]=arguments[n]}return a(s).apply(undefined,[e].concat(r,[new Map]))}function f(e){for(var t=arguments.length,r=Array(t>1?t-1:0),n=1;n<t;n++){r[n-1]=arguments[n]}return a(s).apply(undefined,[e].concat(r,[new Set]))}function l(e,t){if(!e){throw new Error(t||"Assertion failed")}}function c(e){return typeof e==="undefined"}function v(e){return typeof e!=="undefined"}function d(e,t){return new Array(e+1).join(t)}function h(e,t){var r=arguments[2]===undefined?" ":arguments[2];return e.replace(/^(?!\s*$)/gm,d(t,r))}var p={};function y(e,t,r){var n=function a(e){if(!p[t]){p[t]=Symbol("once per:"+t)}if(e[p[t]]){return}e[p[t]]=true;return r.call(e,e)};if(typeof e==="string"){var i=[e,t];t=i[0];r=i[1];return n}else{return n(e)}}var g=function E(e,t){return function(r,n){return r.type===e&&n.type===t}};t.t=g;var m=function k(e){return function(t,r){if(typeof r==="string"){r=function(e){return function(t){return t[e]}}(r)}return function(n,i){return new e.Delta[t](r&&r({d1:n,d2:i,p1:n.arg,p2:i.arg}))}}};t.define_d=m;function w(e,t){var r=arguments[2]===undefined?function(e,t){return e===t}:arguments[2];if(e.size!==t.size){return false}var i=[].concat(n(e.keys())).sort();var a=[].concat(n(t.keys())).sort();for(var o=0;o<i.length;++o){if(i[o]!==a[o]){return false}if(!r(e.get(i[o]),t.get(a[o]))){return false}}return true}function b(e,t){var r=arguments[2]===undefined?function(e,t){return e===t}:arguments[2];for(var n=0;n<e.length;++n){if(r(e[n],t)){return n}}return-1}function x(e,t){var r=arguments[2]===undefined?function(e,t){return e===t}:arguments[2];if(e.length!==t.length){return false}for(var n=0;n<e.length;++n){if(!r(e[n],t[n])){return false}}return true}function _(e,t){var r=arguments[2]===undefined?function(e,t){return e===t}:arguments[2];if(e.length!==t.length){return false}var i=[].concat(n(t));for(var a=0;a<e.length;++a){var o=false;for(var u=0;u<i.length;++u){if(r(e[a],i[u])){i.splice(u,1);o=true;break}}if(!o){return false}}return true}function O(e){return e.slice(0,-2).concat([e[e.length-1],e[e.length-2]])}},function(e,t,r){"use strict";var n=function(e){return e&&e.__esModule?e:{"default":e}};var i=function(e,t){if(!(e instanceof t)){throw new TypeError("Cannot call a class as a function")}};Object.defineProperty(t,"__esModule",{value:true});var a=r(3);var o=r(6);var u=n(o);var s=r(5);var f=r(9);var l=n(f);var c=r(10);var v=n(c);var d=r(11);var h=n(d);var p=r(12);var y=n(p);var g=r(13);var m=n(g);var w=r(14);var b=n(w);var x=r(15);var _=n(x);var O=r(16);var P=n(O);var E=r(17);var k=n(E);var S=r(18);var j=n(S);var A=r(19);var C=n(A);var D=r(20);var M=n(D);var T=function F(){i(this,F);l["default"](this);M["default"](this);v["default"](this);h["default"](this);y["default"](this);m["default"](this);b["default"](this);_["default"](this);P["default"](this);k["default"](this);j["default"](this);C["default"](this)};t["default"]=T;e.exports=t["default"]},function(e,t,r){"use strict";var n=function c(e,t,r){var n=Object.getOwnPropertyDescriptor(e,t);if(n===undefined){var i=Object.getPrototypeOf(e);if(i===null){return undefined}else{return c(i,t,r)}}else if("value"in n){return n.value}else{var a=n.get;if(a===undefined){return undefined}return a.call(r)}};var i=function(e,t){if(typeof t!=="function"&&t!==null){throw new TypeError("Super expression must either be null or a function, not "+typeof t)}e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:false,writable:true,configurable:true}});if(t)e.__proto__=t};var a=function(e,t){if(!(e instanceof t)){throw new TypeError("Cannot call a class as a function")}};var o=function(){function e(e,t){for(var r=0;r<t.length;r++){var n=t[r];n.enumerable=n.enumerable||false;n.configurable=true;if("value"in n)n.writable=true;Object.defineProperty(e,n.key,n)}}return function(t,r,n){if(r)e(t.prototype,r);if(n)e(t,n);return t}}();Object.defineProperty(t,"__esModule",{value:true});t.wt=f;t.rt=l;var u=function(){function e(t){a(this,e);this._val=t}o(e,[{key:"getValue",value:function t(){return this._val}},{key:"value",get:function(){return this.getValue()},set:function(e){this.setValue(e)}}]);return e}();t.ReadableTarget=u;var s=function(e){function t(e,r){a(this,t);n(Object.getPrototypeOf(t.prototype),"constructor",this).call(this);this._obj=e;this._prop=r}i(t,e);o(t,[{key:"getValue",value:function r(){return this._obj[this._prop]}},{key:"setValue",value:function u(e){this._obj[this._prop]=e}},{key:"delete",value:function s(){delete this._obj[this._prop]}}]);return t}(u);t.WritableTarget=s;function f(e,t){return new s(e,t)}function l(e,t){return new u(e,t)}},function(e,t,r){"use strict";var n=function(e,t){if(Array.isArray(e)){return e}else if(Symbol.iterator in Object(e)){var r=[];var n=true;var i=false;var a=undefined;try{for(var o=e[Symbol.iterator](),u;!(n=(u=o.next()).done);n=true){r.push(u.value);if(t&&r.length===t)break}}catch(s){i=true;a=s}finally{try{if(!n&&o["return"])o["return"]()}finally{if(i)throw a}}return r}else{throw new TypeError("Invalid attempt to destructure non-iterable instance")}};var i=function(e,t){if(!(e instanceof t)){throw new TypeError("Cannot call a class as a function")}};var a=function(){function e(e,t){for(var r=0;r<t.length;r++){var n=t[r];n.enumerable=n.enumerable||false;n.configurable=true;if("value"in n)n.writable=true;Object.defineProperty(e,n.key,n)}}return function(t,r,n){if(r)e(t.prototype,r);if(n)e(t,n);return t}}();Object.defineProperty(t,"__esModule",{value:true});var o=r(3);var u=function(){function e(){var t=arguments[0]===undefined?"":arguments[0];i(this,e);var r=t.match(/^([.#]?)(\w*|\(\w+\))(.*)$/);o.assert(r,"The path string '"+t+"' is not well formed.");var a=n(r,4);var u=a[1];var s=a[2];var f=a[3];if(u==="#"){this.set(new e(".(instance)."+s+""+f))}else if(s!==""){this._prop=s;if(f!==""){this._rest=new e(f)}}}a(e,[{key:"set",value:function t(e){this._prop=e._prop;this._rest=e._rest}},{key:"prop",get:function(){return this._prop}},{key:"rest",get:function(){return this._rest}},{key:"toString",value:function r(){var e="";if(o.isDefined(this.prop)){e+=this.prop;if(o.isDefined(this.rest)){e+="."+this.rest.toString()}}return e}}]);return e}();t["default"]=u;e.exports=t["default"]},function(e,t,r){"use strict";var n=function(e){if(Array.isArray(e)){for(var t=0,r=Array(e.length);t<e.length;t++)r[t]=e[t];return r}else{return Array.from(e)}};var i=Function.prototype.bind;var a=Array.prototype.slice;var o=function w(e,t,r){var n=Object.getOwnPropertyDescriptor(e,t);if(n===undefined){var i=Object.getPrototypeOf(e);if(i===null){return undefined}else{return w(i,t,r)}}else if("value"in n){return n.value}else{var a=n.get;if(a===undefined){return undefined}return a.call(r)}};var u=function(e,t){if(!(e instanceof t)){throw new TypeError("Cannot call a class as a function")}};var s=function(e,t){if(typeof t!=="function"&&t!==null){throw new TypeError("Super expression must either be null or a function, not "+typeof t)}e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:false,writable:true,configurable:true}});if(t)e.__proto__=t};Object.defineProperty(t,"__esModule",{value:true});var f=function(e){function t(){u(this,t);if(e!=null){var r=new(i.apply(e,[null].concat(a.call(arguments))));r.__proto__=t.prototype;return r}return r}s(t,e);return t}(Error);t.ApplicationError=f;var l=function(e){function t(e,r){u(this,t);o(Object.getPrototypeOf(t.prototype),"constructor",this).call(this);this.name="PreconditionFailure";this.message="This delta of type '"+e.type+"' cannot apply to this value of type '"+typeof r+"'.";this.delta=e;this.value=r}s(t,e);return t}(f);t.PreconditionFailure=l;var c=function(e){function t(e,r){var n=arguments[2]===undefined?[]:arguments[2];u(this,t);o(Object.getPrototypeOf(t.prototype),"constructor",this).call(this,e,r);this.name="MultipleOverloadsApplicationError";this.message="None of the delta-types "+e.overloads.map(function(e){return"'"+e.type+"'"}).join(",")+" can apply to this value of type '"+typeof r+"'."+n.map(function(e){return"\n-- "+e.message}).join("");this.errors=n}s(t,e);return t}(l);t.MultipleOverloadsApplicationError=c;var v=function(e){function t(e,r){u(this,t);o(Object.getPrototypeOf(t.prototype),"constructor",this).call(this,e,r);this.name="NoOverloadsApplicationError";this.message="This delta of type '"+e.type+"' has no specific deltas assigned to it, so it cannot apply to this value of type '"+typeof r+"."}s(t,e);return t}(l);t.NoOverloadsApplicationError=v;var d=function(e){function t(r,n){u(this,t);var i=new e;i.__proto__=t.prototype;i.name="CompositionError";i.message="This delta of type '"+r.type+"' cannot be composed with this other delta of type '"+n.type+"'.";i.delta1=r;i.delta2=n;return i}s(t,e);return t}(Error);t.CompositionError=d;var h=function(e){function t(e,r){var n=arguments[2]===undefined?[]:arguments[2];u(this,t);o(Object.getPrototypeOf(t.prototype),"constructor",this).call(this,e,r);this.name="MultipleOverloadsCompositionError";this.message="There are no overloads to compose this delta of type '"+e.type+"' with this other delta of type '"+r.type+"'."+n.map(function(e){return"\n-- "+e.message}).join("");this.errors=n}s(t,e);return t}(d);t.MultipleOverloadsCompositionError=h;var p=function(e){function t(r){u(this,t);var n=new e;n.__proto__=t.prototype;n.name="ConstraintFailure";n.message="The feature '"+r.name+"' is both selected and excluded by its constraints.";n.feature=r;return n}s(t,e);return t}(Error);t.ConstraintFailure=p;var y=function(e){function t(r){u(this,t);var n=new e;n.__proto__=t.prototype;n.name="ApplicationOrderCycle";n.message="The new application order created a cycle: "+r+"}";n.cycle=r;return n}s(t,e);return t}(Error);t.ApplicationOrderCycle=y;var g=function(e){function t(e){u(this,t);o(Object.getPrototypeOf(t.prototype),"constructor",this).call(this);this.name="UnresolvedDeltaConflict";e=[].concat(n(e));var r=e.slice(0,-1).map(function(e){return"'"+e+"'"}).join(",");this.message="There is an unresolved conflict between deltas "+r+" and '"+e[e.length-1]+"'.";this.deltaNames=e}s(t,e);return t}(f);t.UnresolvedDeltaConflict=g;var m=function(e){function t(){u(this,t);var r=new e;r.__proto__=t.prototype;r.name="MultipleActiveProxiesError";r.message="Only one Proxy per path can be active at any given time.";return r}s(t,e);return t}(Error);t.MultipleActiveProxiesError=m},function(e,t,r){e.exports=r(21)},function(e,t,r){"use strict";var n=Function.prototype.bind;Object.defineProperty(t,"__esModule",{value:true});var i=r(3);t["default"]=i.oncePer("operation types",function(e){i.oncePer(e.constructor,"operation types",function(e){i.extend(e.prototype,{newOperationType:function t(r,a){var o=arguments[2]===undefined?null:arguments[2];i.assert(r[0]===r[0].toUpperCase(),"Names of delta operation classes must start with a capital letter - '"+r+"' does not.");i.assert(i.isUndefined(this.Delta[r]),"The '"+r+"' operation type already exists.");this.Delta[r]=a;a.Proxy=o;var u=a.prototype.applyTo||function(){};i.extend(a.prototype,{applyTo:function y(t){var r=arguments[1]===undefined?{}:arguments[1];if(!this.selected){return}if(!(t instanceof e.ReadableTarget)){t=new e.ReadableTarget(t)}if(i.isUndefined(r.weak)){r.weak=false}var n=this.evaluatePrecondition(t,r);if(n!==true){throw n}u.call(this,t,r)},type:r});var s=r[0].toLowerCase()+r.slice(1);var f=true;var l=false;var c=undefined;try{for(var v=(a.prototype.methods||[s])[Symbol.iterator](),d;!(f=(d=v.next()).done);f=true){var h=d.value;this.ContainerProxy.newProxyMethod(h,function(){for(var e=arguments.length,t=Array(e),r=0;r<e;r++){t[r]=arguments[r]}return new(n.apply(a,[null].concat(t)))})}}catch(p){l=true;c=p}finally{try{if(!f&&v["return"]){v["return"]()}}finally{if(l){throw c}}}return a}})})});e.exports=t["default"]},function(e,t,r){"use strict";var n=function(e){return e&&e.__esModule?e:{"default":e}};var i=function(e){if(Array.isArray(e)){for(var t=0,r=Array(e.length);t<e.length;t++)r[t]=e[t];return r}else{return Array.from(e)}};var a=function(e,t,r){return Object.defineProperty(e,t,{value:r,enumerable:true,configurable:true,writable:true})};var o=function(e,t){if(!(e instanceof t)){throw new TypeError("Cannot call a class as a function")}};var u=function(){function e(e,t){for(var r=0;r<t.length;r++){var n=t[r];n.enumerable=n.enumerable||false;n.configurable=true;if("value"in n)n.writable=true;Object.defineProperty(e,n.key,n)}}return function(t,r,n){if(r)e(t.prototype,r);if(n)e(t,n);return t}}();Object.defineProperty(t,"__esModule",{value:true});var s=r(3);var f=r(5);var l=r(7);var c=r(22);var v=n(c);t["default"]=s.oncePer("Delta",function(e){e.Delta=function(){function t(){for(var r=arguments.length,n=Array(r),i=0;i<r;i++){n[i]=arguments[i]}o(this,t);this.id=++e.Delta._nextID;this.args=n}u(t,[{key:"arg",get:function(){return this.args[0]},set:function(e){this.args[0]=e}},{key:"clone",value:function r(){return new this.constructor(this.arg)}},{key:"evaluatePrecondition",value:function n(e){var t=arguments[1]===undefined?{}:arguments[1];var r=t.weak;if(this.precondition){var n=this.precondition(e,t);if(n instanceof l.PreconditionFailure){return n}else if(!n){return new l.PreconditionFailure(this,e.value)}}return true}},{key:"appliedTo",value:function i(e){var t=arguments[1]===undefined?{}:arguments[1];if(e instanceof f.ReadableTarget){e=e.value}if(typeof e.clone==="function"){e=e.clone()}var r={value:e};this.applyTo(f.wt(r,"value"),t);return r.value}},{key:"toString",value:function a(){var e=arguments[0]===undefined?{}:arguments[0];var t=this.type;if(e.targetProp){t+=" ‹"+e.targetProp+"›"}if(this.args.length>0){t+=": "+this.args.map(function(e){return JSON.stringify(e)}).join(",")}if(e.debug){t+=" ("+this.id+")"}return t}}]);return t}();e.Delta._nextID=0;var t=new Map;function r(r,n,o){var u;var f=arguments[3]===undefined?{}:arguments[3];if(s.isUndefined(f.commutative)){f.commutative=false}if(s.isUndefined(f.arity)){f.arity=2}if(s.isUndefined(f.onTrue)){f.onTrue=function(){for(var e=arguments.length,t=Array(e),r=0;r<e;r++){t[r]=arguments[r]}return t.slice(0,f.arity)}}if(s.isUndefined(f.onFalse)){f.onFalse=function(){throw new Error("Failure in finding a "+r+"!")}}if(f.onDefault==="onTrue"){f.onDefault=f.onTrue}else if(f.onDefault==="onFalse"||s.isUndefined(f.onDefault)){f.onDefault=f.onFalse}s.extend(f,{name:r,staticMethodName:n,methodName:o,creationMethodName:"new"+r[0].toUpperCase()+""+r.slice(1),storageSymbol:Symbol("multiDispatch:"+r)});t.set(r,f);var l=f.creationMethodName;var c=f.storageSymbol;var v=f.onTrue;var d=f.onFalse;var h=f.onDefault;var p=f.commutative;var y=f.arity;s.extend(e.Delta,(u={},a(u,c,[]),a(u,l,function(t,r){var n=arguments[2]===undefined?{}:arguments[2];if(s.isUndefined(n.weak)){n.weak=false}if(s.isUndefined(e.Delta[c])){e.Delta[c]=[]}e.Delta[c].push({precondition:t,value:r,options:n})}),a(u,n,function(){for(var t=arguments.length,r=Array(t),n=0;n<t;n++){r[n]=arguments[n]}var a=r.slice(0,y),o=r[y]||{};if(s.isUndefined(o.weak)){o.weak=false}var u=function S(){},f=false,l=false;if(s.isUndefined(e.Delta[c])){e.Delta[c]=[]}var g=true;var m=false;var w=undefined;try{for(var b=e.Delta[c][Symbol.iterator](),x;!(g=(x=b.next()).done);g=true){var _=x.value;var O=_.precondition;var P=_.value;var E=_.options;if(E.weak&&!o.weak){continue}if(O.apply(undefined,i(a))){u=P;f=true;break}else if(p&&O.apply(undefined,i(s.swapLastTwo(a)))){u=P;f=true;l=true;break}}}catch(k){m=true;w=k}finally{try{if(!g&&b["return"]){b["return"]()}}finally{if(m){throw w}}}if(!f){u=h}else if(u===false){u=d}else if(u===true){u=v}if(l){return u.apply(undefined,i(s.swapLastTwo(a)).concat([o]))}else{return u.apply(undefined,i(a).concat([o]))}}),u));s.extend(e.Delta.prototype,a({},o,function(){var t;for(var r=arguments.length,i=Array(r),a=0;a<r;a++){i[a]=arguments[a]}return(t=e.Delta)[n].apply(t,[this].concat(i))}));s.oncePer(e.constructor,"multiDispatch:"+r,function(){s.extend(e.constructor.prototype,a({},l,function(e,t){var r=arguments[2]===undefined?{}:arguments[2];return this.Delta[l](e,t,r)}))})}function n(r){for(var n=arguments.length,a=Array(n>1?n-1:0),o=1;o<n;o++){a[o-1]=arguments[o]}var u=t.get(r);var f=u.storageSymbol;var l=u.commutative;var c=true;var v=false;var d=undefined;try{for(var h=e.Delta[f][Symbol.iterator](),p;!(c=(p=h.next()).done);c=true){var y=p.value;var g=y.precondition;var m=y.value;if(g.apply(undefined,a)||l&&g.apply(undefined,i(s.swapLastTwo(a)))){return typeof m==="function"}}}catch(w){v=true;d=w}finally{try{if(!c&&h["return"]){h["return"]()}}finally{if(v){throw d}}}return false}r("composition","_binaryComposed","composedWith",{onTrue:function c(t,r,n){return new e.Delta.Composed([t,r],n)},onFalse:function d(e,t){throw new l.CompositionError(e,t)},onDefault:"onFalse"});e.Delta.composed=function h(){for(var t=arguments.length,r=Array(t),n=0;n<t;n++){r[n]=arguments[n]}var i=undefined,a=undefined;if(!(r[r.length-1]instanceof e.Delta)&&typeof r[r.length-1]!=="undefined"){a=r.slice(0,r.length-1);i=r[r.length-1]}else{a=r;i={}}return a.map(function(t){return t||new e.Delta.NoOp}).reduce(function(t,r){return e.Delta._binaryComposed(t,r,i)},new e.Delta.NoOp)};r("refinement","refines","refines",{onTrue:function p(e,t){return true},onFalse:function y(e,t){return false},onDefault:function g(e,t,r){return e.equals(t,r)}});r("equality","equal","equals",{onTrue:function m(e,t){return true},onFalse:function w(e,t){return false},onDefault:function b(e,t,r){if(n("refinement",e,t)){return e.refines(t,r)&&t.refines(e,r)}else{return e.type===t.type&&s.arraysEqual(e.args,t.args)}},commutative:true});r("commutation","commute","commutesWith",{onTrue:function x(e,t){return true},onFalse:function _(e,t){return false},onDefault:function O(e,t,r){return e.composedWith(t,r).equals(t.composedWith(e,r),r)},commutative:true});r("resolution","resolves","resolves",{onTrue:function P(e,t,r){return true},onFalse:function E(e,t,r){return false},onDefault:function k(t,r,n,i){return e.Delta.composed(r,n,t,i).equals(e.Delta.composed(n,r,t,i),i)},arity:3,commutative:true});v["default"](e)});e.exports=t["default"]},function(e,t,r){"use strict";var n=function(e){return e&&e.__esModule?e:{"default":e}};var i=function(e,t){if(!(e instanceof t)){throw new TypeError("Cannot call a class as a function")}};var a=function(){function e(e,t){for(var r=0;r<t.length;r++){var n=t[r];n.enumerable=n.enumerable||false;n.configurable=true;if("value"in n)n.writable=true;Object.defineProperty(e,n.key,n)}}return function(t,r,n){if(r)e(t.prototype,r);if(n)e(t,n);return t}}();var o=function h(e,t,r){var n=Object.getOwnPropertyDescriptor(e,t);if(n===undefined){var i=Object.getPrototypeOf(e);if(i===null){return undefined}else{return h(i,t,r)}}else if("value"in n){return n.value}else{var a=n.get;if(a===undefined){return undefined}return a.call(r)}};var u=function(e,t){if(typeof t!=="function"&&t!==null){throw new TypeError("Super expression must either be null or a function, not "+typeof t)}e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:false,writable:true,configurable:true}});if(t)e.__proto__=t};Object.defineProperty(t,"__esModule",{value:true});var s=r(3);var f=r(9);var l=n(f);var c=r(10);var v=n(c);var d=r(7);t["default"]=s.oncePer("Overloaded",function(e){l["default"](e);v["default"](e);e.newOperationType("Overloaded",function(e){function t(){for(var e=arguments.length,r=Array(e),n=0;n<e;n++){r[n]=arguments[n]}i(this,t);o(Object.getPrototypeOf(t.prototype),"constructor",this).apply(this,r);this.overloads=this.arg||[]}u(t,e);a(t,[{key:"clone",value:function r(){var e=o(Object.getPrototypeOf(t.prototype),"clone",this).call(this);e.overloads=this.overloads.map(function(e){return e.clone()});return e}},{key:"precondition",value:function n(e,t){var r=[];var n=this.overloads.some(function(n){var i=n.evaluatePrecondition(e,t);if(i!==true){r.push(i);return false}return true});if(!n){if(r.length===0){return new d.NoOverloadsApplicationError(this,e.value)}else if(r.length===1){return r[0]}else{return new d.MultipleOverloadsApplicationError(this,e.value,r)}}return true}},{key:"applyTo",value:function f(e){var t=arguments[1]===undefined?{}:arguments[1];var r=[];var n=this.overloads.some(function(n){var i=n.evaluatePrecondition(e);if(i!==true){r.push(i);return false}n.applyTo(e,t);return true});if(!n){if(r.length===0){throw new d.NoOverloadsApplicationError(this,e.value)}else if(r.length===1){throw r[0]}else{throw new d.MultipleOverloadsApplicationError(this,e.value,r)}}}},{key:"toString",value:function l(){var e=arguments[0]===undefined?{}:arguments[0];var r=o(Object.getPrototypeOf(t.prototype),"toString",this).call(this,e);var n=this.overloads.map(function(t){return t.toString(e)}).join("\n");r+="\n"+s.indent(n,4);return r}}]);return t}(e.Delta));e.newComposition(function(t,r){return t instanceof e.Delta.Overloaded||r instanceof e.Delta.Overloaded},function(t,r,n){var i=t instanceof e.Delta.Overloaded?t.overloads:[t];var a=r instanceof e.Delta.Overloaded?r.overloads:[r];var o=new e.Delta.Overloaded;var u=[];var s=true;var f=false;var l=undefined;try{for(var c=i[Symbol.iterator](),v;!(s=(v=c.next()).done);s=true){var h=v.value;var p=true;var y=false;var g=undefined;try{for(var m=a[Symbol.iterator](),w;!(p=(w=m.next()).done);p=true){var b=w.value;try{o.overloads.push(h.composedWith(b,n))}catch(x){u.push(x)}}}catch(_){y=true;g=_}finally{try{if(!p&&m["return"]){m["return"]()}}finally{if(y){throw g}}}}}catch(_){f=true;l=_}finally{try{if(!s&&c["return"]){c["return"]()}}finally{if(f){throw l}}}if(o.overloads.length===0){throw new d.MultipleOverloadsCompositionError(t,r,u)}return o});e.newEquality(s.t("Overloaded","Overloaded"),function(e,t,r){return s.arraysEqual(e.overloads,t.overloads,function(e,t){return e.equals(t,r)})});e.newCommutation(s.t("Overloaded","Overloaded"),function(e,t,r){for(var n=0;n<e.overloads.length;++n){if(!e.overloads[n].commutesWith(t.overloads[n],r)){return false}}return true})});e.exports=t["default"]},function(e,t,r){"use strict";var n=function(e){return e&&e.__esModule?e:{"default":e}};var i=function(e,t){if(Array.isArray(e)){return e}else if(Symbol.iterator in Object(e)){var r=[];var n=true;var i=false;var a=undefined;try{for(var o=e[Symbol.iterator](),u;!(n=(u=o.next()).done);n=true){r.push(u.value);if(t&&r.length===t)break}}catch(s){i=true;a=s}finally{try{if(!n&&o["return"])o["return"]()}finally{if(i)throw a}}return r}else{throw new TypeError("Invalid attempt to destructure non-iterable instance")}};var a=function(e,t){if(!(e instanceof t)){throw new TypeError("Cannot call a class as a function")}};var o=function(){function e(e,t){for(var r=0;r<t.length;r++){var n=t[r];n.enumerable=n.enumerable||false;n.configurable=true;if("value"in n)n.writable=true;Object.defineProperty(e,n.key,n)}}return function(t,r,n){if(r)e(t.prototype,r);if(n)e(t,n);return t}}();var u=function g(e,t,r){var n=Object.getOwnPropertyDescriptor(e,t);if(n===undefined){var i=Object.getPrototypeOf(e);if(i===null){return undefined}else{return g(i,t,r)}}else if("value"in n){return n.value}else{var a=n.get;if(a===undefined){return undefined}return a.call(r)}};var s=function(e,t){if(typeof t!=="function"&&t!==null){throw new TypeError("Super expression must either be null or a function, not "+typeof t)}e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:false,writable:true,configurable:true}});if(t)e.__proto__=t};Object.defineProperty(t,"__esModule",{value:true});var f=r(3);var l=r(6);var c=n(l);var v=r(5);var d=r(9);var h=n(d);var p=r(20);var y=n(p);t["default"]=f.oncePer("Modify",function(e){h["default"](e);y["default"](e);e.newOperationType("Modify",function(e){function t(){var e=this;for(var r=arguments.length,n=Array(r),i=0;i<r;i++){n[i]=arguments[i]}a(this,t);u(Object.getPrototypeOf(t.prototype),"constructor",this).apply(this,n);this.subDeltas=new Map(this.arg&&Object.keys(this.arg).map(function(t){return[t,e.arg[t]]}))}s(t,e);o(t,[{key:"clone",value:function r(){var e=u(Object.getPrototypeOf(t.prototype),"clone",this).call(this);var r=true;var n=false;var a=undefined;try{for(var o=this.subDeltas[Symbol.iterator](),s;!(r=(s=o.next()).done);r=true){var f=i(s.value,2);var l=f[0];var c=f[1];e.subDeltas.set(l,c.clone())}}catch(v){n=true;a=v}finally{try{if(!r&&o["return"]){o["return"]()}}finally{if(n){throw a}}}return e}},{key:"precondition",value:function n(e){var t=arguments[1]===undefined?{}:arguments[1];if(!(e.value instanceof Object)){return false}var r=true;var n=false;var a=undefined;try{for(var o=this.subDeltas[Symbol.iterator](),u;!(r=(u=o.next()).done);r=true){var s=i(u.value,2);var l=s[0];var c=s[1];if(!t.restrictToProperty||t.restrictToProperty===l){var d=c.evaluatePrecondition(v.wt(e.value,l),f.extend({},t,{restrictToProperty:null}));if(d!==true){return d}}}}catch(h){n=true;a=h}finally{try{if(!r&&o["return"]){o["return"]()}}finally{if(n){throw a}}}return true}},{key:"applyTo",value:function l(e){var t=arguments[1]===undefined?{}:arguments[1];var r=true;var n=false;var a=undefined;try{for(var o=this.subDeltas[Symbol.iterator](),u;!(r=(u=o.next()).done);r=true){var s=i(u.value,2);var l=s[0];var c=s[1];if(!t.restrictToProperty||t.restrictToProperty===l){c.applyTo(v.wt(e.value,l),f.extend({},t,{restrictToProperty:null}))}}}catch(d){n=true;a=d}finally{try{if(!r&&o["return"]){o["return"]()}}finally{if(n){throw a}}}}},{key:"toString",value:function c(){var e=arguments[0]===undefined?{}:arguments[0];var r=u(Object.getPrototypeOf(t.prototype),"toString",this).call(this,e);if(this.subDeltas.size>0){var n=this.subDeltas.entries().map(function(t){var r=i(t,2);var n=r[0];var a=r[1];return a.toString(f.extend({},e,{targetProp:n}))}).join("\n");r+="\n"+f.indent(n,4)}return r}}]);return t}(e.Delta),function(t){function r(){a(this,r);if(t!=null){t.apply(this,arguments)}}s(r,t);o(r,[{key:"processProxyArguments",value:function n(){for(var e=arguments.length,t=Array(e),r=0;r<e;r++){t[r]=arguments[r]}var n={};do{if(t.length===0){throw new Error("The argument list for this Modify.Proxy method is insufficient.")}var i=t.shift();if(typeof i==="string"){n.path=i}else{f.extend(n,i)}}while(!n.path);return{options:n,args:t}}},{key:"addOperation",value:function i(t,r){var n=r.path;if(!n.prop){throw new Error("Operations on a Modify.Proxy need to have a non-empty path.")}var i;if(n.rest){var a=f.extend({},r,{path:n.rest});var o=this.addChildProxy(n.prop,new e.Delta.Modify);i=o.addOperation(t,a)}else{i=this.addChildProxy(n.prop,t)}return i}},{key:"delta",value:function l(){var e=u(Object.getPrototypeOf(r.prototype),"delta",this).call(this);var t=true;var n=false;var i=undefined;try{for(var a=this.childKeys()[Symbol.iterator](),o;!(t=(o=a.next()).done);t=true){var s=o.value;e.subDeltas.set(s,this.childDelta(s))}}catch(f){n=true;i=f}finally{try{if(!t&&a["return"]){a["return"]()}}finally{if(n){throw i}}}return e}}]);return r}(e.ContainerProxy));e.newComposition(f.t("Modify","Modify"),function(t,r,n){var i=t.clone();var a=true;var o=false;var u=undefined;try{for(var s=r.subDeltas.keys()[Symbol.iterator](),f;!(a=(f=s.next()).done);a=true){var l=f.value;i.subDeltas.set(l,e.Delta.composed(i.subDeltas.get(l),r.subDeltas.get(l),n))}}catch(c){o=true;u=c}finally{try{if(!a&&s["return"]){s["return"]()}}finally{if(o){throw u}}}return i});e.newEquality(f.t("Modify","Modify"),function(e,t){return f.mapEqual(e.subDeltas,t.subDeltas,function(e,t){return e.equals(t)})});e.newCommutation(f.t("Modify","Modify"),function(e,t,r){var n=true;var i=false;var a=undefined;try{for(var o=e.subDeltas.keys()[Symbol.iterator](),u;!(n=(u=o.next()).done);n=true){var s=u.value;if(t.subDeltas.has(s)){var f=e.subDeltas.get(s);var l=t.subDeltas.get(s);if(!f.commutesWith(l,r)){return false}}}}catch(c){i=true;a=c}finally{try{if(!n&&o["return"]){o["return"]()}}finally{if(i){throw a}}}return true})});e.exports=t["default"]},function(e,t,r){"use strict";var n=function(e){return e&&e.__esModule?e:{"default":e}};var i=function(){function e(e,t){for(var r=0;r<t.length;r++){var n=t[r];n.enumerable=n.enumerable||false;n.configurable=true;if("value"in n)n.writable=true;Object.defineProperty(e,n.key,n)}}return function(t,r,n){if(r)e(t.prototype,r);if(n)e(t,n);return t}}();var a=function(e,t){if(!(e instanceof t)){throw new TypeError("Cannot call a class as a function")}};var o=function(e,t){if(typeof t!=="function"&&t!==null){throw new TypeError("Super expression must either be null or a function, not "+typeof t)}e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:false,writable:true,configurable:true}});if(t)e.__proto__=t};Object.defineProperty(t,"__esModule",{value:true});var u=r(3);var s=r(5);var f=r(9);var l=n(f);var c=r(10);var v=n(c);var d=r(12);var h=n(d);t["default"]=u.oncePer("basic operations",function(e){l["default"](e);v["default"](e);h["default"](e);e.newOperationType("NoOp",function(e){
@@ -43502,7 +46282,7 @@
 	//# sourceMappingURL=dist/delta.full.min.js.map
 
 /***/ },
-/* 117 */
+/* 122 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
@@ -43511,7 +46291,7 @@
 	
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(61), __webpack_require__(70), __webpack_require__(74)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(71), __webpack_require__(75)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir) {
 	
 		/** {@export}{@class KefirSignalHandler}
 	  * Use this as a subclass (or just mix it in) to provide support for
@@ -43764,7 +46544,7 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 118 */
+/* 123 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;"use strict";
@@ -43780,7 +46560,7 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 119 */
+/* 124 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*! Kefir.js v1.0.0
@@ -46482,7 +49262,7 @@
 	}(this));
 
 /***/ },
-/* 120 */
+/* 125 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;;(function(global){
@@ -46545,10 +49325,74 @@
 
 
 /***/ },
-/* 121 */
+/* 126 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(setImmediate, clearImmediate) {var nextTick = __webpack_require__(122).nextTick;
+	// shim for using process in browser
+	
+	var process = module.exports = {};
+	var queue = [];
+	var draining = false;
+	
+	function drainQueue() {
+	    if (draining) {
+	        return;
+	    }
+	    draining = true;
+	    var currentQueue;
+	    var len = queue.length;
+	    while(len) {
+	        currentQueue = queue;
+	        queue = [];
+	        var i = -1;
+	        while (++i < len) {
+	            currentQueue[i]();
+	        }
+	        len = queue.length;
+	    }
+	    draining = false;
+	}
+	process.nextTick = function (fun) {
+	    queue.push(fun);
+	    if (!draining) {
+	        setTimeout(drainQueue, 0);
+	    }
+	};
+	
+	process.title = 'browser';
+	process.browser = true;
+	process.env = {};
+	process.argv = [];
+	process.version = ''; // empty string to avoid regexp issues
+	process.versions = {};
+	
+	function noop() {}
+	
+	process.on = noop;
+	process.addListener = noop;
+	process.once = noop;
+	process.off = noop;
+	process.removeListener = noop;
+	process.removeAllListeners = noop;
+	process.emit = noop;
+	
+	process.binding = function (name) {
+	    throw new Error('process.binding is not supported');
+	};
+	
+	// TODO(shtylman)
+	process.cwd = function () { return '/' };
+	process.chdir = function (dir) {
+	    throw new Error('process.chdir is not supported');
+	};
+	process.umask = function() { return 0; };
+
+
+/***/ },
+/* 127 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(setImmediate, clearImmediate) {var nextTick = __webpack_require__(126).nextTick;
 	var apply = Function.prototype.apply;
 	var slice = Array.prototype.slice;
 	var immediateIds = {};
@@ -46624,74 +49468,10 @@
 	exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
 	  delete immediateIds[id];
 	};
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(121).setImmediate, __webpack_require__(121).clearImmediate))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(127).setImmediate, __webpack_require__(127).clearImmediate))
 
 /***/ },
-/* 122 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// shim for using process in browser
-	
-	var process = module.exports = {};
-	var queue = [];
-	var draining = false;
-	
-	function drainQueue() {
-	    if (draining) {
-	        return;
-	    }
-	    draining = true;
-	    var currentQueue;
-	    var len = queue.length;
-	    while(len) {
-	        currentQueue = queue;
-	        queue = [];
-	        var i = -1;
-	        while (++i < len) {
-	            currentQueue[i]();
-	        }
-	        len = queue.length;
-	    }
-	    draining = false;
-	}
-	process.nextTick = function (fun) {
-	    queue.push(fun);
-	    if (!draining) {
-	        setTimeout(drainQueue, 0);
-	    }
-	};
-	
-	process.title = 'browser';
-	process.browser = true;
-	process.env = {};
-	process.argv = [];
-	process.version = ''; // empty string to avoid regexp issues
-	process.versions = {};
-	
-	function noop() {}
-	
-	process.on = noop;
-	process.addListener = noop;
-	process.once = noop;
-	process.off = noop;
-	process.removeListener = noop;
-	process.removeAllListeners = noop;
-	process.emit = noop;
-	
-	process.binding = function (name) {
-	    throw new Error('process.binding is not supported');
-	};
-	
-	// TODO(shtylman)
-	process.cwd = function () { return '/' };
-	process.chdir = function (dir) {
-	    throw new Error('process.chdir is not supported');
-	};
-	process.umask = function() { return 0; };
-
-
-/***/ },
-/* 123 */
+/* 128 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = function(module) {

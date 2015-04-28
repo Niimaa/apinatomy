@@ -1,4 +1,4 @@
-define(['jquery', 'bluebird', './util/misc.js', './util/defer.js'], ($, P, U, defer) => {
+define(['jquery', 'bluebird'], ($, P) => {
 	'use strict';
 
 
@@ -24,7 +24,7 @@ define(['jquery', 'bluebird', './util/misc.js', './util/defer.js'], ($, P, U, de
 
 		/* request and build the model objects belonging to those ids */
 		return P.resolve($.ajax({
-			url: `http://apinatomy.net:8766/resources/paths/${ids.join(',')}`,
+			url: `http://95.85.58.17:8766/resources/paths/${ids.join(',')}`, // TODO: Oi... when will we be rid of this server?
 			dataType: 'jsonp'
 		})).each((path) => {
 
