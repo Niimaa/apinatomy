@@ -3,7 +3,7 @@
   "version": "0.32.1",
   "description": "the core component (widget) of the ApiNATOMY circuit-board",
   "main": "apinatomy.js",
-  "repository": "https://github.com/mhelvens/apinatomy-core.git",
+  "repository": "https://github.com/mhelvens/apinatomy.git",
   "contributors": [
     {
       "name": "Michiel Helvensteijn",
@@ -13,6 +13,8 @@
   "license": "MIT",
   "devDependencies": {
     "autoprefixer-loader": "^1.0.0",
+    "babel-core": "^5.1.8",
+    "babel-loader": "^5.0.0",
     "biojs-sniper": "^0.1.1",
     "bluebird": "^2.3.6",
     "bower": "^1.3.10",
@@ -22,6 +24,7 @@
     "file-loader": "^0.8.1",
     "generator-mhelvens-library": "^0.6.0",
     "gulp": "^3.8.7",
+    "gulp-babel": "^5.1.0",
     "gulp-bump": "^0.1.11",
     "gulp-jshint": "^1.8.4",
     "gulp-karma": "0.0.4",
@@ -32,6 +35,7 @@
     "gulp-uglify": "^1.0.0",
     "gulp-util": "^3.0.1",
     "gulp-webpack": "^0.3.0",
+    "html-webpack-plugin": "^1.1.0",
     "jshint": "^2.5.6",
     "jshint-stylish": "^0.4.0",
     "json-loader": "^0.5.1",
@@ -54,7 +58,9 @@
   "scripts": {
     "test": "gulp test",
     "install": "bower install",
-    "update": "bower update"
+    "update": "bower update",
+	"build": "webpack",
+	"build-example": "webpack --config ./webpack-example.config.js"
   },
   "dependencies": {
     "url-loader": "^0.5.5"

@@ -19,7 +19,7 @@
     "chroma-js": "~0.5.8",
     "d3": "~3.4.11",
     "three.js": "*",
-    "delta.js": "~1.1.0-alpha",
+    "delta.js": "~1.4.0-alpha",
     "tweenjs": "*",
     "kefir": "~1.0.0",
     "kefir-jquery": "~1.0.0",

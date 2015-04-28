@@ -15,7 +15,6 @@
       <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/.intermediate-output" />
       <excludeFolder url="file://$MODULE_DIR$/.sass-cache" />
-      <excludeFolder url="file://$MODULE_DIR$/dist" />
       <excludeFolder url="file://$MODULE_DIR$/tmp-build" />
     </content>
     <orderEntry type="inheritedJdk" />

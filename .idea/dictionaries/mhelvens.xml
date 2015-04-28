@@ -7,10 +7,12 @@
       <w>autoselect</w>
       <w>baconjs</w>
       <w>bbox</w>
+      <w>chromajs</w>
       <w>circuitboarddestroy</w>
       <w>concat</w>
       <w>deferreds</w>
       <w>definedness</w>
+      <w>deltajs</w>
       <w>devtool</w>
       <w>disjunct</w>
       <w>disjuncts</w>
@@ -21,6 +23,7 @@
       <w>jshint</w>
       <w>jsonp</w>
       <w>kefir</w>
+      <w>kefirjquery</w>
       <w>keydown</w>
       <w>keypress</w>
       <w>keyup</w>
