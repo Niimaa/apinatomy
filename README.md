@@ -1,4 +1,4 @@
-# apinatomy-core
+# apinatomy
 
 This is the core component (widget) of the ApiNATOMY circuit-board system. It offers a jQuery plugin to
 create visual [*treemaps*](http://en.wikipedia.org/wiki/Treemapping) that can be manipulated and made
@@ -19,7 +19,7 @@ This library depends on
 
 ### Install using Bower
 
-`apinatomy-core` is available as a [Bower](http://bower.io/) package, installed as follows:
+`apinatomy` is available as a [Bower](http://bower.io/) package, installed as follows:
 
 ```shell
 bower install apinatomy-core
@@ -27,7 +27,7 @@ bower install apinatomy-core
 
 ### Install using NPM
 
-`apinatomy-core` is available as an [NPM](https://www.npmjs.org) package, installed as follows:
+`apinatomy` is available as an [NPM](https://www.npmjs.org) package, installed as follows:
 
 ```shell
 npm install apinatomy-core
@@ -35,7 +35,7 @@ npm install apinatomy-core
 
 ## Usage
 
-The `apinatomy-core` packages use the [UMD](https://github.com/umdjs/umd) API, so they support
+The `apinatomy` packages use the [UMD](https://github.com/umdjs/umd) API, so they support
 AMD ([RequireJS](http://requirejs.org/)), CommonJS and script-tags.
 
 There are currently two types of files that may be loaded:
