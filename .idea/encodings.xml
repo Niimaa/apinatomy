@@ -10,7 +10,6 @@
     <file url="file://$PROJECT_DIR$/build-config/modules/p-tile-hidden.json" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/build-config/modules/p-tile-maximized.json" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/build-config/modules/p-tile-middleclick-to-maximize.json" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/gulpfile.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/package.json" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/Artefact.es6.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/circuitboard.es6.js" charset="UTF-8" />
