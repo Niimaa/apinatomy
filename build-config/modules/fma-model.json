@@ -1,0 +1,6 @@
+{
+	"type": "internal-library",
+	"name": "fma-model",
+	"file": "fma-model.js",
+    "var": "getFmaModels"
+}

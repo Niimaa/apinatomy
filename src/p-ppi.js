@@ -3,19 +3,23 @@ define([
 	'./D3Group.js',
 	'./D3Vertex.js',
 	'./D3Edge.js',
+	'./util/kefir-and-eggs.js',
 	'./p-ppi.scss'
-], function ($, D3Group, D3Vertex, D3Edge) {
+], function ($, D3GroupP, D3VertexP, D3EdgeP, Kefir) {
 	'use strict';
 
 
-	var plugin = $.circuitboard.plugin({
-		name: 'ppi',
+	var plugin = $.circuitboard.plugin.do('ppi', {
 		requires: ['d3']
 	});
 
 
 	// TODO: implement this properly; this is just for testing purposes
-	plugin.insert('Tile.prototype.construct', function () {
+	plugin.append('Tile.prototype.construct', function () {
+
+		var D3Group = D3GroupP.value();
+		var D3Vertex = D3VertexP.value();
+		var D3Edge = D3EdgeP.value();
 
 		var graphGroup = new D3Group({
 			parent: this,
@@ -24,11 +28,12 @@ define([
 			linkDistanceFactor: 0.3
 		});
 
-		((setGraphGroupRegion) => {
-			setGraphGroupRegion();
-			this.on('size', setGraphGroupRegion);
-			this.on('position', setGraphGroupRegion);
-		})(() => {
+
+		Kefir.merge([
+			Kefir.once(),
+			this.on('size').changes(),
+			this.on('position').changes()
+		]).onValue(() => {
 			var AREA_MARGIN = 5;
 			graphGroup.setRegion({
 				top: this.position.top + AREA_MARGIN,

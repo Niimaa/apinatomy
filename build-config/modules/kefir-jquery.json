@@ -1,0 +1,8 @@
+{
+  "type": "external-library",
+  "name": "kefir-jquery",
+  "dir": "kefir-jquery",
+  "file": "kefir-jquery.js",
+  "var": "KefirJQuery"
+
+}

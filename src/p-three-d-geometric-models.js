@@ -2,127 +2,69 @@ define([
 	'jquery',
 	'three-js',
 	'bluebird',
-	'./util/misc.js'
-], function ($, THREE, P, U) {
+	'./util/kefir-and-eggs.js',
+	'./util/misc.js',
+	'./ThreeDModel.js'
+], function ($, THREE, P, Kefir, U, ThreeDModelP) {
 	'use strict';
 
 
 	/* the plugin */
-	var plugin = $.circuitboard.plugin({
-		name: 'three-d-geometric-models',
-		requires: ['three-d', 'tile-hidden']
+	var plugin = $.circuitboard.plugin.do('three-d-geometric-models', {
+		requires: ['three-d', 'three-d-spinner']
 	});
-
-
-	/* convenience predicate functions */
-	function isGeometry(v) { return v instanceof THREE.Geometry || v instanceof THREE.BufferGeometry }
-	function isFilename(v) { return typeof v === 'string' }
-	function isCoordinates(v) { return Array.isArray(v) && v.length === 3 && v.every((c) => typeof c === 'number') }
-
-
-	/* a function to load a 3D model from a filename and return a promise */
-	function load(file) {
-		var i = file.lastIndexOf('.');
-		U.assert(i >= 0, `The filename '${file}' does not have a file extension.`);
-		var ext = file.substr(i + 1);
-		var Loader = $.circuitboard.Circuitboard.threeJsLoaders[ext];
-		U.assert(U.isDefined(Loader), `The '${ext}' extension is not recognized as a 3D model.`);
-		return U.promisify(new Loader(), 'load')(file).then((obj) => {
-			if (isGeometry(obj)) {
-				var geometry = obj;
-				var material = new THREE.MeshLambertMaterial({ color: 'white' });
-				obj = new THREE.Mesh(geometry, material);
-			}
-			return obj;
-		});
-	}
-
-
-	/* to calculate overall bounding box of an object3D */
-	function calculateBoundingBox(obj) {
-		obj.userData.boundingBox = null;
-		obj.traverse(function (subObj) {
-			var geometry = subObj.geometry;
-			if (U.isUndefined(geometry)) { return }
-			geometry.computeBoundingBox();
-			if (obj.userData.boundingBox === null) {
-				obj.userData.boundingBox = geometry.boundingBox;
-			} else {
-				obj.userData.boundingBox.union(geometry.boundingBox);
-			}
-		});
-	}
-
-
-	/* to center all the geometry of an object on its (0, 0, 0) point */
-	function centerGeometries(obj) {
-		var translation = obj.userData.boundingBox.center().negate();
-		obj.traverse(function (o) {
-			if (o.geometry) {
-				o.geometry.applyMatrix(new THREE.Matrix4().setPosition(translation));
-			}
-		});
-	}
 
 
 	/* an object where three.js loaders for different file formats can be plugged in */
 	plugin.add('Circuitboard.threeJsLoaders', {});
 
 
-	/* load any 3D models associated with a tile */
-	plugin.insert('Tile.prototype.construct', function () {
-
-		if (!this.model) { return }
-
+	/* to load any 3D models associated with a tile */
+	plugin.add('Tile.prototype.loadThreeDModels', function () {
 		var threeDModels = this.circuitboard.options.threeDModels;
-
 		if (!threeDModels) { return }
+		return P.all([this.model, ThreeDModelP]).spread((tileModel, ThreeDModel) => {
+			if (threeDModels[tileModel.id]) {
+				this.threeDModels = {};
+				Object.keys(threeDModels[tileModel.id]).forEach((modelID) => {
 
-		this.model.then((model) => {
-			if (U.isDefined(threeDModels[model.id])) {
+					/* create a simple clock for animated models */
+					// TODO: at some point, we change this to a more global clock
+					var clock = new THREE.Clock();
+					var clockStream = Kefir.animationFrames().map(() => clock.getElapsedTime());
 
-				/* load the 3D objects into the scene through a promise chain */
-				P
+					/* create the model artefact */
+					var model = this.threeDModels[modelID] =
+						new ThreeDModel(U.extend({}, threeDModels[tileModel.id][modelID], {
+							id:      modelID,
+							parent:  this,
+							clock:   clockStream,
+							visible: false
+						}));
 
-					/* load any 3D models from files */
-						.all(threeDModels[model.id].filter(isFilename).map(load))
+					/* when the object is created, add it to the scene and dynamically resize */
+					model.object3D.then((object) => {
+						this.object3D.add(object);
+						this.p('size').onValue((size) => {
+							this.threeDModels[modelID].adaptToSurfaceArea(size);
+						});
+					});
 
-					/* add the connection markers */
-						.tap((objs) => {
-							threeDModels[model.id].filter(isCoordinates).forEach((coords) => {
-								var geometry = new THREE.SphereGeometry(4, 32, 32);
-								geometry.applyMatrix(new THREE.Matrix4()
-										.setPosition(U.applyConstructor(THREE.Vector3, coords)));
-								var material = new THREE.MeshLambertMaterial({ color: 'red' });
-								var mesh = new THREE.Mesh(geometry, material);
-								objs.push(mesh);
-							});
-						})
+					/* loading indicator until the model is loaded */
+					model.p('visible').value(true).take(1).onValue(() => {
+						this.loadingIndicator({ until: model.object3D });
+					});
 
-					/* put them all in one parent Object3D object */
-						.reduce((parent, child) => { parent.add(child); return parent; }, new THREE.Object3D())
-
-					/* reposition and resize the resulting object */
-						.tap(calculateBoundingBox)
-						.tap(centerGeometries)
-						.tap((obj) => {
-							this.on('size').takeWhile(this.on('visible')).onValue(() => {
-								var ratio = Math.min(this.size.width / obj.userData.boundingBox.size().x,
-												this.size.height / obj.userData.boundingBox.size().y) * 0.7;
-
-								/* adjust size */
-								obj.scale.set(ratio, ratio, ratio);
-
-								/* adjust 'altitude' */
-								obj.position.z = 0.5 * ratio * obj.userData.boundingBox.size().z + 30;
-							});
-						})
-
-					/* add the object to the scene, centered on this tile */
-						.then((obj) => { this.object3D.add(obj) });
-
+				});
+				return this.threeDModels;
 			}
 		});
+	});
+
+
+	/* load any 3D models associated with a tile */
+	plugin.append('Tile.prototype.construct', function () {
+		this.loadThreeDModels();
 	});
 
 

@@ -2,20 +2,18 @@ define([
 	'jquery',
 	'd3',
 	'./util/misc.js',
-	'bacon',
-	'./util/bacon-and-eggs.js',
+	'./util/kefir-and-eggs.js',
 	'./p-d3.scss'
-], function ($, d3, U, Bacon) {
+], function ($, d3, U, Kefir) {
 	'use strict';
 
 
-	var plugin = $.circuitboard.plugin({
-		name: 'd3',
-		requires: ['core', 'position-tracking', 'animation-loop']
+	var plugin = $.circuitboard.plugin.do('d3', {
+		requires: ['core', 'position-tracking']
 	}).modify('Circuitboard.prototype');
 
 
-	plugin.insert('construct', function () {
+	plugin.append('construct', function () {
 		this._p_d3_vertices = {};
 		this._p_d3_edges = {};
 
@@ -39,26 +37,24 @@ define([
 				.links(U.objValues(this._p_d3_edges))
 				.gravity(0)
 				.charge(function (d) {
-					return -0.025 *
-							d.group.chargeFactor *
-							d.group.region.width *
-							d.group.region.height *
-							(U.defOr(d.chargeFactor, 1)) /
-							(d.group.vertices.length || 1);
+					return -2 *
+							(d.group.region.width + d.group.region.height) *
+							U.defOr(d.group.chargeFactor, 1) *
+							U.defOr(d.chargeFactor, 1) /
+							Math.sqrt(d.group.vertices.length || 1);
 				})
+				.chargeDistance(200)
 				.linkDistance(function (d) {
-					return 0.01 *
-							d.group.linkDistanceFactor *
-							d.group.region.width *
-							d.group.region.height *
-							(U.defOr(d.linkDistanceFactor, 1)) /
-							(d.group.vertices.length || 1);
+					return (d.group.region.width + d.group.region.height) *
+							U.defOr(d.group.linkDistanceFactor, 1) *
+							U.defOr(d.linkDistanceFactor, 1) /
+							Math.sqrt(d.group.vertices.length || 1);
 				})
 				.linkStrength(0.8);
 
 
 		/* auto-resize the force-layout canvas */
-		this.on('size').map((v) => [v.width, v.height]).assign(this.d3Force, 'size');
+		this.on('size').map((v) => [v.width, v.height]).onValue((s) => { this.d3Force.size(s) });
 
 
 		/* create corresponding svg elements */
@@ -106,19 +102,17 @@ define([
 		}, 200);
 
 
+		/* a property for which vertex (if any) is being dragged */
 		var currentEventData = () => d3.select(d3.event.sourceEvent.target.parentElement).data()[0];
-		this.newProperty('draggingVertex', {
-			initial: null,
-			source: Bacon.mergeAll(
-					Bacon.fromOnNull(this.d3Force.drag(), 'dragstart').map(currentEventData),
-					Bacon.fromOnNull(this.d3Force.drag(), 'dragend').map(null)
-			)
-		});
+		this.newProperty('draggingVertex', { initial: null }).plug(Kefir.merge([
+			Kefir.fromOnNull(this.d3Force.drag(), 'dragstart').mapTo(currentEventData),
+			Kefir.fromOnNull(this.d3Force.drag(), 'dragend').mapTo(null)
+		]));
 
 
-		/* declarer the 'd3-tick' event-stream, and perform animation on a tick */
+		/* the 'd3-tick' event-stream, and performing animation on a tick */
 		this.newEvent('d3-tick', {
-			source: Bacon.fromOnNull(this.d3Force, 'tick').holdUntil(this.on('animation-frame'))
+			source: Kefir.fromOnNull(this.d3Force, 'tick')
 		}).onValue((e) => {
 
 			/* dampening factor */

@@ -1,0 +1,7 @@
+{
+  "type": "external-library",
+  "name": "velocity",
+  "dir": "velocity",
+  "file": "velocity.min.js"
+
+}

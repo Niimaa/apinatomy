@@ -1,0 +1,9 @@
+{
+  "type": "external-library",
+  "name": "kefir",
+  "dir": "kefir/dist",
+  "file": "kefir.js"
+  
+      , "var": "Kefir"
+  
+}

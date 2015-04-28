@@ -2,15 +2,15 @@ define([
 	'jquery',
 	'chroma-js',
 	'./util/misc.js',
+	'./util/kefir-and-eggs.js',
 	'./util/defaults.js',
 	'./util/put-css-rules.js',
 	'./p-tile-skin.scss'
-], function ($, color, U, defaults) {
+], function ($, color, U, Kefir, defaults) {
 	'use strict';
 
 
-	var plugin = $.circuitboard.plugin({
-		name: 'tile-skin',
+	var plugin = $.circuitboard.plugin.do('tile-skin', {
 		requires: ['tile-open', 'position-tracking']
 	}).modify('Tile.prototype');
 
@@ -23,16 +23,16 @@ define([
 			color:           " color(`['&'].backgroundColor`).luminance() > 0.5 && 'black' || 'white' "
 		},
 		'& > header':   {
-			borderColor: " `['&'].borderColor` "
+			borderColor:     " `['&'].borderColor` "
 		},
 		'& > icon-btn': {
 			backgroundColor: " `['&'].backgroundColor` "
 		}
-	}, { color: color });
+	}, { color });
 
 
 	/* make tiles look nice, with a header, content section, and CSS styling derived from the model */
-	plugin.insert('construct', function () {
+	plugin.append('construct', function () {
 
 		/*  create the header and content elements, and reroute the  */
 		/* 'dom' property to the new content element                 */
@@ -45,30 +45,33 @@ define([
 		this.model.get('name').then((name)=> { this._p_tileSkin_headerElement.text(name) });
 
 		/* take any css rules from the model and apply them to the tile */
-		this.model.get('tile').get('normal').get('css').then((css)=> { this.element.amyPutCssRules(applyStyleDefaults(css)) })
-				.catch(()=>{}); // it's OK if '.tile.normal.css' is not on the model
+		this.model.get('tile').get('normal').get('css')
+			.then((css)=> { this.element.amyPutCssRules(applyStyleDefaults(css)) })
+			.catch(()=>{}); // it's OK if '.tile.normal.css' is not on the model
 
 		/* when the tile is closed, make the font size dynamic */
-		this.on('size').filter(this.on('open').not()).onValue((size) => {
+		this.on('size').filterBy(this.p('open').not()).onValue((size) => {
 			this._p_tileSkin_headerElement // formula gotten experimentally
-					.css('fontSize', Math.min(0.2 * Math.pow(size.height, 1.01), 0.13 * Math.pow(size.width, 1.01))
-					// We're growing / shrinking the font size in proportion to the (1.01)st power of the tile size.
-					// Making the font grow/shrink just a tiny bit faster than the tile prevents an awkward 'flickering'
-					// between different line-breaks that would otherwise happen sometimes.
-			);
+				.css('fontSize', Math.min(0.2 * Math.pow(size.height, 1.01), 0.13 * Math.pow(size.width, 1.01)));
+				// We're growing / shrinking the font size in proportion to the (1.01)st power of the tile size.
+				// Making the font grow/shrink just a tiny bit faster than the tile prevents an awkward 'flickering'
+				// between different line-breaks that would otherwise happen sometimes.
 		});
 
 		/* the 'headerSize' observable */
-		this.newProperty('headerSize'); // TODO: use Bacon way to update this
-		var refreshHeaderSize = () => {
-			this.headerSize = new U.Size(this._p_tileSkin_headerElement.height(), this.size.width);
-		};
-		this.on('size', refreshHeaderSize);
-		this.on('open', refreshHeaderSize);
+		this.newProperty('headerSize', {
+			settable: false,
+			isEqual: U.Size.equals
+		}).plug(Kefir.merge([
+			Kefir.once(),
+			this.on('size').changes(),
+			this.on('open').changes()
+		]).map(() => new U.Size(this._p_tileSkin_headerElement.height(), this.size.width)));
 
 		/* the 'headerPosition' observable */
-		this.newProperty('headerPosition'); // TODO: use Bacon way to update this
-		this.on('position', (position) => { this.headerPosition = position });
+		this.newProperty('headerPosition', {
+			settable: false
+		}).plug(this.on('position'));
 
 	});
 });

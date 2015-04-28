@@ -1,19 +1,17 @@
-define(['jquery', './util/bacon-and-eggs.js'], function ($) {
+define(['jquery', './util/codes.js', './util/kefir-and-eggs.js'], function ($, {button}) {
 	'use strict';
 
 
-	var plugin = $.circuitboard.plugin({
-		name: 'tile-middleclick-to-maximize',
+	var plugin = $.circuitboard.plugin.do('tile-middleclick-to-maximize', {
 		requires: ['tile-maximized']
 	}).modify('Tile.prototype');
 
 
-	/* allows a tile to be maximized by middle-clicking on it */
-	plugin.insert('construct', function () {
+	/* When a tile is middle-clicked, it is maximized/un-maximized. */
+	plugin.append('construct', function () {
 
-		this.on('click')
-				.filter(e => e.which === 2)       // only middle clicks
-				.onlyOnceFor('tile-middle-click') // only for the inner-most tile (smart '.stopPropagation')
+		this.on('click').which(button.MIDDLE)
+				.skipPropagation('tile-middle-click')  // only register this event for the inner-most tile
 				.onValue(() => { this.maximized = !this.maximized });
 
 	});

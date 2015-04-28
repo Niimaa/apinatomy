@@ -1,108 +1,132 @@
-/*  RequireJS Configuration */
-requirejs.config({
-	paths: {
-		'domReady':  '../../bower_components/requirejs-domready/domReady',
-		'jquery':    '../../bower_components/jquery/dist/jquery',
-		'js-graph':  '../../bower_components/js-graph/dist/js-graph',
-		'delta-js':  '../../bower_components/delta.js/dist/delta',
-		'bluebird':  '../../bower_components/bluebird/js/browser/bluebird',
-		'chroma-js': '../../bower_components/chroma-js/chroma',
-		'd3':        '../../bower_components/d3/d3',
-		'three-js':  '../../bower_components/three.js/three'
-	},
-	shim: {
-		'jquery':   { exports: 'jQuery' },
-		'bluebird': { init() { this.longStackTraces() } },
-		'three-js': { exports: 'THREE' }
-	}
-});
-
-
-/* make 'jQuery' globally available for Bacon.js to find */
-window.jQuery = require('jquery');
-
-
-/* load the circuitboard code and style */
-require('../circuitboard.js');
+/* styling */
 require('./example.scss');
 
 
-/* example application  (circuitboard.js has to be loaded first) */
-require([
-
-	/* libraries that return a variable */
-	'jquery',
-	'../fma-model.js',
-
-	/* plugins */
-	'../p-core.js',
-	'../p-tile-skin.js',
-	'../p-tile-spacing.js',
-	'../p-tile-click-to-open.js',
-	'../p-tile-weight.js',
-	'../p-tile-active.js',
-	'../p-tile-open.js',
-	'../p-tile-grow-when-open.js',
-	'../p-tile-open-active.js',
-	'../p-tile-skin-grow-when-open.js',
-	'../p-position-tracking.js',
-	'../p-transition-position-tracking.js',
-	'../p-tile-hidden.js',
-	'../p-tile-maximized.js',
-	'../p-tile-middleclick-to-maximize.js',
-	'../p-d3.js',
-	'../p-animation-loop.js', // TODO: figure out why we get an error when this is moved down one line
-	'../p-ppi.js',
-	'../p-three-d.js',
-	'../p-three-d-geometric-models.js',
-	'../p-three-d-geometric-models-stl.js',
-	'../p-d3-three-d.js',
-	'../p-three-d-manual-controls.js',
-	'../p-three-d-auto-controls.js',
-
-	/* files for testing */
-	'../p-connectivity.js'
-
-], function ($, getFmaModels) {
-	'use strict';
+/* libraries */
+var $ = require('expose?jQuery!jquery');
 
 
-	/* select plugins to activate them  (note that these must already be *loaded* at this point) */
-	$.circuitboard.plugin([
-		'tile-skin',
-		'tile-click-to-open',
-		'tile-grow-when-open',
-		'tile-middleclick-to-maximize',
-		'tile-spacing',
-		'tile-active',
-		//'ppi',
-		'three-d',
-		'three-d-manual-controls',
-		'three-d-auto-controls',
-		'three-d-geometric-models',
-		'three-d-geometric-models-stl',
-		'connectivity'
-	]);
+/* load the circuitboard, model loader and plugins */
+var circuitboard = require('../circuitboard.js');
+var getFmaModels = require('../fma-model.js');
+require('../p-core.js');
+require('../p-tile-skin.js');
+require('../p-tile-spacing.js');
+require('../p-tile-click-to-open.js');
+require('../p-tile-weight.js');
+require('../p-tile-active.js');
+require('../p-tile-open.js');
+require('../p-tile-grow-when-open.js');
+require('../p-tile-shrink-when-hidden.js');
+require('../p-tile-grow-when-maximized.js');
+require('../p-tile-open-active.js');
+require('../p-tile-skin-grow-when-open.js');
+require('../p-position-tracking.js');
+require('../p-transition-position-tracking.js');
+require('../p-tile-hidden.js');
+require('../p-tile-maximized.js');
+require('../p-tile-middleclick-to-maximize.js');
+require('../p-d3.js');
+require('../p-ppi.js');
+require('../p-three-d.js');
+require('../p-three-d-geometric-models.js');
+require('../p-three-d-geometric-models-stl.js');
+require('../p-three-d-geometric-models-obj.js');
+require('../p-three-d-geometric-models-json.js');
+require('../p-three-d-spinner.js');
+require('../p-d3-three-d.js');
+require('../p-three-d-manual-controls.js');
+require('../p-three-d-auto-controls.js');
+require('../p-snapshot.js');
+require('../p-three-d-camera-snapshot.js');
+require('../p-tile-open-snapshot.js');
+require('../p-tile-buttons.js');
+require('../p-tile-button-to-hide.js');
+require('../p-tile-visible-snapshot.js');
+require('../p-tile-maximized-snapshot.js');
+require('../p-three-d-model-snapshot.js');
+require('../p-tile-button-to-maximize.js');
+require('../p-tile-button-to-swap-three-d-model.js');
+require('../p-tile-button-to-point-camera.js');
+require('../p-three-d-tubes.js');
 
 
-	/* use the $.fn.circuitboard method to instantiate the circuit-board */
-	$(document).ready(() => {
-		$('#circuitboard').circuitboard({
-			model: getFmaModels(['24tile:60000000'])[0],
-			tileSpacing: 1,
-			tilemapMargin: 0,
-			weightWhenOpen: 8,
-			threeDCanvasElement: $('#three-d-canvas')
-		}).circuitboard('instance').then(function (circuitboard) {
+/* select plugins to activate them  (note that these must already be *loaded* at this point) */
+circuitboard.plugin.select(
+	'tile-skin',
+	'tile-click-to-open',
+	'tile-grow-when-open',
+	'tile-shrink-when-hidden',
+	'tile-grow-when-maximized',
+	'tile-middleclick-to-maximize',
+	'tile-spacing',
+	'tile-active',
+	'three-d',
+	'three-d-manual-controls',
+	'three-d-auto-controls',
+	'three-d-geometric-models',
+	'three-d-geometric-models-obj',
+	'three-d-geometric-models-json',
+	'snapshot',
+	'tile-buttons',
+	'tile-button-to-hide',
+	'tile-button-to-maximize',
+	'tile-button-to-swap-three-d-model',
+	'tile-button-to-point-camera',
+	'three-d-tubes'
+	//'ppi',
+);
 
-			console.info('circuitboard loaded');
 
-			window.setThreeDMode = function (mode) {
-				circuitboard.threeDMode = mode;
-			};
+	$('#circuitboard').circuitboard({
+		model: getFmaModels(['24tile:60000000'])[0],
+		tileSpacing: 1,
+		tilemapMargin: 0,
+		weightWhenOpen: 8,
+		threeDCanvasElement: $('#three-d-canvas'),
+		threeDModels: {
 
-		});
+			'fma:7148': {
+				'stomach': {
+					file: require('./3d-models/FMA7148_Stomach.obj'),
+					color: 0x7F1F1A
+				},
+			},
+
+			'fma:7187': {
+				'walking-legs': {
+					parts: {
+						'left_femur_1':    { file: require('./3d-models/walking-legs/left_femur_1.json') },
+						'left_fibula_1':   { file: require('./3d-models/walking-legs/left_fibula_1.json') },
+						'left_foot_1':     { file: require('./3d-models/walking-legs/left_foot_1.json') },
+						'left_hip_1':      { file: require('./3d-models/walking-legs/left_hip_1.json') },
+						'left_patella_1':  { file: require('./3d-models/walking-legs/left_patella_1.json') },
+						'left_tibia_1':    { file: require('./3d-models/walking-legs/left_tibia_1.json') },
+						'muscles_1':       { file: require('./3d-models/walking-legs/muscles_1.json'), color: 0x7F1F1A },
+						'right_femur_1':   { file: require('./3d-models/walking-legs/right_femur_1.json') },
+						'right_fibula_1':  { file: require('./3d-models/walking-legs/right_fibula_1.json') },
+						'right_foot_1':    { file: require('./3d-models/walking-legs/right_foot_1.json') },
+						'right_hip_1':     { file: require('./3d-models/walking-legs/right_hip_1.json') },
+						'right_patella_1': { file: require('./3d-models/walking-legs/right_patella_1.json') },
+						'right_tibia_1':   { file: require('./3d-models/walking-legs/right_tibia_1.json') }
+					},
+					color: 0xE6E6B3,
+					animation: { duration: 1500 },
+					elevation: 0
+				}
+			},
+
+		}
+	}).circuitboard('instance').then(function (circuitboard) {
+
+		console.info('circuitboard loaded');
+
+		/* set up global functions to test with from the JavaScript console */
+		window.newSnapshot = (options) => {
+			return new circuitboard.Snapshot(options);
+		};
+
 	});
 
-
 });
+

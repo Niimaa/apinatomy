@@ -2,23 +2,22 @@ define(['jquery'], function ($) {
 	'use strict';
 
 
-	var plugin = $.circuitboard.plugin({
-		name: 'tile-weight',
+	var plugin = $.circuitboard.plugin.do('tile-weight', {
 		requires: ['core']
 	}).modify('Tile.prototype');
 
 
 	/*  gives tiles a `weight` which reflects the screen area they take up  */
 	/*  in relation to other tiles in the same tilemap                      */
-	plugin.insert('construct', function () {
+	plugin.append('construct', function () {
 
-		/* the 'weight' observable */
-		this.newProperty('weight', { initial: 1 });
+		// TODO: this is now done in 'tile-grow-when-' deltas
 
-		/* enact 'weight' on the DOM */
-		this.on('weight', (weight) => { // TODO: update DOM the Bacon way
-			this.element.amyNestedFlexGrow(weight);
-		});
+		///* the 'weight' observable */
+		//this.newProperty('weight', { initial: 1 });
+
+		///* enact 'weight' on the DOM */
+		//this.p('weight').onValue((w) => { this.element.amyNestedFlexGrow(w) });
 
 	});
 

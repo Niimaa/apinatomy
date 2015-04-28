@@ -1,48 +1,38 @@
-define(['jquery', 'bluebird', './util/widget.js', './util/misc.js', './util/main-delta-model.js' ], function ($, P, amyWidget, U, dm) {
+define([
+	'jquery',
+	'bluebird',
+	'./util/newWidgetType.js',
+	'./util/main-deltajs.js'
+], function ($, P, newWidgetType, deltaJs) {
 	'use strict';
 
 
-	/* allow '$.circuitboard' to accept plugins */
-	U.extend(U.object($, 'circuitboard'), {
-		plugin(pluginOrSelection) {
-			if ($.isPlainObject(pluginOrSelection)) {
-				// the function is used to register a new plugin
-				return new dm.Delta(pluginOrSelection.name, pluginOrSelection);
-			} else {
-				// the function is used to select plugins to be applied
-				dm.select.apply(dm, pluginOrSelection);
-				defineWidgetClasses();
-			}
-		}
+	/* create $.circuitboard object if it doesn't exist */
+	$.circuitboard = { plugin: deltaJs };
+
+
+	/* create the classes directly circuitboard related */
+	var CircuitboardP = newWidgetType('Circuitboard', {
+		cssClass: "circuitboard",
+		filter: () => P.resolve(true) // don't hide any entities
+	});
+	var TilemapP = newWidgetType('Tilemap', {
+		cssClass: "tilemap"
+	});
+	var TileP = newWidgetType('Tile', {
+		cssClass: "tile"
 	});
 
 
-	/* to define the widget classes after the proper plugins have been selected */
-	function defineWidgetClasses() {
-		$.circuitboard.Circuitboard = amyWidget('Circuitboard', {
-			cssClass: "circuitboard",
-			filter: ()=>P.resolve(true)
-		});
-
-		$.circuitboard.Tilemap = amyWidget('Tilemap', {
-			cssClass: "tilemap"
-		});
-
-		$.circuitboard.Tile = amyWidget('Tile', {
-			cssClass: 'tile'
-		});
-	}
-
-
-	/* for getting the plugin graph */
-	$.circuitboard.plugin.graph = () => dm.graph();
-
-	/* for getting the main delta model */
-	$.circuitboard.plugin.dm = dm;
+	/* put those classes on the $.circuitboard object */
+	CircuitboardP.then((c) => { $.circuitboard.Circuitboard = c });
+	TilemapP.then((c) => { $.circuitboard.Tilemap = c });
+	TileP.then((c) => { $.circuitboard.Tile = c });
 
 
 	/*  return the static `$.circuitboard` object,         */
 	/*  through which plugins can be applied and selected  */
 	return $.circuitboard;
+
 
 });

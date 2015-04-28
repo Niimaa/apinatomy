@@ -1,26 +1,25 @@
 define([
 	'jquery',
-	'./util/bacon-and-eggs.js',
+	'./util/kefir-and-eggs.js',
 	'./util/misc.js'
-], function ($, Bacon) {
+], function ($, Kefir) {
 	'use strict';
 
 
-	var plugin = $.circuitboard.plugin({
-		name: 'transition-position-tracking',
-		resolves: ['position-tracking', 'tile-grow-when-open', 'animation-loop']
+	var plugin = $.circuitboard.plugin.do('transition-position-tracking', {
+		resolves: ['position-tracking', 'tile-grow-when-open']
 	});
 
 
 	/* make sure that positioning is updated during CSS3 transition animations */
-	plugin.insert('Tile.prototype.construct', function () {
-		this.on('weight', () => {
+	plugin.append('Tile.prototype.construct', function () {
 
-			this.circuitboard.on('animation-frame')
-					.takeUntil(this.element.asEventStream('transitionend').merge(Bacon.later(500)))
-					.onValue(() => { this.resetPositioning() });
+		// TODO: maybe just remove this whole delta
 
-		});
+		//this.on('weight').changes().flatMapLatest(
+		//	() => Kefir.animationFrames().takeUntilBy(this.element.asKefirStream('transitionend webkitTransitionEnd').merge(Kefir.later(300)))
+		//).onValue(() => { this.trigger('reset-positioning') });
+
 	});
 
 

@@ -5,10 +5,12 @@
       <w>amywidget</w>
       <w>autoprefixer</w>
       <w>autoselect</w>
+      <w>baconjs</w>
       <w>bbox</w>
       <w>circuitboarddestroy</w>
       <w>concat</w>
       <w>deferreds</w>
+      <w>definedness</w>
       <w>devtool</w>
       <w>disjunct</w>
       <w>disjuncts</w>
@@ -18,6 +20,7 @@
       <w>gutil</w>
       <w>jshint</w>
       <w>jsonp</w>
+      <w>kefir</w>
       <w>keydown</w>
       <w>keypress</w>
       <w>keyup</w>
@@ -26,6 +29,7 @@
       <w>lundin</w>
       <w>memberof</w>
       <w>memoize</w>
+      <w>memoized</w>
       <w>middleclick</w>
       <w>mousewheel</w>
       <w>ness</w>
@@ -48,6 +52,7 @@
       <w>touchstart</w>
       <w>traceur</w>
       <w>transparentize</w>
+      <w>tweenjs</w>
       <w>uglify</w>
       <w>webgl</w>
       <w>xmlhttp</w>

@@ -9,8 +9,7 @@ define([
 	'use strict';
 
 
-	var plugin = $.circuitboard.plugin({
-		name: 'core',
+	var plugin = $.circuitboard.plugin.do('core', {
 		if: true
 	});
 
@@ -19,9 +18,19 @@ define([
 	plugin.modify('Circuitboard.prototype')
 			.add('_registerTile', function _registerTile(tile) {
 
-				// called by the tile constructor
+				// called by the Tile constructor
 
 				U.getDef(this._p_circuitboardCore_tilesByModelId, tile.model.id, defer).resolve(tile);
+
+			}).add('allTiles', function () {
+
+				var tiles = {};
+
+				Object.keys(this._p_circuitboardCore_tilesByModelId).forEach((id) => {
+					tiles[id] = this._p_circuitboardCore_tilesByModelId[id].promise;
+				});
+
+				return tiles;
 
 			}).add('tile', function (tileSelector) {
 
@@ -112,10 +121,10 @@ define([
 
 				/* support certain DOM-event subscriptions from the tile object itself */
 				['mouseover', 'mouseout', 'mouseenter', 'mouseleave'].forEach((event) => {
-					this.newEvent(event, { source: this.element.asEventStream(event) });
+					this.newEvent(event, { source: this.element.asKefirStream(event) });
 				});
 				this.newEvent('click', {
-					source: this.element.mouseClick({ threshold: this.circuitboard.options.dragTheshold })
+					source: this.element.mouseClick({ threshold: this.circuitboard.options.dragThreshold })
 				});
 
 				/* a field to hold the innermost HTML content element still belonging to this tile */
@@ -124,7 +133,7 @@ define([
 				/* an element id for quick jQuery lookups */
 				this.element.attr('id', this.id);
 
-				/* inform circuitboard of new tile */
+				/* notify the circuitboard of this new tile */
 				this.circuitboard._registerTile(this);
 
 			});

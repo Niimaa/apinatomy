@@ -20,6 +20,9 @@
 	"nonew":     true,
 	"forin":     true,
 	"evil":      true,
+    "laxbreak":  true,
+
+    "debug":     true,
 
 	"predef": [ "requirejs", "define", "describe", "beforeEach", "it", "expect" ]
 }

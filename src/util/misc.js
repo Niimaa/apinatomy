@@ -1,28 +1,22 @@
-define(['bluebird', './defer.js', 'bacon'], (P, defer) => {
+define(['bluebird'], (P) => {
 	'use strict';
 
 	var U = {
 
 		// create a new class, given a constructor and possible prototype
-		newClass(constructor, prototype) {
-			prototype = prototype || {};
-			var cls = function (...args) {
-				constructor.apply(this, args);
-			};
-			cls.prototype = prototype;
-			cls.prototype.constructor = cls;
-			return cls;
+		newClass(constructor, prototype = {}) {
+			constructor.prototype = prototype;
+			constructor.prototype.constructor = constructor;
+			return constructor;
 		},
 
 		// create a new subclass, given a superclass, constructor and possible prototype
-		newSubclass(SuperClass, constructor, prototype = {}) {
-			var cls = function (...args) {
-				constructor.apply(this, [SuperClass.prototype.constructor.bind(this)].concat(args));
-			};
-			cls.prototype = Object.create(SuperClass.prototype);
-			U.extend(cls.prototype, prototype);
-			cls.prototype.constructor = cls;
-			return cls;
+		newSubclass(superClass, constructorMaker, prototype = {}) {
+			var constructor = constructorMaker(superClass.prototype.constructor);
+			constructor.prototype = Object.create(superClass.prototype);
+			U.extend(constructor.prototype, prototype);
+			constructor.prototype.constructor = constructor;
+			return constructor;
 		},
 
 		// extend the first passed object with the properties
