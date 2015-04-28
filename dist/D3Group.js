@@ -1,10 +1,10 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("jquery"), require("bluebird"), require("delta-js"), require("kefir"), require("tweenjs"), require("kefir-jquery"));
+		module.exports = factory(require("jquery"), require("bluebird"), require("kefir"), require("tweenjs"), require("kefir-jquery"), require("delta-js"));
 	else if(typeof define === 'function' && define.amd)
-		define(["jquery", "bluebird", "delta-js", "kefir", "tweenjs", "kefir-jquery"], factory);
+		define(["jquery", "bluebird", "kefir", "tweenjs", "kefir-jquery", "delta-js"], factory);
 	else {
-		var a = typeof exports === 'object' ? factory(require("jquery"), require("bluebird"), require("delta-js"), require("kefir"), require("tweenjs"), require("kefir-jquery")) : factory(root["jquery"], root["bluebird"], root["delta-js"], root["kefir"], root["tweenjs"], root["kefir-jquery"]);
+		var a = typeof exports === 'object' ? factory(require("jquery"), require("bluebird"), require("kefir"), require("tweenjs"), require("kefir-jquery"), require("delta-js")) : factory(root["jquery"], root["bluebird"], root["kefir"], root["tweenjs"], root["kefir-jquery"], root["delta-js"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
 })(this, function(__WEBPACK_EXTERNAL_MODULE_62__, __WEBPACK_EXTERNAL_MODULE_63__, __WEBPACK_EXTERNAL_MODULE_65__, __WEBPACK_EXTERNAL_MODULE_66__, __WEBPACK_EXTERNAL_MODULE_67__, __WEBPACK_EXTERNAL_MODULE_68__) {
@@ -596,7 +596,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(14), __webpack_require__(66), __webpack_require__(67), __webpack_require__(68)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir, TWEEN, KefirJQuery) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(14), __webpack_require__(65), __webpack_require__(66), __webpack_require__(67)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir, TWEEN, KefirJQuery) {
 	
 		/* Kefir jQuery plugin ********************************************************************************************/
 	
@@ -898,231 +898,258 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
+	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(14), __webpack_require__(11)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir) {
 	
 		/** {@export}{@class KefirSignalHandler}
 	  * Use this as a subclass (or just mix it in) to provide support for
 	  * events and observable properties through Kefir.js.
 	  */
-		var KefirSignalHandler = U.newClass(function KefirSignalHandler() {
+		var KefirSignalHandler = (function () {
+			function KefirSignalHandler() {
+				_classCallCheck(this, KefirSignalHandler);
 	
-			this._events = {};
-			this._properties = {};
-			this._propertyBusses = {};
-		}, /** @lends KefirSignalHandler.prototype */{
-	
-			/** {@public}{@method}
-	   * Declares a new event stream for this object.
-	   *
-	   * @param  {String}        name    - the name of the event, used to trigger or subscribe to it
-	   * @param  {Kefir.Stream} [source] - another event stream to automatically trigger this event
-	   *
-	   * @return {Kefir.Bus} - the created event stream
-	   */
-			newEvent: function newEvent(name) {
-				var _ref = arguments[1] === undefined ? {} : arguments[1];
-	
-				var source = _ref.source;
-	
-				/* is the event name already taken? */
-				U.assert(!this._events[name], 'There is already an event \'' + name + '\' on this object.');
-				U.assert(!this._properties[name], 'There is already a property \'' + name + '\' on this object.');
-	
-				/* define the event stream */
-				var bus = Kefir.bus();
-				if (source) {
-					bus.plug(source);
-				}
-				return this._events[name] = bus;
-			},
-	
-			/** {@public}{@method}
-	   * Retrieve an event stream by name. If the name of a property is given, a stream
-	   * based on changes to that property is returned.
-	   *
-	   * @param  {String}  name - the name of the event stream to retrieve
-	   * @return {Kefir.Stream} - the event stream associated with the given name
-	   */
-			event: function event(name) {
-	
-				/* does the event exist? */
-				U.assert(this._events[name], 'There is no event \'' + name + '\' on this object.');
-	
-				/* return it */
-				return this._events[name];
-			},
-	
-			/** {@public}{@method}
-	   * Retrieve a property by name.
-	   *
-	   * @param  {String} name - the name of the property to retrieve
-	   * @return {Kefir.Property} - the property associated with the given name
-	   */
-			property: function property(name) {
-				return this._properties[name];
-			},
-	
-			/** @alias property */
-			p: function p(name) {
-				return this._properties[name];
-			},
-	
-			/** {@public}{@method}
-	   * This method defines a new property on this object.
-	   *
-	   * @param  {String}                   name           - the name of the event stream to retrieve
-	   * @param  {Boolean}                 [settable=true] - whether the value can be manually set
-	   * @param  {*}                       [initial]       - the initial value of this property
-	   * @param  {function(*,*):Boolean}   [isEqual]       - a predicate function by which to test for duplicate values
-	   *
-	   * @return {Kefir.Property} - the property associated with the given name
-	   */
-			newProperty: function newProperty(name) {
-				var _ref2 = arguments[1] === undefined ? {} : arguments[1];
-	
-				var settable = _ref2.settable;
-				var initial = _ref2.initial;
-				var isEqual = _ref2.isEqual;
-	
-				/* is the property name already taken? */
-				U.assert(!this._events[name], 'There is already an event \'' + name + '\' on this object.');
-				U.assert(!this._properties[name], 'There is already a property \'' + name + '\' on this object.');
-	
-				/* default value for 'settable' */
-				if (U.isUndefined(settable)) {
-					settable = true;
-				}
-	
-				/* define the bus which manages the property */
-				var bus = Kefir.bus();
-	
-				/* define the property itself, and give it additional methods */
-				var property = this._properties[name] = bus.toProperty(initial).skipDuplicates(isEqual);
-				property.plug = function (observable) {
-					bus.plug(observable);return property;
-				};
-				property.unplug = function (observable) {
-					bus.unplug(observable);return property;
-				};
-				property.get = function () {
-					return property._current;
-				}; // TODO: accessing private field of Kefir property; don't
-				if (settable) {
-					property.set = function (value) {
-						bus.emit(value);return property;
-					};
-				}
-	
-				/* add the property to the object interface */
-				Object.defineProperty(this, name, {
-					get: property.get,
-					set: settable ? property.set : undefined
-				});
-	
-				/* make the property active; it doesn't work if this isn't done (the nature of Kefir.js) */
-				property.run();
-				this.event('destroy').onValue(function () {
-					bus.end();
-				});
-	
-				/* return the property */
-				return property;
-			},
-	
-			/** {@public}{@method}
-	   * Trigger an event for all subscribers.
-	   *
-	   * @param {String} name  - the name of the event stream to trigger
-	   * @value {*}      value - the value to attach to the event
-	   */
-			trigger: function trigger(name, value) {
-	
-				/* does the event stream exist? */
-				U.assert(this._events[name], 'There is no event \'' + name + '\' on this object.');
-	
-				/* push the value to the stream */
-				this._events[name].emit(value);
-			},
-	
-			/** {@public}{@method}
-	   * This method selects an existing stream or property, and then
-	   * either returns it, or creates a subscription to it, depending
-	   * on whether a callback is provided.
-	   *
-	   * @param {String}            name                 - the name of the event or property to subscribe to
-	   * @param {*}                [expectedValue]       - if provided, filters the stream by === equality with this value;
-	   *                                                   this may not be a plain object
-	   * @param {Object}           [options]             - a plain object for providing additional options
-	   * @param {Boolean}          [options.once=false]  - whether the stream ends after one event
-	   * @param {function(*):void} [callback]            - if provided, subscribes to this stream with the this callback
-	   *
-	   * @return {Kefir.Observable|function():undefined} - if no `callback` is provided, the specified event stream
-	   *                                                   or property; otherwise, a function to unsubscribe to said
-	   *                                                   stream or property
-	   */
-			on: function on(name, expectedValue, options, callback) {
-				var argsObj = this._gatherOnArguments(name, expectedValue, options, callback);
-				return this._on(argsObj);
-			},
-	
-			/** {@private}{@method}
-	   * This method does the main work for {@link on}, but accepts
-	   * the parameters as one object, so it doesn't have to deal with parameter ordering.
-	   *
-	   * @return {Kefir.Observable|function():void}
-	   */
-			_on: function _on(_ref3) {
-				var name = _ref3.name;
-				var expectedValue = _ref3.expectedValue;
-				var callback = _ref3.callback;
-	
-				/* does an event or property by this name exist? */
-				U.assert(this._events[name] || this._properties[name], 'There is no event or property \'' + name + '\' on this object.');
-	
-				/* process name */
-				var result = this._events[name] || this._properties[name];
-	
-				/* process expectedValue */
-				if (U.isDefined(expectedValue)) {
-					result = result.filter(function (v) {
-						return v === expectedValue;
-					});
-				}
-	
-				/* process callback */
-				if (callback) {
-					result = result.onValue(callback);
-				}
-	
-				return result;
-			},
-	
-			/** {@private}{@method}
-	   * Process the arguments accepted by {@link on}.
-	   *
-	   * @return {Object}
-	   */
-			_gatherOnArguments: function _gatherOnArguments() {
-				for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-					args[_key] = arguments[_key];
-				}
-	
-				var result = { name: args.shift() };
-	
-				/* test for expected value argument */
-				if (U.isDefined(args[0]) && !U.isFunction(args[0]) && !U.isPlainObject(args[0])) {
-					result.expectedValue = args.shift();
-				}
-	
-				/* test for callback function */
-				if (U.isDefined(args[0]) && U.isFunction(args[0])) {
-					result.callback = args.shift();
-				}
-	
-				return result;
+				this._events = {};
+				this._properties = {};
+				this._propertyBusses = {};
 			}
 	
-		});
+			_createClass(KefirSignalHandler, [{
+				key: 'newEvent',
+	
+				/** {@public}{@method}
+	    * Declares a new event stream for this object.
+	    *
+	    * @param  {String}        name    - the name of the event, used to trigger or subscribe to it
+	    * @param  {Kefir.Stream} [source] - another event stream to automatically trigger this event
+	    *
+	    * @return {Kefir.Bus} - the created event stream
+	    */
+				value: function newEvent(name) {
+					var _ref = arguments[1] === undefined ? {} : arguments[1];
+	
+					var source = _ref.source;
+	
+					/* is the event name already taken? */
+					U.assert(!this._events[name], 'There is already an event \'' + name + '\' on this object.');
+					U.assert(!this._properties[name], 'There is already a property \'' + name + '\' on this object.');
+	
+					/* define the event stream */
+					var bus = Kefir.bus();
+					if (source) {
+						bus.plug(source);
+					}
+					return this._events[name] = bus;
+				}
+			}, {
+				key: 'event',
+	
+				/** {@public}{@method}
+	    * Retrieve an event stream by name. If the name of a property is given, a stream
+	    * based on changes to that property is returned.
+	    *
+	    * @param  {String}  name - the name of the event stream to retrieve
+	    * @return {Kefir.Stream} - the event stream associated with the given name
+	    */
+				value: function event(name) {
+	
+					/* does the event exist? */
+					U.assert(this._events[name], 'There is no event \'' + name + '\' on this object.');
+	
+					/* return it */
+					return this._events[name];
+				}
+			}, {
+				key: 'property',
+	
+				/** {@public}{@method}
+	    * Retrieve a property by name.
+	    *
+	    * @param  {String} name - the name of the property to retrieve
+	    * @return {Kefir.Property} - the property associated with the given name
+	    */
+				value: function property(name) {
+					return this._properties[name];
+				}
+			}, {
+				key: 'p',
+	
+				/** @alias property */
+				value: function p(name) {
+					return this._properties[name];
+				}
+			}, {
+				key: 'newProperty',
+	
+				/** {@public}{@method}
+	    * This method defines a new property on this object.
+	    *
+	    * @param  {String}                   name           - the name of the event stream to retrieve
+	    * @param  {Boolean}                 [settable=true] - whether the value can be manually set
+	    * @param  {*}                       [initial]       - the initial value of this property
+	    * @param  {function(*,*):Boolean}   [isEqual]       - a predicate function by which to test for duplicate values
+	    *
+	    * @return {Kefir.Property} - the property associated with the given name
+	    */
+				value: function newProperty(name) {
+					var _ref2 = arguments[1] === undefined ? {} : arguments[1];
+	
+					var settable = _ref2.settable;
+					var initial = _ref2.initial;
+					var isEqual = _ref2.isEqual;
+	
+					/* is the property name already taken? */
+					U.assert(!this._events[name], 'There is already an event \'' + name + '\' on this object.');
+					U.assert(!this._properties[name], 'There is already a property \'' + name + '\' on this object.');
+	
+					/* default value for 'settable' */
+					if (U.isUndefined(settable)) {
+						settable = true;
+					}
+	
+					/* define the bus which manages the property */
+					var bus = Kefir.bus();
+	
+					/* define the property itself, and give it additional methods */
+					var property = this._properties[name] = bus.toProperty(initial).skipDuplicates(isEqual);
+					property.plug = function (observable) {
+						bus.plug(observable);return property;
+					};
+					property.unplug = function (observable) {
+						bus.unplug(observable);return property;
+					};
+					property.get = function () {
+						return property._current;
+					}; // TODO: accessing private field of Kefir property; don't
+					if (settable) {
+						property.set = function (value) {
+							bus.emit(value);return property;
+						};
+					}
+	
+					/* add the property to the object interface */
+					Object.defineProperty(this, name, {
+						get: property.get,
+						set: settable ? property.set : undefined
+					});
+	
+					/* make the property active; it doesn't work if this isn't done (the nature of Kefir.js) */
+					property.run();
+					this.event('destroy').onValue(function () {
+						bus.end();
+					});
+	
+					/* return the property */
+					return property;
+				}
+			}, {
+				key: 'trigger',
+	
+				/** {@public}{@method}
+	    * Trigger an event for all subscribers.
+	    *
+	    * @param {String} name  - the name of the event stream to trigger
+	    * @value {*}      value - the value to attach to the event
+	    */
+				value: function trigger(name, value) {
+	
+					/* does the event stream exist? */
+					U.assert(this._events[name], 'There is no event \'' + name + '\' on this object.');
+	
+					/* push the value to the stream */
+					this._events[name].emit(value);
+				}
+			}, {
+				key: 'on',
+	
+				/** {@public}{@method}
+	    * This method selects an existing stream or property, and then
+	    * either returns it, or creates a subscription to it, depending
+	    * on whether a callback is provided.
+	    *
+	    * @param {String}            name                 - the name of the event or property to subscribe to
+	    * @param {*}                [expectedValue]       - if provided, filters the stream by === equality with this value;
+	    *                                                   this may not be a plain object
+	    * @param {Object}           [options]             - a plain object for providing additional options
+	    * @param {Boolean}          [options.once=false]  - whether the stream ends after one event
+	    * @param {function(*):void} [callback]            - if provided, subscribes to this stream with the this callback
+	    *
+	    * @return {Kefir.Observable|function():undefined} - if no `callback` is provided, the specified event stream
+	    *                                                   or property; otherwise, a function to unsubscribe to said
+	    *                                                   stream or property
+	    */
+				value: function on(name, expectedValue, options, callback) {
+					var argsObj = this._gatherOnArguments(name, expectedValue, options, callback);
+					return this._on(argsObj);
+				}
+			}, {
+				key: '_on',
+	
+				/** {@private}{@method}
+	    * This method does the main work for {@link on}, but accepts
+	    * the parameters as one object, so it doesn't have to deal with parameter ordering.
+	    *
+	    * @return {Kefir.Observable|function():void}
+	    */
+				value: function _on(_ref3) {
+					var name = _ref3.name;
+					var expectedValue = _ref3.expectedValue;
+					var callback = _ref3.callback;
+	
+					/* does an event or property by this name exist? */
+					U.assert(this._events[name] || this._properties[name], 'There is no event or property \'' + name + '\' on this object.');
+	
+					/* process name */
+					var result = this._events[name] || this._properties[name];
+	
+					/* process expectedValue */
+					if (U.isDefined(expectedValue)) {
+						result = result.filter(function (v) {
+							return v === expectedValue;
+						});
+					}
+	
+					/* process callback */
+					if (callback) {
+						result = result.onValue(callback);
+					}
+	
+					return result;
+				}
+			}, {
+				key: '_gatherOnArguments',
+	
+				/** {@private}{@method}
+	    * Process the arguments accepted by {@link on}.
+	    *
+	    * @return {Object}
+	    */
+				value: function _gatherOnArguments() {
+					for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+						args[_key] = arguments[_key];
+					}
+	
+					var result = { name: args.shift() };
+	
+					/* test for expected value argument */
+					if (U.isDefined(args[0]) && !U.isFunction(args[0]) && !U.isPlainObject(args[0])) {
+						result.expectedValue = args.shift();
+					}
+	
+					/* test for callback function */
+					if (U.isDefined(args[0]) && U.isFunction(args[0])) {
+						result.callback = args.shift();
+					}
+	
+					return result;
+				}
+			}]);
+	
+			return KefirSignalHandler;
+		})();
 	
 		return KefirSignalHandler;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -1134,7 +1161,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(63), __webpack_require__(65), __webpack_require__(9)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, DeltaJs, defer) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(63), __webpack_require__(68), __webpack_require__(9)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, DeltaJs, defer) {
 		'use strict';
 	
 		/* already cached? */
@@ -1167,19 +1194,19 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
+	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
+	
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(63)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P) {
 		'use strict';
 	
 		var U = {
 	
-			// create a new class, given a constructor and possible prototype
-			newClass: function newClass(constructor) {
-				var prototype = arguments[1] === undefined ? {} : arguments[1];
-	
-				constructor.prototype = prototype;
-				constructor.prototype.constructor = constructor;
-				return constructor;
-			},
+			//// create a new class, given a constructor and possible prototype
+			//newClass(constructor, prototype = {}) {
+			//	constructor.prototype = prototype;
+			//	constructor.prototype.constructor = constructor;
+			//	return constructor;
+			//}, // Already made redundant by ES6; TODO: do same for `newSubclass`
 	
 			// create a new subclass, given a superclass, constructor and possible prototype
 			newSubclass: function newSubclass(superClass, constructorMaker) {
@@ -1509,10 +1536,12 @@ return /******/ (function(modules) { // webpackBootstrap
 		};
 	
 		/* HTML element position */
-		U.Position = U.newClass(function (top, left) {
+		U.Position = function Position(top, left) {
+			_classCallCheck(this, Position);
+	
 			this.top = top;
 			this.left = left;
-		});
+		};
 		U.Position.subtract = function (a, b) {
 			return new U.Position(a.top - b.top, a.left - b.left);
 		};
@@ -1521,10 +1550,12 @@ return /******/ (function(modules) { // webpackBootstrap
 		};
 	
 		/* HTML element size */
-		U.Size = U.newClass(function (height, width) {
+		U.Size = function Size(height, width) {
+			_classCallCheck(this, Size);
+	
 			this.height = height;
 			this.width = width;
-		});
+		};
 		U.Size.equals = function (a, b) {
 			return U.isDefined(a) && U.isDefined(b) && sortOfEqual(a.height, b.height) && sortOfEqual(a.width, b.width);
 		};

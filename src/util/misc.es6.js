@@ -3,12 +3,12 @@ define(['bluebird'], (P) => {
 
 	var U = {
 
-		// create a new class, given a constructor and possible prototype
-		newClass(constructor, prototype = {}) {
-			constructor.prototype = prototype;
-			constructor.prototype.constructor = constructor;
-			return constructor;
-		},
+		//// create a new class, given a constructor and possible prototype
+		//newClass(constructor, prototype = {}) {
+		//	constructor.prototype = prototype;
+		//	constructor.prototype.constructor = constructor;
+		//	return constructor;
+		//}, // Already made redundant by ES6; TODO: do same for `newSubclass`
 
 		// create a new subclass, given a superclass, constructor and possible prototype
 		newSubclass(superClass, constructorMaker, prototype = {}) {
@@ -247,10 +247,12 @@ define(['bluebird'], (P) => {
 	var sortOfEqual = (a, b) => (b - EPS < a && a < b + EPS);
 
 	/* HTML element position */
-	U.Position = U.newClass(function (top, left) {
-		this.top = top;
-		this.left = left;
-	});
+	U.Position = class Position {
+		constructor(top, left) {
+			this.top = top;
+			this.left = left;
+		}
+	};
 	U.Position.subtract = (a, b) => {
 		return new U.Position(a.top - b.top, a.left - b.left);
 	};
@@ -260,10 +262,12 @@ define(['bluebird'], (P) => {
 
 
 	/* HTML element size */
-	U.Size = U.newClass(function (height, width) {
-		this.height = height;
-		this.width = width;
-	});
+	U.Size = class Size {
+		constructor(height, width) {
+			this.height = height;
+			this.width = width;
+		}
+	};
 	U.Size.equals = (a, b) => {
 		return U.isDefined(a) && U.isDefined(b) && sortOfEqual(a.height, b.height) && sortOfEqual(a.width, b.width);
 	};

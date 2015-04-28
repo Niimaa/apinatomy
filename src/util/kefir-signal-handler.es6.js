@@ -7,13 +7,13 @@ define(['jquery', './misc.es6.js', './kefir-and-eggs.es6.js'], function ($, U, K
 	 * Use this as a subclass (or just mix it in) to provide support for
 	 * events and observable properties through Kefir.js.
 	 */
-	var KefirSignalHandler = U.newClass(function KefirSignalHandler() {
+	var KefirSignalHandler = class KefirSignalHandler {
 
-		this._events = {};
-		this._properties = {};
-		this._propertyBusses = {};
-
-	}, /** @lends KefirSignalHandler.prototype */ {
+		constructor() {
+			this._events = {};
+			this._properties = {};
+			this._propertyBusses = {};
+		}
 
 		/** {@public}{@method}
 		 * Declares a new event stream for this object.
@@ -36,7 +36,7 @@ define(['jquery', './misc.es6.js', './kefir-and-eggs.es6.js'], function ($, U, K
 			if (source) { bus.plug(source) }
 			return this._events[name] = bus;
 
-		},
+		}
 
 
 		/** {@public}{@method}
@@ -55,7 +55,7 @@ define(['jquery', './misc.es6.js', './kefir-and-eggs.es6.js'], function ($, U, K
 			/* return it */
 			return this._events[name];
 
-		},
+		}
 
 
 		/** {@public}{@method}
@@ -64,10 +64,10 @@ define(['jquery', './misc.es6.js', './kefir-and-eggs.es6.js'], function ($, U, K
 		 * @param  {String} name - the name of the property to retrieve
 		 * @return {Kefir.Property} - the property associated with the given name
 		 */
-		property(name) { return this._properties[name] },
+		property(name) { return this._properties[name] }
 
 		/** @alias property */
-		p(name) { return this._properties[name] },
+		p(name) { return this._properties[name] }
 
 
 		/** {@public}{@method}
@@ -116,7 +116,7 @@ define(['jquery', './misc.es6.js', './kefir-and-eggs.es6.js'], function ($, U, K
 			/* return the property */
 			return property;
 
-		},
+		}
 
 
 		/** {@public}{@method}
@@ -134,7 +134,7 @@ define(['jquery', './misc.es6.js', './kefir-and-eggs.es6.js'], function ($, U, K
 			/* push the value to the stream */
 			this._events[name].emit(value);
 
-		},
+		}
 
 
 		/** {@public}{@method}
@@ -156,7 +156,7 @@ define(['jquery', './misc.es6.js', './kefir-and-eggs.es6.js'], function ($, U, K
 		on(name, expectedValue, options, callback) {
 			var argsObj = this._gatherOnArguments(name, expectedValue, options, callback);
 			return this._on(argsObj);
-		},
+		}
 
 
 		/** {@private}{@method}
@@ -180,7 +180,7 @@ define(['jquery', './misc.es6.js', './kefir-and-eggs.es6.js'], function ($, U, K
 			if (callback) { result = result.onValue(callback) }
 
 			return result;
-		},
+		}
 
 
 		/** {@private}{@method}
@@ -204,8 +204,7 @@ define(['jquery', './misc.es6.js', './kefir-and-eggs.es6.js'], function ($, U, K
 			return result;
 		}
 
-
-	});
+	};
 
 
 	return KefirSignalHandler;
