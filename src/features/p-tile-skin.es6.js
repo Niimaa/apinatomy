@@ -52,7 +52,7 @@ define([
 		/* when the tile is closed, make the font size dynamic */
 		this.on('size').filterBy(this.p('open').not()).onValue((size) => {
 			this._p_tileSkin_headerElement // formula gotten experimentally
-				.css('fontSize', Math.min(0.2 * Math.pow(size.height, 1.01), 0.13 * Math.pow(size.width, 1.01)));
+				.css('fontSize', Math.pow(Math.min(0.203 * size.height, 0.133 * size.width), 1.01));
 				// We're growing / shrinking the font size in proportion to the (1.01)st power of the tile size.
 				// Making the font grow/shrink just a tiny bit faster than the tile prevents an awkward 'flickering'
 				// between different line-breaks that would otherwise happen sometimes.
