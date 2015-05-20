@@ -10,10 +10,12 @@ define(['jquery'], function ($) {
 	/* while dragging a vertex, lock the 3D camera */
 	plugin.append('construct', function () {
 
-		this.on('draggingVertex').filter((v) => v && this.threeDManualControlsEnabled).onValue(() => {
+		this.p('draggingVertex').filter(v => v && this.threeDManualControlsEnabled).onValue(() => {
 			this.threeDManualControlsEnabled = false;
-			this.on('draggingVertex').value(null).take(1).onValue(() => {
-				this.threeDManualControlsEnabled = true;
+			setTimeout(() => {
+				this.p('draggingVertex').filter(v => v === null).take(1).onValue(() => {
+					this.threeDManualControlsEnabled = true;
+				});
 			});
 		});
 

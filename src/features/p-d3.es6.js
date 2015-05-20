@@ -105,7 +105,7 @@ define([
 		/* a property for which vertex (if any) is being dragged */
 		var currentEventData = () => d3.select(d3.event.sourceEvent.target.parentElement).data()[0];
 		this.newProperty('draggingVertex', { initial: null }).plug(Kefir.merge([
-			Kefir.fromOnNull(this.d3Force.drag(), 'dragstart').mapTo(currentEventData),
+			Kefir.fromOnNull(this.d3Force.drag(), 'dragstart').map(currentEventData),
 			Kefir.fromOnNull(this.d3Force.drag(), 'dragend').mapTo(null)
 		]));
 
