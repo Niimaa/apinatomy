@@ -123,8 +123,8 @@ define(['bluebird', './defer.es6.js'], (P, defer) => {
 		},
 
 		// Returns a function, that, as long as it continues to be invoked, will not
-		// be triggered. The function will be called after it stops being called for
-		// N milliseconds. Every invocation returns a promise to the eventual result.
+		// be triggered. The function will actually be invoked after it stops being called
+		// for N milliseconds. Every invocation returns a promise to the eventual result.
 		debounce(func, wait, context) {
 			var timeout;
 			var deferred = defer();

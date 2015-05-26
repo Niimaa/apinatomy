@@ -14,16 +14,16 @@
     "bower_components"
   ],
   "dependencies": {
-    "jquery": "~2.1.1",
-    "bluebird": "~2.3.2",
-    "chroma-js": "~0.5.8",
-    "d3": "~3.4.11",
+    "jquery": "~2.1",
+    "bluebird": "~2.3",
+    "chroma-js": "~0.5",
+    "d3": "~3.4",
     "three.js": "*",
-    "delta.js": "~1.4.0-alpha",
+    "delta.js": "~1.4.1-alpha",
     "tweenjs": "*",
-    "kefir": "~1.0.0",
+    "kefir": "~2.0",
     "kefir-jquery": "~1.0.0",
-    "velocity": "~1.2.2"
+    "velocity": "~1.2"
   },
   "devDependencies": {
     "requirejs-domready": "~2.0.1",

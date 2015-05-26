@@ -26,6 +26,7 @@ import '../features/p-transition-position-tracking.es6.js';
 import '../features/p-tile-hidden.es6.js';
 import '../features/p-tile-maximized.es6.js';
 import '../features/p-tile-middleclick-to-maximize.es6.js';
+//import '../features/p-svg.es6.js';
 import '../features/p-d3.es6.js';
 import '../features/p-connectivity.es6.js';
 import '../features/p-ppi.es6.js';
@@ -71,8 +72,8 @@ circuitboard.plugin.select(
 	'tile-button-to-maximize',
 	'tile-button-to-swap-three-d-model',
 	'tile-button-to-point-camera',
-	//'three-d-tubes',
 	'connectivity'
+	//'three-d-tubes'
 );
 
 $(document).ready(() => {
@@ -90,30 +91,7 @@ $(document).ready(() => {
 					file: require('./3d-models/FMA7148_Stomach.obj'),
 					color: 0x7F1F1A
 				},
-			},
-
-			'fma:7187': {
-				'walking-legs': {
-					parts: {
-						'left_femur_1':    { file: require('./3d-models/walking-legs/left_femur_1.json') },
-						'left_fibula_1':   { file: require('./3d-models/walking-legs/left_fibula_1.json') },
-						'left_foot_1':     { file: require('./3d-models/walking-legs/left_foot_1.json') },
-						'left_hip_1':      { file: require('./3d-models/walking-legs/left_hip_1.json') },
-						'left_patella_1':  { file: require('./3d-models/walking-legs/left_patella_1.json') },
-						'left_tibia_1':    { file: require('./3d-models/walking-legs/left_tibia_1.json') },
-						'muscles_1':       { file: require('./3d-models/walking-legs/muscles_1.json'), color: 0x7F1F1A },
-						'right_femur_1':   { file: require('./3d-models/walking-legs/right_femur_1.json') },
-						'right_fibula_1':  { file: require('./3d-models/walking-legs/right_fibula_1.json') },
-						'right_foot_1':    { file: require('./3d-models/walking-legs/right_foot_1.json') },
-						'right_hip_1':     { file: require('./3d-models/walking-legs/right_hip_1.json') },
-						'right_patella_1': { file: require('./3d-models/walking-legs/right_patella_1.json') },
-						'right_tibia_1':   { file: require('./3d-models/walking-legs/right_tibia_1.json') }
-					},
-					color: 0xE6E6B3,
-					animation: { duration: 1500 },
-					elevation: 0
-				}
-			},
+			}
 
 		}
 	}).circuitboard('instance').then(function (circuitboard) {

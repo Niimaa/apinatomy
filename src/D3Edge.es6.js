@@ -15,24 +15,24 @@ define([
 		if (U.isDefined(window._amy_D3Edge)) { return window._amy_D3Edge }
 
 
-		window._amy_D3Edge = Artefact.newSubclass('D3Edge', function D3Edge({source, target}) {
+		window._amy_D3Edge = Artefact.newSubclass('D3Edge', function D3Edge({}) {
 
-			/* store references to the two vertices */
-			this._source = source;
-			this._target = target;
+			/* when one of the vertices is destroyed, so is this edge */ // TODO: reintroduce this at some point, in some way
+			//Kefir.merge([ this.source.on('destroy'), this.target.on('destroy') ]).take(1).onValue(() => { this.destroy() });
 
-			/* when one of the vertices is destroyed, so is this edge */
-			Kefir.merge([
-				source.on('destroy'),
-				target.on('destroy')
-			]).take(1).onValue(() => { this.destroy() });
 
 		}, {
 
-			get source() { return this._source },
+			/* update whichever visual representation is active (d3 or 3d) */
+			updateVisualization() {
+				this.element.attr('x1', this.source.x);
+				this.element.attr('y1', this.source.y);
+				this.element.attr('x2', this.target.x);
+				this.element.attr('y2', this.target.y);
+				this.object3d.updateTube();
+			},
 
-			get target() { return this._target },
-
+			/* D3 representation*/
 			get element() {
 				if (!this._element) {
 					// adding and discarding an 'svg' element prevents a bug where the line would not appear
@@ -40,8 +40,16 @@ define([
 				}
 				return this._element;
 			},
+			get graphZIndex() { return this.options.graphZIndex },
 
-			get graphZIndex() { return this.options.graphZIndex }
+			/* 3D representation */
+			get object3d() {
+				if (!this._object3d) {
+					this._object3d = this.circuitboard.newTubeFromVertexToVertex(this, 0xff0000);
+					this.on('destroy').take(1).onValue(() => { this.object3d.removeTube() });
+				}
+				return this._object3d; // TODO: properly delete this 3D object when this edge is destroyed
+			}
 
 		}, {
 			graphZIndex: 100,

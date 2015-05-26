@@ -55,17 +55,17 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1);
+	module.exports = __webpack_require__(2);
 
 
 /***/ },
 
-/***/ 1:
+/***/ 2:
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(63), __webpack_require__(16), __webpack_require__(13)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, newWidgetType, deltaJs) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(63), __webpack_require__(17), __webpack_require__(14)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, newWidgetType, deltaJs) {
 		'use strict';
 	
 		/* create $.circuitboard object if it doesn't exist */
@@ -103,12 +103,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 2:
+/***/ 3:
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(63), __webpack_require__(14), __webpack_require__(12), __webpack_require__(19), __webpack_require__(13), __webpack_require__(9)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, U, KefirSignalHandler, uniqueID, deltaJs, defer) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(63), __webpack_require__(15), __webpack_require__(13), __webpack_require__(20), __webpack_require__(14), __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, U, KefirSignalHandler, uniqueID, deltaJs, defer) {
 		'use strict';
 	
 		return deltaJs.selected.then(function () {
@@ -452,7 +452,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 9:
+/***/ 10:
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
@@ -477,12 +477,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 11:
+/***/ 12:
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(14), __webpack_require__(65), __webpack_require__(66), __webpack_require__(67)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir, TWEEN, KefirJQuery) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(15), __webpack_require__(65), __webpack_require__(66), __webpack_require__(67)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir, TWEEN, KefirJQuery) {
 	
 		/* Kefir jQuery plugin ********************************************************************************************/
 	
@@ -779,16 +779,16 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 12:
+/***/ 13:
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
-	
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(14), __webpack_require__(11)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir) {
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(15), __webpack_require__(12)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir) {
 	
 		/** {@export}{@class KefirSignalHandler}
 	  * Use this as a subclass (or just mix it in) to provide support for
@@ -1042,12 +1042,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 13:
+/***/ 14:
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(63), __webpack_require__(68), __webpack_require__(9)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, DeltaJs, defer) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(63), __webpack_require__(68), __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, DeltaJs, defer) {
 		'use strict';
 	
 		/* already cached? */
@@ -1075,14 +1075,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 14:
+/***/ 15:
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(63)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(63), __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, defer) {
 		'use strict';
 	
 		var U = {
@@ -1263,10 +1263,11 @@ return /******/ (function(modules) { // webpackBootstrap
 			},
 	
 			// Returns a function, that, as long as it continues to be invoked, will not
-			// be triggered. The function will be called after it stops being called for
-			// N milliseconds.
+			// be triggered. The function will actually be invoked after it stops being called
+			// for N milliseconds. Every invocation returns a promise to the eventual result.
 			debounce: function debounce(func, wait, context) {
 				var timeout;
+				var deferred = defer();
 				return function () {
 					var _this = this;
 	
@@ -1276,10 +1277,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 					var laterFn = function laterFn() {
 						timeout = null;
-						func.apply(context || _this, args);
+						deferred.resolve(func.apply(context || _this, args));
+						deferred = defer();
 					};
 					clearTimeout(timeout);
 					timeout = setTimeout(laterFn, wait);
+					return deferred.promise;
 				};
 			},
 	
@@ -1451,12 +1454,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 16:
+/***/ 17:
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(63), __webpack_require__(14), __webpack_require__(2), __webpack_require__(11)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, U, ArtefactP) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(63), __webpack_require__(15), __webpack_require__(3), __webpack_require__(12)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, U, ArtefactP) {
 		'use strict';
 	
 		/*  a function to create an apinatomy component (widget)          */
@@ -1533,7 +1536,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 19:
+/***/ 20:
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;"use strict";

@@ -33,24 +33,26 @@ define([
 
 		/* create the force layout */
 		this.d3Force = d3.layout.force()
-				.nodes(U.objValues(this._p_d3_vertices))
-				.links(U.objValues(this._p_d3_edges))
-				.gravity(0)
-				.charge(function (d) {
-					return -2 *
-							(d.group.region.width + d.group.region.height) *
-							U.defOr(d.group.chargeFactor, 1) *
-							U.defOr(d.chargeFactor, 1) /
-							Math.sqrt(d.group.vertices.length || 1);
-				})
-				.chargeDistance(200)
-				.linkDistance(function (d) {
-					return (d.group.region.width + d.group.region.height) *
-							U.defOr(d.group.linkDistanceFactor, 1) *
-							U.defOr(d.linkDistanceFactor, 1) /
-							Math.sqrt(d.group.vertices.length || 1);
-				})
-				.linkStrength(0.8);
+			.nodes(U.objValues(this._p_d3_vertices))
+			.links(U.objValues(this._p_d3_edges))
+			.gravity(0)
+			.charge((d) => {
+				return -2 *
+						(d.group.region.width + d.group.region.height) *
+						U.defOr(d.group.chargeFactor, 1) *
+						U.defOr(d.chargeFactor, 1) /
+						Math.sqrt(d.group.vertices.length || 1);
+			})
+			.chargeDistance(200)
+			.linkDistance((d) => {
+				return (d.group.region.width + d.group.region.height) *
+						U.defOr(d.group.linkDistanceFactor, 1) *
+						U.defOr(d.linkDistanceFactor, 1) /
+						Math.sqrt(d.group.vertices.length || 1);
+			})
+			.linkStrength((d) => {
+				return 0.8 * U.defOr(d.group.linkStrengthFactor, 1);
+			});
 
 
 		/* auto-resize the force-layout canvas */
@@ -96,7 +98,7 @@ define([
 
 			/* define a nice visual z-order for the svg elements */
 			svg.selectAll('.vertex, .edge').sort(
-					(a, b) => (a.graphZIndex < b.graphZIndex) ? -1 : ((a.graphZIndex === b.graphZIndex) ? 0 : 1)
+				(a, b) => (a.graphZIndex < b.graphZIndex) ? -1 : ((a.graphZIndex === b.graphZIndex) ? 0 : 1)
 			);
 
 		}, 200);
@@ -111,37 +113,24 @@ define([
 
 
 		/* the 'd3-tick' event-stream, and performing animation on a tick */
-		this.newEvent('d3-tick', {
-			source: Kefir.fromOnNull(this.d3Force, 'tick')
-		}).onValue((e) => {
-
+		this.newEvent('d3-tick', { source: Kefir.fromOnNull(this.d3Force, 'tick') }).onValue((e) => {
 			/* dampening factor */
 			var k = 0.1 * e.alpha;
 
-			/* gravitate towards the center of the region */
-			visibleVertices.forEach((d) => {
-				d.x += d.group.gravityFactor * (d.group.region.left + 0.5 * d.group.region.width - d.x) * k;
-				d.y += d.group.gravityFactor * (d.group.region.top + 0.5 * d.group.region.height - d.y) * k;
-			});
-
-			/* but always stay within the region */
-			visibleVertices.forEach((d) => {
-				d.x = Math.max(d.x, d.group.region.left);
-				d.x = Math.min(d.x, d.group.region.left + d.group.region.width);
-				d.y = Math.max(d.y, d.group.region.top);
-				d.y = Math.min(d.y, d.group.region.top + d.group.region.height);
-			});
+			for (let d of visibleVertices) {
+				let x = d.x,
+					y = d.y;
+				x += k * d.group.gravityFactor * (d.group.region.left + 0.5 * d.group.region.width  - x);
+				y += k * d.group.gravityFactor * (d.group.region.top  + 0.5 * d.group.region.height - y);
+				x = Math.min(Math.max(x, d.group.region.left), d.group.region.left + d.group.region.width );
+				y = Math.min(Math.max(y, d.group.region.top ), d.group.region.top  + d.group.region.height);
+				d.x = x;
+				d.y = y;
+			}
 
 			/* update the visible vertices and edges */
-			vertices
-					.attr('x', (d) => d.x)
-					.attr('y', (d) => d.y);
-			edges
-					.attr("x1", (d) => d.source.x)
-					.attr("y1", (d) => d.source.y)
-					.attr("x2", (d) => d.target.x)
-					.attr("y2", (d) => d.target.y);
-
+			for (let d of visibleVertices) { d.updateVisualization() }
+			for (let d of visibleEdges)    { d.updateVisualization() }
 		});
 
 

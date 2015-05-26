@@ -14,11 +14,12 @@ define([
 		if (U.isDefined(window._amy_D3Vertex)) { return window._amy_D3Vertex }
 
 
-		window._amy_D3Vertex = Artefact.newSubclass('D3Vertex', function D3Vertex({visible}) {
+		window._amy_D3Vertex = Artefact.newSubclass('D3Vertex', function D3Vertex({ visible, z }) {
 
 			/* the coordinate properties */
-			this.newProperty('x', { initial: 10 });
-			this.newProperty('y', { initial: 10 });
+			this.newProperty('x', { initial: 10     });
+			this.newProperty('y', { initial: 10     });
+			this.newProperty('z', { initial: z || 0 });
 
 			/* the 'visible' and 'hidden' properties */
 			this.newProperty('visible', { initial: visible });
@@ -32,6 +33,11 @@ define([
 			});
 
 		}, {
+
+			updateVisualization() {
+				this.element.attr('x', this.x);
+				this.element.attr('y', this.y);
+			},
 
 			get element() {
 				if (!this._element) {
@@ -48,9 +54,9 @@ define([
 
 		}, {
 			graphZIndex: 200,
-			cssClass: '',
-			radius: 5,
-			visible: true
+			cssClass:    '',
+			radius:      5,
+			visible:     true
 		});
 
 

@@ -182,7 +182,7 @@ define(['jquery', './misc.es6.js', 'kefir', 'tweenjs', 'kefir-jquery'], function
 
 	// This filters an observable to only let through values equal to the given value.
 	Kefir.Observable.prototype.value = function (value, comparator) {
-		comparator = comparator || ((e) => e === value);
+		comparator = comparator || (e => e === value);
 		return this.skipDuplicates().filter(comparator);
 	};
 
