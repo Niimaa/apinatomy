@@ -13,7 +13,7 @@ define(['jquery', '../util/misc.es6.js', 'bluebird', 'three-js', '../util/kefir-
 			geometry,
 			new THREE.MeshLambertMaterial({ color: color })
 		);
-		result.receiveShadow = false;
+		result.receiveShadow = true;
 		result.castShadow    = true;
 		return result;
 	}
