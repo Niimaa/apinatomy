@@ -18,7 +18,8 @@
   margin-left: 2px;
 
   border: solid 1px transparent;
-  &:hover { border: dotted 1px white  }
+  &.white:hover          { border: dotted 1px white  }
+  &.black:hover, &:hover { border: dotted 1px black  }
 }
 
 .tile:not(:hover) > .tile-button-holder {

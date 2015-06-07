@@ -158,6 +158,15 @@ define(['jquery', './misc.es6.js', 'kefir', 'tweenjs', 'kefir-jquery'], function
 	};
 
 
+	// convert to a stream of 1-or-2 element arrays;
+	// the first is just the element at that point in the stream
+	// the second is the previous element in the stream, if there is one
+	Kefir.Observable.prototype.newOld = function newOld() {
+		return Kefir.fromArray([null, null]).concat(this).slidingWindow(2).map(([a, b]) => [b, a]);
+	};
+
+
+
 	// This is a cheap version of the limiter defined above. TODO: use the limiter where this is now used
 	Kefir.Stream.prototype.holdUntil = function holdUntil(pacing) {
 		return Kefir.fromBinder((emitter) => {

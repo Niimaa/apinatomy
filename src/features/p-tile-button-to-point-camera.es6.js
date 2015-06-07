@@ -1,10 +1,14 @@
-define(['jquery', '../util/misc.es6.js', '../util/kefir-and-eggs.es6.js'], function ($, U, Kefir) {
+define(['jquery', 'chroma-js', '../util/misc.es6.js', '../util/kefir-and-eggs.es6.js'], function ($, color, U, Kefir) {
 	'use strict';
 
 
 	var plugin = $.circuitboard.plugin.do('tile-button-to-point-camera', {
 		requires: ['tile-buttons', 'three-d']
 	});
+
+
+	let blackIcon = require('../util/icons/camera-black.png');
+	let whiteIcon = require('../util/icons/camera-white.png');
 
 
 	plugin.append('Circuitboard.prototype.construct', function () {
@@ -40,29 +44,31 @@ define(['jquery', '../util/misc.es6.js', '../util/kefir-and-eggs.es6.js'], funct
 
 
 		/* when a new tile is targeted, change the color of its camera button */
-		Kefir.fromArray([null, null]).concat(newTarget).slidingWindow(2).map(([a, b]) => [b, a]).onValue(([newTarget, oldTarget]) => { // TODO: use '.diff'
+		newTarget.newOld().onValue(([newTarget, oldTarget]) => {
 			if (newTarget) {
+				let lightBackground = color(newTarget.element.css('backgroundColor')).luminance() > 0.5;
 				newTarget.element.find('> .tile-button-holder > .tile-button.pointCamera').css({
-					backgroundImage: `url(${require('../util/icons/camera-black.png')})`
+					backgroundImage: `url('${lightBackground ? whiteIcon : blackIcon})`,
+					backgroundColor: lightBackground ? 'black' : 'white'
 				});
 			}
 			if (oldTarget) {
+				let lightBackground = color(oldTarget.element.css('backgroundColor')).luminance() > 0.5;
 				oldTarget.element.find('> .tile-button-holder > .tile-button.pointCamera').css({
-					backgroundImage: `url(${require('../util/icons/camera-white.png')})`
+					backgroundImage: `url('${lightBackground ? blackIcon : whiteIcon})`,
+					backgroundColor: 'transparent'
 				});
 			}
 		});
 
 	}).append('Tile.prototype.construct', function () {
 
-		this.addButton({ name: 'pointCamera', icon: require('../util/icons/camera-white.png') }).onValue(() => {
-
+		this.addButton({ name: 'pointCamera', icon: { white: whiteIcon, black: blackIcon } }).onValue(() => {
 			if (this.circuitboard.cameraTargetTile === this) {
 				this.circuitboard.cameraTargetTile = null;
 			} else {
 				this.circuitboard.cameraTargetTile = this;
 			}
-
 		});
 
 	});

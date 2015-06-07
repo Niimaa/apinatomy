@@ -35,7 +35,7 @@ define([
 			if (flexGrowTo > 0) {
 				sibling.element.css({
 					display: 'flex',
-					marginRight: '1px'
+					marginRight: this.circuitboard.options.tileSpacing
 				});
 			}
 			promises.push(new P((resolve) => {
@@ -46,7 +46,7 @@ define([
 			}).tap(() => {
 				if (flexGrowTo === 0) {
 					sibling.element.css({
-						display: 'none',
+						display:  'none',
 						marginRight: '0'
 					});
 				}
@@ -64,7 +64,7 @@ define([
 				$(rowElement).css('display', 'flex');
 			}
 			if (!maximized) {
-				$(rowElement).css('marginBottom', '1px');
+				$(rowElement).css('marginBottom', this.circuitboard.options.tileSpacing);
 			}
 			promises.push(new P((resolve) => {
 				$(rowElement).velocity(
@@ -82,7 +82,7 @@ define([
 		});
 
 		if (!maximized) {
-			this.element.css('marginRight', '1px');
+			this.element.css('marginRight', this.circuitboard.options.tileSpacing);
 		}
 		return P.all(promises).tap(() => {
 			if (maximized) {

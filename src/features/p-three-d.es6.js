@@ -110,9 +110,21 @@ define([
 
 			/* lighting */
 			this._p_threeD_scene.add(new THREE.AmbientLight(0x101030))
-				.add(new THREE.DirectionalLight(0xffeedd).translateX(-1).translateY(1).translateZ(1))
-				.add(new THREE.DirectionalLight(0xffeedd).translateX(1).translateY(-1).translateZ(1))
-				.add(new THREE.DirectionalLight(0xffeedd).translateX(1).translateY(-1).translateZ(-1));
+				.add((() => {
+					let light = new THREE.PointLight(0xffffff, 2, 0);
+					light.position.set(-2000, -2000, 2000);
+					return light;
+				})())
+				.add((() => {
+					let light = new THREE.PointLight(0xffffff, 1, 0);
+					light.position.set(2000, 2000, -1000);
+					return light;
+				})());
+
+
+
+
+
 
 
 			/* renderers */
@@ -242,7 +254,7 @@ define([
 				);
 				backface.position.z -= 0.1;
 				this._p_threeD_scene.add(backface);
-				this.on('threeDCanvasSize').takeWhileBy(this.p('threeDMode')).onValue((canvasSize) => {
+				this.p('threeDCanvasSize').takeWhileBy(this.p('threeDMode')).onValue((canvasSize) => {
 					backface.scale.x = canvasSize.width  - margin0.left - margin0.right  - 1;
 					backface.scale.y = canvasSize.height - margin0.top  - margin0.bottom - 1;
 				});
@@ -251,13 +263,14 @@ define([
 				this.object3D = new THREE.Object3D();
 				this._p_threeD_scene.add(this.object3D);
 				Kefir.merge([
-					this.on('threeDCanvasSize'),
-					this.on('size')
+					Kefir.once(),
+					this.p('threeDCanvasSize').changes(),
+					this.p('size').changes(),
+					Kefir.interval(10) // backup; TODO: this actually seems necessary; Why doesn't stuff propagate properly?
 				]).takeWhileBy(this.p('threeDMode')).onValue(() => {
 					this.object3D.position.x = 0.5 * (margin0.left - margin0.right) - this.size.width  / 2 + 1;
 					this.object3D.position.y = 0.5 * (margin0.bottom - margin0.top) - this.size.height / 2 + 1;
 				});
-
 
 			})({ // remember some pre-3D DOM state
 				parent0: this.element.parent(),
@@ -318,9 +331,15 @@ define([
 			this.circuitboard.object3D.add(this.object3D);
 
 			/* position it always in the center of the tile */
-			Kefir.combine([ this.p('position'), this.p('size') ]).onValue(([position, size]) => {
-				this.object3D.position.x = position.left + size.width / 2;
-				this.object3D.position.y = this.circuitboard.size.height - position.top - size.height / 2;
+			Kefir.merge([
+				Kefir.once(),
+				this.p('position'),
+				this.p('size'),
+				this.circuitboard.p('size'),
+				Kefir.interval(1000)
+			]).onValue(() => {
+				this.object3D.position.x = this.position.left + this.size.width / 2;
+				this.object3D.position.y = this.circuitboard.size.height - this.position.top - this.size.height / 2;
 			});
 
 			/* hide it when the tile is hidden */
@@ -332,12 +351,26 @@ define([
 				});
 			}
 
-			// DEBUGGING CODE
+			//// DEBUGGING CODE
 			//(()=>{
 			//	var geometry = new THREE.SphereGeometry( 5, 32, 32 );
 			//	var material = new THREE.MeshPhongMaterial( {color: 0xff0000} );
-			//	var sphere = new THREE.Mesh( geometry, material );
-			//	this.object3D.add( sphere );
+			//	let sphere0 = new THREE.Mesh( geometry, material );
+			//	let sphere1 = new THREE.Mesh( geometry, material );
+			//	let sphere2 = new THREE.Mesh( geometry, material );
+			//	let sphere3 = new THREE.Mesh( geometry, material );
+			//	let sphere4 = new THREE.Mesh( geometry, material );
+			//	this.object3D.add( sphere0 );
+			//	this.object3D.add( sphere1 );
+			//	this.object3D.add( sphere2 );
+			//	this.object3D.add( sphere3 );
+			//	this.object3D.add( sphere4 );
+			//	this.p('size').onValue(({ width, height }) => {
+			//		sphere1.position.set(-0.5 * width,  0.5 * height, 0);
+			//		sphere2.position.set( 0.5 * width,  0.5 * height, 0);
+			//		sphere3.position.set( 0.5 * width, -0.5 * height, 0);
+			//		sphere4.position.set(-0.5 * width, -0.5 * height, 0);
+			//	});
 			//})();
 
 		});

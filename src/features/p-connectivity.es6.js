@@ -8,9 +8,10 @@ define([
 	'../D3Vertex.es6.js',
 	'../D3Edge.es6.js',
 	'../util/path-model.es6.js',
+	'three-js',
 	'./p-ppi.scss',
 	'./p-connectivity.scss'
-], function ($, P, Kefir, Graph, U, D3GroupP, D3VertexP, D3EdgeP, PathModel) {
+], function ($, P, Kefir, Graph, U, D3GroupP, D3VertexP, D3EdgeP, fetchPathsFor, THREE) {
 	'use strict';
 
 
@@ -34,8 +35,8 @@ define([
 			});
 			Kefir.merge([
 				Kefir.once(),
-				this.on('size').changes(),
-				this.on('position').changes()
+				this.p('size'    ).changes(),
+				this.p('position').changes()
 			]).onValue(() => {
 				var AREA_MARGIN = 5;
 				this._p_connectivity_d3group.setRegion({
@@ -55,21 +56,17 @@ define([
 			/* create the tile-specific graph group */
 			if (!this._p_connectivity_d3group) {
 				this._p_connectivity_d3group = new D3Group({
-					parent: this,
-					gravityFactor: 20,
-					chargeFactor: 10
+					parent:        this,
+					gravityFactor: 3,
+					chargeFactor:  1
 				});
-				((setGraphGroupRegion) => {
-					setGraphGroupRegion();
-					this.on('headerSize', setGraphGroupRegion);
-					this.on('headerPosition', setGraphGroupRegion);
-				})(() => {
-					var AREA_MARGIN = 5;
+				Kefir.combine([this.p('headerSize'), this.p('headerPosition')]).onValue(([size, position]) => {
+					var AREA_MARGIN = 10;
 					this._p_connectivity_d3group.setRegion({
-						top:    this.headerPosition.top  +   AREA_MARGIN,
-						left:   this.headerPosition.left +   AREA_MARGIN,
-						height: this.headerSize.height   - 2*AREA_MARGIN,
-						width:  this.headerSize.width    - 2*AREA_MARGIN
+						top:    position.top  +   AREA_MARGIN,
+						left:   position.left +   AREA_MARGIN,
+						height: size.height   - 2*AREA_MARGIN,
+						width:  size.width    - 2*AREA_MARGIN
 					});
 				});
 			}
@@ -98,7 +95,7 @@ define([
 						return [{
 							parent:   this._p_connectivity_activeTiles[key],
 							cssClass: `${type} tile`,
-							radius:   5
+							radius:   10
 						}];
 					} else {
 						return [{
@@ -117,7 +114,7 @@ define([
 			let graph = this._p_connectivity_graphs[type]; // abbreviation
 
 			graph.on('vertex-added', (vertex) => {
-				let vTile = tile(vertex.key);
+				let vTile = tile(vertex.value.tileId);
 				if (vertex.value.location === 'tile') {
 					vTile._p_connectivity_d3group.addVertex(vertex);
 				} else {
@@ -146,20 +143,18 @@ define([
 		this._p_connectivity_updateRequests = Kefir.bus();
 
 		this._p_connectivity_updateRequests.debounce(100).onValue(() => {
-			PathModel.fetchPathsFor(Object.keys(this._p_connectivity_activeTiles)).then((paths) => { // get paths (async)
+			fetchPathsFor(Object.keys(this._p_connectivity_activeTiles)).then((paths) => { // get paths (async)
 				Object.keys(paths).forEach((type) => { // for all connectivity types
 					this._p_connectivity_registerType(type).then(() => {
+
 						/* creating the full connectivity graph */
 						var graph = new Graph();
-						for (let from of Object.keys(paths[type])) {
-							graph.ensureVertex(from, { location: 'tile' });
-							for (let to of Object.keys(paths[type][from])) {
-								graph.ensureVertex(to, { location: 'tile' });
-								let p = paths[type][from][to];
-								for (let i = 0; i < p.path.length-1; ++i) {
-									graph.ensureVertex(p.path[i+1], { location: 'inter-tile' });
-									graph.spanEdge(p.path[i], p.path[i+1]);
-								}
+						for (let p of paths[type]) {
+							graph.ensureVertex(p.path[0],               { location: 'tile', tileId: p.startlyph });
+							graph.ensureVertex(p.path[p.path.length-1], { location: 'tile', tileId: p.endlyph   });
+							for (let i = 0; i < p.path.length-1; ++i) {
+								graph.ensureVertex(p.path[i+1], { location: 'inter-tile' });
+								graph.spanEdge(p.path[i], p.path[i+1], { lyphTemplate: p.edges[i].template }); // TODO: this is lyph-specific stuff (hacked in)
 							}
 						}
 
@@ -167,7 +162,9 @@ define([
 						graph.contractPaths({
 							isNexus: (id, info) => info.location === 'tile'
 						}); // TODO: let graph.js accept function for filling edge values
-						for (let [from, to] of graph.edges()) { graph.setEdge(from, to, {}) }
+						for (let [key, g] of graph.edges()) {
+							graph.setEdge(key, { lyphTemplate: g.edges().next().value.value.lyphTemplate }); // TODO: this is lyph-specific stuff (hacked in)
+						}
 
 						/* update the 'actual' graph by making a minimum of changes */
 						this._p_connectivity_graphs[type].set(graph);

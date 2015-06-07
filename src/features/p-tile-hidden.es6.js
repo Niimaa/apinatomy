@@ -16,6 +16,11 @@ define(['jquery', './p-tile-hidden.scss'], function ($) {
 		/* enact tile hiding on the DOM */
 		this.p('hidden').merge(this.on('destroy').mapTo(true)).onValue((hidden) => {
 			this.element.toggleClass('hidden', hidden);
+
+			///* assign the .right-most class */
+			//let ch = this.element.parent().children().filter(`:not(.hidden)`);
+			//ch.removeClass('right-most');
+			//ch.last().addClass('right-most');
 		});
 
 	});

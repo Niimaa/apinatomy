@@ -17,12 +17,12 @@ define([
 
 	/* tile styling defaults generator */
 	var applyStyleDefaults = defaults({
-		'&':            {
-			backgroundColor: " 'white'                                                                ",
-			borderColor:     " color(`['&'].backgroundColor`).brighten(20).css()                      ",
-			color:           " color(`['&'].backgroundColor`).luminance() > 0.5 && 'black' || 'white' "
+		'&': {
+			backgroundColor: " 'white'                                                                                                                                                      ",
+			borderColor:     " color(`['&'].backgroundColor`).luminance() > 0.5  &&  color(`['&'].backgroundColor`).darken(30).css()  ||  color(`['&'].backgroundColor`).brighten(30).css() ",
+			color:           " color(`['&'].backgroundColor`).luminance() > 0.5  &&  'black'                                          ||  'white'                                           "
 		},
-		'& > header':   {
+		'& > header': {
 			borderColor:     " `['&'].borderColor` "
 		},
 		'& > icon-btn': {
@@ -42,12 +42,14 @@ define([
 		this.dom = $(`<section/>`).appendTo(origElement);
 
 		/* put the name of the model in the header element */
+		//this._p_tileSkin_headerElement.text(this.model.id);
 		this.model.get('name').then((name)=> { this._p_tileSkin_headerElement.text(name) });
 
 		/* take any css rules from the model and apply them to the tile */
-		this.model.get('tile').get('normal').get('css')
-			.then((css)=> { this.element.amyPutCssRules(applyStyleDefaults(css)) })
-			.catch(()=>{}); // it's OK if '.tile.normal.css' is not on the model
+		this.skinnedElement = this.model.get('tile').get('normal').get('css')
+			.catch(() => ({})) // There is no given css object? Then use an empty object.
+			.then((css) => { this.element.amyPutCssRules(applyStyleDefaults(css)) })
+			.return(this.element);
 
 		/* when the tile is closed, make the font size dynamic */
 		this.on('size').filterBy(this.p('open').not()).onValue((size) => {
@@ -62,11 +64,11 @@ define([
 		this.newProperty('headerSize', {
 			settable: false,
 			isEqual: U.Size.equals
-		}).plug(Kefir.merge([
-			Kefir.once(),
-			this.on('size').changes(),
-			this.on('open').changes()
-		]).map(() => new U.Size(this._p_tileSkin_headerElement.height(), this.size.width)));
+		}).plug(Kefir.combine([
+			this.p('size'),
+			this.p('fullyOpen'),
+			this.p('fullyClosed')
+		]).map(([size]) => new U.Size(this._p_tileSkin_headerElement.height(), size.width)));
 
 		/* the 'headerPosition' observable */
 		this.newProperty('headerPosition', {

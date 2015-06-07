@@ -14,11 +14,14 @@ define(['jquery'], function ($) {
 			var models = [null].concat(this.children.filter((child) => child.type === 'ThreeDModel'));
 
 			if (models.length > 1) {
-				this.addButton({ name: 'swap3dModel', icon: require('../util/icons/3d-white.png') }).onValue(() => {
+				this.addButton({ name: 'swap3dModel', icon: {
+					white: require('../util/icons/3d-white.png'),
+					black: require('../util/icons/3d-black.png')
+				} }).onValue(() => {
 
 					// the button switches between the available 3D models on the top level of the tile
 
-					var i;
+					let i;
 					for (i = 1; i < models.length; ++i) {
 						if (models[i].visible) {
 							models[i].visible = false;
@@ -26,23 +29,7 @@ define(['jquery'], function ($) {
 						}
 					}
 					i = (i+1) % models.length;
-					if (models[i]) {
-
-						/* make the corresponding model visible, as well as all its children */
-						models[i].traverseArtefactsByType('ThreeDModel', (model) => { model.visible = true });
-
-						/* temporary information in the console for Bernard */// TODO: remove when the corresponding demo is over
-						var indentation = "-- ";
-						var modelHierarchy = "Available parts of this 3D model:\n";
-						models[i].traverseArtefactsByType('ThreeDModel', (model) => {
-							modelHierarchy += indentation + model.id + '\n';
-						}, {
-							beforeGoingIn() { indentation += "-- " },
-							beforeGoingOut() { indentation = indentation.slice(3) }
-						});
-						console.log(modelHierarchy);
-
-					}
+					if (models[i]) {models[i].traverseArtefactsByType('ThreeDModel', (model) => { model.visible = true }) }
 
 				});
 			}

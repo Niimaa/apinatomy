@@ -3,7 +3,7 @@ define([
 	'bluebird',
 	'../util/misc.es6.js',
 	'../util/defer.es6.js',
-	'../util/nested-flex-grow.es6.js',
+	//'../util/nested-flex-grow.es6.js',
 	'./p-core.scss'
 ], function ($, P, U, defer) {
 	'use strict';
@@ -64,10 +64,9 @@ define([
 				/* get the id's of all child models */
 					.call('getChildIds')
 				/* filter out the ids of children that ought not be displayed */
-					.map((id) => {
-						return P.resolve(this.circuitboard.options.filter(id, U.bind(P.resolve(this.model).value(), 'getModels', id)))
-								.then((show) => { return { id: id, show: show } });
-					}).filter(U.field('show')).map(U.field('id'))
+					.map(id => P.resolve(this.circuitboard.options.filter(id, U.bind(P.resolve(this.model).value(), 'getModels', id)))
+					            .then(show => ({ id: id, show: show }))
+					).filter(U.field('show')).map(U.field('id'))
 				/* get promises to all child entities */
 					.then((ids) => P.resolve(this.model).value().getModels(ids))
 				/* create a tile for each child entity */
@@ -76,17 +75,21 @@ define([
 						this.element.children().empty();
 						this.element.empty();
 
+
+
+
 						/* render and store references to the new tiles */
 						this._p_tilemapCore_tiles = [];
 						var rowCount = Math.floor(Math.sqrt(childrenToDisplay.length));
 						var colCount = Math.ceil(childrenToDisplay.length / rowCount);
+						this.element.css('flex-grow', childrenToDisplay);
 						while (rowCount--) {
-							var row = $('<div/>').addClass('tilerow').appendTo(this.element);
+							var row = $(`<div/>`).addClass('tilerow').appendTo(this.element);
 							for (var column = 0; column < colCount && childrenToDisplay.length > 0; column += 1) {
-								$('<div/>').tile({
+								$(`<div/>`).tile({
 									model: childrenToDisplay.shift(),
 									parent: this
-								}).appendTo(row).amyNestedFlexGrow(1);
+								}).appendTo(row).css('flex-grow', 1);
 							}
 						}
 					})

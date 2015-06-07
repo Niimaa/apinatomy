@@ -4,11 +4,14 @@ import './example.scss';
 
 /* libraries */
 import $ from 'expose?jQuery!jquery';
+import P from 'bluebird';
+import Kefir from '../util/kefir-and-eggs.es6.js';
 
 
 /* load the circuitboard, model loader and plugins */
 import circuitboard from '../circuitboard.es6.js';
-import getFmaModels from './fma-model.es6.js';
+//import getFmaModels from './fma-model.es6.js';
+import getLyphModels from './lyph-model.es6.js';
 import '../features/p-core.es6.js';
 import '../features/p-tile-skin.es6.js';
 import '../features/p-tile-spacing.es6.js';
@@ -24,6 +27,7 @@ import '../features/p-tile-skin-grow-when-open.es6.js';
 import '../features/p-position-tracking.es6.js';
 import '../features/p-transition-position-tracking.es6.js';
 import '../features/p-tile-hidden.es6.js';
+import '../features/p-tile-effectively-visible.es6.js';
 import '../features/p-tile-maximized.es6.js';
 import '../features/p-tile-middleclick-to-maximize.es6.js';
 //import '../features/p-svg.es6.js';
@@ -79,9 +83,11 @@ circuitboard.plugin.select(
 $(document).ready(() => {
 
 	$('#circuitboard').circuitboard({
-		model: getFmaModels(['24tile:60000000'])[0],
-		tileSpacing: 1,
-		tilemapMargin: 0,
+		//model: getFmaModels(['24tile:60000000'])[0],
+		//model: getLyphModels(['10040'])[0],
+		model: getLyphModels('1'),
+		tileSpacing: 20,
+		tilemapMargin: 20,
 		weightWhenOpen: 8,
 		threeDCanvasElement: $('#three-d-canvas'),
 		threeDModels: {
@@ -97,6 +103,10 @@ $(document).ready(() => {
 	}).circuitboard('instance').then(function (circuitboard) {
 
 		console.info('circuitboard loaded');
+
+		//circuitboard.tile('1').then((tile) => {
+		//	tile.p('open').value(false).onValue(() => { tile.open = true });
+		//}); // starting the '1' tile as open
 
 		/* set up global functions to test with from the JavaScript console */
 		window.newSnapshot = (options) => {

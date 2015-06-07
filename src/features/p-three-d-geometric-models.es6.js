@@ -21,7 +21,7 @@ define([
 
 	/* to load any 3D models associated with a tile */
 	plugin.add('Tile.prototype.loadThreeDModels', function () {
-		var threeDModels = this.circuitboard.options.threeDModels;
+		var threeDModels = this.circuitboard.options.threeDModels || {};
 		if (!threeDModels) { return }
 		return P.all([this.model, ThreeDModelP]).spread((tileModel, ThreeDModel) => {
 			if (threeDModels[tileModel.id]) {

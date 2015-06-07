@@ -8,7 +8,7 @@ define(['jquery', '../util/misc.es6.js', '../util/kefir-and-eggs.es6.js'], funct
 
 
 	/* a stream limiter, setting up a window for calculating element offsets */
-	plugin.add('Circuitboard.prototype._posTrackingWindow', function (window) { window() });
+	plugin.add('Circuitboard.prototype._posTrackingWindow', U.call);
 	plugin.append('Circuitboard.prototype.construct', function () {
 		this._posTrackingLimiter = Kefir.limiter(Kefir.merge([
 			Kefir.once(),
@@ -66,15 +66,16 @@ define(['jquery', '../util/misc.es6.js', '../util/kefir-and-eggs.es6.js'], funct
 			this.parent.p('offset').changes(),
 			this.parent.on('reorganize'),
 			this.p('animationIdle').value(true),
-			Kefir.interval(1000).filterBy(this.p('animationIdle')) // backup timer
-		]).filter(() => !this._offsetUpdated).limitedBy(this.circuitboard._posTrackingLimiter).map(() => {
+			Kefir.interval(1000)//.filterBy(this.p('animationIdle')) // backup timer
+		])//.filter(() => !this._offsetUpdated)
+			.limitedBy(this.circuitboard._posTrackingLimiter).map(() => {
 			this._offsetUpdated = true;
 			return this.element.offset();
 		}));
 
-		/* making sure size is only updated once every 100ms, to keep things fast */
-		this._offsetUpdated = false; // TODO: write Kefir modifier to do this more easily; using .throttle doesn't work
-		Kefir.interval(100).onValue(() => { this._offsetUpdated = false });
+		///* making sure size is only updated once every 100ms, to keep things fast */
+		//this._offsetUpdated = false; // TODO: write Kefir modifier to do this more easily; using .throttle doesn't work
+		//Kefir.interval(100).onValue(() => { this._offsetUpdated = false });
 
 	});
 
@@ -109,15 +110,16 @@ define(['jquery', '../util/misc.es6.js', '../util/kefir-and-eggs.es6.js'], funct
 			this.p('offset').changes(),
 			this.circuitboard.p('offset').changes(),
 			this.p('animationIdle').value(true),
-			Kefir.interval(1000).filterBy(this.p('animationIdle')) // backup timer
-		]).filter(() => !this._positionUpdated).map(() => {
+			Kefir.interval(1000)//.filterBy(this.p('animationIdle')) // backup timer
+		])//.filter(() => !this._positionUpdated)
+			.map(() => {
 			this._positionUpdated = true;
 			return U.Position.subtract(this.offset, this.circuitboard.offset);
 		}));
 
-		/* making sure size is only updated once every 100ms, to keep things fast */
-		this._positionUpdated = false; // TODO: write Kefir modifier to do this more easily; using .throttle doesn't work
-		Kefir.interval(100).onValue(() => { this._positionUpdated = false });
+		///* making sure size is only updated once every 100ms, to keep things fast */
+		//this._positionUpdated = false; // TODO: write Kefir modifier to do this more easily; using .throttle doesn't work
+		//Kefir.interval(100).onValue(() => { this._positionUpdated = false });
 
 	});
 
@@ -153,15 +155,16 @@ define(['jquery', '../util/misc.es6.js', '../util/kefir-and-eggs.es6.js'], funct
 			this.parent.p('size').changes(),
 			this.parent.on('reorganize'),
 			this.p('animationIdle').value(true),
-			Kefir.interval(1000).filterBy(this.p('animationIdle')) // backup timer
-		]).filter(() => !this._sizeUpdated).map(() => {
+			Kefir.interval(1000)//.filterBy(this.p('animationIdle')) // backup timer
+		])//.filter(() => !this._sizeUpdated)
+			.map(() => {
 			this._sizeUpdated = true;
 			return new U.Size(this.element.height(), this.element.width());
 		}));
 
-		/* making sure size is only updated once every 100ms, to keep things fast */
-		this._sizeUpdated = false; // TODO: write Kefir modifier to do this more easily; using .throttle doesn't work
-		Kefir.interval(100).onValue(() => { this._sizeUpdated = false });
+		///* making sure size is only updated once every 100ms, to keep things fast */
+		//this._sizeUpdated = false; // TODO: write Kefir modifier to do this more easily; using .throttle doesn't work
+		//Kefir.interval(100).onValue(() => { this._sizeUpdated = false });
 
 	});
 

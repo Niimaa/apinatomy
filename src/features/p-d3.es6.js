@@ -3,6 +3,7 @@ define([
 	'../../bower_components/d3/d3',
 	'../util/misc.es6.js',
 	'../util/kefir-and-eggs.es6.js',
+	'../util/jquery-svg-class.es6.js',
 	'./p-d3.scss'
 ], function ($, d3, U, Kefir) {
 	'use strict';
@@ -70,8 +71,11 @@ define([
 
 
 		/* update the graph to account for new and/or removed vertices and/or edges */
-		this.updateGraph = U.debounce(() => {
+		let graphStable = Kefir.bus();
+		graphStable.emit(true);
+		this.updateGraph = () => { graphStable.emit(false) };
 
+		graphStable.filter(v=>!v).debounce(200).onValue(() => {
 			// using the d3 general update pattern:
 			// http://bl.ocks.org/mbostock/3808218
 
@@ -83,17 +87,17 @@ define([
 			this.d3Force.nodes(visibleVertices).links(visibleEdges).start();
 
 			/* vertices */
-			vertices = svg.selectAll('.vertex').data(visibleVertices, (d) => d.graphId);
-			vertices.enter().append((d) => d.element[0])
-					.classed('vertex', true).classed('edge', false)
-					.call(this.d3Force.drag); // all vertices can be dragged around
+			vertices = svg.selectAll('.vertex').data(visibleVertices, d => d.graphId);
+			vertices.enter().append(d => d.element[0])
+				.classed('vertex', true).classed('edge', false)
+				.call(this.d3Force.drag); // all vertices can be dragged around
 			vertices.exit().remove();
 
 			/* edges */
-			edges = svg.selectAll('.edge').data(visibleEdges, (d) => d.graphId);
+			edges = svg.selectAll('.edge').data(visibleEdges, d => d.graphId);
 			edges.enter()
-					.append((d) => d.element[0])
-					.classed('edge', true).classed('vertex', false);
+				.append(d => d.element[0])
+				.classed('edge', true).classed('vertex', false);
 			edges.exit().remove();
 
 			/* define a nice visual z-order for the svg elements */
@@ -101,7 +105,9 @@ define([
 				(a, b) => (a.graphZIndex < b.graphZIndex) ? -1 : ((a.graphZIndex === b.graphZIndex) ? 0 : 1)
 			);
 
-		}, 200);
+			graphStable.emit(true);
+
+		});
 
 
 		/* a property for which vertex (if any) is being dragged */
@@ -111,9 +117,15 @@ define([
 			Kefir.fromOnNull(this.d3Force.drag(), 'dragend').mapTo(null)
 		]));
 
+		/* add a 'dragging' css class to a vertex being dragged */
+		this.p('draggingVertex').newOld().onValue(([newVertex, oldVertex]) => {
+			if (newVertex) { newVertex.element.addSvgClass   ('dragging') }
+			if (oldVertex) { oldVertex.element.removeSvgClass('dragging') }
+		});
+
 
 		/* the 'd3-tick' event-stream, and performing animation on a tick */
-		this.newEvent('d3-tick', { source: Kefir.fromOnNull(this.d3Force, 'tick') }).onValue((e) => {
+		this.newEvent('d3-tick', { source: Kefir.fromOnNull(this.d3Force, 'tick') }).filterBy(graphStable).onValue((e) => {
 			/* dampening factor */
 			var k = 0.1 * e.alpha;
 

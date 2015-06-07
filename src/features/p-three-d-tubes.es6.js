@@ -6,47 +6,72 @@ define(['jquery', '../util/misc.es6.js', 'bluebird', 'three-js', '../util/kefir-
 		requires: ['three-d']
 	});
 
+	// TODO: general translation mechanism between d3 and three.js coordinates
+	const tY = (cb, y) => (cb.size.height - y - 2); // TODO: magic nr '2' has to do with borders/padding
 
 	/* convenience definitions ****************************************************/
-	function mesh(geometry, color) {
+	function bezierMesh(cb, edge, color) {
+		let geometry = new THREE.Geometry();
 		var result = new THREE.Mesh(
 			geometry,
 			new THREE.MeshLambertMaterial({ color: color })
 		);
 		result.receiveShadow = true;
 		result.castShadow    = true;
-		return result;
-	}
 
-
-	plugin.add('Circuitboard.prototype._tubeGeometry', function (V) {
-		var TUBE_WIDTH = 2;
-		return new THREE.TubeGeometry(
-			new THREE.CubicBezierCurve3(V[0], V[1], V[2], V[3]),
-			Math.ceil(V[0].distanceTo(V[3]) / 25),
-			TUBE_WIDTH
-		);
-	});
-
-
-	plugin.add('Circuitboard.prototype.newTubeFromVertexToVertex', function (edge, color) {
-		// TODO: general translation mechanism between d3 and three.js coordinates
-		const tY = (y) => (this.size.height - y - 2); // TODO: magic nr '2' has to do with borders/padding
-
-		var tube = mesh(new THREE.Geometry(), color);
-		this.object3D.add(tube);
-
-		return {
+		result._amy_interface = {
 			removeTube: () => {
-				this.object3D.remove(tube);
+				cb.object3D.remove(tube);
 			},
 			updateTube: () => {
-				const v3 = (v) => new THREE.Vector3(v.x, tY(v.y), v.z);
+				const v3 = (v) => new THREE.Vector3(v.x, tY(cb, v.y), v.z);
+
+				//function vectorAverage(vectors) {
+				//	let result = new THREE.Vector3();
+				//	let count = 0;
+				//	for (let v of vectors) {
+				//		result.add(v);
+				//		count += 1;
+				//	}
+				//	//result.divideScalar(count);
+				//	return result;
+				//}
+				//function catmullRomToBezier(p1, p2, p3, p4) {
+				//	return [
+				//		p2,
+				//		p2.clone().add(p3.clone().sub(p1).divideScalar(6)),
+				//		p3.clone().sub(p4.clone().sub(p2).divideScalar(6)),
+				//		p3
+				//	];
+				//}
+				//result.geometry.dispose();
+				//result.geometry = this._tubeGeometry(catmullRomToBezier(
+				//	((vec)=>{
+				//		if (edge.source.value.location === 'tile') {
+				//			return vec.add(new THREE.Vector3(0, 0, -500)); // TODO: magic nr -500
+				//		} else {
+				//			return vectorAverage(
+				//				[...edge.source.verticesTo()].map(v => v3(v).sub(vec))
+				//			).add(vec);
+				//		}
+				//	})(v3(edge.source)),
+				//	v3(edge.source),
+				//	v3(edge.target),
+				//	((vec)=>{
+				//		if (edge.target.value.location === 'tile') {
+				//			return vec.add(new THREE.Vector3(0, 0, -500)); // TODO: magic nr -500
+				//		} else {
+				//			return vectorAverage(
+				//				[...edge.target.verticesFrom()].map(v => v3(v).sub(vec))
+				//			).add(vec);
+				//		}
+				//	})(v3(edge.target))
+				//));
 
 				/* control point distance */ // TODO: optimize for aesthetics (http://stackoverflow.com/q/30424772/681588)
 				let cpd = { source: 0.45, target: 0.45 };
 
-				const other = (d) => d === 'source' ? 'target' : 'source';
+				const other = (d) => (d === 'source' ? 'target' : 'source');
 
 				const vForce3 = (direction) => {
 					let force = new THREE.Vector3(0, 0, 0);
@@ -70,17 +95,42 @@ define(['jquery', '../util/misc.es6.js', 'bluebird', 'three-js', '../util/kefir-
 					force.setLength(cpd[direction] * v3(edge.source).distanceTo(v3(edge.target)));
 					return force;
 				};
-
 				var V = [
 					v3(edge.source),
 					v3(edge.source).add(vForce3('source')),
 					v3(edge.target).add(vForce3('target')),
 					v3(edge.target)
 				];
-				tube.geometry.dispose();
-				tube.geometry = this._tubeGeometry(V);
+				result.geometry.dispose();
+				let curve = new THREE.CubicBezierCurve3(...V);
+				result.geometry = cb._tubeGeometry(curve);
+
+				return { curve };
+
 			}
 		};
+
+		return result;
+	}
+
+
+	plugin.add('Circuitboard.prototype._tubeGeometry', function (curve) {
+		const TUBE_WIDTH = 2;
+		return new THREE.TubeGeometry(
+			curve,
+			//Math.ceil(V[0].distanceTo(V[3]) / 25),
+			25,
+			TUBE_WIDTH
+		);
+	});
+
+
+	plugin.add('Circuitboard.prototype.newTubeFromVertexToVertex', function (edge, color) {
+
+		var tube = bezierMesh(this, edge, color);
+		this.object3D.add(tube);
+
+		return tube._amy_interface;
 
 	});
 
