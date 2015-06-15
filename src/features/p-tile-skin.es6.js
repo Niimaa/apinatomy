@@ -18,7 +18,7 @@ define([
 	/* tile styling defaults generator */
 	var applyStyleDefaults = defaults({
 		'&': {
-			backgroundColor: " 'white'                                                                                                                                                      ",
+			backgroundColor: " parentBackgroundColor || 'darkgray'                                                                                                                                       ",
 			borderColor:     " color(`['&'].backgroundColor`).luminance() > 0.5  &&  color(`['&'].backgroundColor`).darken(30).css()  ||  color(`['&'].backgroundColor`).brighten(30).css() ",
 			color:           " color(`['&'].backgroundColor`).luminance() > 0.5  &&  'black'                                          ||  'white'                                           "
 		},
@@ -28,7 +28,7 @@ define([
 		'& > icon-btn': {
 			backgroundColor: " `['&'].backgroundColor` "
 		}
-	}, { color });
+	}, { color, parentBackgroundColor: null });
 
 
 	/* make tiles look nice, with a header, content section, and CSS styling derived from the model */
@@ -48,8 +48,19 @@ define([
 		/* take any css rules from the model and apply them to the tile */
 		this.skinnedElement = this.model.get('tile').get('normal').get('css')
 			.catch(() => ({})) // There is no given css object? Then use an empty object.
-			.then((css) => { this.element.amyPutCssRules(applyStyleDefaults(css)) })
-			.return(this.element);
+			.then((css) => {
+				let parent = this.closestAncestorByType('Tile');
+				if (parent) {
+					return parent.skinnedElement.then((skinnedParentElement) => {
+						let parentBackgroundColor = color(skinnedParentElement.css('backgroundColor')).luminance() > 0.5 ? 'darkgray' : 'lightgray';
+						this.element.amyPutCssRules(applyStyleDefaults(css, { parentBackgroundColor }));
+						return this.element;
+					});
+				} else {
+					this.element.amyPutCssRules(applyStyleDefaults(css, { parentBackgroundColor: null }));
+					return this.element;
+				}
+			});
 
 		/* when the tile is closed, make the font size dynamic */
 		this.on('size').filterBy(this.p('open').not()).onValue((size) => {

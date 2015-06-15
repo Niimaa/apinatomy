@@ -34,54 +34,47 @@ define([
 
 		/* create the force layout */
 		this.d3Force = d3.layout.force()
-			.nodes(U.objValues(this._p_d3_vertices))
-			.links(U.objValues(this._p_d3_edges))
 			.gravity(0)
-			.charge((d) => {
-				return -2 *
-						(d.group.region.width + d.group.region.height) *
-						U.defOr(d.group.chargeFactor, 1) *
-						U.defOr(d.chargeFactor, 1) /
-						Math.sqrt(d.group.vertices.length || 1);
-			})
+			.charge(d => -2 * (d.group.region.width + d.group.region.height)
+			                * U.defOr(d.group.chargeFactor, 1)
+			                * U.defOr(d.chargeFactor, 1)
+			                / Math.sqrt(d.group.vertices.length || 1))
 			.chargeDistance(200)
-			.linkDistance((d) => {
-				return (d.group.region.width + d.group.region.height) *
-						U.defOr(d.group.linkDistanceFactor, 1) *
-						U.defOr(d.linkDistanceFactor, 1) /
-						Math.sqrt(d.group.vertices.length || 1);
-			})
-			.linkStrength((d) => {
-				return 0.8 * U.defOr(d.group.linkStrengthFactor, 1);
-			});
+			.linkDistance(d => (d.group.region.width + d.group.region.height)
+			                   * U.defOr(d.group.linkDistanceFactor, 1)
+			                   * U.defOr(d.linkDistanceFactor, 1)
+			                   / Math.sqrt(d.group.vertices.length || 1))
+			.linkStrength(d => 0.8 * U.defOr(d.group.linkStrengthFactor, 1));
 
 
 		/* auto-resize the force-layout canvas */
-		this.on('size').map((v) => [v.width, v.height]).onValue((s) => { this.d3Force.size(s) });
+		this.on('size').map(v => [v.width, v.height]).onValue((s) => {
+			this.d3Force.size(s);
+		});
 
 
 		/* create corresponding svg elements */
-		var svg = d3.select(svgElement[0]);
-		var edges = svg.selectAll('.edge');
+		var svg      = d3.select(svgElement[0]);
+		var edges    = svg.selectAll('.edge');
 		var vertices = svg.selectAll('.vertex');
 
 
 		/* visible vertices and edges */
 		var visibleVertices, visibleEdges;
 
-
-		/* update the graph to account for new and/or removed vertices and/or edges */
+		/* keep track of whether the graph is stable; if not, do not fire 'tick' events */
 		let graphStable = Kefir.bus();
 		graphStable.emit(true);
 		this.updateGraph = () => { graphStable.emit(false) };
 
-		graphStable.filter(v=>!v).debounce(200).onValue(() => {
+		/* update the graph to account for new and/or removed vertices and/or edges */
+		graphStable.filter(v => !v).debounce(200).onValue(() => {
 			// using the d3 general update pattern:
 			// http://bl.ocks.org/mbostock/3808218
 
 			/* gather the vertices/edges that ought to be visible */
-			visibleVertices = U.objValues(this._p_d3_vertices).filter((artefact) => artefact.visible);
-			visibleEdges = U.objValues(this._p_d3_edges);
+			visibleVertices = U.objValues(this._p_d3_vertices).filter(v => v.visible);
+			visibleEdges    = U.objValues(this._p_d3_edges);
 
 			/* restart the force */
 			this.d3Force.nodes(visibleVertices).links(visibleEdges).start();
@@ -96,8 +89,8 @@ define([
 			/* edges */
 			edges = svg.selectAll('.edge').data(visibleEdges, d => d.graphId);
 			edges.enter()
-				.append(d => d.element[0])
-				.classed('edge', true).classed('vertex', false);
+			     .append(d => d.element[0])
+			     .classed('edge', true).classed('vertex', false);
 			edges.exit().remove();
 
 			/* define a nice visual z-order for the svg elements */
@@ -116,6 +109,7 @@ define([
 			Kefir.fromOnNull(this.d3Force.drag(), 'dragstart').map(currentEventData),
 			Kefir.fromOnNull(this.d3Force.drag(), 'dragend').mapTo(null)
 		]));
+
 
 		/* add a 'dragging' css class to a vertex being dragged */
 		this.p('draggingVertex').newOld().onValue(([newVertex, oldVertex]) => {

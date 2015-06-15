@@ -16,11 +16,6 @@ define(['jquery', './util/misc.es6.js', './Artefact.es6.js'], function ($, U, Ar
 				edges: {}
 			});
 
-			this.newEvent('vertex-added');
-			this.newEvent('vertex-removed');
-			this.newEvent('edge-added');
-			this.newEvent('edge-removed');
-
 			this.on('destroy').take(1).onValue(() => {
 				this.vertices.forEach((v) => { v.destroy() });
 				// edges will be destroyed when their vertices are destroyed
@@ -42,7 +37,6 @@ define(['jquery', './util/misc.es6.js', './Artefact.es6.js'], function ($, U, Ar
 				this.vertices[vertex.id] = vertex;
 				vertex.graphId = vertex.id;
 				this.circuitboard._p_d3_vertices[vertex.graphId] = vertex;
-				this.trigger('vertex-added', vertex);
 				this.circuitboard.updateGraph();
 				return vertex;
 			},
@@ -55,7 +49,6 @@ define(['jquery', './util/misc.es6.js', './Artefact.es6.js'], function ($, U, Ar
 					vertex.destroy();
 					delete this.circuitboard._p_d3_vertices[vertex.graphId];
 					delete this.vertices[vertex];
-					this.trigger('vertex-removed', vertex);
 					this.circuitboard.updateGraph();
 				}
 			},
@@ -65,20 +58,18 @@ define(['jquery', './util/misc.es6.js', './Artefact.es6.js'], function ($, U, Ar
 				this.edges[edge.id] = edge;
 				edge.graphId = this.id + ':' + edge.id;
 				this.circuitboard._p_d3_edges[edge.graphId] = edge;
-				this.trigger('edge-added', edge);
 				this.circuitboard.updateGraph();
 				return edge;
 			},
 
 			removeEdge(edge) {
 				if (edge) {
-					if (typeof vertex === 'string') {
+					if (typeof edge === 'string') {
 						edge = this.edges[edge];
 					}
 					edge.destroy();
 					delete this.circuitboard._p_d3_edges[edge.graphId];
 					delete this.edges[edge.id];
-					this.trigger('edge-removed', edge);
 					this.circuitboard.updateGraph();
 				}
 			},
@@ -97,7 +88,7 @@ define(['jquery', './util/misc.es6.js', './Artefact.es6.js'], function ($, U, Ar
 			gravityFactor: 1,
 			chargeFactor: 1,
 			linkDistanceFactor: 1,
-			region: { // the whole canvas with a small padding
+			region: { // default to the whole canvas with a small padding
 				top: 10,
 				left: 10,
 				get width() { return this.circuitboard.size.width - 20 },

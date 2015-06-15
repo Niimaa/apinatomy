@@ -5,6 +5,7 @@ import './example.scss';
 /* libraries */
 import $ from 'expose?jQuery!jquery';
 import P from 'bluebird';
+import U from '../util/misc.es6.js';
 import Kefir from '../util/kefir-and-eggs.es6.js';
 
 
@@ -57,6 +58,13 @@ import '../features/p-tile-button-to-swap-three-d-model.es6.js';
 import '../features/p-tile-button-to-point-camera.es6.js';
 
 
+/* open up all tiles by default */
+circuitboard.plugin.do('start-tiles-open', { resolves: ['tile-open'] }).append('Tile.prototype.construct', function () {
+	this.model.then((model) => {
+		this.open = model.children.length > 0;
+	});
+});
+
 /* select plugins to activate them  (note that these must already be *loaded* at this point) */
 circuitboard.plugin.select(
 	'tile-skin',
@@ -77,41 +85,22 @@ circuitboard.plugin.select(
 	'tile-button-to-swap-three-d-model',
 	'tile-button-to-point-camera',
 	'connectivity'
-	//'three-d-tubes'
 );
 
 $(document).ready(() => {
 
+	let root = U.getQueryVariable('root') || '1';
+
 	$('#circuitboard').circuitboard({
-		//model: getFmaModels(['24tile:60000000'])[0],
-		//model: getLyphModels(['10040'])[0],
-		model: getLyphModels('1'),
+		model: getLyphModels('root', { root }),
 		tileSpacing: 20,
 		tilemapMargin: 20,
 		weightWhenOpen: 8,
 		threeDCanvasElement: $('#three-d-canvas'),
-		threeDModels: {
-
-			'fma:7148': {
-				'stomach': {
-					file: require('./3d-models/FMA7148_Stomach.obj'),
-					color: 0x7F1F1A
-				},
-			}
-
-		}
+		threeDModels: {}
 	}).circuitboard('instance').then(function (circuitboard) {
 
 		console.info('circuitboard loaded');
-
-		//circuitboard.tile('1').then((tile) => {
-		//	tile.p('open').value(false).onValue(() => { tile.open = true });
-		//}); // starting the '1' tile as open
-
-		/* set up global functions to test with from the JavaScript console */
-		window.newSnapshot = (options) => {
-			return new circuitboard.Snapshot(options);
-		};
 
 	});
 

@@ -35,8 +35,10 @@ define([
 		}, {
 
 			updateVisualization() {
-				this.element.attr('x', this.x);
-				this.element.attr('y', this.y);
+				if (!this.destroyed) {
+					this.element.attr('x', this.x);
+					this.element.attr('y', this.y);
+				}
 			},
 
 			get element() {

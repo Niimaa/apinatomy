@@ -199,6 +199,7 @@ define([
 			 * to do any necessary cleanup.
 			 */
 			destroy() {
+				this.destroyed = true; // TODO: make this a property?
 				this.trigger('destroy');
 				this.children.forEach((child) => { child.destroy() });
 			}

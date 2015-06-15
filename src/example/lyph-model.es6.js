@@ -38,7 +38,7 @@ define(['jquery', 'bluebird', '../util/defer.es6.js', '../util/main-deltajs.es6.
 		}
 
 		/* if nothing is requested, return nothing */
-		if (ids.length === 0) { return [] }
+		if (ids.length === 0) { return returnArray ? [] : null }
 
 		/* gather the ids that we have not requested from the server before */
 		let newIds = [];
@@ -55,7 +55,7 @@ define(['jquery', 'bluebird', '../util/defer.es6.js', '../util/main-deltajs.es6.
 			}
 		});
 
-		if (options.root && ids.length === 1 && ids[0] === 'root') {
+		if (options.root && newIds.length === 1 && newIds[0] === 'root') {
 			_getDeferred('root').resolve(new LyphModel({
 				id: 'root',
 				children: [ { child: { id: options.root } } ] // setting the root tile to have one child of id '0'; TODO: make it parametrized

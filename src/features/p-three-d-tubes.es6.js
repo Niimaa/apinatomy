@@ -21,52 +21,11 @@ define(['jquery', '../util/misc.es6.js', 'bluebird', 'three-js', '../util/kefir-
 
 		result._amy_interface = {
 			removeTube: () => {
-				cb.object3D.remove(tube);
+				cb.object3D.remove(result);
 			},
 			updateTube: () => {
-				const v3 = (v) => new THREE.Vector3(v.x, tY(cb, v.y), v.z);
 
-				//function vectorAverage(vectors) {
-				//	let result = new THREE.Vector3();
-				//	let count = 0;
-				//	for (let v of vectors) {
-				//		result.add(v);
-				//		count += 1;
-				//	}
-				//	//result.divideScalar(count);
-				//	return result;
-				//}
-				//function catmullRomToBezier(p1, p2, p3, p4) {
-				//	return [
-				//		p2,
-				//		p2.clone().add(p3.clone().sub(p1).divideScalar(6)),
-				//		p3.clone().sub(p4.clone().sub(p2).divideScalar(6)),
-				//		p3
-				//	];
-				//}
-				//result.geometry.dispose();
-				//result.geometry = this._tubeGeometry(catmullRomToBezier(
-				//	((vec)=>{
-				//		if (edge.source.value.location === 'tile') {
-				//			return vec.add(new THREE.Vector3(0, 0, -500)); // TODO: magic nr -500
-				//		} else {
-				//			return vectorAverage(
-				//				[...edge.source.verticesTo()].map(v => v3(v).sub(vec))
-				//			).add(vec);
-				//		}
-				//	})(v3(edge.source)),
-				//	v3(edge.source),
-				//	v3(edge.target),
-				//	((vec)=>{
-				//		if (edge.target.value.location === 'tile') {
-				//			return vec.add(new THREE.Vector3(0, 0, -500)); // TODO: magic nr -500
-				//		} else {
-				//			return vectorAverage(
-				//				[...edge.target.verticesFrom()].map(v => v3(v).sub(vec))
-				//			).add(vec);
-				//		}
-				//	})(v3(edge.target))
-				//));
+				const v3 = (v) => new THREE.Vector3(v.x, tY(cb, v.y), v.z);
 
 				/* control point distance */ // TODO: optimize for aesthetics (http://stackoverflow.com/q/30424772/681588)
 				let cpd = { source: 0.45, target: 0.45 };
@@ -77,29 +36,32 @@ define(['jquery', '../util/misc.es6.js', 'bluebird', 'three-js', '../util/kefir-
 					let force = new THREE.Vector3(0, 0, 0);
 					if (edge[direction].value.location === 'inter-tile') {
 						for (let pred of edge[direction].verticesTo()) {
-							let contribution = v3(pred).sub(v3(edge[direction])).normalize();
+							let contribution = v3(pred).sub(v3(edge[direction].value.d3Vertex)).normalize();
 							if (direction === 'source') { contribution.negate() }
 							force.add(contribution);
 						}
 						for (let succ of edge[direction].verticesFrom()) {
-							let contribution = v3(succ).sub(v3(edge[direction])).normalize();
+							let contribution = v3(succ).sub(v3(edge[direction].value.d3Vertex)).normalize();
 							if (direction === 'target') { contribution.negate() }
 							force.add(contribution);
 						}
 					} else {
 						force.setZ(2); // 'straight up' counts twice
-						force.add(v3(edge[other(direction)]).sub(v3(edge[direction])).normalize());
+						force.add(v3(edge[other(direction)].value.d3Vertex).sub(v3(edge[direction].value.d3Vertex)).normalize());
 						//force.add(vec3[(direction)].sub(vec3[other(direction)]).normalize());
 					}
 					force.normalize();
-					force.setLength(cpd[direction] * v3(edge.source).distanceTo(v3(edge.target)));
+					force.setLength(cpd[direction] * v3(edge.source.value.d3Vertex).distanceTo(v3(edge.target.value.d3Vertex)));
 					return force;
 				};
+
+				console.log(edge.source.key, edge.source.value.d3Vertex); // TODO
+
 				var V = [
-					v3(edge.source),
-					v3(edge.source).add(vForce3('source')),
-					v3(edge.target).add(vForce3('target')),
-					v3(edge.target)
+					v3(edge.source.value.d3Vertex),
+					v3(edge.source.value.d3Vertex).add(vForce3('source')),
+					v3(edge.target.value.d3Vertex).add(vForce3('target')),
+					v3(edge.target.value.d3Vertex)
 				];
 				result.geometry.dispose();
 				let curve = new THREE.CubicBezierCurve3(...V);

@@ -87,53 +87,74 @@ define([
 			const tile = id => this._p_connectivity_activeTiles[id];
 
 			/* create a new graph for this type */
-			this._p_connectivity_graphs[type] = new Graph({
-				VertexSuperclass: D3Vertex,
-				EdgeSuperclass:   D3Edge,
-				vertexSuperArguments: (key, value) => {
-					if (value.location === 'tile') {
-						return [{
-							parent:   this._p_connectivity_activeTiles[key],
-							cssClass: `${type} tile`,
-							radius:   10
-						}];
-					} else {
-						return [{
-							parent:   this,
-							cssClass: `${type} inter-tile`,
-							radius:   3,
-							z:        150
-						}];
-					}
-				},
-				edgeSuperArguments: (from, to) => [{
-					parent:   this,
-					cssClass: type
-				}]
-			});
-			let graph = this._p_connectivity_graphs[type]; // abbreviation
+			let graph = this._p_connectivity_graphs[type] = new Graph();
+			//	VertexSuperclass: D3Vertex,
+			//	EdgeSuperclass:   D3Edge,
+			//	vertexSuperArguments: (key, value) => {
+			//		if (value.location === 'tile') {
+			//			//return [{
+			//			//	parent:   this._p_connectivity_activeTiles[key],
+			//			//	cssClass: `${type} tile`,
+			//			//	radius:   10
+			//			//}];
+			//		} else {
+			//			//return [{
+			//			//	parent:   this,
+			//			//	cssClass: `${type} inter-tile`,
+			//			//	radius:   3,
+			//			//	z:        150
+			//			//}];
+			//		}
+			//	},
+			//	edgeSuperArguments: (from, to) => [{
+			//		parent:   this,
+			//		cssClass: type
+			//	}]
+			//});
 
 			graph.on('vertex-added', (vertex) => {
 				let vTile = tile(vertex.value.tileId);
+				let d3Vertex;
 				if (vertex.value.location === 'tile') {
-					vTile._p_connectivity_d3group.addVertex(vertex);
+					d3Vertex = vertex.value.d3Vertex = new D3Vertex({
+						parent:      this._p_connectivity_activeTiles[vTile],
+						cssClass:    `${type} tile`,
+						radius:      10,
+						graphVertex: vertex
+					});
+					vTile._p_connectivity_d3group.addVertex(vertex.value.d3Vertex);
 				} else {
-					this._p_connectivity_d3group.addVertex(vertex);
+					d3Vertex = vertex.value.d3Vertex = new D3Vertex({
+						parent:   this,
+						cssClass: `${type} inter-tile`,
+						radius:   3,
+						z:        150
+					});
+					this._p_connectivity_d3group.addVertex(vertex.value.d3Vertex);
 				}
 				Kefir.fromEvent(graph, 'vertex-removed').filter(key => key === vertex.key).take(1).onValue(() => {
 					if (vertex.value.location === 'tile') {
-						vTile._p_connectivity_d3group.removeVertex(vertex);
+						vTile._p_connectivity_d3group.removeVertex(vertex.value.d3Vertex);
 					} else {
-						this._p_connectivity_d3group.removeVertex(vertex);
+						this._p_connectivity_d3group.removeVertex(vertex.value.d3Vertex);
 					}
-					vertex.destroy();
+					vertex.value.d3Vertex.destroy();
+					delete vertex.value.d3Vertex;
 				});
 			});
 			graph.on('edge-added', (edge) => {
-				this._p_connectivity_d3group.addEdge(edge);
+				edge.value.d3Edge = new D3Edge({
+					parent:    this,
+					cssClass:  type,
+					source:    edge.source.value.d3Vertex,
+					target:    edge.target.value.d3Vertex,
+					graphEdge: edge
+				});
+				this._p_connectivity_d3group.addEdge(edge.value.d3Edge);
 				Kefir.fromEvent(graph, 'edge-removed').filter(([f, t]) => f === edge.from && t === edge.to).take(1).onValue(() => {
-					this._p_connectivity_d3group.removeEdge(edge);
-					edge.destroy();
+					this._p_connectivity_d3group.removeEdge(edge.value.d3Edge);
+					edge.value.d3Edge.destroy();
+					delete edge.value.d3Edge;
 				});
 			});
 
@@ -167,7 +188,36 @@ define([
 						}
 
 						/* update the 'actual' graph by making a minimum of changes */
-						this._p_connectivity_graphs[type].set(graph);
+						//this._p_connectivity_graphs[type].set(graph); // TODO: make this method 'not modify' vertices/edges that already exist
+
+
+						for (let [key, value] of this._p_connectivity_graphs[type].edges()) {
+							if (!graph.hasEdge(key)) {
+								this._p_connectivity_graphs[type].removeExistingEdge(key);
+							}
+							//else if (value !== graph.edgeValue(key)) {
+							//	this._p_connectivity_graphs[type].setEdge(key, graph.edgeValue(key));
+							//}
+						}
+						for (let [key, value] of this._p_connectivity_graphs[type].vertices()) {
+							if (!graph.hasVertex(key)) {
+								this._p_connectivity_graphs[type].removeExistingVertex(key);
+							}
+							//else if (value !== graph.vertexValue(key)) {
+							//	this._p_connectivity_graphs[type].setVertex(key, graph.vertexValue(key));
+							//}
+						}
+						for (let [key, value] of graph.vertices()) {
+							if (!this._p_connectivity_graphs[type].hasVertex(key)) {
+								this._p_connectivity_graphs[type].addNewVertex(key, value);
+							}
+						}
+						for (let [key, value] of graph.edges()) {
+							if (!this._p_connectivity_graphs[type].hasEdge(key)) {
+								this._p_connectivity_graphs[type].addNewEdge(key, value);
+							}
+						}
+
 					});
 				});
 			});
