@@ -251,6 +251,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    * to do any necessary cleanup.
 	    */
 				destroy: function destroy() {
+					this.destroyed = true; // TODO: make this a property?
 					this.trigger('destroy');
 					this.children.forEach(function (child) {
 						child.destroy();
@@ -414,7 +415,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(15), __webpack_require__(3), __webpack_require__(77)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, ArtefactP) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(15), __webpack_require__(3), __webpack_require__(78)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, ArtefactP) {
 		'use strict';
 	
 		return ArtefactP.then(function (Artefact) {
@@ -428,10 +429,12 @@ return /******/ (function(modules) { // webpackBootstrap
 				var _this = this;
 	
 				var visible = _ref.visible;
+				var z = _ref.z;
 	
 				/* the coordinate properties */
 				this.newProperty('x', { initial: 10 });
 				this.newProperty('y', { initial: 10 });
+				this.newProperty('z', { initial: z || 0 });
 	
 				/* the 'visible' and 'hidden' properties */
 				this.newProperty('visible', { initial: visible });
@@ -442,7 +445,14 @@ return /******/ (function(modules) { // webpackBootstrap
 				this.p('hidden').merge(this.on('destroy').mapTo(true)).onValue(function (h) {
 					_this.element.toggleClass('hidden', h).toggleClass('visible', !h);
 				});
-			}, Object.defineProperties({}, {
+			}, Object.defineProperties({
+	
+				updateVisualization: function updateVisualization() {
+					if (!this.destroyed) {
+						this.element.attr('x', this.x);
+						this.element.attr('y', this.y);
+					}
+				} }, {
 				element: {
 					get: function () {
 						if (!this._element) {
@@ -504,6 +514,8 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
+	
+	function _slicedToArray(arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }
 	
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(15), __webpack_require__(65), __webpack_require__(66), __webpack_require__(67)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir, TWEEN, KefirJQuery) {
 	
@@ -675,6 +687,19 @@ return /******/ (function(modules) { // webpackBootstrap
 			return wrapper(this, options);
 		};
 	
+		// convert to a stream of 1-or-2 element arrays;
+		// the first is just the element at that point in the stream
+		// the second is the previous element in the stream, if there is one
+		Kefir.Observable.prototype.newOld = function newOld() {
+			return Kefir.fromArray([null, null]).concat(this).slidingWindow(2).map(function (_ref3) {
+				var _ref32 = _slicedToArray(_ref3, 2);
+	
+				var a = _ref32[0];
+				var b = _ref32[1];
+				return [b, a];
+			});
+		};
+	
 		// This is a cheap version of the limiter defined above. TODO: use the limiter where this is now used
 		Kefir.Stream.prototype.holdUntil = function holdUntil(pacing) {
 			var _this = this;
@@ -741,9 +766,9 @@ return /******/ (function(modules) { // webpackBootstrap
 		/* EventStream generators *****************************************************************************************/
 	
 		$.fn.mouseDrag = function mouseDrag() {
-			var _ref3 = arguments[0] === undefined ? {} : arguments[0];
+			var _ref4 = arguments[0] === undefined ? {} : arguments[0];
 	
-			var threshold = _ref3.threshold;
+			var threshold = _ref4.threshold;
 	
 			return $(this).asKefirStream('mousedown').flatMap(function (mouseDownEvent) {
 				var stream = $(document).asKefirStream('mousemove');
@@ -769,9 +794,9 @@ return /******/ (function(modules) { // webpackBootstrap
 		};
 	
 		$.fn.mouseClick = function mouseClick() {
-			var _ref4 = arguments[0] === undefined ? {} : arguments[0];
+			var _ref5 = arguments[0] === undefined ? {} : arguments[0];
 	
-			var threshold = _ref4.threshold;
+			var threshold = _ref5.threshold;
 	
 			return $(this).asKefirStream('mousedown').flatMap(function (mouseDownEvent) {
 				var untilStream = $(document).asKefirStream('mousemove');
@@ -1438,6 +1463,18 @@ return /******/ (function(modules) { // webpackBootstrap
 					cache.push(result);
 					return result;
 				};
+			},
+	
+			getQueryVariable: function getQueryVariable(variable) {
+				var query = window.location.search.substring(1);
+				var vars = query.split('&');
+				for (var i = 0; i < vars.length; ++i) {
+					var pair = vars[i].split('=');
+					if (pair[0] == variable) {
+						return pair[1];
+					}
+				}
+				return null;
 			}
 	
 		};
@@ -1536,16 +1573,16 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 77:
+/***/ 78:
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(78);
+	var content = __webpack_require__(79);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(104)(content, {});
+	var update = __webpack_require__(108)(content, {});
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
@@ -1560,15 +1597,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 78:
+/***/ 79:
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(105)();
+	exports = module.exports = __webpack_require__(109)();
 	exports.push([module.id, "", ""]);
 
 /***/ },
 
-/***/ 104:
+/***/ 108:
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -1765,7 +1802,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 105:
+/***/ 109:
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = function() {

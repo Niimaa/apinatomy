@@ -1,4 +1,4 @@
-define(['jquery', 'bluebird', '../util/defer.es6.js', '../util/main-deltajs.es6.js'], ($, P, defer, dm) => {
+define(['jquery', 'bluebird', '../util/misc.es6.js', '../util/defer.es6.js', '../util/main-deltajs.es6.js'], ($, P, U, defer, dm) => {
 	'use strict';
 
 
@@ -8,7 +8,7 @@ define(['jquery', 'bluebird', '../util/defer.es6.js', '../util/main-deltajs.es6.
 
 	/* the class of FMA models, implementing the interface expected by ApiNATOMY */
 	let LyphModel = dm.vp('LyphModel', class LyphModel {
-		constructor(fields) { Object.assign(this, fields) }
+		constructor(fields) { console.log('    ..i:', fields); U.extend(this, fields); console.log('    ..ii');  }
 		get type()     { return TYPE }
 		getChildIds()  { return this.children.map(child => child.child.id) }
 		getModels(ids) { return getLyphModels(ids) }
@@ -68,10 +68,12 @@ define(['jquery', 'bluebird', '../util/defer.es6.js', '../util/main-deltajs.es6.
 				P.resolve($.ajax({
 					url: `http://open-physiology.org:5056/lyph/${newIds.join(',')}?array=yes`,
 					dataType: 'jsonp'
-				})).each((model) => {
+				})).tap(() => { console.log('(1)') }).each((model) => {
+					console.log('    .a');
 					/* resolve the corresponding promise */
 					_getDeferred(model.id).resolve(new LyphModel(model));
-				}).error((err) => {
+					console.log('    .b');
+				}).tap(() => { console.log('(2)') }).error((err) => {
 					console.error("There seems to be something wrong with the server.", err);
 				});
 			}

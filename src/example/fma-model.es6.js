@@ -1,4 +1,4 @@
-define(['jquery', 'bluebird', '../util/defer.es6.js', '../util/main-deltajs.es6.js', './24tiles.JSON'], ($, P, defer, dm, tfTiles) => {
+define(['jquery', 'bluebird', '../util/misc.es6.js', '../util/defer.es6.js', '../util/main-deltajs.es6.js', './24tiles.JSON'], ($, P, U, defer, dm, tfTiles) => {
 	'use strict';
 
 
@@ -18,7 +18,7 @@ define(['jquery', 'bluebird', '../util/defer.es6.js', '../util/main-deltajs.es6.
 
 	/* the class of FMA models, implementing the interface expected by ApiNATOMY */
 	var FmaModel = dm.vp('FmaModel', class FmaModel {
-		constructor(fields) { Object.assign(this, fields) }
+		constructor(fields) { U.extend(this, fields) }
 		get type() { return 'fma' } // <-- includes '24tiles' categorization models, though
 		get id() { return this._id }
 		getChildIds()  { return this.sub.map((sub) => sub.entity._id) }
