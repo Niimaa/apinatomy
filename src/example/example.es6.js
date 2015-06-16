@@ -31,31 +31,33 @@ import '../features/p-tile-hidden.es6.js';
 import '../features/p-tile-effectively-visible.es6.js';
 import '../features/p-tile-maximized.es6.js';
 import '../features/p-tile-middleclick-to-maximize.es6.js';
-//import '../features/p-svg.es6.js';
-import '../features/p-d3.es6.js';
-import '../features/p-connectivity.es6.js';
-import '../features/p-ppi.es6.js';
-import '../features/p-three-d.es6.js';
-import '../features/p-three-d-geometric-models.es6.js';
-import '../features/p-three-d-geometric-models-stl.es6.js';
-import '../features/p-three-d-geometric-models-obj.es6.js';
-import '../features/p-three-d-geometric-models-json.es6.js';
-import '../features/p-three-d-spinner.es6.js';
-import '../features/p-d3-three-d.es6.js';
-import '../features/p-three-d-manual-controls.es6.js';
-import '../features/p-three-d-auto-controls.es6.js';
-import '../features/p-snapshot.es6.js';
-import '../features/p-three-d-camera-snapshot.es6.js';
-import '../features/p-tile-open-snapshot.es6.js';
 import '../features/p-tile-buttons.es6.js';
-import '../features/p-tile-visible-snapshot.es6.js';
-import '../features/p-tile-maximized-snapshot.es6.js';
-import '../features/p-three-d-tubes.es6.js';
-import '../features/p-three-d-model-snapshot.es6.js';
 import '../features/p-tile-button-to-hide.es6.js';
 import '../features/p-tile-button-to-maximize.es6.js';
-import '../features/p-tile-button-to-swap-three-d-model.es6.js';
-import '../features/p-tile-button-to-point-camera.es6.js';
+import '../features/p-tile-button-to-unhide-children.es6.js';
+import '../features/p-tile-child-count-if-closed.es6.js';
+
+//import '../features/p-d3.es6.js';
+//import '../features/p-connectivity.es6.js';
+//import '../features/p-ppi.es6.js';
+//import '../features/p-three-d.es6.js';
+//import '../features/p-three-d-geometric-models.es6.js';
+//import '../features/p-three-d-geometric-models-stl.es6.js';
+//import '../features/p-three-d-geometric-models-obj.es6.js';
+//import '../features/p-three-d-geometric-models-json.es6.js';
+//import '../features/p-three-d-spinner.es6.js';
+//import '../features/p-d3-three-d.es6.js';
+//import '../features/p-three-d-manual-controls.es6.js';
+//import '../features/p-three-d-auto-controls.es6.js';
+//import '../features/p-snapshot.es6.js';
+//import '../features/p-tile-visible-snapshot.es6.js';
+//import '../features/p-tile-maximized-snapshot.es6.js';
+//import '../features/p-three-d-camera-snapshot.es6.js';
+//import '../features/p-tile-open-snapshot.es6.js';
+//import '../features/p-three-d-tubes.es6.js';
+//import '../features/p-three-d-model-snapshot.es6.js';
+//import '../features/p-tile-button-to-swap-three-d-model.es6.js';
+//import '../features/p-tile-button-to-point-camera.es6.js';
 
 
 /* open up all tiles by default */
@@ -64,6 +66,7 @@ circuitboard.plugin.do('start-tiles-open', { resolves: ['tile-open'] }).append('
 		this.open = model.children.length > 0;
 	});
 });
+
 
 /* select plugins to activate them  (note that these must already be *loaded* at this point) */
 circuitboard.plugin.select(
@@ -75,29 +78,35 @@ circuitboard.plugin.select(
 	'tile-middleclick-to-maximize',
 	'tile-spacing',
 	'tile-active',
-	'three-d-manual-controls',
-	'three-d-auto-controls',
-	'three-d-geometric-models-obj',
-	'three-d-geometric-models-json',
-	'snapshot',
 	'tile-button-to-hide',
 	'tile-button-to-maximize',
-	'tile-button-to-swap-three-d-model',
-	'tile-button-to-point-camera',
-	'connectivity'
+	'tile-button-to-unhide-children',
+	'tile-child-count-if-closed'
+
+	//'three-d-manual-controls',
+	//'three-d-auto-controls',
+	//'three-d-geometric-models-obj',
+	//'three-d-geometric-models-json',
+	//'snapshot',
+	//'tile-button-to-swap-three-d-model',
+	//'tile-button-to-point-camera',
+	//'connectivity',
 );
+
 
 $(document).ready(() => {
 
 	let root = U.getQueryVariable('root') || '1';
+	let port = U.getQueryVariable('port') || '5056';
 
 	$('#circuitboard').circuitboard({
-		model: getLyphModels('root', { root }),
-		tileSpacing: 20,
-		tilemapMargin: 20,
+		model: getLyphModels('root', { root, port }),
+		tileSpacing: 8,
+		tilemapMargin: 8,
 		weightWhenOpen: 8,
 		threeDCanvasElement: $('#three-d-canvas'),
-		threeDModels: {}
+		threeDModels: {},
+		pathServerPort: port
 	}).circuitboard('instance').then(function (circuitboard) {
 
 		console.info('circuitboard loaded');

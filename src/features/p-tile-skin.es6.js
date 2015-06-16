@@ -43,7 +43,10 @@ define([
 
 		/* put the name of the model in the header element */
 		//this._p_tileSkin_headerElement.text(this.model.id);
-		this.model.get('name').then((name)=> { this._p_tileSkin_headerElement.text(name) });
+		this.model.then((model)=> {
+			this._p_tileSkin_headerElement.text(model.name);
+			this._p_tileSkin_headerElement.attr('title', `${model.name} (${model.children.length})`);
+		});
 
 		/* take any css rules from the model and apply them to the tile */
 		this.skinnedElement = this.model.get('tile').get('normal').get('css')

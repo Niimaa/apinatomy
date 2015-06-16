@@ -26,7 +26,7 @@ module.exports = {
 			path.join(__dirname, "bower_components")
 		],
 		alias: {
-			'delta-js$':     'delta.js',
+			'delta-js$':     'delta.js/dist/delta.full.js',
 			'three-js$':     'three.js',
 			'velocity':      'velocity/velocity.js'
 		}

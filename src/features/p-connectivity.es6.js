@@ -8,10 +8,9 @@ define([
 	'../D3Vertex.es6.js',
 	'../D3Edge.es6.js',
 	'../util/path-model.es6.js',
-	'three-js',
 	'./p-ppi.scss',
 	'./p-connectivity.scss'
-], function ($, P, Kefir, Graph, U, D3GroupP, D3VertexP, D3EdgeP, fetchPathsFor, THREE) {
+], function ($, P, Kefir, Graph, U, D3GroupP, D3VertexP, D3EdgeP, fetchPathsFor) {
 	'use strict';
 
 
@@ -164,7 +163,7 @@ define([
 		this._p_connectivity_updateRequests = Kefir.bus();
 
 		this._p_connectivity_updateRequests.debounce(100).onValue(() => {
-			fetchPathsFor(Object.keys(this._p_connectivity_activeTiles)).then((paths) => { // get paths (async)
+			fetchPathsFor(Object.keys(this._p_connectivity_activeTiles), { port: this.options.pathServerPort }).then((paths) => { // get paths (async)
 				Object.keys(paths).forEach((type) => { // for all connectivity types
 					this._p_connectivity_registerType(type).then(() => {
 

@@ -1,0 +1,11 @@
+.tile > .tile-child-counter {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  margin: 0 2px;
+  padding: 0;
+}
+
+.tile.open > .tile-child-counter {
+    display: none;
+}

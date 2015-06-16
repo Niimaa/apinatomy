@@ -2,7 +2,7 @@ define(['jquery', 'bluebird'], ($, P) => {
 	'use strict';
 
 	/* to retrieve the path models relating to the given ids from the server */
-	return function fetchPathsFor(ids) {
+	return function fetchPathsFor(ids, {port} = {}) {
 
 		// TEMPORARY HACK FOR NOT SHOWING ANY EDGES:
 		return P.resolve({});
@@ -17,7 +17,7 @@ define(['jquery', 'bluebird'], ($, P) => {
         //
 		///* make actual query to server */
 		//return P.resolve($.ajax({
-		//	url: `http://open-physiology.org:5056/connections/?lyphs=${ids.join(',')}`, // 5055, 5056
+		//	url: `http://open-physiology.org:${port}/connections/?lyphs=${ids.join(',')}`, // 5055, 5056
 		//	dataType: 'jsonp'
 		//})).then((obj) => {
 		//	/* check for errors */

@@ -8,10 +8,10 @@ define(['jquery', 'bluebird', '../util/misc.es6.js', '../util/defer.es6.js', '..
 
 	/* the class of FMA models, implementing the interface expected by ApiNATOMY */
 	let LyphModel = dm.vp('LyphModel', class LyphModel {
-		constructor(fields) { console.log('    ..i:', fields); U.extend(this, fields); console.log('    ..ii');  }
+		constructor(fields) { U.extend(this, fields)  }
 		get type()     { return TYPE }
 		getChildIds()  { return this.children.map(child => child.child.id) }
-		getModels(ids) { return getLyphModels(ids) }
+		getModels(ids) { return getLyphModels(ids, { port: this._serverPort }) }
 	});
 
 
@@ -58,60 +58,24 @@ define(['jquery', 'bluebird', '../util/misc.es6.js', '../util/defer.es6.js', '..
 		if (options.root && newIds.length === 1 && newIds[0] === 'root') {
 			_getDeferred('root').resolve(new LyphModel({
 				id: 'root',
-				children: [ { child: { id: options.root } } ] // setting the root tile to have one child of id '0'; TODO: make it parametrized
+				children: [ { child: { id: options.root } } ],
+				_serverPort: options.port
 			}));
 		} else {
-
 
 			/* request and build the model objects belonging to any new ids */
 			if (newIds.length > 0) {
 				P.resolve($.ajax({
-					url: `http://open-physiology.org:5056/lyph/${newIds.join(',')}?array=yes`,
+					url: `http://open-physiology.org:${options.port}/lyph/${newIds.join(',')}?array=yes`,
 					dataType: 'jsonp'
-				})).tap(() => { console.log('(1)') }).each((model) => {
-					console.log('    .a');
+				})).each((model) => {
 					/* resolve the corresponding promise */
+					model._serverPort = options.port;
 					_getDeferred(model.id).resolve(new LyphModel(model));
-					console.log('    .b');
-				}).tap(() => { console.log('(2)') }).error((err) => {
+				}).error((err) => {
 					console.error("There seems to be something wrong with the server.", err);
 				});
 			}
-
-
-			//if (ids[0] === '0') {
-			//	_getDeferred('0').resolve(new LyphModel({
-			//		id:   '0',
-			//		name: 'Lyph 0',
-			//		children: [
-			//			{ child: { id: '1' } },
-			//			{ child: { id: '2' } },
-			//			{ child: { id: '3' } },
-			//			{ child: { id: '4' } }
-			//		]
-			//	}));
-			//} else {
-			//	_getDeferred('1').resolve(new LyphModel({
-			//		id:   '1',
-			//		name: 'Lyph 1',
-			//		children: []
-			//	}));
-			//	_getDeferred('2').resolve(new LyphModel({
-			//		id:   '2',
-			//		name: 'Lyph 2',
-			//		children: []
-			//	}));
-			//	_getDeferred('3').resolve(new LyphModel({
-			//		id:   '3',
-			//		name: 'Lyph 3',
-			//		children: []
-			//	}));
-			//	_getDeferred('4').resolve(new LyphModel({
-			//		id:   '4',
-			//		name: 'Lyph 4',
-			//		children: []
-			//	}));
-			//}
 
 		}
 
