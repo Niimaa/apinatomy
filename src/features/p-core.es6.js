@@ -1,11 +1,12 @@
 define([
 	'jquery',
 	'bluebird',
+	'../util/kefir-and-eggs.es6.js',
 	'../util/misc.es6.js',
 	'../util/defer.es6.js',
 	//'../util/nested-flex-grow.es6.js',
 	'./p-core.scss'
-], function ($, P, U, defer) {
+], function ($, P, Kefir, U, defer) {
 	'use strict';
 
 
@@ -16,13 +17,7 @@ define([
 
 	/* Circuitboard */
 	plugin.modify('Circuitboard.prototype')
-		.add('_registerTile', function _registerTile(tile) {
-
-			// called by the Tile constructor
-
-			U.getDef(this._p_circuitboardCore_tilesByModelId, tile.model.id, defer).resolve(tile);
-
-		}).add('allTiles', function () {
+		.add('allTiles', function () {
 
 			var tiles = {};
 
@@ -47,6 +42,18 @@ define([
 						model: this.options.model,
 						parent: this
 					}).tilemap('instance');
+
+		}).append('construct', function () {
+
+			this.newTiles = Kefir.bus();
+
+		}).add('_registerTile', function _registerTile(tile) {
+
+			// called by the Tile constructor
+
+			U.getDef(this._p_circuitboardCore_tilesByModelId, tile.model.id, defer).resolve(tile);
+
+			this.newTiles.emit(tile);
 
 		});
 

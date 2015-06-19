@@ -66,7 +66,7 @@ define(['jquery', 'bluebird', '../util/misc.es6.js', '../util/defer.es6.js', '..
 			/* request and build the model objects belonging to any new ids */
 			if (newIds.length > 0) {
 				P.resolve($.ajax({
-					url: `http://open-physiology.org:${options.port}/lyph/${newIds.join(',')}?array=yes`,
+					url: `http://open-physiology.org:${options.port}/lyph/${newIds.join(',')}?array=yes&correlations=yes`,
 					dataType: 'jsonp'
 				})).each((model) => {
 					/* resolve the corresponding promise */

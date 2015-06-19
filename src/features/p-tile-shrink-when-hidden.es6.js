@@ -15,13 +15,13 @@ define([
 
 	/* default DOM manipulation */
 	plugin.add('shrinkWhenHidden', function (hidden) {
-		var flexGrowFrom = parseFloat(U.defOr(this.element.data('amyFlexGrowTarget'), 1));
-		var flexGrowTo = hidden ? 0 : (this.open ? this.weightWhenOpen() : this.weightWhenClosed());
+		let flexGrowFrom = parseFloat(U.defOr(this.element.data('amyFlexGrowTarget'), 1));
+		let flexGrowTo = hidden ? 0 : (this.open ? this.weightWhenOpen() : this.weightWhenClosed());
 		this.element.data('amyFlexGrowTarget', flexGrowTo);
-		var rowFlexGrowTo = 0;
+		let rowFlexGrowTo = 0;
 		this.element.parent().children()
 			.each(function () { rowFlexGrowTo += parseFloat(U.defOr($(this).data('amyFlexGrowTarget'), 1)) });
-		var rowFlexGrowFrom = rowFlexGrowTo - flexGrowTo + flexGrowFrom;
+		let rowFlexGrowFrom = rowFlexGrowTo - flexGrowTo + flexGrowFrom;
 		if (flexGrowTo    > 0) { this.element         .css('display', 'flex') }
 		if (rowFlexGrowTo > 0) { this.element.parent().css('display', 'flex') }
 		return P.all([

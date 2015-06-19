@@ -3,13 +3,13 @@ define([
 	'bluebird',
 	'chroma-js',
 	'../util/misc.es6.js',
-	'./p-tile-child-count-if-closed.scss'
+	'./p-tile-correlation-count-if-closed.scss'
 ], function ($, P, color, U) {
 	'use strict';
 
 
 	/* the plugin */
-	var plugin = $.circuitboard.plugin.do('tile-child-count-if-closed', {
+	var plugin = $.circuitboard.plugin.do('tile-correlation-count-if-closed', {
 		requires: ['core', 'tile-open', 'tile-skin']
 	});
 
@@ -18,11 +18,11 @@ define([
 
 		/* create a <div> to hold the child counter */
 		U.makePositioned(this.element);
-		this.model.get('children').get('length').then((childCount)=> {
-			if (childCount > 0) {
-				this._childCounter = $(`<div class="tile-child-counter">`)
-					.text(childCount)
-					.attr('title', `${childCount} child lyphs`)
+		this.model.get('correlation count').then((correlationCount)=> {
+			if (correlationCount > 0) {
+				this._correlationCounter = $(`<div class="tile-correlation-counter">`)
+					.text(correlationCount)
+					.attr('title', `${correlationCount} correlations`)
 					.appendTo(this.element);
 			}
 		});

@@ -36,6 +36,7 @@ import '../features/p-tile-button-to-hide.es6.js';
 import '../features/p-tile-button-to-maximize.es6.js';
 import '../features/p-tile-button-to-unhide-children.es6.js';
 import '../features/p-tile-child-count-if-closed.es6.js';
+import '../features/p-tile-correlation-count-if-closed.es6.js';
 
 //import '../features/p-d3.es6.js';
 //import '../features/p-connectivity.es6.js';
@@ -60,12 +61,27 @@ import '../features/p-tile-child-count-if-closed.es6.js';
 //import '../features/p-tile-button-to-point-camera.es6.js';
 
 
-/* open up all tiles by default */
-circuitboard.plugin.do('start-tiles-open', { resolves: ['tile-open'] }).append('Tile.prototype.construct', function () {
-	this.model.then((model) => {
-		this.open = model.children.length > 0;
+/* fetch query parameters */
+const root = U.getQueryVariable('root') || '1';
+const port = U.getQueryVariable('port') || '5056';
+
+
+circuitboard.plugin.do('start-tiles-open', { if: true, after: ['tile-open', 'tile-hidden'] })
+	.append('Tile.prototype.construct', function () {
+
+		/* start tiles out as invisible, except for the root */
+		this.visible = (this.model.id === root);
+
+		/* open up all tiles by default */
+		this.model.then((model) => {
+			this.open = (model.children.length > 0);
+		});
+
 	});
-});
+
+
+
+
 
 
 /* select plugins to activate them  (note that these must already be *loaded* at this point) */
@@ -81,7 +97,8 @@ circuitboard.plugin.select(
 	'tile-button-to-hide',
 	'tile-button-to-maximize',
 	'tile-button-to-unhide-children',
-	'tile-child-count-if-closed'
+	'tile-child-count-if-closed',
+	'tile-correlation-count-if-closed'
 
 	//'three-d-manual-controls',
 	//'three-d-auto-controls',
@@ -96,9 +113,6 @@ circuitboard.plugin.select(
 
 $(document).ready(() => {
 
-	let root = U.getQueryVariable('root') || '1';
-	let port = U.getQueryVariable('port') || '5056';
-
 	$('#circuitboard').circuitboard({
 		model: getLyphModels('root', { root, port }),
 		tileSpacing: 8,
@@ -106,10 +120,80 @@ $(document).ready(() => {
 		weightWhenOpen: 8,
 		threeDCanvasElement: $('#three-d-canvas'),
 		threeDModels: {},
-		pathServerPort: port
+		pathServerPort: port,
+		initialTileVisibility: false
 	}).circuitboard('instance').then(function (circuitboard) {
 
 		console.info('circuitboard loaded');
+
+		let correlations = new Map();
+		let clIndexCbById = new Map();
+
+		let lyphCBs    = $('#lyph-checkboxes');
+		let clIndexCBs = $('#clindex-checkboxes');
+		circuitboard.newTiles.onValue((tile) => {
+			tile.model.then((model) => {
+				/* lyph checkboxes */
+				let lyphCheckbox = $('<div><label><input type="checkbox"/></label></div>')
+					.appendTo(lyphCBs)
+					.children().append(`<span>${model.name}</span>`)
+					.children('input')
+					.prop('checked' , tile.model.id == root)
+					.prop('disabled', tile.model.id == root)
+					.on('change', () => { tile.visible = lyphCheckbox.prop('checked') });
+				tile.p('visible').onValue((visible) => {
+					if (visible) {
+						let parent = tile.closestAncestorByType('Tile');
+						if (parent) { parent.visible = true }
+					} else {
+						for (let child of tile.closestDescendantsByType('Tile')) { child.visible = false }
+					}
+					lyphCheckbox.prop('checked', visible);
+				});
+
+				/* correlation checkboxes */
+				for (let correlation of model.correlations) {
+					correlations.set(correlation.id, correlation);
+					for (let variable of correlation.variables) {
+						if (variable.type === 'clinical index') {
+							if (!clIndexCbById.has(variable.clindex)) {
+								clIndexCbById.set(variable.clindex,
+									$('<div><label><input type="checkbox"/></label></div>')
+										.appendTo(clIndexCBs)
+										.attr('title', variable['clindex label'])
+										.children().append(`<span>${variable['clindex label']}</span>`)
+										.children('input'));
+							}
+							let clIndexCheckbox = clIndexCbById.get(variable.clindex);
+							clIndexCheckbox.on('change', (event) => {
+								if (clIndexCheckbox.prop('checked')) {
+									tile.visible = true;
+								} else {
+									clIndexCheckbox.prop('checked', true);
+									event.preventDefault();
+									return false;
+								}
+							});
+							tile.p('visible').changes().value(false).onValue(() => {
+								// TODO: make correlation invisible, which will trigger:
+								// TODO: - uncheck box - hide related glyphs
+								console.log('auto-hiding checkbox:', variable['clindex label']);
+								clIndexCheckbox.prop('checked', false);
+							});
+
+						}
+					}
+				}
+
+			});
+		});
+
+
+
+
+
+
+
 
 	});
 

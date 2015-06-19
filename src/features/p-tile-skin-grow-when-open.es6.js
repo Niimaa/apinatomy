@@ -3,7 +3,8 @@ define(['jquery', 'bluebird', './p-tile-skin-grow-when-open.scss'], function ($,
 
 
 	var plugin = $.circuitboard.plugin.do('tile-skin-grow-when-open', {
-		resolves: ['tile-skin', 'tile-grow-when-open']
+		resolves: ['tile-skin', 'tile-grow-when-open'],
+		after: ['tile-hidden']
 	}).modify('Tile.prototype');
 
 
@@ -44,7 +45,7 @@ define(['jquery', 'bluebird', './p-tile-skin-grow-when-open.scss'], function ($,
 	plugin.replace('growWhenOpen', function (open) {
 		var openCloseTransition = () => {
 			var flexGrowFrom = parseFloat(this.element.data('amyFlexGrowTarget') || 1);
-			var flexGrowTo = open ? this.weightWhenOpen() : this.weightWhenClosed();
+			var flexGrowTo = this.hidden ? 0 : (open ? this.weightWhenOpen() : this.weightWhenClosed());
 			this.element.data('amyFlexGrowTarget', flexGrowTo);
 			var rowFlexGrowTo = 0;
 			this.element.parent().children().each(function () {

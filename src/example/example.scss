@@ -22,11 +22,44 @@ body {
 
 #circuitboard {
 	position: absolute;
-	top: 0px;
-	left: 0px;
-	right: 0px;
-	bottom: 0px;
+	top:    0;
+	left:   250px;
+	right:  0;
+	bottom: 0;
 	z-index: 1;
+}
+
+#left-panel {
+  position: absolute;
+  top:    0;
+  left:   0;
+  width:  250px;
+  bottom: 0;
+  z-index: 1;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  details {
+	margin: 8px;
+	summary {
+	  font-weight: bold;
+	}
+	label {
+	  display: inline-block;
+	  width: 100%;
+	  white-space: nowrap;
+	  text-overflow: ellipsis;
+	  overflow: hidden;
+	  & > span {
+		margin-left: 2px;
+	  }
+	  input[type=checkbox] {
+		margin-left: 0;
+		&[disabled] ~ span {
+		  color: gray;
+		}
+	  }
+	}
+  }
 }
 
 #three-d-canvas {

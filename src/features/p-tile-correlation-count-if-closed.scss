@@ -1,14 +1,15 @@
-.tile > .tile-child-counter {
+.tile > .tile-correlation-counter {
   position: absolute;
   bottom: 2px;
-  right: 2px;
+  left: 2px;
   margin: 1px;
   padding: 0 2px;
+  font-style: italic;
   border: solid 1px;
   border-color: inherit;
   background-color: inherit;
 }
 
-.tile.open > .tile-child-counter {
+.tile.open > .tile-correlation-counter {
     display: none;
 }
