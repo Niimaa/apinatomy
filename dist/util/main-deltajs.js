@@ -7,7 +7,7 @@
 		var a = typeof exports === 'object' ? factory(require("bluebird"), require("delta-js")) : factory(root["bluebird"], root["delta-js"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE_63__, __WEBPACK_EXTERNAL_MODULE_68__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_63__, __WEBPACK_EXTERNAL_MODULE_67__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -90,7 +90,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(63), __webpack_require__(68), __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, DeltaJs, defer) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(63), __webpack_require__(67), __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, DeltaJs, defer) {
 		'use strict';
 	
 		/* already cached? */
@@ -125,10 +125,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 68:
+/***/ 67:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_68__;
+	module.exports = __WEBPACK_EXTERNAL_MODULE_67__;
 
 /***/ }
 

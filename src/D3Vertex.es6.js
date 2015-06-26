@@ -17,8 +17,8 @@ define([
 		window._amy_D3Vertex = Artefact.newSubclass('D3Vertex', function D3Vertex({ visible, z }) {
 
 			/* the coordinate properties */
-			this.newProperty('x', { initial: 10     });
-			this.newProperty('y', { initial: 10     });
+			this.newProperty('x', { initial: Math.random() * 10000 });
+			this.newProperty('y', { initial: Math.random() * 10000 });
 			this.newProperty('z', { initial: z || 0 });
 
 			/* the 'visible' and 'hidden' properties */
@@ -43,11 +43,20 @@ define([
 
 			get element() {
 				if (!this._element) {
-					this._element = $(`
-						<svg x="${this.x}" y="${this.y}" class="vertex ${this.options.cssClass}">
-							<circle class="core" r="${this.options.radius}"></circle>
-						</svg>
-					`);
+					if (this.options.shape === 'square') {
+						this._element = $(`
+							<svg x="${this.x}" y="${this.y}" class="vertex ${this.options.cssClass}">
+								<rect class="core" x="${-this.options.radius/2}" y="${-this.options.radius/2}"
+								      width="${this.options.radius}" height="${this.options.radius}"></rect>
+							</svg>
+						`);
+					} else {
+						this._element = $(`
+							<svg x="${this.x}" y="${this.y}" class="vertex ${this.options.cssClass}">
+								<circle class="core" r="${this.options.radius / 2}"></circle>
+							</svg>
+						`);
+					}
 				}
 				return this._element;
 			},

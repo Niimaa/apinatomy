@@ -257,7 +257,6 @@ define(['jquery', './misc.es6.js', 'kefir', 'tweenjs', 'kefir-jquery'], function
 		});
 	};
 
-
 	$.fn.mouseWheel = function mouseWheel() {
 		return $(this).asKefirStream('mousewheel DOMMouseScroll');
 	};

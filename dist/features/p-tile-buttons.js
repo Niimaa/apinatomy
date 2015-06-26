@@ -600,7 +600,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(63), __webpack_require__(69), __webpack_require__(15), __webpack_require__(9), __webpack_require__(88)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, color, U, _ref) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(63), __webpack_require__(69), __webpack_require__(15), __webpack_require__(9), __webpack_require__(86)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, color, U, _ref) {
 		'use strict';
 	
 		var button = _ref.button;
@@ -666,13 +666,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 88:
+/***/ 86:
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(89);
+	var content = __webpack_require__(87);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(108)(content, {});
@@ -690,7 +690,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 89:
+/***/ 87:
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(109)();

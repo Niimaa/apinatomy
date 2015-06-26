@@ -1,13 +1,13 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("jquery"), require("bluebird"));
+		module.exports = factory(require("jquery"), require("bluebird"), require("kefir"), require("tweenjs"), require("kefir-jquery"));
 	else if(typeof define === 'function' && define.amd)
-		define(["jquery", "bluebird"], factory);
+		define(["jquery", "bluebird", "kefir", "tweenjs", "kefir-jquery"], factory);
 	else {
-		var a = typeof exports === 'object' ? factory(require("jquery"), require("bluebird")) : factory(root["jquery"], root["bluebird"]);
+		var a = typeof exports === 'object' ? factory(require("jquery"), require("bluebird"), require("kefir"), require("tweenjs"), require("kefir-jquery")) : factory(root["jquery"], root["bluebird"], root["kefir"], root["tweenjs"], root["kefir-jquery"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE_62__, __WEBPACK_EXTERNAL_MODULE_63__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_62__, __WEBPACK_EXTERNAL_MODULE_63__, __WEBPACK_EXTERNAL_MODULE_64__, __WEBPACK_EXTERNAL_MODULE_65__, __WEBPACK_EXTERNAL_MODULE_66__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -81,6 +81,323 @@ return /******/ (function(modules) { // webpackBootstrap
 				promise: promise
 			};
 		};
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ },
+
+/***/ 12:
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
+	
+	function _slicedToArray(arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }
+	
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(15), __webpack_require__(64), __webpack_require__(65), __webpack_require__(66)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir, TWEEN, KefirJQuery) {
+	
+		/* Kefir jQuery plugin ********************************************************************************************/
+	
+		KefirJQuery.init(Kefir, $);
+	
+		/* EventStream generators *****************************************************************************************/
+	
+		// This method works with events that can have only one subscriber,
+		// that can be un-subscribed by setting the subscriber to `null`.
+		// This function is memoized, so only one subscription is taken,
+		// and the same stream for it returned for each request.
+		Kefir.fromOnNull = U.memoize(function fromOnNull(obj, eventName) {
+			return Kefir.fromBinder(function (emitter) {
+				obj.on(eventName, emitter.emit);
+				return function () {
+					obj.on(eventName, null);
+				};
+			});
+		});
+	
+		var requestAnimationFrameFn = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (f) {
+			window.setTimeout(f, 1000 / 60);
+		};
+		Kefir.animationFrames = function animationFrames() {
+			return Kefir.fromBinder(function (emitter) {
+	
+				/* self-calling animation-frame loop */
+				var subscribed = true;
+				(function iterationFn() {
+					requestAnimationFrameFn(function () {
+						emitter.emit();
+						if (subscribed) {
+							iterationFn();
+						}
+					});
+				})();
+	
+				/* unsubscribe function */
+				return function () {
+					subscribed = false;
+				};
+			});
+		};
+	
+		Kefir.tween = function tween(objStart, objEnd, _ref) {
+			var duration = _ref.duration;
+			var delay = _ref.delay;
+			var easing = _ref.easing;
+	
+			/* the tween */
+			var tw = new TWEEN.Tween(objStart).to(objEnd, duration);
+	
+			/* the returned bus */
+			var bus = Kefir.bus();
+	
+			/* a local function to plug in other streams, keeping track in order to 'end' the bus */
+			var addStream = (function () {
+				var chainedStreams = 0;
+				return function (stream) {
+					chainedStreams += 1;
+					bus.plug(stream);
+					stream.onEnd(function () {
+						chainedStreams -= 1;
+						if (chainedStreams === 0) {
+							bus.end();
+						}
+					});
+				};
+			})();
+	
+			/* main stream */
+			addStream(Kefir.fromBinder(function (emitter) {
+				if (easing) {
+					tw.easing(easing);
+				}
+				if (delay) {
+					tw.delay(delay);
+				}
+				tw.onUpdate(function () {
+					emitter.emit(this);
+				});
+				tw.onComplete(emitter.end);
+			}));
+	
+			/* adding tween-specific properties to the returned bus */
+			bus.tween = tw;
+			bus.start = function () {
+				tw.start();
+				return bus;
+			};
+			bus.chain = function (other) {
+				addStream(other);
+				tw.chain(other.tween);
+				return bus;
+			};
+	
+			/* returning the bus */
+			return bus;
+		};
+	
+		Kefir.keyPress = function keyPress(keyCode) {
+			return $(window).asKefirStream('keypress').filter(function (e) {
+				return e.keyCode === keyCode;
+			});
+		};
+	
+		Kefir.once = function once(value) {
+			return Kefir.fromBinder(function (emitter) {
+				emitter.emit(value);
+				emitter.end();
+			});
+			//return Kefir.constant(value); // TODO: replace all 'once' calls with 'constant' calls; then remove 'once'
+		};
+	
+		Kefir.fromArray = function fromArray(array) {
+			return Kefir.fromBinder(function (emitter) {
+				array.forEach(emitter.emit);
+				emitter.end();
+			});
+		};
+	
+		/* EventStream converters *****************************************************************************************/
+	
+		// This creates a 'window of opportunity' to limit other streams by.
+		// This window is provided by the `pacing` observable. An optional `handler`
+		// parameter can be given to do some setup and some breakdown. It is passed a function as an argument
+		// that should be called *once* in the place where other streams can do their
+		// thing. It returns a function used to wrap other streams. It does not
+		// return a stream.
+		Kefir.limiter = function limiter(pacing) {
+			var handler = arguments[1] === undefined ? U.call : arguments[1];
+	
+			var wantedBus = Kefir.bus();
+			var open = Kefir.bus();
+			var close = Kefir.bus();
+	
+			/* takes 'this' stream as pacing for a window of opportunity for other streams */
+			pacing.filterBy(wantedBus.toProperty(false)).onValue(function () {
+				handler(function () {
+					open.emit();
+					wantedBus.emit(false);
+					close.emit();
+				});
+			});
+	
+			/* returns a function to wrap a stream in this wrapper */
+			return function (stream) {
+				var _ref2 = arguments[1] === undefined ? {} : arguments[1];
+	
+				var buffer = _ref2.buffer;
+	
+				wantedBus.plug(stream.mapTo(true));
+				return Kefir.constant(true).take(1).concat(close).flatMapLatest(function () {
+					var accumulator = function accumulator(arr, val) {
+						return buffer ? arr.concat([val]) : [val];
+					};
+					return stream.takeUntilBy(open).reduce(accumulator, []).flatMap(Kefir.fromArray);
+				});
+			};
+		};
+	
+		// This restricts a given stream to a wrapper stream created with the method above.
+		// All its original events are now fired inside the provided window. Set `options.buffer`
+		// to `true` if all its events should be buffered and released inside the next window.
+		// Otherwise, only the last event is retained.
+		Kefir.Observable.prototype.limitedBy = function limitedBy(wrapper, options) {
+			return wrapper(this, options);
+		};
+	
+		// convert to a stream of 1-or-2 element arrays;
+		// the first is just the element at that point in the stream
+		// the second is the previous element in the stream, if there is one
+		Kefir.Observable.prototype.newOld = function newOld() {
+			return Kefir.fromArray([null, null]).concat(this).slidingWindow(2).map(function (_ref3) {
+				var _ref32 = _slicedToArray(_ref3, 2);
+	
+				var a = _ref32[0];
+				var b = _ref32[1];
+				return [b, a];
+			});
+		};
+	
+		// This is a cheap version of the limiter defined above. TODO: use the limiter where this is now used
+		Kefir.Stream.prototype.holdUntil = function holdUntil(pacing) {
+			var _this = this;
+	
+			return Kefir.fromBinder(function (emitter) {
+				var buffer = [];
+				var unsubscribeToThis = _this.onValue(function (value) {
+					buffer.push(value);
+				});
+				var unsubscribeToPacing = pacing.onValue(function () {
+					if (buffer.length > 0) {
+						var oldBuffer = buffer;
+						buffer = [];
+						oldBuffer.forEach(emitter.emit);
+					}
+				});
+				return function () {
+					unsubscribeToThis();
+					unsubscribeToPacing();
+					buffer = null;
+				};
+			});
+		};
+	
+		// This filters an observable to only let through values equal to the given value.
+		Kefir.Observable.prototype.value = function (value, comparator) {
+			comparator = comparator || function (e) {
+				return e === value;
+			};
+			return this.skipDuplicates().filter(comparator);
+		};
+	
+		// This makes a subscription to an observable that doesn't do anything
+		Kefir.Observable.prototype.run = function () {
+			var _this2 = this;
+	
+			var doNothing = function doNothing() {};
+			this.onValue(doNothing);
+			return function () {
+				_this2.offValue(doNothing);
+			};
+		};
+	
+		// This is a 'smart' .stopPropagation, marking events with a label
+		// and skipping those that already have that label.
+		Kefir.Stream.prototype.skipPropagation = function (label) {
+			return this.filter(function (event) {
+				return !U.array(event.originalEvent, '_onlyOnceFor')[label];
+			}).map(function (event) {
+				U.array(event.originalEvent, '_onlyOnceFor')[label] = true;
+			});
+		};
+	
+		// Filter events to only certain keys / buttons. Can be a predicate function or single number.
+		Kefir.Stream.prototype.which = function (buttonId) {
+			var pred = typeof buttonId === 'function' ? buttonId : function (b) {
+				return b === buttonId;
+			};
+			return this.filter(function (e) {
+				return pred(e.which);
+			});
+		};
+	
+		/* EventStream generators *****************************************************************************************/
+	
+		$.fn.mouseDrag = function mouseDrag() {
+			var _ref4 = arguments[0] === undefined ? {} : arguments[0];
+	
+			var threshold = _ref4.threshold;
+	
+			return $(this).asKefirStream('mousedown').flatMap(function (mouseDownEvent) {
+				var stream = $(document).asKefirStream('mousemove');
+				if (threshold) {
+					var crossed = false;
+					stream = stream.filter(function (mouseMoveEvent) {
+						// TODO: don't use 'filter', but something like 'skipUntil' or 'flatMap'
+						if (crossed) {
+							return true;
+						}
+						var dx = mouseDownEvent.pageX - mouseMoveEvent.pageX;
+						var dy = mouseDownEvent.pageY - mouseMoveEvent.pageY;
+						if (dx * dx + dy * dy > threshold * threshold) {
+							return crossed = true;
+						}
+						return false;
+					});
+				}
+				return stream.takeUntilBy($(document).asKefirStream('mouseup')).map(function (mouseMoveEvent) {
+					return { mouseDownEvent: mouseDownEvent, mouseMoveEvent: mouseMoveEvent };
+				});
+			});
+		};
+	
+		$.fn.mouseClick = function mouseClick() {
+			var _ref5 = arguments[0] === undefined ? {} : arguments[0];
+	
+			var threshold = _ref5.threshold;
+	
+			return $(this).asKefirStream('mousedown').flatMap(function (mouseDownEvent) {
+				var untilStream = $(document).asKefirStream('mousemove');
+				if (threshold) {
+					var crossed = false;
+					untilStream = untilStream.filter(function (mouseMoveEvent) {
+						if (crossed) {
+							return true;
+						}
+						var dx = mouseDownEvent.pageX - mouseMoveEvent.pageX;
+						var dy = mouseDownEvent.pageY - mouseMoveEvent.pageY;
+						if (dx * dx + dy * dy > threshold * threshold) {
+							return crossed = true;
+						}
+						return false;
+					});
+				}
+				return $(document).asKefirStream('mouseup').take(1).takeUntilBy(untilStream);
+			});
+		};
+	
+		$.fn.mouseWheel = function mouseWheel() {
+			return $(this).asKefirStream('mousewheel DOMMouseScroll');
+		};
+	
+		return Kefir;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
@@ -481,9 +798,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(63), __webpack_require__(15), __webpack_require__(10),
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(63), __webpack_require__(12), __webpack_require__(15), __webpack_require__(10),
 	//'../util/nested-flex-grow.es6.js',
-	__webpack_require__(80)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, U, defer) {
+	__webpack_require__(80)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, Kefir, U, defer) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('core', {
@@ -491,12 +808,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		});
 	
 		/* Circuitboard */
-		plugin.modify('Circuitboard.prototype').add('_registerTile', function _registerTile(tile) {
-	
-			// called by the Tile constructor
-	
-			U.getDef(this._p_circuitboardCore_tilesByModelId, tile.model.id, defer).resolve(tile);
-		}).add('allTiles', function () {
+		plugin.modify('Circuitboard.prototype').add('allTiles', function () {
 			var _this = this;
 	
 			var tiles = {};
@@ -518,6 +830,16 @@ return /******/ (function(modules) { // webpackBootstrap
 				model: this.options.model,
 				parent: this
 			}).tilemap('instance');
+		}).append('construct', function () {
+	
+			this.newTiles = Kefir.bus();
+		}).add('_registerTile', function _registerTile(tile) {
+	
+			// called by the Tile constructor
+	
+			U.getDef(this._p_circuitboardCore_tilesByModelId, tile.model.id, defer).resolve(tile);
+	
+			this.newTiles.emit(tile);
 		});
 	
 		/* Tilemap */
@@ -558,7 +880,7 @@ return /******/ (function(modules) { // webpackBootstrap
 						$('<div/>').tile({
 							model: childrenToDisplay.shift(),
 							parent: _this2
-						}).appendTo(row).css('flex-grow', 1);
+						}).appendTo(row).css('flex-grow', 1).data('artefact');
 					}
 				}
 			})
@@ -624,6 +946,27 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __WEBPACK_EXTERNAL_MODULE_63__;
+
+/***/ },
+
+/***/ 64:
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_64__;
+
+/***/ },
+
+/***/ 65:
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_65__;
+
+/***/ },
+
+/***/ 66:
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_66__;
 
 /***/ },
 

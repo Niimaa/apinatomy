@@ -18,7 +18,7 @@ define(['jquery', './util/misc.es6.js', './Artefact.es6.js'], function ($, U, Ar
 
 			this.on('destroy').take(1).onValue(() => {
 				this.vertices.forEach((v) => { v.destroy() });
-				// edges will be destroyed when their vertices are destroyed
+				// edges are destroyed when either of their vertices is destroyed
 			});
 
 		}, {
@@ -37,7 +37,7 @@ define(['jquery', './util/misc.es6.js', './Artefact.es6.js'], function ($, U, Ar
 				this.vertices[vertex.id] = vertex;
 				vertex.graphId = vertex.id;
 				this.circuitboard._p_d3_vertices[vertex.graphId] = vertex;
-				this.circuitboard.updateGraph();
+				vertex.p('visible').onValue(() => { this.circuitboard.updateGraph() });
 				return vertex;
 			},
 
@@ -58,7 +58,7 @@ define(['jquery', './util/misc.es6.js', './Artefact.es6.js'], function ($, U, Ar
 				this.edges[edge.id] = edge;
 				edge.graphId = this.id + ':' + edge.id;
 				this.circuitboard._p_d3_edges[edge.graphId] = edge;
-				this.circuitboard.updateGraph();
+				edge.p('visible').onValue(() => { this.circuitboard.updateGraph() });
 				return edge;
 			},
 

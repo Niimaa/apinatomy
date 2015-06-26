@@ -82,9 +82,6 @@ define([
 						this.element.children().empty();
 						this.element.empty();
 
-
-
-
 						/* render and store references to the new tiles */
 						this._p_tilemapCore_tiles = [];
 						var rowCount = Math.floor(Math.sqrt(childrenToDisplay.length));
@@ -96,7 +93,7 @@ define([
 								$(`<div/>`).tile({
 									model: childrenToDisplay.shift(),
 									parent: this
-								}).appendTo(row).css('flex-grow', 1);
+								}).appendTo(row).css('flex-grow', 1).data('artefact');
 							}
 						}
 					})

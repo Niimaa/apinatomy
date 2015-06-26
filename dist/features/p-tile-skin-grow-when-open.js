@@ -65,11 +65,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(63), __webpack_require__(98)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(63), __webpack_require__(96)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('tile-skin-grow-when-open', {
-			resolves: ['tile-skin', 'tile-grow-when-open']
+			resolves: ['tile-skin', 'tile-grow-when-open'],
+			after: ['tile-hidden']
 		}).modify('Tile.prototype');
 	
 		///*  react to a tile opening or closing by      */
@@ -103,7 +104,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 			var openCloseTransition = function openCloseTransition() {
 				var flexGrowFrom = parseFloat(_this.element.data('amyFlexGrowTarget') || 1);
-				var flexGrowTo = open ? _this.weightWhenOpen() : _this.weightWhenClosed();
+				var flexGrowTo = _this.hidden ? 0 : open ? _this.weightWhenOpen() : _this.weightWhenClosed();
 				_this.element.data('amyFlexGrowTarget', flexGrowTo);
 				var rowFlexGrowTo = 0;
 				_this.element.parent().children().each(function () {
@@ -152,13 +153,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 98:
+/***/ 96:
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(99);
+	var content = __webpack_require__(97);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(108)(content, {});
@@ -176,7 +177,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 99:
+/***/ 97:
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(109)();

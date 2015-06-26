@@ -15,6 +15,8 @@ define(['jquery', 'bluebird', './misc.es6.js', '../Artefact.es6.js', './kefir-an
 			/* if the jquery element is removed, destroy the artefact */
 			this.element.asKefirStream('remove').onValue(() => { this.destroy() });
 
+			this.element.data('artefact', this);
+
 		}, {
 
 			get model() { return this.options.model },

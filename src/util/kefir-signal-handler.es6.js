@@ -111,7 +111,9 @@ define(['jquery', './misc.es6.js', './kefir-and-eggs.es6.js'], function ($, U, K
 
 			/* make the property active; it doesn't work if this isn't done (the nature of Kefir.js) */
 			property.run();
-			this.event('destroy').onValue(() => { bus.end() });
+			if (this._events['destroy']) {
+				this.event('destroy').onValue(() => { bus.end() });
+			}
 
 			/* return the property */
 			return property;

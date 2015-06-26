@@ -35,10 +35,9 @@ define([
 		/* create the force layout */
 		this.d3Force = d3.layout.force()
 			.gravity(0)
-			.charge(d => -2 * (d.group.region.width + d.group.region.height)
+			.charge(d => -2 * Math.max(d.group.region.width, d.group.region.height)
 			                * U.defOr(d.group.chargeFactor, 1)
-			                * U.defOr(d.chargeFactor, 1)
-			                / Math.sqrt(d.group.vertices.length || 1))
+			                * U.defOr(d.chargeFactor, 1))
 			.chargeDistance(200)
 			.linkDistance(d => (d.group.region.width + d.group.region.height)
 			                   * U.defOr(d.group.linkDistanceFactor, 1)
@@ -83,7 +82,8 @@ define([
 			vertices = svg.selectAll('.vertex').data(visibleVertices, d => d.graphId);
 			vertices.enter().append(d => d.element[0])
 				.classed('vertex', true).classed('edge', false)
-				.call(this.d3Force.drag); // all vertices can be dragged around
+				.call(this.d3Force.drag) // all vertices can be dragged around
+				.append('svg:title').text(d => d.options.tooltipText);
 			vertices.exit().remove();
 
 			/* edges */

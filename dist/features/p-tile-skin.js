@@ -7,7 +7,7 @@
 		var a = typeof exports === 'object' ? factory(require("jquery"), require("bluebird"), require("kefir"), require("tweenjs"), require("kefir-jquery"), require("chroma-js")) : factory(root["jquery"], root["bluebird"], root["kefir"], root["tweenjs"], root["kefir-jquery"], root["chroma-js"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE_62__, __WEBPACK_EXTERNAL_MODULE_63__, __WEBPACK_EXTERNAL_MODULE_65__, __WEBPACK_EXTERNAL_MODULE_66__, __WEBPACK_EXTERNAL_MODULE_67__, __WEBPACK_EXTERNAL_MODULE_69__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_62__, __WEBPACK_EXTERNAL_MODULE_63__, __WEBPACK_EXTERNAL_MODULE_64__, __WEBPACK_EXTERNAL_MODULE_65__, __WEBPACK_EXTERNAL_MODULE_66__, __WEBPACK_EXTERNAL_MODULE_69__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -178,7 +178,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _slicedToArray(arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(15), __webpack_require__(65), __webpack_require__(66), __webpack_require__(67)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir, TWEEN, KefirJQuery) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(15), __webpack_require__(64), __webpack_require__(65), __webpack_require__(66)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir, TWEEN, KefirJQuery) {
 	
 		/* Kefir jQuery plugin ********************************************************************************************/
 	
@@ -919,7 +919,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _slicedToArray(arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(69), __webpack_require__(15), __webpack_require__(12), __webpack_require__(11), __webpack_require__(18), __webpack_require__(94)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, color, U, Kefir, defaults) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(69), __webpack_require__(15), __webpack_require__(12), __webpack_require__(11), __webpack_require__(18), __webpack_require__(92)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, color, U, Kefir, defaults) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('tile-skin', {
@@ -956,7 +956,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			//this._p_tileSkin_headerElement.text(this.model.id);
 			this.model.then(function (model) {
 				_this._p_tileSkin_headerElement.text(model.name);
-				_this._p_tileSkin_headerElement.attr('title', '' + model.name + ' (' + model.children.length + ')');
+				_this._p_tileSkin_headerElement.attr('title', '' + model.id + ' - ' + model.name + ' (' + model['correlation count'] + ' correlations) (' + model.children.length + ' child lyphs)');
 			});
 	
 			/* take any css rules from the model and apply them to the tile */
@@ -978,7 +978,9 @@ return /******/ (function(modules) { // webpackBootstrap
 			});
 	
 			/* when the tile is closed, make the font size dynamic */
-			this.on('size').filterBy(this.p('open').not()).onValue(function (size) {
+			Kefir.merge([this.on('size').filterBy(this.p('open').not()), this.p('open').value(false).map(function () {
+				return _this.size;
+			})]).onValue(function (size) {
 				_this._p_tileSkin_headerElement // formula gotten experimentally
 				.css('fontSize', Math.min(0.2 * Math.pow(size.height, 1.01), 0.13 * Math.pow(size.width, 1.01)));
 				// We're growing / shrinking the font size in proportion to the (1.01)st power of the tile size.
@@ -1020,6 +1022,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
+/***/ 64:
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_64__;
+
+/***/ },
+
 /***/ 65:
 /***/ function(module, exports, __webpack_require__) {
 
@@ -1034,13 +1043,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 67:
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_67__;
-
-/***/ },
-
 /***/ 69:
 /***/ function(module, exports, __webpack_require__) {
 
@@ -1048,13 +1050,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 94:
+/***/ 92:
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(95);
+	var content = __webpack_require__(93);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(108)(content, {});
@@ -1072,7 +1074,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 95:
+/***/ 93:
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(109)();

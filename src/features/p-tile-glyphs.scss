@@ -1,0 +1,7 @@
+.circuitboard > svg.d3 {
+	.glyph > .core {
+		pointer-events: visiblePainted;
+		fill:   green;
+		stroke: darkgreen;
+	}
+}

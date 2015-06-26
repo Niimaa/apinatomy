@@ -1,10 +1,10 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("jquery"), require("bluebird"), require("three-js"), require("kefir"), require("tweenjs"), require("kefir-jquery"), require("delta-js"));
+		module.exports = factory(require("jquery"), require("bluebird"), require("kefir"), require("tweenjs"), require("kefir-jquery"), require("delta-js"), require("three-js"));
 	else if(typeof define === 'function' && define.amd)
-		define(["jquery", "bluebird", "three-js", "kefir", "tweenjs", "kefir-jquery", "delta-js"], factory);
+		define(["jquery", "bluebird", "kefir", "tweenjs", "kefir-jquery", "delta-js", "three-js"], factory);
 	else {
-		var a = typeof exports === 'object' ? factory(require("jquery"), require("bluebird"), require("three-js"), require("kefir"), require("tweenjs"), require("kefir-jquery"), require("delta-js")) : factory(root["jquery"], root["bluebird"], root["three-js"], root["kefir"], root["tweenjs"], root["kefir-jquery"], root["delta-js"]);
+		var a = typeof exports === 'object' ? factory(require("jquery"), require("bluebird"), require("kefir"), require("tweenjs"), require("kefir-jquery"), require("delta-js"), require("three-js")) : factory(root["jquery"], root["bluebird"], root["kefir"], root["tweenjs"], root["kefir-jquery"], root["delta-js"], root["three-js"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
 })(this, function(__WEBPACK_EXTERNAL_MODULE_62__, __WEBPACK_EXTERNAL_MODULE_63__, __WEBPACK_EXTERNAL_MODULE_64__, __WEBPACK_EXTERNAL_MODULE_65__, __WEBPACK_EXTERNAL_MODULE_66__, __WEBPACK_EXTERNAL_MODULE_67__, __WEBPACK_EXTERNAL_MODULE_68__) {
@@ -415,7 +415,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(64), __webpack_require__(15), __webpack_require__(12), __webpack_require__(3), __webpack_require__(76)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, THREE, U, Kefir, ArtefactP) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(68), __webpack_require__(15), __webpack_require__(12), __webpack_require__(3), __webpack_require__(78)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, THREE, U, Kefir, ArtefactP) {
 		'use strict';
 	
 		return ArtefactP.then(function (Artefact) {
@@ -589,7 +589,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _slicedToArray(arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(15), __webpack_require__(65), __webpack_require__(66), __webpack_require__(67)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir, TWEEN, KefirJQuery) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(15), __webpack_require__(64), __webpack_require__(65), __webpack_require__(66)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir, TWEEN, KefirJQuery) {
 	
 		/* Kefir jQuery plugin ********************************************************************************************/
 	
@@ -1044,9 +1044,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 					/* make the property active; it doesn't work if this isn't done (the nature of Kefir.js) */
 					property.run();
-					this.event('destroy').onValue(function () {
-						bus.end();
-					});
+					if (this._events['destroy']) {
+						this.event('destroy').onValue(function () {
+							bus.end();
+						});
+					}
 	
 					/* return the property */
 					return property;
@@ -1167,7 +1169,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(63), __webpack_require__(68), __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, DeltaJs, defer) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(63), __webpack_require__(67), __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, DeltaJs, defer) {
 		'use strict';
 	
 		/* already cached? */
@@ -1652,13 +1654,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 76:
+/***/ 78:
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(77);
+	var content = __webpack_require__(79);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(108)(content, {});
@@ -1676,7 +1678,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 77:
+/***/ 79:
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(109)();

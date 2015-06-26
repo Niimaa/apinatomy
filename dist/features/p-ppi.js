@@ -1,10 +1,10 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("jquery"), require("bluebird"), require("three-js"), require("kefir"), require("tweenjs"), require("kefir-jquery"), require("delta-js"));
+		module.exports = factory(require("jquery"), require("bluebird"), require("kefir"), require("tweenjs"), require("kefir-jquery"), require("delta-js"), require("three-js"));
 	else if(typeof define === 'function' && define.amd)
-		define(["jquery", "bluebird", "three-js", "kefir", "tweenjs", "kefir-jquery", "delta-js"], factory);
+		define(["jquery", "bluebird", "kefir", "tweenjs", "kefir-jquery", "delta-js", "three-js"], factory);
 	else {
-		var a = typeof exports === 'object' ? factory(require("jquery"), require("bluebird"), require("three-js"), require("kefir"), require("tweenjs"), require("kefir-jquery"), require("delta-js")) : factory(root["jquery"], root["bluebird"], root["three-js"], root["kefir"], root["tweenjs"], root["kefir-jquery"], root["delta-js"]);
+		var a = typeof exports === 'object' ? factory(require("jquery"), require("bluebird"), require("kefir"), require("tweenjs"), require("kefir-jquery"), require("delta-js"), require("three-js")) : factory(root["jquery"], root["bluebird"], root["kefir"], root["tweenjs"], root["kefir-jquery"], root["delta-js"], root["three-js"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
 })(this, function(__WEBPACK_EXTERNAL_MODULE_62__, __WEBPACK_EXTERNAL_MODULE_63__, __WEBPACK_EXTERNAL_MODULE_64__, __WEBPACK_EXTERNAL_MODULE_65__, __WEBPACK_EXTERNAL_MODULE_66__, __WEBPACK_EXTERNAL_MODULE_67__, __WEBPACK_EXTERNAL_MODULE_68__) {
@@ -436,7 +436,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(64), __webpack_require__(15), __webpack_require__(12), __webpack_require__(3), __webpack_require__(76)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, THREE, U, Kefir, ArtefactP) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(68), __webpack_require__(15), __webpack_require__(12), __webpack_require__(3), __webpack_require__(78)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, THREE, U, Kefir, ArtefactP) {
 		'use strict';
 	
 		return ArtefactP.then(function (Artefact) {
@@ -605,7 +605,7 @@ return /******/ (function(modules) { // webpackBootstrap
 					_this.vertices.forEach(function (v) {
 						v.destroy();
 					});
-					// edges will be destroyed when their vertices are destroyed
+					// edges are destroyed when either of their vertices is destroyed
 				});
 			}, Object.defineProperties({
 	
@@ -615,11 +615,15 @@ return /******/ (function(modules) { // webpackBootstrap
 				},
 	
 				addVertex: function addVertex(vertex) {
+					var _this2 = this;
+	
 					vertex.group = this;
 					this.vertices[vertex.id] = vertex;
 					vertex.graphId = vertex.id;
 					this.circuitboard._p_d3_vertices[vertex.graphId] = vertex;
-					this.circuitboard.updateGraph();
+					vertex.p('visible').onValue(function () {
+						_this2.circuitboard.updateGraph();
+					});
 					return vertex;
 				},
 	
@@ -636,11 +640,15 @@ return /******/ (function(modules) { // webpackBootstrap
 				},
 	
 				addEdge: function addEdge(edge) {
+					var _this3 = this;
+	
 					edge.group = this;
 					this.edges[edge.id] = edge;
 					edge.graphId = this.id + ':' + edge.id;
 					this.circuitboard._p_d3_edges[edge.graphId] = edge;
-					this.circuitboard.updateGraph();
+					edge.p('visible').onValue(function () {
+						_this3.circuitboard.updateGraph();
+					});
 					return edge;
 				},
 	
@@ -657,16 +665,16 @@ return /******/ (function(modules) { // webpackBootstrap
 				},
 	
 				removeAllEdgesAndVertices: function removeAllEdgesAndVertices() {
-					var _this2 = this;
+					var _this4 = this;
 	
 					Object.keys(this.edges).forEach(function (edgeId) {
-						if (_this2.edges[edgeId]) {
-							_this2.removeEdge(_this2.edges[edgeId]);
+						if (_this4.edges[edgeId]) {
+							_this4.removeEdge(_this4.edges[edgeId]);
 						}
 					});
 					Object.keys(this.vertices).forEach(function (vertexId) {
-						if (_this2.vertices[vertexId]) {
-							_this2.removeVertex(_this2.vertices[vertexId]);
+						if (_this4.vertices[vertexId]) {
+							_this4.removeVertex(_this4.vertices[vertexId]);
 						}
 					});
 					this.circuitboard.updateGraph();
@@ -731,7 +739,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(15), __webpack_require__(3), __webpack_require__(78)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, ArtefactP) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(15), __webpack_require__(3), __webpack_require__(76)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, ArtefactP) {
 		'use strict';
 	
 		return ArtefactP.then(function (Artefact) {
@@ -748,8 +756,8 @@ return /******/ (function(modules) { // webpackBootstrap
 				var z = _ref.z;
 	
 				/* the coordinate properties */
-				this.newProperty('x', { initial: 10 });
-				this.newProperty('y', { initial: 10 });
+				this.newProperty('x', { initial: Math.random() * 10000 });
+				this.newProperty('y', { initial: Math.random() * 10000 });
 				this.newProperty('z', { initial: z || 0 });
 	
 				/* the 'visible' and 'hidden' properties */
@@ -772,7 +780,11 @@ return /******/ (function(modules) { // webpackBootstrap
 				element: {
 					get: function () {
 						if (!this._element) {
-							this._element = $('\n\t\t\t\t\t\t<svg x="' + this.x + '" y="' + this.y + '" class="vertex ' + this.options.cssClass + '">\n\t\t\t\t\t\t\t<circle class="core" r="' + this.options.radius + '"></circle>\n\t\t\t\t\t\t</svg>\n\t\t\t\t\t');
+							if (this.options.shape === 'square') {
+								this._element = $('\n\t\t\t\t\t\t\t<svg x="' + this.x + '" y="' + this.y + '" class="vertex ' + this.options.cssClass + '">\n\t\t\t\t\t\t\t\t<rect class="core" x="' + -this.options.radius / 2 + '" y="' + -this.options.radius / 2 + '"\n\t\t\t\t\t\t\t\t      width="' + this.options.radius + '" height="' + this.options.radius + '"></rect>\n\t\t\t\t\t\t\t</svg>\n\t\t\t\t\t\t');
+							} else {
+								this._element = $('\n\t\t\t\t\t\t\t<svg x="' + this.x + '" y="' + this.y + '" class="vertex ' + this.options.cssClass + '">\n\t\t\t\t\t\t\t\t<circle class="core" r="' + this.options.radius / 2 + '"></circle>\n\t\t\t\t\t\t\t</svg>\n\t\t\t\t\t\t');
+							}
 						}
 						return this._element;
 					},
@@ -833,7 +845,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _slicedToArray(arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(15), __webpack_require__(65), __webpack_require__(66), __webpack_require__(67)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir, TWEEN, KefirJQuery) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(15), __webpack_require__(64), __webpack_require__(65), __webpack_require__(66)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir, TWEEN, KefirJQuery) {
 	
 		/* Kefir jQuery plugin ********************************************************************************************/
 	
@@ -1288,9 +1300,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 					/* make the property active; it doesn't work if this isn't done (the nature of Kefir.js) */
 					property.run();
-					this.event('destroy').onValue(function () {
-						bus.end();
-					});
+					if (this._events['destroy']) {
+						this.event('destroy').onValue(function () {
+							bus.end();
+						});
+					}
 	
 					/* return the property */
 					return property;
@@ -1411,7 +1425,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(63), __webpack_require__(68), __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, DeltaJs, defer) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(63), __webpack_require__(67), __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, DeltaJs, defer) {
 		'use strict';
 	
 		/* already cached? */
@@ -1973,8 +1987,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
-		module.hot.accept("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/D3Edge.scss", function() {
-			var newContent = require("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/D3Edge.scss");
+		module.hot.accept("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/D3Vertex.scss", function() {
+			var newContent = require("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/D3Vertex.scss");
 			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 			update(newContent);
 		});
@@ -2005,8 +2019,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
-		module.hot.accept("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/D3Vertex.scss", function() {
-			var newContent = require("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/D3Vertex.scss");
+		module.hot.accept("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/D3Edge.scss", function() {
+			var newContent = require("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/D3Edge.scss");
 			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 			update(newContent);
 		});
