@@ -456,7 +456,7 @@ $(document).ready(() => {
 		let newCorrelationClIndices = Kefir.bus();
 		newCorrelations.onValue((correlation) => {
 			for (let variable of correlation.variables) {
-				if (variable.type === 'clinical index') {
+				if (variable.type === 'clinical index' && variable.clindex !== "") {
 					if (!clIndices.has(variable.clindex)) {
 
 						/* signal handling */

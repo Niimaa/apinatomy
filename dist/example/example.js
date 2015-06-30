@@ -51,86 +51,8 @@
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
-	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(42), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U) {
-		'use strict';
-	
-		function deepTransform(val, fn) {
-			if ($.isPlainObject(val) || $.isArray(val)) {
-				$.each(val, function (key, subVal) {
-					var returned = fn(subVal);
-					if (U.isUndefined(returned)) {
-						deepTransform(subVal, fn);
-					} else {
-						val[key] = returned;
-					}
-				});
-			}
-		}
-	
-		var REF_PATTERN = /`([\[\.].+?)`/g;
-	
-		return function defaults(spec, context) {
-	
-			deepTransform(spec, function (val) {
-				if (typeof val === 'string') {
-					var refs = (val.match(REF_PATTERN) || []).map(function (ref) {
-						var strippedRef = ref.substring(1, ref.length - 1);
-						return new Function('refs', 'return refs' + strippedRef);
-					});
-					var expr = val.replace(REF_PATTERN, '(refs$1)');
-					var templateFn = function templateFn(formalParams) {
-						var newFormalParams = formalParams.concat(['return ' + expr]);
-						return U.applyConstructor(Function, newFormalParams);
-					};
-					templateFn.refs = refs;
-					return templateFn;
-				}
-			});
-	
-			//// recursive auxiliary function; returns true if a change to obj was made
-			function withDefaultsAux(defSpec, obj, refs, params) {
-				var change = false;
-				Object.keys(defSpec).forEach(function (key) {
-	
-					if (key in obj) {
-						if ($.isPlainObject(defSpec[key]) && $.isPlainObject(obj[key])) {
-							change = withDefaultsAux(defSpec[key], obj[key], refs, params) || change;
-						}
-					} else if ($.isPlainObject(defSpec[key])) {
-						obj[key] = {};
-						change = withDefaultsAux(defSpec[key], obj[key], refs, params) || change;
-					} else if ($.isFunction(defSpec[key])) {
-						if (defSpec[key].refs.every(function (ref) {
-							return !U.isUndefined(ref(refs));
-						})) {
-							// if none of the references are undefined, assign this 'default'
-							var allparams = $.extend({ refs: refs }, context, params);
-							var formalParams = Object.keys(allparams);
-							var actualParams = formalParams.map(function (fpar) {
-								return allparams[fpar];
-							});
-							var finalFn = defSpec[key](formalParams);
-							obj[key] = finalFn.apply(null, actualParams);
-						}
-					}
-				});
-				return change;
-			}
-	
-			return function withDefaults(obj, params) {
-				var result = U.isUndefined(obj) ? {} : $.extend(true, {}, obj);
-	
-				var change = true;
-				while (change) {
-					change = withDefaultsAux(spec, result, result, params || {});
-				}
-	
-				return result;
-			};
-		};
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	exports = module.exports = __webpack_require__(86)();
+	exports.push([module.id, ".skinned-tile{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-box-orient:vertical;-webkit-box-direction:normal;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column;}.skinned-tile>header{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-webkit-justify-content:center;-ms-flex-pack:center;justify-content:center;font-weight:bold;border-width:1px;overflow:hidden;}.skinned-tile.open>header{height:26px;border-style:none none solid none;line-height:26px;font-size:19.5px !important;white-space:nowrap;}.skinned-tile:not(.open)>header{-webkit-box-flex:1;-webkit-flex-grow:1;-ms-flex-positive:1;flex-grow:1;padding:0 5px;}.skinned-tile>section{-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;user-select:text;}.skinned-tile.open>section{-webkit-box-flex:1;-webkit-flex-grow:1;-ms-flex-positive:1;flex-grow:1;opacity:1;}.skinned-tile:not(.open)>section{opacity:0;}", ""]);
 
 /***/ },
 /* 2 */
@@ -1289,7 +1211,7 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(42), __webpack_require__(43), __webpack_require__(45), __webpack_require__(46)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, newWidgetType, deltaJs) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(42), __webpack_require__(43), __webpack_require__(50), __webpack_require__(45)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, newWidgetType, deltaJs) {
 		'use strict';
 	
 		/* create $.circuitboard object if it doesn't exist */
@@ -1335,7 +1257,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(42), __webpack_require__(43), __webpack_require__(3), __webpack_require__(44), __webpack_require__(46)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, U, defer, dm) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(42), __webpack_require__(43), __webpack_require__(3), __webpack_require__(44), __webpack_require__(45)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, U, defer, dm) {
 		'use strict';
 	
 		/* the type of entity we can retrieve with this module */
@@ -1459,7 +1381,7 @@
 	
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(42), __webpack_require__(43), __webpack_require__(4), __webpack_require__(3), __webpack_require__(44),
 	//'../util/nested-flex-grow.es6.js',
-	__webpack_require__(47)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, Kefir, U, defer) {
+	__webpack_require__(51)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, Kefir, U, defer) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('core', {
@@ -1600,7 +1522,7 @@
 	
 	function _slicedToArray(arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(42), __webpack_require__(79), __webpack_require__(3), __webpack_require__(4), __webpack_require__(1), __webpack_require__(50), __webpack_require__(51)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, color, U, Kefir, defaults) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(42), __webpack_require__(79), __webpack_require__(3), __webpack_require__(4), __webpack_require__(46), __webpack_require__(47), __webpack_require__(48)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, color, U, Kefir, defaults) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('tile-skin', {
@@ -17424,89 +17346,6 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(42), __webpack_require__(43), __webpack_require__(3), __webpack_require__(87), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, U, ArtefactP) {
-		'use strict';
-	
-		/*  a function to create an apinatomy component (widget)          */
-		/*  as a jQuery element plugin; this is returned from the module  */
-		function newWidgetType(typeName) {
-			var optionDefaults = arguments[1] === undefined ? {} : arguments[1];
-	
-			/* the specific widget class */
-			var WidgetP = ArtefactP.then(function (Artefact) {
-				return Artefact.newSubclass(typeName, function (_ref) {
-					var _this = this;
-	
-					var cssClass = _ref.cssClass;
-	
-					/* set the element CSS class */
-					if (U.isDefined(cssClass)) {
-						this.element.addClass(cssClass);
-					}
-	
-					/* if the jquery element is removed, destroy the artefact */
-					this.element.asKefirStream('remove').onValue(function () {
-						_this.destroy();
-					});
-	
-					this.element.data('artefact', this);
-				}, Object.defineProperties({}, {
-					model: {
-						get: function () {
-							return this.options.model;
-						},
-						configurable: true,
-						enumerable: true
-					},
-					element: {
-						get: function () {
-							return this.options.element;
-						},
-						configurable: true,
-						enumerable: true
-					}
-				}), U.extend({
-	
-					beforeConstruction: P.resolve() // guarantee all widget construction to be asynchronous
-	
-				}, optionDefaults));
-			});
-	
-			/* create a lowercase name for this widget type */
-			var lowercaseName = typeName[0].toLowerCase() + typeName.slice(1);
-	
-			/* jQuery plugin: the widget creation & retrieval function  */
-			$.fn[lowercaseName] = function (options) {
-				var _this2 = this;
-	
-				/* if the word 'instance' is passed, return the (already created) widget promise */
-				if (options === 'instance') {
-					return this.data('-amy-' + lowercaseName);
-				}
-	
-				/* else, create a new widget and set a promise to it */
-				this.data('-amy-' + lowercaseName, WidgetP.then(function (Widget) {
-					return new Widget(U.extend(options, { element: _this2 })).constructed;
-				}));
-	
-				/* return the jQuery element instance, by jQuery convention */
-				return this;
-			};
-	
-			/* return a promise to the widget artefact class */
-			return WidgetP;
-		}
-	
-		/* expose the widget class creator function */
-		return newWidgetType;
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ },
-/* 46 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
-	
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(43), __webpack_require__(90), __webpack_require__(44)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, DeltaJs, defer) {
 		'use strict';
 	
@@ -17534,34 +17373,144 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
+/* 46 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
+	
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(42), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U) {
+		'use strict';
+	
+		function deepTransform(val, fn) {
+			if ($.isPlainObject(val) || $.isArray(val)) {
+				$.each(val, function (key, subVal) {
+					var returned = fn(subVal);
+					if (U.isUndefined(returned)) {
+						deepTransform(subVal, fn);
+					} else {
+						val[key] = returned;
+					}
+				});
+			}
+		}
+	
+		var REF_PATTERN = /`([\[\.].+?)`/g;
+	
+		return function defaults(spec, context) {
+	
+			deepTransform(spec, function (val) {
+				if (typeof val === 'string') {
+					var refs = (val.match(REF_PATTERN) || []).map(function (ref) {
+						var strippedRef = ref.substring(1, ref.length - 1);
+						return new Function('refs', 'return refs' + strippedRef);
+					});
+					var expr = val.replace(REF_PATTERN, '(refs$1)');
+					var templateFn = function templateFn(formalParams) {
+						var newFormalParams = formalParams.concat(['return ' + expr]);
+						return U.applyConstructor(Function, newFormalParams);
+					};
+					templateFn.refs = refs;
+					return templateFn;
+				}
+			});
+	
+			//// recursive auxiliary function; returns true if a change to obj was made
+			function withDefaultsAux(defSpec, obj, refs, params) {
+				var change = false;
+				Object.keys(defSpec).forEach(function (key) {
+	
+					if (key in obj) {
+						if ($.isPlainObject(defSpec[key]) && $.isPlainObject(obj[key])) {
+							change = withDefaultsAux(defSpec[key], obj[key], refs, params) || change;
+						}
+					} else if ($.isPlainObject(defSpec[key])) {
+						obj[key] = {};
+						change = withDefaultsAux(defSpec[key], obj[key], refs, params) || change;
+					} else if ($.isFunction(defSpec[key])) {
+						if (defSpec[key].refs.every(function (ref) {
+							return !U.isUndefined(ref(refs));
+						})) {
+							// if none of the references are undefined, assign this 'default'
+							var allparams = $.extend({ refs: refs }, context, params);
+							var formalParams = Object.keys(allparams);
+							var actualParams = formalParams.map(function (fpar) {
+								return allparams[fpar];
+							});
+							var finalFn = defSpec[key](formalParams);
+							obj[key] = finalFn.apply(null, actualParams);
+						}
+					}
+				});
+				return change;
+			}
+	
+			return function withDefaults(obj, params) {
+				var result = U.isUndefined(obj) ? {} : $.extend(true, {}, obj);
+	
+				var change = true;
+				while (change) {
+					change = withDefaultsAux(spec, result, result, params || {});
+				}
+	
+				return result;
+			};
+		};
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ },
 /* 47 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
+	
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(42)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
+		'use strict';
+	
+		//
+		// takes an object mapping 'selector' → 'property' → 'value' and
+		// applies it as a set of CSS rules to the descendants of the current element
+		//
+		$.fn.extend({
+			amyPutCssRules: function amyPutCssRules(rules) {
+				var _this = this;
+	
+				$.each(rules, function (selector, css) {
+					var context;
+					if (selector.trim() === '&') {
+						context = _this;
+					} else if (selector.trim().charAt(0) === '&') {
+						context = _this.find(selector.trim().substr(1).trim());
+					} else {
+						context = _this.find(selector);
+					}
+					context.css(css);
+				});
+			}
+		});
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ },
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(48);
+	var content = __webpack_require__(1);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(75)(content, {});
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
-		module.hot.accept("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/features/p-core.scss", function() {
-			var newContent = require("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/features/p-core.scss");
+		module.hot.accept("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/features/p-tile-skin.scss", function() {
+			var newContent = require("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/features/p-tile-skin.scss");
 			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 			update(newContent);
 		});
 		// When the module is disposed, remove the <style> tags
 		module.hot.dispose(function() { update(); });
 	}
-
-/***/ },
-/* 48 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(86)();
-	exports.push([module.id, ".circuitboard{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:stretch;-webkit-align-items:stretch;-ms-flex-align:stretch;align-items:stretch;padding:0;}.circuitboard .tilemap{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column;-webkit-box-pack:justify;-webkit-justify-content:space-between;-ms-flex-pack:justify;justify-content:space-between;}.circuitboard .tilemap>.tilerow{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-orient:horizontal;-webkit-box-direction:normal;-webkit-flex-direction:row;-ms-flex-direction:row;flex-direction:row;-webkit-box-pack:justify;-webkit-justify-content:space-between;-ms-flex-pack:justify;justify-content:space-between;margin:0;padding:0;height:0;}.circuitboard .tilemap>.tilerow>.tile{width:0;margin:0;padding:0;}.circuitboard .tilemap>.tilerow>.tile:last-of-type{margin-right:0 !important;}.circuitboard .tilemap>.tilerow:last-child{margin-bottom:0 !important;}", ""]);
 
 /***/ },
 /* 49 */
@@ -17852,9 +17801,10 @@
 				checkbox.p('checked').plug(correlation.p('visible'));
 				correlation.p('visible').plug(checkbox.p('checked'));
 	
-				/* add header and checkbox to block */
-				result.append('\n\t\t\t\t<div style="margin-bottom: 5px; font-weight: bold;">\n\t\t\t\t\tCorrelation: <a target="_blank" href="http://www.ncbi.nlm.nih.gov/pubmed/' + pubmedId + '">' + pubmedTitle + '</a>\n\t\t\t\t</div>\n\t\t\t').append(checkbox.element);
+				/* add checkbox and header */
+				result.append(checkbox.element).append('\n\t\t\t\t\t<div style="margin-bottom: 5px; font-weight: bold;">\n\t\t\t\t\t\tCorrelation: <a target="_blank" href="http://www.ncbi.nlm.nih.gov/pubmed/' + pubmedId + '">' + pubmedTitle + '</a>\n\t\t\t\t\t</div>\n\t\t\t\t');
 	
+				/* add located measures */
 				var _iteratorNormalCompletion = true;
 				var _didIteratorError = false;
 				var _iteratorError = undefined;
@@ -17882,6 +17832,7 @@
 					}
 				}
 	
+				/* add clinical indices */
 				var _iteratorNormalCompletion2 = true;
 				var _didIteratorError2 = false;
 				var _iteratorError2 = undefined;
@@ -18170,12 +18121,14 @@
 					for (var _iterator7 = correlation.variables[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
 						var variable = _step7.value;
 	
-						if (variable.type === 'clinical index') {
+						if (variable.type === 'clinical index' && variable.clindex !== '') {
 							if (!clIndices.has(variable.clindex)) {
 	
 								/* signal handling */
 								var newClIndex = new _utilKefirSignalHandlerEs6Js2['default']();
 								_utilMiscEs6Js2['default'].extend(newClIndex, variable);
+	
+								console.log(JSON.stringify(variable));
 	
 								/* visibility */
 								newClIndex.newProperty('visible', { settable: true, initial: false });
@@ -18380,30 +18333,81 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(42)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(42), __webpack_require__(43), __webpack_require__(3), __webpack_require__(87), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, U, ArtefactP) {
 		'use strict';
 	
-		//
-		// takes an object mapping 'selector' → 'property' → 'value' and
-		// applies it as a set of CSS rules to the descendants of the current element
-		//
-		$.fn.extend({
-			amyPutCssRules: function amyPutCssRules(rules) {
-				var _this = this;
+		/*  a function to create an apinatomy component (widget)          */
+		/*  as a jQuery element plugin; this is returned from the module  */
+		function newWidgetType(typeName) {
+			var optionDefaults = arguments[1] === undefined ? {} : arguments[1];
 	
-				$.each(rules, function (selector, css) {
-					var context;
-					if (selector.trim() === '&') {
-						context = _this;
-					} else if (selector.trim().charAt(0) === '&') {
-						context = _this.find(selector.trim().substr(1).trim());
-					} else {
-						context = _this.find(selector);
+			/* the specific widget class */
+			var WidgetP = ArtefactP.then(function (Artefact) {
+				return Artefact.newSubclass(typeName, function (_ref) {
+					var _this = this;
+	
+					var cssClass = _ref.cssClass;
+	
+					/* set the element CSS class */
+					if (U.isDefined(cssClass)) {
+						this.element.addClass(cssClass);
 					}
-					context.css(css);
-				});
-			}
-		});
+	
+					/* if the jquery element is removed, destroy the artefact */
+					this.element.asKefirStream('remove').onValue(function () {
+						_this.destroy();
+					});
+	
+					this.element.data('artefact', this);
+				}, Object.defineProperties({}, {
+					model: {
+						get: function () {
+							return this.options.model;
+						},
+						configurable: true,
+						enumerable: true
+					},
+					element: {
+						get: function () {
+							return this.options.element;
+						},
+						configurable: true,
+						enumerable: true
+					}
+				}), U.extend({
+	
+					beforeConstruction: P.resolve() // guarantee all widget construction to be asynchronous
+	
+				}, optionDefaults));
+			});
+	
+			/* create a lowercase name for this widget type */
+			var lowercaseName = typeName[0].toLowerCase() + typeName.slice(1);
+	
+			/* jQuery plugin: the widget creation & retrieval function  */
+			$.fn[lowercaseName] = function (options) {
+				var _this2 = this;
+	
+				/* if the word 'instance' is passed, return the (already created) widget promise */
+				if (options === 'instance') {
+					return this.data('-amy-' + lowercaseName);
+				}
+	
+				/* else, create a new widget and set a promise to it */
+				this.data('-amy-' + lowercaseName, WidgetP.then(function (Widget) {
+					return new Widget(U.extend(options, { element: _this2 })).constructed;
+				}));
+	
+				/* return the jQuery element instance, by jQuery convention */
+				return this;
+			};
+	
+			/* return a promise to the widget artefact class */
+			return WidgetP;
+		}
+	
+		/* expose the widget class creator function */
+		return newWidgetType;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
@@ -18420,8 +18424,8 @@
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
-		module.hot.accept("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/features/p-tile-skin.scss", function() {
-			var newContent = require("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/features/p-tile-skin.scss");
+		module.hot.accept("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/features/p-core.scss", function() {
+			var newContent = require("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/features/p-core.scss");
 			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 			update(newContent);
 		});
@@ -18434,7 +18438,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(86)();
-	exports.push([module.id, ".skinned-tile{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-box-orient:vertical;-webkit-box-direction:normal;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column;}.skinned-tile>header{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-webkit-justify-content:center;-ms-flex-pack:center;justify-content:center;font-weight:bold;border-width:1px;overflow:hidden;}.skinned-tile.open>header{height:26px;border-style:none none solid none;line-height:26px;font-size:19.5px !important;white-space:nowrap;}.skinned-tile:not(.open)>header{-webkit-box-flex:1;-webkit-flex-grow:1;-ms-flex-positive:1;flex-grow:1;padding:0 5px;}.skinned-tile>section{-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;user-select:text;}.skinned-tile.open>section{-webkit-box-flex:1;-webkit-flex-grow:1;-ms-flex-positive:1;flex-grow:1;opacity:1;}.skinned-tile:not(.open)>section{opacity:0;}", ""]);
+	exports.push([module.id, ".circuitboard{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:stretch;-webkit-align-items:stretch;-ms-flex-align:stretch;align-items:stretch;padding:0;}.circuitboard .tilemap{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column;-webkit-box-pack:justify;-webkit-justify-content:space-between;-ms-flex-pack:justify;justify-content:space-between;}.circuitboard .tilemap>.tilerow{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-orient:horizontal;-webkit-box-direction:normal;-webkit-flex-direction:row;-ms-flex-direction:row;flex-direction:row;-webkit-box-pack:justify;-webkit-justify-content:space-between;-ms-flex-pack:justify;justify-content:space-between;margin:0;padding:0;height:0;}.circuitboard .tilemap>.tilerow>.tile{width:0;margin:0;padding:0;}.circuitboard .tilemap>.tilerow>.tile:last-of-type{margin-right:0 !important;}.circuitboard .tilemap>.tilerow:last-child{margin-bottom:0 !important;}", ""]);
 
 /***/ },
 /* 53 */
@@ -37741,7 +37745,7 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(42), __webpack_require__(43), __webpack_require__(3), __webpack_require__(5), __webpack_require__(95), __webpack_require__(46), __webpack_require__(44)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, U, KefirSignalHandler, uniqueID, deltaJs, defer) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(42), __webpack_require__(43), __webpack_require__(3), __webpack_require__(5), __webpack_require__(95), __webpack_require__(45), __webpack_require__(44)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, U, KefirSignalHandler, uniqueID, deltaJs, defer) {
 		'use strict';
 	
 		return deltaJs.selected.then(function () {
