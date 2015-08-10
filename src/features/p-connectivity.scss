@@ -1,22 +1,23 @@
 .circuitboard > svg.d3 {
-	.vascular.vertex > .core {
-		pointer-events: visiblePainted;
-		fill: lighten(red, 20);
-		stroke: red;
-		//&.inter-tile { }
-	}
-
-  .vascular.vertex {
-	.core                           { opacity: 0   }
-	&:hover .core, &.dragging .core { opacity: 0.9 }
+  .nif.vertex > .core {
+	pointer-events: visiblePainted;
   }
 
-	.vascular.edge {
-	    visibility: hidden; // TODO: We're doing 3D tubes for now; Add svg back as an option!
-		pointer-events: visiblePainted;
-		cursor: pointer;
-		stroke: red;
-		stroke-width: 3px;
-		stroke-linecap: round;
-	}
+  .nif.vertex.direct {
+	fill: blue;
+	stroke: blue;
+  }
+
+  .nif.vertex.indirect {
+	fill: transparent;
+	stroke: darken(blue, 20);
+  }
+
+  .nif.edge {
+	pointer-events: visiblePainted;
+	cursor: pointer;
+	stroke: blue;
+	stroke-width: 3px;
+	stroke-linecap: round;
+  }
 }

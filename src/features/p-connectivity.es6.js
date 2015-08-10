@@ -7,15 +7,15 @@ define([
 	'../D3Group.es6.js',
 	'../D3Vertex.es6.js',
 	'../D3Edge.es6.js',
-	'../util/path-model.es6.js',
 	'./p-ppi.scss',
 	'./p-connectivity.scss'
-], function ($, P, Kefir, Graph, U, D3GroupP, D3VertexP, D3EdgeP, fetchPathsFor) {
+], function ($, P, Kefir, Graph, U, D3GroupP, D3VertexP, D3EdgeP) {
 	'use strict';
 
 
 	var plugin = $.circuitboard.plugin.do('connectivity', {
-		requires: ['d3', 'three-d-tubes']
+		//requires: ['d3', 'three-d-tubes']
+		requires: ['d3']
 	});
 
 
@@ -72,6 +72,7 @@ define([
 
 			/* when the 'active' or 'visible property changes, initiate a graph update */
 			Kefir.combine([ this.on('active'), this.on('visible') ], (a, v) => a && v).onValue((active) => {
+				//console.log('---', this.model.id, active, this); // TODO: remove
 				if (active) { this.circuitboard._p_connectivity_activeTiles[this.model.id] = this }
 				else { delete this.circuitboard._p_connectivity_activeTiles[this.model.id]        }
 				this.circuitboard._p_connectivity_fetchPaths();
@@ -113,17 +114,27 @@ define([
 
 			graph.on('vertex-added', (vertex) => {
 				let vTile = tile(vertex.value.tileId);
-				let d3Vertex;
 				if (vertex.value.location === 'tile') {
-					d3Vertex = vertex.value.d3Vertex = new D3Vertex({
+					vertex.value.d3Vertex = new D3Vertex({
 						parent:      this._p_connectivity_activeTiles[vTile],
-						cssClass:    `${type} tile`,
-						radius:      10,
+						cssClass:    `${type} tile ${vertex.value.direct ? 'direct' : 'indirect'}`,
+						radius:      vertex.value.direct ? 10 : 16,
 						graphVertex: vertex
 					});
 					vTile._p_connectivity_d3group.addVertex(vertex.value.d3Vertex);
+
+					/* when clicking on an indirect connection, open the tile corresponding to the direct connection */
+					if (!vertex.value.direct) {
+						vertex.value.d3Vertex.element.mouseClick({ threshold: 5 }).onValue(() => {
+							this.tile(vertex.value.directTileId).then((tile) => {
+								console.log(tile.model.id);
+								tile.visible = true;
+							});
+						});
+					}
+
 				} else {
-					d3Vertex = vertex.value.d3Vertex = new D3Vertex({
+					vertex.value.d3Vertex = new D3Vertex({
 						parent:   this,
 						cssClass: `${type} inter-tile`,
 						radius:   3,
@@ -162,29 +173,57 @@ define([
 
 		this._p_connectivity_updateRequests = Kefir.bus();
 
+		if (!this.options.fetchPaths) { return }
+
 		this._p_connectivity_updateRequests.debounce(100).onValue(() => {
-			fetchPathsFor(Object.keys(this._p_connectivity_activeTiles), { port: this.options.pathServerPort }).then((paths) => { // get paths (async)
+
+			this.options.fetchPaths(Object.keys(this._p_connectivity_activeTiles)).then((paths) => { // get paths (async)
+
+
+				//console.log(paths);
+
+
 				Object.keys(paths).forEach((type) => { // for all connectivity types
+
 					this._p_connectivity_registerType(type).then(() => {
 
+						let graph = new Graph();
+
+						const addPath = (from, to, path) => {
+							graph.ensureVertex(from + ':' + path[0], { location: 'tile', tileId: from, directTileId: path[0], direct: from === path[0] });
+							graph.ensureVertex(to   + ':' + path[1], { location: 'tile', tileId: to,   directTileId: path[1], direct: to   === path[1] });
+							graph.spanEdge(
+								from + ':' + path[0],
+								to + ':' + path[1],
+								{}
+							);
+							//for (let i = 0; i < path.length-1; ++i) {
+							//	//graph.ensureVertex(path[i+1], { location: 'inter-tile' });
+							//	graph.spanEdge(path[i], path[i+1], {});
+							//}
+						};
+
 						/* creating the full connectivity graph */
-						var graph = new Graph();
-						for (let p of paths[type]) {
-							graph.ensureVertex(p.path[0],               { location: 'tile', tileId: p.startlyph });
-							graph.ensureVertex(p.path[p.path.length-1], { location: 'tile', tileId: p.endlyph   });
-							for (let i = 0; i < p.path.length-1; ++i) {
-								graph.ensureVertex(p.path[i+1], { location: 'inter-tile' });
-								graph.spanEdge(p.path[i], p.path[i+1], { lyphTemplate: p.edges[i].template }); // TODO: this is lyph-specific stuff (hacked in)
+						//for (let pg of paths[type]) {
+						//	for (let p of pg.niflings) {
+						//
+						//	}
+						//}
+						for (let pg of paths[type]) {
+							//console.log(pg.niflings);
+							for (let p of pg.niflings) {
+								addPath(pg.fma1_lyph, pg.fma2_lyph, p.path);
 							}
 						}
+
+
+
+
 
 						/* remove inter-tile linear (i.e., unnecessary) vertices */
 						graph.contractPaths({
 							isNexus: (id, info) => info.location === 'tile'
 						}); // TODO: let graph.js accept function for filling edge values
-						for (let [key, g] of graph.edges()) {
-							graph.setEdge(key, { lyphTemplate: g.edges().next().value.value.lyphTemplate }); // TODO: this is lyph-specific stuff (hacked in)
-						}
 
 						/* update the 'actual' graph by making a minimum of changes */
 						//this._p_connectivity_graphs[type].set(graph); // TODO: make this method 'not modify' vertices/edges that already exist
@@ -219,7 +258,10 @@ define([
 
 					});
 				});
+
+
 			});
+
 		});
 
 	}).add('Circuitboard.prototype._p_connectivity_fetchPaths', function () {

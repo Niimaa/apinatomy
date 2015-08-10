@@ -20,6 +20,7 @@ import 'golden-layout/src/css/goldenlayout-light-theme.css';
 import circuitboard from '../circuitboard.es6.js';
 //import getFmaModels from './fma-model.es6.js';
 import getLyphModels from './lyph-model.es6.js';
+import fetchPathsFn  from '../util/path-model.es6.js';
 import '../features/p-core.es6.js';
 import '../features/p-tile-skin.es6.js';
 import '../features/p-tile-spacing.es6.js';
@@ -47,7 +48,7 @@ import '../features/p-tile-correlation-count-if-closed.es6.js';
 import '../features/p-tile-glyphs.es6.js';
 import '../features/p-d3.es6.js';
 
-//import '../features/p-connectivity.es6.js';
+import '../features/p-connectivity.es6.js';
 //import '../features/p-ppi.es6.js';
 //import '../features/p-three-d.es6.js';
 //import '../features/p-three-d-geometric-models.es6.js';
@@ -77,72 +78,74 @@ const port = U.getQueryVariable('port') || '5056';
 
 
 /* golden layout */
-let goldenLayout = new GoldenLayout({
-	settings: {
-		showPopoutIcon:   false,
-		showMaximiseIcon: false,
-		showCloseIcon:    false
-	},
-	dimensions: {
-		borderWidth: 4
-	},
-	content: [{
-		type: 'row',
-		content:[{
-			type: 'column',
-			width: 0.2,
+{
+	let goldenLayout = new GoldenLayout({
+		settings: {
+			showPopoutIcon:   false,
+			showMaximiseIcon: false,
+			showCloseIcon:    false
+		},
+		dimensions: {
+			borderWidth: 4
+		},
+		content: [{
+			type: 'row',
 			content:[{
-				type: 'component',
-				componentName: 'correlations',
-				title: 'Correlations',
-				height: 0.2
+				type: 'column',
+				width: 0.2,
+				content:[{
+					type: 'component',
+					componentName: 'correlations',
+					title: 'Correlations',
+					height: 0.2
+				}, {
+					type: 'component',
+					componentName: 'lyphs',
+					title: 'Lyphs',
+					height: 0.4
+				}, {
+					type: 'component',
+					componentName: 'clindices',
+					title: 'Clinical Indices',
+					height: 0.4
+				}]
 			}, {
 				type: 'component',
-				componentName: 'lyphs',
-				title: 'Lyphs',
-				height: 0.4
-			}, {
-				type: 'component',
-				componentName: 'clindices',
-				title: 'Clinical Indices',
-				height: 0.4
+				width: 0.8,
+				componentName: 'circuitboard',
+				title: 'Circuitboard'
 			}]
-		}, {
-			type: 'component',
-			width: 0.8,
-			componentName: 'circuitboard',
-			title: 'Circuitboard'
 		}]
-	}]
-});
-goldenLayout.registerComponent('correlations', (container) => {
-	container.getElement().css({
-		'overflow-x': 'hidden',
-		'overflow-y': 'scroll'
-	}).append(`<div id="correlation-info"></div>`);
-});
-goldenLayout.registerComponent('lyphs', (container) => {
-	container.getElement().css({
-		'overflow-x': 'hidden',
-		'overflow-y': 'scroll'
-	}).append(`<div id="lyph-checkboxes"></div>`);
-});
-goldenLayout.registerComponent('clindices', (container) => {
-	container.getElement().css({
-		'overflow-x': 'hidden',
-		'overflow-y': 'scroll'
-	}).append(`<div id="clindex-checkboxes"></div>`);
-});
-goldenLayout.registerComponent('circuitboard', (container) => {
-	container.getElement().css({
-		position: 'relative',
-		overflow: 'hidden'
-	}).append(`<div id="circuitboard"></div>`);
-});
-goldenLayout.init();
+	});
+	goldenLayout.registerComponent('correlations', (container) => {
+		container.getElement().css({
+			'overflow-x': 'hidden',
+			'overflow-y': 'scroll'
+		}).append(`<div id="correlation-info"></div>`);
+	});
+	goldenLayout.registerComponent('lyphs', (container) => {
+		container.getElement().css({
+			'overflow-x': 'hidden',
+			'overflow-y': 'scroll'
+		}).append(`<div id="lyph-checkboxes"></div>`);
+	});
+	goldenLayout.registerComponent('clindices', (container) => {
+		container.getElement().css({
+			'overflow-x': 'hidden',
+			'overflow-y': 'scroll'
+		}).append(`<div id="clindex-checkboxes"></div>`);
+	});
+	goldenLayout.registerComponent('circuitboard', (container) => {
+		container.getElement().css({
+			position: 'relative',
+			overflow: 'hidden'
+		}).append(`<div id="circuitboard"></div>`);
+	});
+	goldenLayout.init();
+}
 
 
-
+/* start the brain tile opened up */
 circuitboard.plugin.do('start-brain-open', { if: true, after: ['tile-open', 'tile-hidden'] })
 	.append('Tile.prototype.construct', function () {
 		if (this.model.id === root) {
@@ -151,6 +154,9 @@ circuitboard.plugin.do('start-brain-open', { if: true, after: ['tile-open', 'til
 		}
 	});
 
+/* load all tiles immediately */
+	// this does it recursively, which implies many server queries;
+	// TODO: arrange a single command for this
 circuitboard.plugin.do('start-tiles-loaded', { if: true, after: ['core'] })
 	.append('Tile.prototype.construct', function () {
 		this.populateInnerTilemap();
@@ -182,7 +188,8 @@ circuitboard.plugin.select(
 	'tile-button-to-unhide-children',
 	'tile-child-count-if-closed',
 	'tile-correlation-count-if-closed',
-	'tile-glyphs'
+	'tile-glyphs',
+	'connectivity'
 
 	//'three-d-manual-controls',
 	//'three-d-auto-controls',
@@ -191,20 +198,19 @@ circuitboard.plugin.select(
 	//'snapshot',
 	//'tile-button-to-swap-three-d-model',
 	//'tile-button-to-point-camera',
-	//'connectivity',
 );
 
 
 $(document).ready(() => {
 
 	$('#circuitboard').circuitboard({
-		model: getLyphModels('root', { root, port }),
-		tileSpacing: 8,
-		tilemapMargin: 8,
+		model:          getLyphModels('root', { root, port }),
+		fetchPaths:     fetchPathsFn({ port }),
+		tileSpacing:    8,
+		tilemapMargin:  8,
 		weightWhenOpen: 4,
 		//threeDCanvasElement: $('#three-d-canvas'),
 		//threeDModels: {},
-		//pathServerPort: port,
 		initialTileVisibility: false
 	}).circuitboard('instance').then(function (circuitboard) {
 
