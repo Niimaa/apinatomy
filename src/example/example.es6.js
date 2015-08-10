@@ -95,13 +95,18 @@ const port = U.getQueryVariable('port') || '5056';
 				width: 0.2,
 				content:[{
 					type: 'component',
-					componentName: 'correlations',
-					title: 'Correlations',
+					componentName: 'selected-correlations',
+					title: 'Selected Correlations',
 					height: 0.2
 				}, {
 					type: 'component',
 					componentName: 'lyphs',
 					title: 'Lyphs',
+					height: 0.4
+				}, {
+					type: 'component',
+					componentName: 'correlations',
+					title: 'Correlations',
 					height: 0.4
 				}, {
 					type: 'component',
@@ -117,7 +122,7 @@ const port = U.getQueryVariable('port') || '5056';
 			}]
 		}]
 	});
-	goldenLayout.registerComponent('correlations', (container) => {
+	goldenLayout.registerComponent('selected-correlations', (container) => {
 		container.getElement().css({
 			'overflow-x': 'hidden',
 			'overflow-y': 'scroll'
@@ -128,6 +133,12 @@ const port = U.getQueryVariable('port') || '5056';
 			'overflow-x': 'hidden',
 			'overflow-y': 'scroll'
 		}).append(`<div id="lyph-checkboxes"></div>`);
+	});
+	goldenLayout.registerComponent('correlations', (container) => {
+		container.getElement().css({
+			'overflow-x': 'hidden',
+			'overflow-y': 'scroll'
+		}).append(`<div id="correlations"></div>`);
 	});
 	goldenLayout.registerComponent('clindices', (container) => {
 		container.getElement().css({
@@ -145,6 +156,15 @@ const port = U.getQueryVariable('port') || '5056';
 }
 
 
+/* a promise for all clinical indices */
+let allClIndices = P.resolve($.ajax({
+	url: `http://open-physiology.org:${port}/all_clinical_indices/`,
+	dataType: 'jsonp'
+})).get('results').error((err) => {
+	console.error("There seems to be something wrong with the server.", err);
+});
+
+
 /* start the brain tile opened up */
 circuitboard.plugin.do('start-brain-open', { if: true, after: ['tile-open', 'tile-hidden'] })
 	.append('Tile.prototype.construct', function () {
@@ -153,6 +173,7 @@ circuitboard.plugin.do('start-brain-open', { if: true, after: ['tile-open', 'til
 			this.visible = true;
 		}
 	});
+
 
 /* load all tiles immediately */
 	// this does it recursively, which implies many server queries;
@@ -163,13 +184,22 @@ circuitboard.plugin.do('start-tiles-loaded', { if: true, after: ['core'] })
 	});
 
 
-
-
+/* utility functions */
 function decimalToHex(d, padding) {
 	var hex = Number(d).toString(16);
 	while (hex.length < padding) { hex = "0" + hex }
 	return hex;
 }
+function sortElements(parentElement, entityList, sortKey, element) {
+	let list = [...entityList].sort((a, b) => {
+		if (sortKey(a) < sortKey(b)) { return -1 }
+		if (sortKey(a) > sortKey(b)) { return  1 }
+		return 0;
+	});
+	parentElement.children().detach();
+	for (let v of list) { parentElement.append(element(v)) }
+}
+
 
 
 
@@ -218,6 +248,12 @@ $(document).ready(() => {
 		console.info('circuitboard loaded');
 
 
+		/* local storage of important entities */
+		let clIndices = new Map();
+		let correlations = new Map();
+		let locatedMeasures = new Map();
+
+
 		/* creating a clinical index checkbox */
 		function createCheckbox(label) {
 			let result = new KefirSignalHandler();
@@ -245,9 +281,13 @@ $(document).ready(() => {
 
 		/* creating a box representing a correlation */
 		function correlationBox(correlation) {
-			let result = $('<div>').css('borderColor', `#${decimalToHex(correlation.color, 6)}`);
-			let pubmedId    = correlation.pubmed.id    === 'autogen' ?  24224044  : correlation.pubmed.id;
-			let pubmedTitle = correlation.pubmed.title === 'autogen' ? '24224044' : correlation.pubmed.title;
+			let result = { correlation };
+
+			result.element = $('<div>')
+				.addClass('correlation-box')
+				.css('borderColor', `#${decimalToHex(correlation.color, 6)}`);
+			result.pubmedId    = correlation.pubmed.id    === 'autogen' ?  24224044  : correlation.pubmed.id;
+			result.pubmedTitle = correlation.pubmed.title === 'autogen' ? '24224044' : correlation.pubmed.title;
 
 			/* create correlation checkbox */
 			let checkbox = createCheckbox();
@@ -257,18 +297,18 @@ $(document).ready(() => {
 			correlation.p('visible').plug(checkbox.p('checked'));
 
 			/* add checkbox and header */
-			result
+			result.element
 				.append(checkbox.element)
 				.append(`
 					<div style="margin-bottom: 5px; font-weight: bold;">
-						Correlation: <a target="_blank" href="http://www.ncbi.nlm.nih.gov/pubmed/${pubmedId}">${pubmedTitle}</a>
+						Correlation: <a target="_blank" href="http://www.ncbi.nlm.nih.gov/pubmed/${result.pubmedId}">${result.pubmedTitle}</a>
 					</div>
 				`);
 
 			/* add located measures */
 			for (let variable of correlation.variables) {
 				if (variable.type === 'located measure') {
-					result.append(`
+					result.element.append(`
 						<div class="checkbox-bullet" title="${variable.quality} of ${variable['location name']}">
 							<span>&#8226;</span>
 							<span style="font-style: italic">${variable.quality} of ${variable['location name']}</span>
@@ -284,7 +324,7 @@ $(document).ready(() => {
 					let clIndexCheckbox = createCheckbox(clIndex['clindex label']);
 					clIndexCheckbox.p('checked').plug(clIndex.p('visible'));
 					clIndex.p('visible').plug(clIndexCheckbox.p('checked'));
-					result.append(clIndexCheckbox.element);
+					result.element.append(clIndexCheckbox.element);
 				}
 			}
 
@@ -313,7 +353,6 @@ $(document).ready(() => {
 
 
 		/* tracking correlations */
-		let correlations = new Map();
 		let newCorrelations = Kefir.bus();
 		circuitboard.newTiles.onValue((tile) => {
 			tile.model.then((model) => {
@@ -356,7 +395,6 @@ $(document).ready(() => {
 
 
 		/* tracking located measures */
-		let locatedMeasures = new Map();
 		let newLocatedMeasures = Kefir.bus();
 		let newCorrelationLocatedMeasures = Kefir.bus();
 		newCorrelations.onValue((correlation) => {
@@ -436,7 +474,7 @@ $(document).ready(() => {
 					let infoBox = $('#correlation-info');
 					infoBox.empty();
 					for (let correlation of locatedMeasure.correlations) {
-						infoBox.append(correlationBox(correlation));
+						infoBox.append(correlationBox(correlation).element);
 					}
 				});
 
@@ -457,31 +495,46 @@ $(document).ready(() => {
 
 
 		/* clinical indices */
-		let clIndices = new Map();
 		let newClIndices = Kefir.bus();
 		let newCorrelationClIndices = Kefir.bus();
+		function registerClIndex(variable) {
+			/* normalize member names (server sends different structures depending on query) */
+			if (!variable.clindex) {
+				variable.clindex = variable.index;
+				variable['clindex label'] = variable.label;
+			}
+
+			/* signal handling */
+			let newClIndex = new KefirSignalHandler();
+			U.extend(newClIndex, variable);
+
+			/* visibility */
+			newClIndex.newProperty('visible', { settable: true, initial: false });
+
+			/* has correlations */
+			newClIndex.newProperty('hasCorrelations', { settable: true, initial: false });
+
+			/* correlations */
+			newClIndex.correlations = new Set();
+			newClIndex.correlationVisibleCounter = 0;
+
+			/* register new clinical index */
+			clIndices.set(newClIndex.clindex, newClIndex);
+			newClIndices.emit(newClIndex);
+		}
+		// processing clinical indices that have no correlations attached
+		Kefir.fromBinder(({emit, end}) => { allClIndices.each(emit).then(end) })
+			.filter((variable) => (variable['correlation count'] === "0"))
+			.onValue(registerClIndex);
+		// processing clinical indices through connected correlations
 		newCorrelations.onValue((correlation) => {
 			for (let variable of correlation.variables) {
 				if (variable.type === 'clinical index' && variable.clindex !== "") {
 					if (!clIndices.has(variable.clindex)) {
-
-						/* signal handling */
-						let newClIndex = new KefirSignalHandler();
-						U.extend(newClIndex, variable);
-
-						/* visibility */
-						newClIndex.newProperty('visible', { settable: true, initial: false });
-
-						/* correlations */
-						newClIndex.correlations = new Set();
-						newClIndex.correlationVisibleCounter = 0;
-
-						/* register new clinical index */
-						clIndices.set(newClIndex.clindex, newClIndex);
-						newClIndices.emit(newClIndex);
-
+						registerClIndex(variable);
 					}
 					let clIndex = clIndices.get(variable.clindex);
+					clIndex.hasCorrelations = true;
 					clIndex.correlations.add(correlation);
 					newCorrelationClIndices.emit({ clIndex, correlation });
 				}
@@ -514,7 +567,6 @@ $(document).ready(() => {
 		let clIndexCBs = $('#clindex-checkboxes');
 		let clIndexCheckboxes = new Map();
 		newClIndices.onValue((clIndex) => {
-
 			/* create and register checkbox */
 			let checkbox = createCheckbox(clIndex['clindex label']);
 			clIndexCheckboxes.set(clIndex.clindex, checkbox);
@@ -523,15 +575,14 @@ $(document).ready(() => {
 			checkbox.p('checked').plug(clIndex.p('visible'));
 			clIndex.p('visible').plug(checkbox.p('checked'));
 
-			/* re-populate the checkbox-list */
-			let list = [...clIndexCheckboxes].sort((a, b) => {
-				if (a[1].label < b[1].label) { return -1 }
-				if (a[1].label > b[1].label) { return  1 }
-				return 0;
+			/* hide checkbox if there are no connected correlations */
+			clIndex.p('hasCorrelations').onValue((hasC) => {
+				checkbox.input.css('visibility', hasC ? 'visible' : 'hidden');
+				checkbox.input.prop('disabled', !hasC);
 			});
-			clIndexCBs.children().detach();
-			for (let v of list) { clIndexCBs.append(v[1].element) }
 
+			/* sort the checkbox-list */
+			sortElements(clIndexCBs, clIndexCheckboxes, cb => cb[1].label, cb => cb[1].element);
 		});
 
 
@@ -561,6 +612,15 @@ $(document).ready(() => {
 		});
 
 
+		/* all correlations */
+		let correlationBoxes = [];
+		let correlationTab = $('#correlations');
+		newCorrelations.onValue((correlation) => {
+			correlationBoxes.push(correlationBox(correlation));
+			sortElements(correlationTab, correlationBoxes, b => b.pubmedTitle, b => b.element);
+		});
+
+
 		/* clicking tile correlation counters */
 		circuitboard.newTiles.onValue((tile) => {
 			setTimeout(() => {
@@ -577,9 +637,11 @@ $(document).ready(() => {
 
 					let infoBox = $('#correlation-info');
 					infoBox.empty();
+					let boxes = [];
 					for (let [, correlation] of correlationsToShow) {
-						infoBox.append(correlationBox(correlation));
+						boxes.push(correlationBox(correlation));
 					}
+					sortElements(infoBox, boxes, b => b.pubmedTitle, b => b.element);
 
 				});
 			});

@@ -10,6 +10,7 @@
       <w>bezier</w>
       <w>chromajs</w>
       <w>circuitboarddestroy</w>
+      <w>clindex</w>
       <w>concat</w>
       <w>deferreds</w>
       <w>definedness</w>
@@ -62,6 +63,7 @@
       <w>transparentize</w>
       <w>tweenjs</w>
       <w>uglify</w>
+      <w>unhide</w>
       <w>webgl</w>
       <w>xmlhttp</w>
     </words>
