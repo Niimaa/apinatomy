@@ -8,8 +8,7 @@ import P from 'bluebird';
 import U from '../util/misc.es6.js';
 import Kefir from '../util/kefir-and-eggs.es6.js';
 import KefirSignalHandler from '../util/kefir-signal-handler.es6.js';
-import codes from '../util/codes.es6.js';
-let button = codes.button;
+import {button} from '../util/codes.es6.js';
 
 import GoldenLayout from 'golden-layout';
 import 'golden-layout/src/css/goldenlayout-base.css';
