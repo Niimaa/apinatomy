@@ -1,10 +1,10 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("jquery"), require("bluebird"), require("kefir"), require("tweenjs"), require("kefir-jquery"), require("delta-js"), require("three-js"));
+		module.exports = factory(require("jquery"), require("bluebird"), require("three-js"), require("kefir"), require("tweenjs"), require("kefir-jquery"), require("delta-js"));
 	else if(typeof define === 'function' && define.amd)
-		define(["jquery", "bluebird", "kefir", "tweenjs", "kefir-jquery", "delta-js", "three-js"], factory);
+		define(["jquery", "bluebird", "three-js", "kefir", "tweenjs", "kefir-jquery", "delta-js"], factory);
 	else {
-		var a = typeof exports === 'object' ? factory(require("jquery"), require("bluebird"), require("kefir"), require("tweenjs"), require("kefir-jquery"), require("delta-js"), require("three-js")) : factory(root["jquery"], root["bluebird"], root["kefir"], root["tweenjs"], root["kefir-jquery"], root["delta-js"], root["three-js"]);
+		var a = typeof exports === 'object' ? factory(require("jquery"), require("bluebird"), require("three-js"), require("kefir"), require("tweenjs"), require("kefir-jquery"), require("delta-js")) : factory(root["jquery"], root["bluebird"], root["three-js"], root["kefir"], root["tweenjs"], root["kefir-jquery"], root["delta-js"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
 })(this, function(__WEBPACK_EXTERNAL_MODULE_62__, __WEBPACK_EXTERNAL_MODULE_63__, __WEBPACK_EXTERNAL_MODULE_64__, __WEBPACK_EXTERNAL_MODULE_65__, __WEBPACK_EXTERNAL_MODULE_66__, __WEBPACK_EXTERNAL_MODULE_67__, __WEBPACK_EXTERNAL_MODULE_68__) {
@@ -415,7 +415,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(68), __webpack_require__(15), __webpack_require__(12), __webpack_require__(3), __webpack_require__(78)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, THREE, U, Kefir, ArtefactP) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(64), __webpack_require__(15), __webpack_require__(12), __webpack_require__(3), __webpack_require__(76)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, THREE, U, Kefir, ArtefactP) {
 		'use strict';
 	
 		return ArtefactP.then(function (Artefact) {
@@ -431,14 +431,24 @@ return /******/ (function(modules) { // webpackBootstrap
 				var source = _ref.source;
 				var target = _ref.target;
 				var graphEdge = _ref.graphEdge;
+				var visible = _ref.visible;
 	
 				/* when one of the vertices is destroyed, so is this edge */
 				this.source = source;
 				this.target = target;
 				this.graphEdge = graphEdge;
 				Kefir.merge([this.source.on('destroy'), this.target.on('destroy')]).take(1).onValue(function () {
-					console.log('--- destroying d3 edge');
 					_this.destroy();
+				});
+	
+				/* the 'visible' and 'hidden' properties */
+				this.newProperty('visible', { initial: visible });
+				this.newProperty('hidden').plug(this.p('visible').not());
+				this.p('visible').plug(this.p('hidden').not());
+	
+				/* enact vertex hiding on the DOM */
+				this.p('hidden').merge(this.on('destroy').mapTo(true)).onValue(function (h) {
+					_this.element.toggleClass('hidden', h).toggleClass('visible', !h);
 				});
 			}, Object.defineProperties({
 	
@@ -449,12 +459,15 @@ return /******/ (function(modules) { // webpackBootstrap
 						this.element.attr('y1', this.source.y);
 						this.element.attr('x2', this.target.x);
 						this.element.attr('y2', this.target.y);
-						var curve = this.object3d.updateTube().curve;
-						var center = curve.getPoint(0.5);
-						if (this._flag) {
-							this._flag.position.set(center.x, center.y, center.z);
-							this._flag.rotation.z = Math.atan2(curve.getPoint(1).y - curve.getPoint(0).y, curve.getPoint(1).x - curve.getPoint(0).x);
-						}
+						//let curve = this.object3d.updateTube().curve;
+						//let center = curve.getPoint(0.5);
+						//if (this._flag) {
+						//	this._flag.position.set(center.x, center.y, center.z);
+						//	this._flag.rotation.z = Math.atan2(
+						//		curve.getPoint(1).y - curve.getPoint(0).y,
+						//		curve.getPoint(1).x - curve.getPoint(0).x
+						//	);
+						//}
 					}
 				} }, {
 				element: {
@@ -477,72 +490,6 @@ return /******/ (function(modules) { // webpackBootstrap
 					},
 					configurable: true,
 					enumerable: true
-				},
-				object3d: {
-	
-					/* 3D representation */
-	
-					get: function () {
-						var _this2 = this;
-	
-						if (!this._object3d) {
-	
-							/* create the 3D tube */
-							this._object3d = this.circuitboard.newTubeFromVertexToVertex(this.graphEdge, 16711680);
-							this.on('destroy').take(1).onValue(function () {
-								_this2.object3d.removeTube();
-							});
-	
-							/* create a flag */
-							var layer = function layer(offset, height, color) {
-								var WIDTH = 15;
-								var DEPTH = 2;
-								var geometry = new THREE.BoxGeometry(WIDTH, DEPTH, height);
-								geometry.applyMatrix(new THREE.Matrix4().setPosition(new THREE.Vector3(0, 0, -0.5 * height - offset - 1)));
-								var material = new THREE.MeshPhongMaterial({ color: color });
-								return new THREE.Mesh(geometry, material);
-							};
-	
-							/* hang the flag off the 3D tube */
-							var template = this.graphEdge.value.lyphTemplate;
-							if (template) {
-								this._flag = new THREE.Object3D();
-								var currentOffset = 0;
-								var _iteratorNormalCompletion = true;
-								var _didIteratorError = false;
-								var _iteratorError = undefined;
-	
-								try {
-									for (var _iterator = template.layers[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-										var l = _step.value;
-	
-										var THICKNESS_FACTOR = 6;
-										this._flag.add(layer(currentOffset, THICKNESS_FACTOR * l.thickness, THREE.Math.randInt(0, 16777215)));
-										currentOffset += THICKNESS_FACTOR + 0.1;
-									}
-								} catch (err) {
-									_didIteratorError = true;
-									_iteratorError = err;
-								} finally {
-									try {
-										if (!_iteratorNormalCompletion && _iterator['return']) {
-											_iterator['return']();
-										}
-									} finally {
-										if (_didIteratorError) {
-											throw _iteratorError;
-										}
-									}
-								}
-	
-								this.circuitboard.object3D.add(this._flag);
-							}
-						}
-	
-						return this._object3d;
-					},
-					configurable: true,
-					enumerable: true
 				}
 			}), {
 				graphZIndex: 100,
@@ -554,6 +501,45 @@ return /******/ (function(modules) { // webpackBootstrap
 			$.circuitboard.D3Edge = c;
 		});
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	
+	///* 3D representation */
+	//get object3d() {
+	//	if (!this._object3d) {
+	//
+	//		/* create the 3D tube */
+	//		this._object3d = this.circuitboard.newTubeFromVertexToVertex(this.graphEdge, 0xff0000);
+	//		this.on('destroy').take(1).onValue(() => { this.object3d.removeTube() });
+	//
+	//
+	//		/* create a flag */
+	//		const layer = (offset, height, color) => {
+	//			const WIDTH = 15;
+	//			const DEPTH = 2;
+	//			let geometry = new THREE.BoxGeometry(WIDTH, DEPTH, height);
+	//			geometry.applyMatrix(new THREE.Matrix4().setPosition(new THREE.Vector3(0, 0, -0.5 * height - offset - 1)));
+	//			let material = new THREE.MeshPhongMaterial({ color });
+	//			return new THREE.Mesh(geometry, material);
+	//		};
+	//
+	//
+	//		/* hang the flag off the 3D tube */
+	//		let template = this.graphEdge.value.lyphTemplate;
+	//		if (template) {
+	//			this._flag = new THREE.Object3D();
+	//			let currentOffset = 0;
+	//			for (let l of template.layers) {
+	//				let THICKNESS_FACTOR = 6;
+	//				this._flag.add(layer(currentOffset, THICKNESS_FACTOR * l.thickness, THREE.Math.randInt(0x000000, 0xffffff)));
+	//				currentOffset += THICKNESS_FACTOR + 0.1;
+	//			}
+	//			this.circuitboard.object3D.add(this._flag);
+	//		}
+	//
+	//	}
+	//
+	//
+	//	return this._object3d;
+	//}
 
 /***/ },
 
@@ -589,7 +575,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _slicedToArray(arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(15), __webpack_require__(64), __webpack_require__(65), __webpack_require__(66)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir, TWEEN, KefirJQuery) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(15), __webpack_require__(65), __webpack_require__(66), __webpack_require__(67)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir, TWEEN, KefirJQuery) {
 	
 		/* Kefir jQuery plugin ********************************************************************************************/
 	
@@ -1169,7 +1155,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(63), __webpack_require__(67), __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, DeltaJs, defer) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(63), __webpack_require__(68), __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, DeltaJs, defer) {
 		'use strict';
 	
 		/* already cached? */
@@ -1544,7 +1530,7 @@ return /******/ (function(modules) { // webpackBootstrap
 				var vars = query.split('&');
 				for (var i = 0; i < vars.length; ++i) {
 					var pair = vars[i].split('=');
-					if (pair[0] == variable) {
+					if (pair[0] === variable) {
 						return pair[1];
 					}
 				}
@@ -1654,13 +1640,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 78:
+/***/ 76:
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(79);
+	var content = __webpack_require__(77);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(108)(content, {});
@@ -1678,7 +1664,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 79:
+/***/ 77:
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(109)();

@@ -7,7 +7,7 @@
 		var a = typeof exports === 'object' ? factory(require("jquery"), require("bluebird"), require("three-js")) : factory(root["jquery"], root["bluebird"], root["three-js"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE_62__, __WEBPACK_EXTERNAL_MODULE_63__, __WEBPACK_EXTERNAL_MODULE_68__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_62__, __WEBPACK_EXTERNAL_MODULE_63__, __WEBPACK_EXTERNAL_MODULE_64__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -432,7 +432,7 @@ return /******/ (function(modules) { // webpackBootstrap
 				var vars = query.split('&');
 				for (var i = 0; i < vars.length; ++i) {
 					var pair = vars[i].split('=');
-					if (pair[0] == variable) {
+					if (pair[0] === variable) {
 						return pair[1];
 					}
 				}
@@ -481,7 +481,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(68), __webpack_require__(15)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, THREE, U) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(64), __webpack_require__(15)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, THREE, U) {
 		'use strict';
 	
 		/* the plugin */
@@ -582,10 +582,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 68:
+/***/ 64:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_68__;
+	module.exports = __WEBPACK_EXTERNAL_MODULE_64__;
 
 /***/ }
 

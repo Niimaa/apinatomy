@@ -1,13 +1,13 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("jquery"), require("bluebird"), require("tweenjs"), require("three-js"));
+		module.exports = factory(require("jquery"), require("bluebird"), require("three-js"), require("tweenjs"));
 	else if(typeof define === 'function' && define.amd)
-		define(["jquery", "bluebird", "tweenjs", "three-js"], factory);
+		define(["jquery", "bluebird", "three-js", "tweenjs"], factory);
 	else {
-		var a = typeof exports === 'object' ? factory(require("jquery"), require("bluebird"), require("tweenjs"), require("three-js")) : factory(root["jquery"], root["bluebird"], root["tweenjs"], root["three-js"]);
+		var a = typeof exports === 'object' ? factory(require("jquery"), require("bluebird"), require("three-js"), require("tweenjs")) : factory(root["jquery"], root["bluebird"], root["three-js"], root["tweenjs"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE_62__, __WEBPACK_EXTERNAL_MODULE_63__, __WEBPACK_EXTERNAL_MODULE_65__, __WEBPACK_EXTERNAL_MODULE_68__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_62__, __WEBPACK_EXTERNAL_MODULE_63__, __WEBPACK_EXTERNAL_MODULE_64__, __WEBPACK_EXTERNAL_MODULE_66__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -432,7 +432,7 @@ return /******/ (function(modules) { // webpackBootstrap
 				var vars = query.split('&');
 				for (var i = 0; i < vars.length; ++i) {
 					var pair = vars[i].split('=');
-					if (pair[0] == variable) {
+					if (pair[0] === variable) {
 						return pair[1];
 					}
 				}
@@ -481,7 +481,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(15), __webpack_require__(63), __webpack_require__(68), __webpack_require__(65)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, P, THREE, TWEEN) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(15), __webpack_require__(63), __webpack_require__(64), __webpack_require__(66)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, P, THREE, TWEEN) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('three-d-auto-controls', {
@@ -549,17 +549,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 65:
+/***/ 64:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_65__;
+	module.exports = __WEBPACK_EXTERNAL_MODULE_64__;
 
 /***/ },
 
-/***/ 68:
+/***/ 66:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_68__;
+	module.exports = __WEBPACK_EXTERNAL_MODULE_66__;
 
 /***/ }
 

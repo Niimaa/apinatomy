@@ -301,7 +301,7 @@ $(document).ready(() => {
 				.append(checkbox.element)
 				.append(`
 					<div style="margin-bottom: 5px; font-weight: bold;">
-						Correlation: <a target="_blank" href="http://www.ncbi.nlm.nih.gov/pubmed/${result.pubmedId}">${result.pubmedTitle}</a>
+						Pubmed ID: <a target="_blank" href="http://www.ncbi.nlm.nih.gov/pubmed/${result.pubmedId}">${result.pubmedTitle}</a>
 					</div>
 				`);
 
