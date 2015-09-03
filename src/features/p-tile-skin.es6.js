@@ -45,7 +45,7 @@ define([
 		//this._p_tileSkin_headerElement.text(this.model.id);
 		this.model.then((model)=> {
 			this._p_tileSkin_headerElement.text(model.name);
-			this._p_tileSkin_headerElement.attr('title', `${model.id} - ${model.name} (${model['correlation count']} correlations) (${model.children.length} child lyphs)`);
+			this._p_tileSkin_headerElement.attr('title', `${model.id} - ${model.name} (${model.children.length} child lyphs)`);
 		});
 
 		/* take any css rules from the model and apply them to the tile */

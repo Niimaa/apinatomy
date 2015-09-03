@@ -46,8 +46,8 @@ import '../features/p-tile-child-count-if-closed.es6.js';
 import '../features/p-tile-correlation-count-if-closed.es6.js';
 import '../features/p-tile-glyphs.es6.js';
 import '../features/p-d3.es6.js';
-
 import '../features/p-connectivity.es6.js';
+
 //import '../features/p-ppi.es6.js';
 //import '../features/p-three-d.es6.js';
 //import '../features/p-three-d-geometric-models.es6.js';
@@ -238,8 +238,6 @@ $(document).ready(() => {
 		tileSpacing:    8,
 		tilemapMargin:  8,
 		weightWhenOpen: 4,
-		//threeDCanvasElement: $('#three-d-canvas'),
-		//threeDModels: {},
 		initialTileVisibility: false
 	}).circuitboard('instance').then(function (circuitboard) {
 
@@ -253,7 +251,7 @@ $(document).ready(() => {
 		let locatedMeasures = new Map();
 
 
-		/* creating a clinical index checkbox */
+		/* creating a checkbox */
 		function createCheckbox(label) {
 			let result = new KefirSignalHandler();
 			let element, input;
