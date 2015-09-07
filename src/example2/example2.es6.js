@@ -14,7 +14,7 @@ import {button} from '../util/codes.es6.js';
 /* load the circuitboard, model loader and plugins */
 import circuitboard from '../circuitboard.es6.js';
 //import getFmaModels from './fma-model.es6.js';
-import getLyphModels from './lyph-model.es6.js';
+import {getLyphModels, provideLyphsFromServer} from './lyph-model.es6.js';
 import fetchPathsFn  from '../util/path-model.es6.js';
 import '../features/p-core.es6.js';
 import '../features/p-tile-skin.es6.js';
@@ -151,7 +151,7 @@ circuitboard.plugin.do('show-experiment-glyphs', { if: true, after: ['core', 'ti
 			/* the color of the glyph */
 			glyph.element.children()
 				.css('fill',   '#' + decimalToHex(experiments[exp].color, 6))
-				.css('stroke', '#' + decimalToHex(experiments[exp].color, 6));
+				.css('stroke', '#ffffff');
 
 			/* clicking the glyph */
 			glyph.element.click(() => {
@@ -167,7 +167,6 @@ circuitboard.plugin.do('show-experiment-glyphs', { if: true, after: ['core', 'ti
 
 
 $(document).ready(() => {
-
 	$('#circuitboard').circuitboard({
 		model:          getLyphModels('root', { root, port }),
 		fetchPaths:     fetchPathsFn({ port }),
@@ -190,7 +189,6 @@ $(document).ready(() => {
 						if (parent) {
 							parent.visible = true;
 							parent.open = true;
-							console.log('v:', tile.model.id);
 						}
 					} else {
 						for (let child of tile.closestDescendantsByType('Tile')) {
@@ -202,48 +200,35 @@ $(document).ready(() => {
 		});
 
 
-		/* getting lyph ids from fmas */
+		/* show tiles of lyphs that have experiments */
+		P.resolve(getLyphModels(Object.keys(LYPH_TO_EXPERIMENTS), {root, port})).map(a => a)
+			// get a hold of their tiles
+			.each(({id}) => {
+				circuitboard.tile(id).tap((tile) => {
+					tile.populateInnerTilemap(); // TODO: this action is too wide, and thus too expensive
+				}).then((tile) => {
+					tile.visible = true;
+				});
+			});
+
+
+		/* get all lyph ids belonging to the given fma ids */
 		//let fmas = [50801,61992,72980]; // test fmas
 		if (fmas) {
-
-			// get all lyph ids belonging to the given fma ids
 			P.resolve($.ajax({
-				url: `http://open-physiology.org:${port}/scaimap/?fmas=${fmas.join(',')}`,
+				url: `http://open-physiology.org:${port}/scaimap/?fmas=${fmas.join(',')}&pipe=yes&root=${original}`,
 				dataType: 'jsonp'
-			})).get('results').filter(({foundmatch}) => foundmatch === "yes")
-				.map(({lyphs}) => lyphs)
-				.reduce((end, next) => end.concat(next), [])
-				.map(({lyphID}) => lyphID)
-				.then(ids => ([...(new Set(ids)).values()])) // dedupe
-
-				// get lyph ids for all lyphs 'inbetween' root and given lyphs
-				.then((ids) => P.resolve($.ajax({
-					url: `http://open-physiology.org:${port}/between/?root=${original}&ends=${ids.join(',')}`,
-					dataType: 'jsonp'
-				})))
-				.map(({id})=>id)
-
-				// get a hold of their models
-				.then(lyphs => P.resolve(getLyphModels(lyphs.concat(Object.keys(LYPH_TO_EXPERIMENTS)), {root, port})))
-				//.map(a => a)
-				.each(console.log.bind(console, '-'))
-				.map(({id}) => id)
-
+			})).then((response) => provideLyphsFromServer(response, {root, port})).map(a => a)
 				// get a hold of their tiles
-				.each((id) => {
-					circuitboard.tile(id).then((tile) => {
-						console.log(id);
+				.each(({id}) => {
+					circuitboard.tile(id).tap((tile) => {
+						tile.populateInnerTilemap(); // TODO: this action is too wide, and thus too expensive
+					}).then((tile) => {
 						tile.visible = true;
 					});
-				})
-
-				// error out if needed
-				.error((err) => {
-					console.error("There seems to be something wrong with the server.", err);
 				});
 		}
 
 
 	});
-
 });
