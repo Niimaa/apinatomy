@@ -188,8 +188,9 @@ $(document).ready(() => {
 					if (visible) {
 						let parent = tile.closestAncestorByType('Tile');
 						if (parent) {
-							parent.open = true;
 							parent.visible = true;
+							parent.open = true;
+							console.log('v:', tile.model.id);
 						}
 					} else {
 						for (let child of tile.closestDescendantsByType('Tile')) {
@@ -197,7 +198,7 @@ $(document).ready(() => {
 						}
 					}
 				});
-			});
+			}, 200);
 		});
 
 
@@ -209,22 +210,32 @@ $(document).ready(() => {
 			P.resolve($.ajax({
 				url: `http://open-physiology.org:${port}/scaimap/?fmas=${fmas.join(',')}`,
 				dataType: 'jsonp'
-			})).get('results').filter(({foundmatch}) => foundmatch).map(({lyphID}) => lyphID)
+			})).get('results').filter(({foundmatch}) => foundmatch === "yes")
+				.map(({lyphs}) => lyphs)
+				.reduce((end, next) => end.concat(next), [])
+				.map(({lyphID}) => lyphID)
+				.then(ids => ([...(new Set(ids)).values()])) // dedupe
 
 				// get lyph ids for all lyphs 'inbetween' root and given lyphs
 				.then((ids) => P.resolve($.ajax({
-						url: `http://open-physiology.org:${port}/between/?root=${original}&ends=${ids.join(',')}`,
-						dataType: 'jsonp'
-				}))).map(({id})=>id)
+					url: `http://open-physiology.org:${port}/between/?root=${original}&ends=${ids.join(',')}`,
+					dataType: 'jsonp'
+				})))
+				.map(({id})=>id)
 
 				// get a hold of their models
-				.then(lyphs => getLyphModels(lyphs.concat(Object.keys(LYPH_TO_EXPERIMENTS)), {root, port}))
+				.then(lyphs => P.resolve(getLyphModels(lyphs.concat(Object.keys(LYPH_TO_EXPERIMENTS)), {root, port})))
+				//.map(a => a)
+				.each(console.log.bind(console, '-'))
+				.map(({id}) => id)
 
 				// get a hold of their tiles
-				.map(({id}) => circuitboard.tile(id))
-
-				// make them all visible
-				.each((tile) => { tile.visible = true })
+				.each((id) => {
+					circuitboard.tile(id).then((tile) => {
+						console.log(id);
+						tile.visible = true;
+					});
+				})
 
 				// error out if needed
 				.error((err) => {
