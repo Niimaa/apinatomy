@@ -1,11 +1,18 @@
 import $     from 'jquery';
 import P     from 'bluebird';
-import THREE from 'three-js';
 import Kefir from '../util/kefir-and-eggs.es6.js';
 import U     from '../util/misc.es6.js';
 import defer from '../util/defer.es6.js';
 
+import THREE from 'expose?THREE!three-js';
+import 'script!../util/Projector.js';
+import 'script!threex.domevents';
+const THREEx = window.THREEx;
 
+import TWEEN from 'tweenjs';
+
+
+/* the core plugin for pure-3D circuitboards */
 var plugin = $.circuitboard.plugin.do('core-3d');
 
 
@@ -17,7 +24,7 @@ plugin.modify('Circuitboard.prototype')
 		this.newTiles = Kefir.bus();
 
 
-		// TODO: check browser support
+		// TODO: check browser support for 3D
 
 
 		this.newProperty('canvasSize').plug(Kefir.merge([
@@ -29,7 +36,7 @@ plugin.modify('Circuitboard.prototype')
 		})));
 
 		this.newProperty('size').plug(this.property('canvasSize'));
-		// TODO: allow 'size' to differ from 'canvasSize' specifying margins
+		// TODO: allow 'size' to differ from 'canvasSize' by specifying margins
 
 
 		/* the render event that will be emitted at every animation frame */
@@ -53,21 +60,23 @@ plugin.modify('Circuitboard.prototype')
 		/* lighting */
 		this.scene3D.add(new THREE.AmbientLight(0xff0000));
 
-		/* WebGL renderer */
+		/* renderer */
 		(() => {
-			let renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-			this.element.append(renderer.domElement);
-			renderer.sortObjects = false;
-			renderer.shadowMapEnabled = true;
-			renderer.shadowMapSoft = true;
+			this.renderer3D = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+			this.element.append(this.renderer3D.domElement);
+			this.renderer3D.sortObjects = false;
+			this.renderer3D.shadowMapEnabled = true;
+			this.renderer3D.shadowMapSoft = true;
 			this.p('canvasSize').onValue(({width, height}) => {
-				renderer.setSize(width, height);
+				this.renderer3D.setSize(width, height);
 			});
 			this.event('3d-render').onValue(() => {
-				renderer.render(this.scene3D, this.camera3D);
+				this.renderer3D.render(this.scene3D, this.camera3D);
 			});
 		})();
 
+		/* dom event handler */
+		this.eventHandler3D = new THREEx.DomEvents(this.camera3D, this.renderer3D.domElement);
 
 		/*  the object containing all 3D things co-located with the circuitboard */
 		this.object3D = new THREE.Object3D();
@@ -79,30 +88,12 @@ plugin.modify('Circuitboard.prototype')
 		// TODO: synchronize this kind of size-change handler with the '3d-render' signal?
 
 
-		/* the rectangle representing the circuitboard */
-		(() => {
-			let geometry = new THREE.PlaneGeometry(1, 1);
-			let material = new THREE.MeshBasicMaterial({
-				color: 0xDB1E1E,
-				wireframe: true // TODO: remove
-			});
-			let mesh = new THREE.Mesh(geometry, material);
-			this.object3D.add(mesh);
-			this.p('size').onValue(({width, height}) => {
-				mesh.scale.x = width;
-				mesh.scale.y = height;
-				mesh.position.x = 0.5 * width;
-				mesh.position.y = 0.5 * height;
-			});
-		})();
-
-
-
 		/* create the root tilemap */
 		const div = $('<div/>');
 		div.tilemap({ // TODO: tilemaps are not widgets anymore, but they still are artefacts
 			model:  this.options.model,
-			parent: this
+			parent: this,
+			tileDepth: 1
 		}).tilemap('instance').then((tilemap) => {
 			tilemap.p('size').plug(this.p('size'));
 			tilemap.position = { x: 0, y: 0 };
@@ -150,45 +141,85 @@ plugin.modify('Tilemap.prototype')
 			const tileCount        = childModels.length;
 			const rowCount         = Math.floor(Math.sqrt(tileCount));
 			const colCount         = Math.ceil(tileCount / rowCount);
-			const lastRowTileCount = colCount - (rowCount * colCount - tileCount);
 
 			/* gather tiles */
 			let tilesP = [];
 			for (let i = 0; i < tileCount; ++i) {
 				tilesP.push($('<div/>').tile({ // TODO: tiles are not widgets anymore, but they still are artefacts
 					model: childModels[i],
-					parent: this
+					parent: this,
+					tileDepth: this.options.tileDepth
 				}).tile('instance'));
 			}
 
 			/* resize tiles based on tilemap resize */
-			P.resolve(tilesP).map(a=>a).then((tiles) => {
-				this.p('size').onValue(({width, height}) => {
-					for (let i = 0; i < tileCount; ++i) {
-						const tile = tiles[i];
-						const row = Math.floor(i / colCount);
-						const col = i % colCount;
-						const rowTileCount = (row === rowCount - 1) ? lastRowTileCount : colCount;
-						const w = width - spacing;
-						const h = height - spacing;
+			P.resolve(tilesP).map(a=>a).tap((tiles) => {
+				const weightProps = tiles.map(tile => tile.p('weight'));
+				Kefir.combine([this.p('size'), ...weightProps]).onValue(([{width: totalWidth, height: totalHeight}]) => {
 
-						tile.size = {
-							height: h / tileCount * rowTileCount - spacing,
-							width: w / rowTileCount - spacing
-						};
-						tile.position = {
-							x: w * (col / rowTileCount) + spacing,
-							y: height - (h * row * colCount / tileCount + spacing) - tile.size.height
-							// going from top to bottom, reversing the y-axis
-						};
+					// TODO: much of the following can be moved out of the kefir stream,
+					//     : and then modified based on specific weight changes
+					let totalWeight = 0;
+					let weightPerRow = [];
+					let accumulatedWeightBeforeRow = [];
+					for (let row = 0, i = 0; row < rowCount; ++row) {
+						weightPerRow.push(0);
+						for (let col = 0; col < colCount && i < tileCount; ++col, ++i) {
+							weightPerRow[row] += tiles[i].weight;
+							totalWeight       += tiles[i].weight;
+						}
+						accumulatedWeightBeforeRow.push(row === 0 ? 0 : (accumulatedWeightBeforeRow[row-1] + weightPerRow[row-1]));
 					}
+
+					for (let row = 0, i = 0; row < rowCount; ++row) {
+						const rowHeight = (totalHeight - spacing) * weightPerRow[row] / totalWeight - spacing;
+						const rowY = totalHeight - ((totalHeight - spacing) * accumulatedWeightBeforeRow[row] / totalWeight + spacing) - rowHeight;
+						             // going from top to bottom, reversing the y-axis
+						let accumulatedWeightInsideRow = 0;
+						for (let col = 0; col < colCount && i < tileCount; ++col, ++i) {
+							const tile = tiles[i];
+							tile.size = {
+								height: rowHeight,
+								width:  (totalWidth - spacing)  * tile.weight / weightPerRow[row] - spacing
+							};
+							tile.position = {
+								y: rowY,
+								x: (totalWidth - spacing) * (accumulatedWeightInsideRow / weightPerRow[row]) + spacing
+							};
+							accumulatedWeightInsideRow += tile.weight;
+						}
+					}
+
+
+					//for (let i = 0; i < tileCount; ++i) {
+					//	const tile = tiles[i];
+					//	const row = Math.floor(i / colCount);
+					//	const col = i % colCount;
+					//	const rowTileCount = (row === rowCount - 1) ? lastRowTileCount : colCount;
+					//	const w = width - spacing;
+					//	const h = height - spacing;
+					//	const weight = tile.weight;
+					//
+					//	console.log(weight);
+					//
+					//	tile.size = {
+					//		height: h / tileCount * rowTileCount - spacing,
+					//		width: w / rowTileCount - spacing
+					//	};
+					//	tile.position = {
+					//		x: w * (col / rowTileCount) + spacing,
+					//		y: height - (h * row * colCount / tileCount + spacing) - tile.size.height
+					//		// going from top to bottom, reversing the y-axis
+					//	};
+					//}
+
 				});
 			});
 
 
 
 
-		}).then(() => { this.trigger('tiles-refreshed') });
+		});
 
 
 	}).add('construct', function () {
@@ -203,114 +234,12 @@ plugin.modify('Tilemap.prototype')
 			isEqual: (a, b) => (a.width === b.width && a.height === b.height)
 		});
 
-		this.newEvent('tiles-refreshed');
-
-
-
 		this.object3D = new THREE.Object3D();
 		this.parent.object3D.add(this.object3D);
-
-
-
-
-		/* the rectangle representing the tilemap */
-		(() => {
-			let geometry = new THREE.PlaneGeometry(1, 1);
-			let material = new THREE.MeshBasicMaterial({
-				color: 0x1EDB1E,
-				wireframe: true // TODO: remove
-			});
-			let mesh = new THREE.Mesh(geometry, material);
-			this.object3D.add(mesh);
-			this.p('size').onValue(({width, height}) => {
-				mesh.scale.x = width;
-				mesh.scale.y = height;
-			});
-			Kefir.combine([this.p('position'), this.p('size')]).onValue(([{x, y}, {width, height}]) => {
-				mesh.position.x = x + 0.5 * width;
-				mesh.position.y = y + 0.5 * height;
-			});
-		})();
-
-							//(() => {
-							//	var geometry = new THREE.SphereGeometry( 5, 8, 8 );
-							//	var material = new THREE.MeshPhongMaterial( {color: 0xff0000} );
-							//	var sphere = new THREE.Mesh( geometry, material );
-							//	this.object3D.add(sphere);
-							//})();
-							//(() => {
-							//	var geometry = new THREE.SphereGeometry( 5, 8, 8 );
-							//	var material = new THREE.MeshPhongMaterial( {color: 0xff0000} );
-							//	var sphere = new THREE.Mesh( geometry, material );
-							//	this.object3D.add(sphere);
-							//	this.p('size').onValue(({width, height}) => {
-							//		sphere.position.y = height;
-							//	});
-							//})();
-							//(() => {
-							//	var geometry = new THREE.SphereGeometry( 5, 8, 8 );
-							//	var material = new THREE.MeshPhongMaterial( {color: 0xff0000} );
-							//	var sphere = new THREE.Mesh( geometry, material );
-							//	this.object3D.add(sphere);
-							//	this.p('size').onValue(({width, height}) => {
-							//		sphere.position.x = width;
-							//	});
-							//})();
-							//(() => {
-							//	var geometry = new THREE.SphereGeometry( 5, 8, 8 );
-							//	var material = new THREE.MeshPhongMaterial( {color: 0xff0000} );
-							//	var sphere = new THREE.Mesh( geometry, material );
-							//	this.object3D.add(sphere);
-							//	this.p('size').onValue(({width, height}) => {
-							//		sphere.position.x = width;
-							//		sphere.position.y = height;
-							//	});
-							//})();
-
-
-		//if (this.model.id === 'root') {
-		//
-		//	(() => {
-		//		var geometry = new THREE.SphereGeometry( 10, 32, 32 );
-		//		var material = new THREE.MeshPhongMaterial( {color: 0xff0000} );
-		//		var sphere = new THREE.Mesh( geometry, material );
-		//		this.object3D.add(sphere);
-		//	})();
-		//
-		//	(() => {
-		//		var geometry = new THREE.SphereGeometry( 10, 32, 32 );
-		//		var material = new THREE.MeshPhongMaterial( {color: 0xff0000} );
-		//		var sphere = new THREE.Mesh( geometry, material );
-		//		this.object3D.add(sphere);
-		//		this.p('size').onValue(({width, height}) => {
-		//			sphere.position.x = width;
-		//			sphere.position.y = height;
-		//		});
-		//	})();
-		//} else {
-		//	(() => {
-		//		var geometry = new THREE.SphereGeometry( 40, 32, 32 );
-		//		var material = new THREE.MeshPhongMaterial( {color: 0x000000} );
-		//		var sphere = new THREE.Mesh( geometry, material );
-		//		this.object3D.add(sphere);
-		//	})();
-		//
-		//	(() => {
-		//		var geometry = new THREE.SphereGeometry( 40, 32, 32 );
-		//		var material = new THREE.MeshPhongMaterial( {color: 0x000000} );
-		//		var sphere = new THREE.Mesh( geometry, material );
-		//		this.object3D.add(sphere);
-		//		this.p('size').onValue(({width, height}) => {
-		//			sphere.position.x = width;
-		//			sphere.position.y = height;
-		//		});
-		//	})();
-		//}
 
 		this._p_tilemapCore_tiles = null;
 		Object.defineProperty(this, 'tiles', { get: () => this._p_tilemapCore_tiles });
 		this.refreshTiles();
-
 	});
 
 
@@ -318,22 +247,19 @@ plugin.modify('Tilemap.prototype')
 plugin.modify('Tile.prototype')
 	.add('populateInnerTilemap', function populateInnerTilemap() {
 
-
-
 		/* create sub-tilemap */
 		if (!this._p_tileCore_tilemap) {
 			const div = $('<div/>');
 			this._p_tileCore_tilemap = div.tilemap({ // TODO: tilemaps are not widgets anymore, but they still are artefacts
 				model:  this.options.model,
-				parent: this
+				parent: this,
+				tileDepth: this.options.tileDepth + 1
 			}).tilemap('instance').tap((tilemap) => {
 				tilemap.p('size').plug(this.p('size'));
 				tilemap.position = { x: 0, y: 0 }; // TODO: maybe remove tilemap positions? They're always (0, 0)?
 			});
 		}
 		return this._p_tileCore_tilemap;
-
-
 
 	}).add('construct', function () {
 
@@ -364,10 +290,10 @@ plugin.modify('Tile.prototype')
 		(() => {
 			let geometry = new THREE.PlaneGeometry(1, 1);
 			let material = new THREE.MeshBasicMaterial({
-				color: 0x1E1EDB,
-				wireframe: true // TODO: remove
+				color: this.options.tileDepth % 2 ? 0xcccccc : 0x777777
 			});
 			let mesh = new THREE.Mesh(geometry, material);
+			mesh.position.z = this.options.tileDepth;
 			this.object3D.add(mesh);
 			this.p('size').onValue(({width, height}) => {
 				mesh.scale.x = width;
@@ -375,6 +301,23 @@ plugin.modify('Tile.prototype')
 				mesh.position.x = 0.5 * width;
 				mesh.position.y = 0.5 * height;
 			});
+
+			this.circuitboard.eventHandler3D.addEventListener(mesh, 'click', (e) => {
+				console.log(`Tile '${this.model.id}' clicked!`, e);
+
+				new TWEEN.Tween(this)
+					.to({ weight: this.weight === 1 ? 8 : 1 }, 500)
+					.easing(TWEEN.Easing.Cubic.InOut)
+				.start();
+
+				// TODO: move this logic out into another delta
+
+			});
+
+			this.circuitboard.event('3d-render').onValue(() => {
+				TWEEN.update();
+			});
+
 		})();
 
 
@@ -385,6 +328,10 @@ plugin.modify('Tile.prototype')
 		if (this.model.id === '161') {
 			this.populateInnerTilemap();
 		}
+
+
+		// TODO: move to a different delta
+		this.newProperty('weight', { initial: 1 });
 
 	});
 

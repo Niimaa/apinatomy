@@ -2,7 +2,21 @@
 <project version="4">
   <component name="PublishConfigData">
     <serverData>
-      <paths name="ApiNATOMY-Core Examples">
+      <paths name="ApiNATOMY App">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/apinatomy" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="Linode (apinatomy-core)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/app" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="Linode (apinatomy-website)">
         <serverdata>
           <mappings>
             <mapping deploy="/app" local="$PROJECT_DIR$" web="/" />

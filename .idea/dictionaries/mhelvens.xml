@@ -52,8 +52,10 @@
       <w>reqwest</w>
       <w>rimraf</w>
       <w>sourcemaps</w>
+      <w>thre</w>
       <w>tilecreated</w>
       <w>tilemap</w>
+      <w>tilemaps</w>
       <w>tilerow</w>
       <w>tileskin</w>
       <w>tilespacing</w>
