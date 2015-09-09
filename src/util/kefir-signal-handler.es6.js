@@ -125,7 +125,7 @@ define(['jquery', './misc.es6.js', './kefir-and-eggs.es6.js'], function ($, U, K
 		 * Trigger an event for all subscribers.
 		 *
 		 * @param {String} name  - the name of the event stream to trigger
-		 * @value {*}      value - the value to attach to the event
+		 * @param {*}      value - the value to attach to the event
 		 */
 		trigger(name, value) {
 

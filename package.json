@@ -65,7 +65,8 @@
     "update": "bower update",
     "build": "webpack",
 	"build-example": "webpack --config ./webpack-example.config.js",
-	"build-example2": "webpack --config ./webpack-example2.config.js"
+	"build-example2": "webpack --config ./webpack-example2.config.js",
+	"build-example3": "webpack --config ./webpack-example3.config.js"
   },
   "sniper": {
     "js": [],

@@ -42,7 +42,7 @@ define([
 
 		/* the 'threeDCanvasElement' property */
 		this.newProperty('threeDCanvasElement');
-		this.p('threeDCanvasElement').diff().onValue(([oldCanvas, newCanvas]) => { // TODO: use '.diff'
+		this.p('threeDCanvasElement').diff().onValue(([oldCanvas, newCanvas]) => {
 			if (oldCanvas) { oldCanvas.removeClass('three-d-canvas') }
 			if (newCanvas) { newCanvas.addClass('three-d-canvas') }
 		});
@@ -50,8 +50,6 @@ define([
 
 		/* was a canvas given through the options? */
 		this.threeDCanvasElement = this.options.threeDCanvasElement;
-
-
 
 
 		/* the 'threeDMode' property */

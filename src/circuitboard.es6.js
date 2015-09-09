@@ -26,8 +26,8 @@ define([
 
 	/* put those classes on the $.circuitboard object */
 	CircuitboardP.then((c) => { $.circuitboard.Circuitboard = c });
-	TilemapP.then((c) => { $.circuitboard.Tilemap = c });
-	TileP.then((c) => { $.circuitboard.Tile = c });
+	TilemapP     .then((c) => { $.circuitboard.Tilemap      = c });
+	TileP        .then((c) => { $.circuitboard.Tile         = c });
 
 
 	/*  return the static `$.circuitboard` object,         */

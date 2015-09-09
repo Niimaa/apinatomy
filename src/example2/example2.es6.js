@@ -42,7 +42,7 @@ import '../features/p-tile-child-count-if-closed.es6.js';
 import '../features/p-tile-glyphs.es6.js';
 import '../features/p-d3.es6.js';
 
-//import '../features/p-tile-correlation-count-if-closed.es6.js';
+import '../features/p-tile-correlation-count-if-closed.es6.js';
 //import '../features/p-connectivity.es6.js';
 //import '../features/p-ppi.es6.js';
 //import '../features/p-three-d.es6.js';
@@ -104,10 +104,10 @@ circuitboard.plugin.select(
 	'tile-button-to-maximize',
 	'tile-button-to-unhide-children',
 	'tile-child-count-if-closed',
-	'tile-glyphs'
+	'tile-glyphs',
 
 	//'connectivity',
-	//'tile-correlation-count-if-closed',
+	'tile-correlation-count-if-closed'
 	//'three-d-manual-controls',
 	//'three-d-auto-controls',
 	//'three-d-geometric-models-obj',
@@ -120,10 +120,28 @@ circuitboard.plugin.select(
 
 
 const LYPH_TO_EXPERIMENTS = {
-	50: ['1', '2']
-
-	// TODO: insert manually from Bernard
-
+	// filled in from translation of SCAI to FMA, then to Lyph ID
+	13:  ['GSE20291'],
+	305: ['E-GEOD-4757', 'E-GEOD-5281', 'GSE9770'],
+	304: ['E-GEOD-4757', 'E-GEOD-5281', 'GSE9770'],
+	280: ['E-GEOD-5281', 'GSE9770', 'E-GEOD-36980', 'E-GEOD-1297'],
+	281: ['E-GEOD-5281', 'GSE9770', 'E-GEOD-36980', 'E-GEOD-1297'],
+	255: ['E-GEOD-5281', 'GSE9770'],
+	166: ['E-GEOD-5281', 'GSE9770'],
+	309: ['E-GEOD-5281', 'GSE9770'],
+	310: ['E-GEOD-5281', 'GSE9770'],
+	230: ['E-GEOD-5281', 'GSE9770'],
+	229: ['E-GEOD-5281', 'GSE9770'],
+	457: ['E-GEOD-53890', 'E-GEOD-36980'],
+	458: ['E-GEOD-53890', 'E-GEOD-36980'],
+	459: ['E-GEOD-36980', 'E-MEXP-2280'],
+	460: ['E-GEOD-36980', 'E-MEXP-2280'],
+	409: ['GSE20146'],
+	410: ['GSE20146'],
+	461: ['E-GEOD-16759'],
+	462: ['E-GEOD-16759'],
+	4:   ['GSE20141'],
+	5:   ['GSE20141']
 };
 
 
@@ -201,7 +219,7 @@ $(document).ready(() => {
 
 
 		/* show tiles of lyphs that have experiments */
-		P.resolve(getLyphModels(Object.keys(LYPH_TO_EXPERIMENTS), {root, port})).map(a => a)
+		P.resolve(getLyphModels(Object.keys(LYPH_TO_EXPERIMENTS), {root, port})).map(({id}) => id)
 			// get a hold of their tiles
 			.each(({id}) => {
 				circuitboard.tile(id).tap((tile) => {
@@ -228,6 +246,9 @@ $(document).ready(() => {
 					});
 				});
 		}
+
+
+		// TODO: correlations
 
 
 	});
