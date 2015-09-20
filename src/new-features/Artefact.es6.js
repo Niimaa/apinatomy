@@ -1,11 +1,11 @@
 define([
 	'jquery',
 	'bluebird',
-	'./util/misc.es6.js',
-	'./util/kefir-signal-handler.es6.js',
-	'./util/unique-id.es6.js',
-	'./util/main-deltajs.es6.js',
-	'./util/defer.es6.js'
+	'../util/misc.es6.js',
+	'../util/kefir-signal-handler.es6.js',
+	'../util/unique-id.es6.js',
+	'../util/main-deltajs.es6.js',
+	'../util/defer.es6.js'
 ], function ($, P, U, KefirSignalHandler, uniqueID, deltaJs, defer) {
 	'use strict';
 

@@ -57,17 +57,8 @@ define(['jquery', './misc.es6.js', './kefir-and-eggs.es6.js'], function ($, U, K
 
 		}
 
-
-		/** {@public}{@method}
-		 * Retrieve a property by name.
-		 *
-		 * @param  {String} name - the name of the property to retrieve
-		 * @return {Kefir.Property} - the property associated with the given name
-		 */
-		property(name) { return this._properties[name] }
-
-		/** @alias property */
-		p(name) { return this._properties[name] }
+		/** @alias event */
+		e(name) { return this.event(name) }
 
 
 		/** {@public}{@method}
@@ -77,10 +68,12 @@ define(['jquery', './misc.es6.js', './kefir-and-eggs.es6.js'], function ($, U, K
 		 * @param  {Boolean}                 [settable=true] - whether the value can be manually set
 		 * @param  {*}                       [initial]       - the initial value of this property
 		 * @param  {function(*,*):Boolean}   [isEqual]       - a predicate function by which to test for duplicate values
+		 * @param  {function(*):*}           [map]           - a function to map incoming values to other values
+		 * @param  {[Kefir.Property]}        [mapWith]       - other properties used in the given 'map' function
 		 *
 		 * @return {Kefir.Property} - the property associated with the given name
 		 */
-		newProperty(name, {settable, initial, isEqual} = {}) {
+		newProperty(name, {settable, initial, isEqual, map, mapWith} = {}) {
 
 			/* is the property name already taken? */
 			U.assert(!this._events[name],
@@ -88,17 +81,40 @@ define(['jquery', './misc.es6.js', './kefir-and-eggs.es6.js'], function ($, U, K
 			U.assert(!this._properties[name],
 					`There is already a property '${name}' on this object.`);
 
-			/* default value for 'settable' */
+			/* default values */
 			if (U.isUndefined(settable)) { settable = true }
 
 			/* define the bus which manages the property */
-			var bus = Kefir.bus();
+			let bus = Kefir.bus();
 
-			/* define the property itself, and give it additional methods */
-			var property = this._properties[name] = bus.toProperty(initial).skipDuplicates(isEqual);
+			/* define the property itself */
+			let property;
+			if (map && mapWith) {
+				property = this._properties[name] = Kefir
+					.combine([ bus.toProperty(initial).skipDuplicates(isEqual), ...mapWith ], map)
+					.toProperty(initial) // TODO: use map here too
+					.skipDuplicates(isEqual);
+			} else if (map && !mapWith) {
+				property = this._properties[name] =
+					bus
+					.toProperty(map(initial))
+					.map(map)
+					.skipDuplicates(isEqual);
+			} else {
+				property = this._properties[name] =
+					bus
+					.toProperty(initial)
+					.skipDuplicates(isEqual);
+			}
+
+			/* give the property additional methods */
 			property.plug   = (observable) => { bus.plug(observable);   return property };
 			property.unplug = (observable) => { bus.unplug(observable); return property };
-			property.get = () => property._current; // TODO: accessing private field of Kefir property; don't
+			property.get = (() => {
+				let currentValue = initial;
+				property.onValue((value) => { currentValue = value });
+				return () => currentValue;
+			})();
 			if (settable) {
 				property.set = (value) => { bus.emit(value); return property };
 			}
@@ -119,6 +135,18 @@ define(['jquery', './misc.es6.js', './kefir-and-eggs.es6.js'], function ($, U, K
 			return property;
 
 		}
+
+
+		/** {@public}{@method}
+		 * Retrieve a property by name.
+		 *
+		 * @param  {String} name - the name of the property to retrieve
+		 * @return {Kefir.Property} - the property associated with the given name
+		 */
+		property(name) { return this._properties[name] }
+
+		/** @alias property */
+		p(name) { return this.property(name) }
 
 
 		/** {@public}{@method}

@@ -9,14 +9,7 @@
           </mappings>
         </serverdata>
       </paths>
-      <paths name="Linode (apinatomy-core)">
-        <serverdata>
-          <mappings>
-            <mapping deploy="/app" local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
-      <paths name="Linode (apinatomy-website)">
+      <paths name="ApiNATOMY-Core Examples">
         <serverdata>
           <mappings>
             <mapping deploy="/app" local="$PROJECT_DIR$" web="/" />

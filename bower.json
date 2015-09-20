@@ -23,7 +23,8 @@
     "tweenjs": "*",
     "kefir": "~2.0",
     "kefir-jquery": "~1.0.0",
-    "velocity": "~1.2"
+    "velocity": "~1.2",
+    "threex.dynamictexture": "*"
   },
   "devDependencies": {
     "requirejs-domready": "~2.0.1",
