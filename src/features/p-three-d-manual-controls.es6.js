@@ -197,11 +197,11 @@ define(['jquery', '../util/misc.es6.js', 'three-js', '../util/kefir-and-eggs.es6
 					/* rotating by keyboard */
 					(() => {
 						if (this.currentArrowKey) {
-							var {which, ctrlKey} = this.currentArrowKey;
+							var {which, shiftKey} = this.currentArrowKey;
 							var axis = new THREE.Vector3();
-							     if ((which === 38 || which === 40) && !ctrlKey) { axis.set(1, 0, 0) } // x: up,down
-							else if ((which === 37 || which === 39) && !ctrlKey) { axis.set(0, 1, 0) } // y: left,right
-							else if ((which === 37 || which === 39) &&  ctrlKey) { axis.set(0, 0, 1) } // z: ctrl+left,right
+							     if ((which === 38 || which === 40) && !shiftKey) { axis.set(1, 0, 0) } // x: up,down
+							else if ((which === 37 || which === 39) && !shiftKey) { axis.set(0, 1, 0) } // y: left,right
+							else if ((which === 37 || which === 39) &&  shiftKey) { axis.set(0, 0, 1) } // z: ctrl+left,right
 							else { return }
 							var angle = 0.015 * Math.PI * this._rotateSpeed;
 							if (which === 39 || which === 40) { angle *= -1 }
@@ -217,10 +217,10 @@ define(['jquery', '../util/misc.es6.js', 'three-js', '../util/kefir-and-eggs.es6
 					// leave this before the 'zooming by mouse' section
 					(() => {
 						if (this.currentArrowKey) {
-							var {which, ctrlKey} = this.currentArrowKey;
-							if (which === 38 && ctrlKey) { // ctrl+up
+							var {which, shiftKey} = this.currentArrowKey;
+							if (which === 38 && shiftKey) { // ctrl+up
 								this._zoomStart.y += 0.02;
-							} else if (which === 40 && ctrlKey) { // ctrl+down
+							} else if (which === 40 && shiftKey) { // ctrl+down
 								this._zoomStart.y -= 0.02;
 							}
 						}

@@ -7,7 +7,7 @@
 		var a = typeof exports === 'object' ? factory(require("jquery"), require("bluebird"), require("kefir"), require("tweenjs"), require("kefir-jquery"), require("delta-js")) : factory(root["jquery"], root["bluebird"], root["kefir"], root["tweenjs"], root["kefir-jquery"], root["delta-js"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE_62__, __WEBPACK_EXTERNAL_MODULE_63__, __WEBPACK_EXTERNAL_MODULE_65__, __WEBPACK_EXTERNAL_MODULE_66__, __WEBPACK_EXTERNAL_MODULE_67__, __WEBPACK_EXTERNAL_MODULE_68__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_3__, __WEBPACK_EXTERNAL_MODULE_8__, __WEBPACK_EXTERNAL_MODULE_9__, __WEBPACK_EXTERNAL_MODULE_10__, __WEBPACK_EXTERNAL_MODULE_13__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -50,22 +50,20 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	return __webpack_require__(0);
 /******/ })
 /************************************************************************/
-/******/ ({
-
-/***/ 0:
+/******/ ([
+/* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(6);
+	module.exports = __webpack_require__(20);
 
 
 /***/ },
-
-/***/ 3:
+/* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(63), __webpack_require__(15), __webpack_require__(13), __webpack_require__(20), __webpack_require__(14), __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, U, KefirSignalHandler, uniqueID, deltaJs, defer) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(2), __webpack_require__(3), __webpack_require__(4), __webpack_require__(6), __webpack_require__(11), __webpack_require__(12), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, U, KefirSignalHandler, uniqueID, deltaJs, defer) {
 		'use strict';
 	
 		return deltaJs.selected.then(function () {
@@ -161,7 +159,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    * @param fn {(Artefact) => Boolean} - the function to call on each artefact
 	    */
 				traverseArtefacts: function traverseArtefacts(fn) {
-					var options = arguments[1] === undefined ? {} : arguments[1];
+					var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 					var order = options.order;
 	
 					if (!order) {
@@ -186,7 +184,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    * @param fn {(Artefact) => Boolean} - the function to call on each artefact
 	    */
 				traverseArtefactsByType: function traverseArtefactsByType(type, fn) {
-					var options = arguments[2] === undefined ? {} : arguments[2];
+					var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
 					var order = options.order;
 	
 					if (!order) {
@@ -258,14 +256,12 @@ return /******/ (function(modules) { // webpackBootstrap
 				}
 	
 			}, {
-				options: {
+				options: { /** {@public}{@property}
+	               *
+	               * @return {Object} - the options provided through the constructor
+	               */
 	
-					/** {@public}{@property}
-	     *
-	     * @return {Object} - the options provided through the constructor
-	     */
-	
-					get: function () {
+					get: function get() {
 						return this._options;
 					},
 					configurable: true,
@@ -278,7 +274,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @return {String} - the unique identifier belonging to this artefact
 	     */
 	
-					get: function () {
+					get: function get() {
 						return this._id;
 					},
 					configurable: true,
@@ -291,7 +287,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @return {String} - the type of this artefact
 	     */
 	
-					get: function () {
+					get: function get() {
 						return this._type;
 					},
 					configurable: true,
@@ -304,7 +300,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @return {Artefact|undefined} - the parent of this artefact, unless this is the root
 	     */
 	
-					get: function () {
+					get: function get() {
 						return this._parent;
 					},
 					configurable: true,
@@ -317,7 +313,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @return {[Artefact]} - the children of this artefact
 	     */
 	
-					get: function () {
+					get: function get() {
 						return this._children;
 					},
 					configurable: true,
@@ -330,7 +326,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @return {Artefact} - the root of the artefact hierarchy
 	     */
 	
-					get: function () {
+					get: function get() {
 						if (!this._root) {
 							this._root = this.parent ? this.parent.root : this;
 						}
@@ -345,14 +341,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * A static convenience function for creating a subclass of {@link Artefact}.
 	   */
 			window._amy_Artefact.newSubclass = function newSubClass(name, constructor) {
-				var prototype = arguments[2] === undefined ? {} : arguments[2];
-				var optionDefaults = arguments[3] === undefined ? {} : arguments[3];
+				var prototype = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+				var optionDefaults = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
 	
 				return deltaJs.vp(name, U.newSubclass(window._amy_Artefact, function (superFn) {
 					return function () {
 						var _this = this;
 	
-						var options = arguments[0] === undefined ? {} : arguments[0];
+						var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 	
 						/* process options */
 						var processedOptions = options;
@@ -389,7 +385,7 @@ return /******/ (function(modules) { // webpackBootstrap
 					};
 				}, U.extend({}, prototype, Object.defineProperties({}, {
 					circuitboard: {
-						get: function () {
+						get: function get() {
 							if (!this._circuitboard) {
 								this._circuitboard = this.closestAncestorByType('Circuitboard');
 							}
@@ -408,704 +404,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
+/* 2 */
+/***/ function(module, exports) {
 
-/***/ 6:
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
-	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(15), __webpack_require__(3), __webpack_require__(77)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, ArtefactP) {
-		'use strict';
-	
-		return ArtefactP.then(function (Artefact) {
-	
-			/* however (often) this is loaded, create the class only once */
-			if (U.isDefined(window._amy_D3Vertex)) {
-				return window._amy_D3Vertex;
-			}
-	
-			window._amy_D3Vertex = Artefact.newSubclass('D3Vertex', function D3Vertex(_ref) {
-				var _this = this;
-	
-				var visible = _ref.visible;
-	
-				/* the coordinate properties */
-				this.newProperty('x', { initial: 10 });
-				this.newProperty('y', { initial: 10 });
-	
-				/* the 'visible' and 'hidden' properties */
-				this.newProperty('visible', { initial: visible });
-				this.newProperty('hidden').plug(this.p('visible').not());
-				this.p('visible').plug(this.p('hidden').not());
-	
-				/* enact vertex hiding on the DOM */
-				this.p('hidden').merge(this.on('destroy').mapTo(true)).onValue(function (h) {
-					_this.element.toggleClass('hidden', h).toggleClass('visible', !h);
-				});
-			}, Object.defineProperties({}, {
-				element: {
-					get: function () {
-						if (!this._element) {
-							this._element = $('\n\t\t\t\t\t\t<svg x="' + this.x + '" y="' + this.y + '" class="vertex ' + this.options.cssClass + '">\n\t\t\t\t\t\t\t<circle class="core" r="' + this.options.radius + '"></circle>\n\t\t\t\t\t\t</svg>\n\t\t\t\t\t');
-						}
-						return this._element;
-					},
-					configurable: true,
-					enumerable: true
-				},
-				graphZIndex: {
-					get: function () {
-						return this.options.graphZIndex;
-					},
-					configurable: true,
-					enumerable: true
-				}
-			}), {
-				graphZIndex: 200,
-				cssClass: '',
-				radius: 5,
-				visible: true
-			});
-	
-			return window._amy_D3Vertex;
-		}).tap(function (c) {
-			$.circuitboard.D3Vertex = c;
-		});
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	module.exports = __WEBPACK_EXTERNAL_MODULE_2__;
 
 /***/ },
+/* 3 */
+/***/ function(module, exports) {
 
-/***/ 10:
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
-	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(63)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P) {
-		'use strict';
-	
-		return function defer() {
-			var resolve, reject;
-			var promise = new P(function () {
-				resolve = arguments[0];
-				reject = arguments[1];
-			});
-			//noinspection JSUnusedAssignment
-			return {
-				resolve: resolve,
-				reject: reject,
-				promise: promise
-			};
-		};
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	module.exports = __WEBPACK_EXTERNAL_MODULE_3__;
 
 /***/ },
-
-/***/ 12:
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
-	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(15), __webpack_require__(65), __webpack_require__(66), __webpack_require__(67)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir, TWEEN, KefirJQuery) {
-	
-		/* Kefir jQuery plugin ********************************************************************************************/
-	
-		KefirJQuery.init(Kefir, $);
-	
-		/* EventStream generators *****************************************************************************************/
-	
-		// This method works with events that can have only one subscriber,
-		// that can be un-subscribed by setting the subscriber to `null`.
-		// This function is memoized, so only one subscription is taken,
-		// and the same stream for it returned for each request.
-		Kefir.fromOnNull = U.memoize(function fromOnNull(obj, eventName) {
-			return Kefir.fromBinder(function (emitter) {
-				obj.on(eventName, emitter.emit);
-				return function () {
-					obj.on(eventName, null);
-				};
-			});
-		});
-	
-		var requestAnimationFrameFn = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (f) {
-			window.setTimeout(f, 1000 / 60);
-		};
-		Kefir.animationFrames = function animationFrames() {
-			return Kefir.fromBinder(function (emitter) {
-	
-				/* self-calling animation-frame loop */
-				var subscribed = true;
-				(function iterationFn() {
-					requestAnimationFrameFn(function () {
-						emitter.emit();
-						if (subscribed) {
-							iterationFn();
-						}
-					});
-				})();
-	
-				/* unsubscribe function */
-				return function () {
-					subscribed = false;
-				};
-			});
-		};
-	
-		Kefir.tween = function tween(objStart, objEnd, _ref) {
-			var duration = _ref.duration;
-			var delay = _ref.delay;
-			var easing = _ref.easing;
-	
-			/* the tween */
-			var tw = new TWEEN.Tween(objStart).to(objEnd, duration);
-	
-			/* the returned bus */
-			var bus = Kefir.bus();
-	
-			/* a local function to plug in other streams, keeping track in order to 'end' the bus */
-			var addStream = (function () {
-				var chainedStreams = 0;
-				return function (stream) {
-					chainedStreams += 1;
-					bus.plug(stream);
-					stream.onEnd(function () {
-						chainedStreams -= 1;
-						if (chainedStreams === 0) {
-							bus.end();
-						}
-					});
-				};
-			})();
-	
-			/* main stream */
-			addStream(Kefir.fromBinder(function (emitter) {
-				if (easing) {
-					tw.easing(easing);
-				}
-				if (delay) {
-					tw.delay(delay);
-				}
-				tw.onUpdate(function () {
-					emitter.emit(this);
-				});
-				tw.onComplete(emitter.end);
-			}));
-	
-			/* adding tween-specific properties to the returned bus */
-			bus.tween = tw;
-			bus.start = function () {
-				tw.start();
-				return bus;
-			};
-			bus.chain = function (other) {
-				addStream(other);
-				tw.chain(other.tween);
-				return bus;
-			};
-	
-			/* returning the bus */
-			return bus;
-		};
-	
-		Kefir.keyPress = function keyPress(keyCode) {
-			return $(window).asKefirStream('keypress').filter(function (e) {
-				return e.keyCode === keyCode;
-			});
-		};
-	
-		Kefir.once = function once(value) {
-			return Kefir.fromBinder(function (emitter) {
-				emitter.emit(value);
-				emitter.end();
-			});
-			//return Kefir.constant(value); // TODO: replace all 'once' calls with 'constant' calls; then remove 'once'
-		};
-	
-		Kefir.fromArray = function fromArray(array) {
-			return Kefir.fromBinder(function (emitter) {
-				array.forEach(emitter.emit);
-				emitter.end();
-			});
-		};
-	
-		/* EventStream converters *****************************************************************************************/
-	
-		// This creates a 'window of opportunity' to limit other streams by.
-		// This window is provided by the `pacing` observable. An optional `handler`
-		// parameter can be given to do some setup and some breakdown. It is passed a function as an argument
-		// that should be called *once* in the place where other streams can do their
-		// thing. It returns a function used to wrap other streams. It does not
-		// return a stream.
-		Kefir.limiter = function limiter(pacing) {
-			var handler = arguments[1] === undefined ? U.call : arguments[1];
-	
-			var wantedBus = Kefir.bus();
-			var open = Kefir.bus();
-			var close = Kefir.bus();
-	
-			/* takes 'this' stream as pacing for a window of opportunity for other streams */
-			pacing.filterBy(wantedBus.toProperty(false)).onValue(function () {
-				handler(function () {
-					open.emit();
-					wantedBus.emit(false);
-					close.emit();
-				});
-			});
-	
-			/* returns a function to wrap a stream in this wrapper */
-			return function (stream) {
-				var _ref2 = arguments[1] === undefined ? {} : arguments[1];
-	
-				var buffer = _ref2.buffer;
-	
-				wantedBus.plug(stream.mapTo(true));
-				return Kefir.constant(true).take(1).concat(close).flatMapLatest(function () {
-					var accumulator = function accumulator(arr, val) {
-						return buffer ? arr.concat([val]) : [val];
-					};
-					return stream.takeUntilBy(open).reduce(accumulator, []).flatMap(Kefir.fromArray);
-				});
-			};
-		};
-	
-		// This restricts a given stream to a wrapper stream created with the method above.
-		// All its original events are now fired inside the provided window. Set `options.buffer`
-		// to `true` if all its events should be buffered and released inside the next window.
-		// Otherwise, only the last event is retained.
-		Kefir.Observable.prototype.limitedBy = function limitedBy(wrapper, options) {
-			return wrapper(this, options);
-		};
-	
-		// This is a cheap version of the limiter defined above. TODO: use the limiter where this is now used
-		Kefir.Stream.prototype.holdUntil = function holdUntil(pacing) {
-			var _this = this;
-	
-			return Kefir.fromBinder(function (emitter) {
-				var buffer = [];
-				var unsubscribeToThis = _this.onValue(function (value) {
-					buffer.push(value);
-				});
-				var unsubscribeToPacing = pacing.onValue(function () {
-					if (buffer.length > 0) {
-						var oldBuffer = buffer;
-						buffer = [];
-						oldBuffer.forEach(emitter.emit);
-					}
-				});
-				return function () {
-					unsubscribeToThis();
-					unsubscribeToPacing();
-					buffer = null;
-				};
-			});
-		};
-	
-		// This filters an observable to only let through values equal to the given value.
-		Kefir.Observable.prototype.value = function (value, comparator) {
-			comparator = comparator || function (e) {
-				return e === value;
-			};
-			return this.skipDuplicates().filter(comparator);
-		};
-	
-		// This makes a subscription to an observable that doesn't do anything
-		Kefir.Observable.prototype.run = function () {
-			var _this2 = this;
-	
-			var doNothing = function doNothing() {};
-			this.onValue(doNothing);
-			return function () {
-				_this2.offValue(doNothing);
-			};
-		};
-	
-		// This is a 'smart' .stopPropagation, marking events with a label
-		// and skipping those that already have that label.
-		Kefir.Stream.prototype.skipPropagation = function (label) {
-			return this.filter(function (event) {
-				return !U.array(event.originalEvent, '_onlyOnceFor')[label];
-			}).map(function (event) {
-				U.array(event.originalEvent, '_onlyOnceFor')[label] = true;
-			});
-		};
-	
-		// Filter events to only certain keys / buttons. Can be a predicate function or single number.
-		Kefir.Stream.prototype.which = function (buttonId) {
-			var pred = typeof buttonId === 'function' ? buttonId : function (b) {
-				return b === buttonId;
-			};
-			return this.filter(function (e) {
-				return pred(e.which);
-			});
-		};
-	
-		/* EventStream generators *****************************************************************************************/
-	
-		$.fn.mouseDrag = function mouseDrag() {
-			var _ref3 = arguments[0] === undefined ? {} : arguments[0];
-	
-			var threshold = _ref3.threshold;
-	
-			return $(this).asKefirStream('mousedown').flatMap(function (mouseDownEvent) {
-				var stream = $(document).asKefirStream('mousemove');
-				if (threshold) {
-					var crossed = false;
-					stream = stream.filter(function (mouseMoveEvent) {
-						// TODO: don't use 'filter', but something like 'skipUntil' or 'flatMap'
-						if (crossed) {
-							return true;
-						}
-						var dx = mouseDownEvent.pageX - mouseMoveEvent.pageX;
-						var dy = mouseDownEvent.pageY - mouseMoveEvent.pageY;
-						if (dx * dx + dy * dy > threshold * threshold) {
-							return crossed = true;
-						}
-						return false;
-					});
-				}
-				return stream.takeUntilBy($(document).asKefirStream('mouseup')).map(function (mouseMoveEvent) {
-					return { mouseDownEvent: mouseDownEvent, mouseMoveEvent: mouseMoveEvent };
-				});
-			});
-		};
-	
-		$.fn.mouseClick = function mouseClick() {
-			var _ref4 = arguments[0] === undefined ? {} : arguments[0];
-	
-			var threshold = _ref4.threshold;
-	
-			return $(this).asKefirStream('mousedown').flatMap(function (mouseDownEvent) {
-				var untilStream = $(document).asKefirStream('mousemove');
-				if (threshold) {
-					var crossed = false;
-					untilStream = untilStream.filter(function (mouseMoveEvent) {
-						if (crossed) {
-							return true;
-						}
-						var dx = mouseDownEvent.pageX - mouseMoveEvent.pageX;
-						var dy = mouseDownEvent.pageY - mouseMoveEvent.pageY;
-						if (dx * dx + dy * dy > threshold * threshold) {
-							return crossed = true;
-						}
-						return false;
-					});
-				}
-				return $(document).asKefirStream('mouseup').take(1).takeUntilBy(untilStream);
-			});
-		};
-	
-		$.fn.mouseWheel = function mouseWheel() {
-			return $(this).asKefirStream('mousewheel DOMMouseScroll');
-		};
-	
-		return Kefir;
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ },
-
-/***/ 13:
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(15), __webpack_require__(12)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir) {
-	
-		/** {@export}{@class KefirSignalHandler}
-	  * Use this as a subclass (or just mix it in) to provide support for
-	  * events and observable properties through Kefir.js.
-	  */
-		var KefirSignalHandler = (function () {
-			function KefirSignalHandler() {
-				_classCallCheck(this, KefirSignalHandler);
-	
-				this._events = {};
-				this._properties = {};
-				this._propertyBusses = {};
-			}
-	
-			_createClass(KefirSignalHandler, [{
-				key: 'newEvent',
-	
-				/** {@public}{@method}
-	    * Declares a new event stream for this object.
-	    *
-	    * @param  {String}        name    - the name of the event, used to trigger or subscribe to it
-	    * @param  {Kefir.Stream} [source] - another event stream to automatically trigger this event
-	    *
-	    * @return {Kefir.Bus} - the created event stream
-	    */
-				value: function newEvent(name) {
-					var _ref = arguments[1] === undefined ? {} : arguments[1];
-	
-					var source = _ref.source;
-	
-					/* is the event name already taken? */
-					U.assert(!this._events[name], 'There is already an event \'' + name + '\' on this object.');
-					U.assert(!this._properties[name], 'There is already a property \'' + name + '\' on this object.');
-	
-					/* define the event stream */
-					var bus = Kefir.bus();
-					if (source) {
-						bus.plug(source);
-					}
-					return this._events[name] = bus;
-				}
-			}, {
-				key: 'event',
-	
-				/** {@public}{@method}
-	    * Retrieve an event stream by name. If the name of a property is given, a stream
-	    * based on changes to that property is returned.
-	    *
-	    * @param  {String}  name - the name of the event stream to retrieve
-	    * @return {Kefir.Stream} - the event stream associated with the given name
-	    */
-				value: function event(name) {
-	
-					/* does the event exist? */
-					U.assert(this._events[name], 'There is no event \'' + name + '\' on this object.');
-	
-					/* return it */
-					return this._events[name];
-				}
-			}, {
-				key: 'property',
-	
-				/** {@public}{@method}
-	    * Retrieve a property by name.
-	    *
-	    * @param  {String} name - the name of the property to retrieve
-	    * @return {Kefir.Property} - the property associated with the given name
-	    */
-				value: function property(name) {
-					return this._properties[name];
-				}
-			}, {
-				key: 'p',
-	
-				/** @alias property */
-				value: function p(name) {
-					return this._properties[name];
-				}
-			}, {
-				key: 'newProperty',
-	
-				/** {@public}{@method}
-	    * This method defines a new property on this object.
-	    *
-	    * @param  {String}                   name           - the name of the event stream to retrieve
-	    * @param  {Boolean}                 [settable=true] - whether the value can be manually set
-	    * @param  {*}                       [initial]       - the initial value of this property
-	    * @param  {function(*,*):Boolean}   [isEqual]       - a predicate function by which to test for duplicate values
-	    *
-	    * @return {Kefir.Property} - the property associated with the given name
-	    */
-				value: function newProperty(name) {
-					var _ref2 = arguments[1] === undefined ? {} : arguments[1];
-	
-					var settable = _ref2.settable;
-					var initial = _ref2.initial;
-					var isEqual = _ref2.isEqual;
-	
-					/* is the property name already taken? */
-					U.assert(!this._events[name], 'There is already an event \'' + name + '\' on this object.');
-					U.assert(!this._properties[name], 'There is already a property \'' + name + '\' on this object.');
-	
-					/* default value for 'settable' */
-					if (U.isUndefined(settable)) {
-						settable = true;
-					}
-	
-					/* define the bus which manages the property */
-					var bus = Kefir.bus();
-	
-					/* define the property itself, and give it additional methods */
-					var property = this._properties[name] = bus.toProperty(initial).skipDuplicates(isEqual);
-					property.plug = function (observable) {
-						bus.plug(observable);return property;
-					};
-					property.unplug = function (observable) {
-						bus.unplug(observable);return property;
-					};
-					property.get = function () {
-						return property._current;
-					}; // TODO: accessing private field of Kefir property; don't
-					if (settable) {
-						property.set = function (value) {
-							bus.emit(value);return property;
-						};
-					}
-	
-					/* add the property to the object interface */
-					Object.defineProperty(this, name, {
-						get: property.get,
-						set: settable ? property.set : undefined
-					});
-	
-					/* make the property active; it doesn't work if this isn't done (the nature of Kefir.js) */
-					property.run();
-					this.event('destroy').onValue(function () {
-						bus.end();
-					});
-	
-					/* return the property */
-					return property;
-				}
-			}, {
-				key: 'trigger',
-	
-				/** {@public}{@method}
-	    * Trigger an event for all subscribers.
-	    *
-	    * @param {String} name  - the name of the event stream to trigger
-	    * @value {*}      value - the value to attach to the event
-	    */
-				value: function trigger(name, value) {
-	
-					/* does the event stream exist? */
-					U.assert(this._events[name], 'There is no event \'' + name + '\' on this object.');
-	
-					/* push the value to the stream */
-					this._events[name].emit(value);
-				}
-			}, {
-				key: 'on',
-	
-				/** {@public}{@method}
-	    * This method selects an existing stream or property, and then
-	    * either returns it, or creates a subscription to it, depending
-	    * on whether a callback is provided.
-	    *
-	    * @param {String}            name                 - the name of the event or property to subscribe to
-	    * @param {*}                [expectedValue]       - if provided, filters the stream by === equality with this value;
-	    *                                                   this may not be a plain object
-	    * @param {Object}           [options]             - a plain object for providing additional options
-	    * @param {Boolean}          [options.once=false]  - whether the stream ends after one event
-	    * @param {function(*):void} [callback]            - if provided, subscribes to this stream with the this callback
-	    *
-	    * @return {Kefir.Observable|function():undefined} - if no `callback` is provided, the specified event stream
-	    *                                                   or property; otherwise, a function to unsubscribe to said
-	    *                                                   stream or property
-	    */
-				value: function on(name, expectedValue, options, callback) {
-					var argsObj = this._gatherOnArguments(name, expectedValue, options, callback);
-					return this._on(argsObj);
-				}
-			}, {
-				key: '_on',
-	
-				/** {@private}{@method}
-	    * This method does the main work for {@link on}, but accepts
-	    * the parameters as one object, so it doesn't have to deal with parameter ordering.
-	    *
-	    * @return {Kefir.Observable|function():void}
-	    */
-				value: function _on(_ref3) {
-					var name = _ref3.name;
-					var expectedValue = _ref3.expectedValue;
-					var callback = _ref3.callback;
-	
-					/* does an event or property by this name exist? */
-					U.assert(this._events[name] || this._properties[name], 'There is no event or property \'' + name + '\' on this object.');
-	
-					/* process name */
-					var result = this._events[name] || this._properties[name];
-	
-					/* process expectedValue */
-					if (U.isDefined(expectedValue)) {
-						result = result.filter(function (v) {
-							return v === expectedValue;
-						});
-					}
-	
-					/* process callback */
-					if (callback) {
-						result = result.onValue(callback);
-					}
-	
-					return result;
-				}
-			}, {
-				key: '_gatherOnArguments',
-	
-				/** {@private}{@method}
-	    * Process the arguments accepted by {@link on}.
-	    *
-	    * @return {Object}
-	    */
-				value: function _gatherOnArguments() {
-					for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-						args[_key] = arguments[_key];
-					}
-	
-					var result = { name: args.shift() };
-	
-					/* test for expected value argument */
-					if (U.isDefined(args[0]) && !U.isFunction(args[0]) && !U.isPlainObject(args[0])) {
-						result.expectedValue = args.shift();
-					}
-	
-					/* test for callback function */
-					if (U.isDefined(args[0]) && U.isFunction(args[0])) {
-						result.callback = args.shift();
-					}
-	
-					return result;
-				}
-			}]);
-	
-			return KefirSignalHandler;
-		})();
-	
-		return KefirSignalHandler;
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ },
-
-/***/ 14:
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
-	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(63), __webpack_require__(68), __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, DeltaJs, defer) {
-		'use strict';
-	
-		/* already cached? */
-		if (window.__apinatomy_core_deltajs) {
-			return window.__apinatomy_core_deltajs;
-		}
-	
-		/* set the cache */
-		var deltaJs = window.__apinatomy_core_deltajs = new DeltaJs();
-		var deferred = defer();
-		deltaJs.selected = deferred.promise;
-		var oldSelect = deltaJs.select;
-		deltaJs.select = function () {
-			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-				args[_key] = arguments[_key];
-			}
-	
-			oldSelect.apply(this, args);
-			deferred.resolve(args);
-		};
-	
-		/* return the delta model that manages all plugins (= deltas) */
-		return window.__apinatomy_core_deltajs;
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ },
-
-/***/ 15:
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(63), __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, defer) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(3), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, defer) {
 		'use strict';
 	
 		var U = {
@@ -1119,7 +437,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 			// create a new subclass, given a superclass, constructor and possible prototype
 			newSubclass: function newSubclass(superClass, constructorMaker) {
-				var prototype = arguments[2] === undefined ? {} : arguments[2];
+				var prototype = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
 	
 				var constructor = constructorMaker(superClass.prototype.constructor);
 				constructor.prototype = Object.create(superClass.prototype);
@@ -1234,7 +552,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			// condition that is expected to be true
 			assert: function assert(condition, message) {
 				if (!condition) {
-					throw new Error(message || 'Assertion failed');
+					throw new Error(message || "Assertion failed");
 				}
 			},
 	
@@ -1313,15 +631,16 @@ return /******/ (function(modules) { // webpackBootstrap
 			oncePerStack: function oncePerStack(func, context) {
 				var notRunYet = true;
 				var result = function result() {
-					for (var _len6 = arguments.length, args = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
-						args[_key6] = arguments[_key6];
-					}
-	
 					if (notRunYet) {
 						notRunYet = false;
 						setTimeout(function () {
 							notRunYet = true;
 						}, 0);
+	
+						for (var _len6 = arguments.length, args = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+							args[_key6] = arguments[_key6];
+						}
+	
 						func.apply(context || this, args);
 					}
 				};
@@ -1476,99 +795,690 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
 
-/***/ 20:
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
+	
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P) {
+		'use strict';
+	
+		return function defer() {
+			var resolve, reject;
+			var promise = new P(function () {
+				resolve = arguments[0];
+				reject = arguments[1];
+			});
+			//noinspection JSUnusedAssignment
+			return {
+				resolve: resolve,
+				reject: reject,
+				promise: promise
+			};
+		};
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(2), __webpack_require__(4), __webpack_require__(7)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir) {
+	
+		/** {@export}{@class KefirSignalHandler}
+	  * Use this as a subclass (or just mix it in) to provide support for
+	  * events and observable properties through Kefir.js.
+	  */
+		var KefirSignalHandler = (function () {
+			function KefirSignalHandler() {
+				_classCallCheck(this, KefirSignalHandler);
+	
+				this._events = {};
+				this._properties = {};
+				this._propertyBusses = {};
+			}
+	
+			/** {@public}{@method}
+	   * Declares a new event stream for this object.
+	   *
+	   * @param  {String}        name    - the name of the event, used to trigger or subscribe to it
+	   * @param  {Kefir.Stream} [source] - another event stream to automatically trigger this event
+	   *
+	   * @return {Kefir.Bus} - the created event stream
+	   */
+	
+			_createClass(KefirSignalHandler, [{
+				key: 'newEvent',
+				value: function newEvent(name) {
+					var _ref = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+	
+					var source = _ref.source;
+	
+					/* is the event name already taken? */
+					U.assert(!this._events[name], 'There is already an event \'' + name + '\' on this object.');
+					U.assert(!this._properties[name], 'There is already a property \'' + name + '\' on this object.');
+	
+					/* define the event stream */
+					var bus = Kefir.bus();
+					if (source) {
+						bus.plug(source);
+					}
+					return this._events[name] = bus;
+				}
+	
+				/** {@public}{@method}
+	    * Retrieve an event stream by name. If the name of a property is given, a stream
+	    * based on changes to that property is returned.
+	    *
+	    * @param  {String}  name - the name of the event stream to retrieve
+	    * @return {Kefir.Stream} - the event stream associated with the given name
+	    */
+			}, {
+				key: 'event',
+				value: function event(name) {
+	
+					/* does the event exist? */
+					U.assert(this._events[name], 'There is no event \'' + name + '\' on this object.');
+	
+					/* return it */
+					return this._events[name];
+				}
+	
+				/** {@public}{@method}
+	    * Retrieve a property by name.
+	    *
+	    * @param  {String} name - the name of the property to retrieve
+	    * @return {Kefir.Property} - the property associated with the given name
+	    */
+			}, {
+				key: 'property',
+				value: function property(name) {
+					return this._properties[name];
+				}
+	
+				/** @alias property */
+			}, {
+				key: 'p',
+				value: function p(name) {
+					return this._properties[name];
+				}
+	
+				/** {@public}{@method}
+	    * This method defines a new property on this object.
+	    *
+	    * @param  {String}                   name           - the name of the event stream to retrieve
+	    * @param  {Boolean}                 [settable=true] - whether the value can be manually set
+	    * @param  {*}                       [initial]       - the initial value of this property
+	    * @param  {function(*,*):Boolean}   [isEqual]       - a predicate function by which to test for duplicate values
+	    *
+	    * @return {Kefir.Property} - the property associated with the given name
+	    */
+			}, {
+				key: 'newProperty',
+				value: function newProperty(name) {
+					var _ref2 = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+	
+					var settable = _ref2.settable;
+					var initial = _ref2.initial;
+					var isEqual = _ref2.isEqual;
+	
+					/* is the property name already taken? */
+					U.assert(!this._events[name], 'There is already an event \'' + name + '\' on this object.');
+					U.assert(!this._properties[name], 'There is already a property \'' + name + '\' on this object.');
+	
+					/* default value for 'settable' */
+					if (U.isUndefined(settable)) {
+						settable = true;
+					}
+	
+					/* define the bus which manages the property */
+					var bus = Kefir.bus();
+	
+					/* define the property itself, and give it additional methods */
+					var property = this._properties[name] = bus.toProperty(initial).skipDuplicates(isEqual);
+					property.plug = function (observable) {
+						bus.plug(observable);return property;
+					};
+					property.unplug = function (observable) {
+						bus.unplug(observable);return property;
+					};
+					property.get = function () {
+						return property._current;
+					}; // TODO: accessing private field of Kefir property; don't
+					if (settable) {
+						property.set = function (value) {
+							bus.emit(value);return property;
+						};
+					}
+	
+					/* add the property to the object interface */
+					Object.defineProperty(this, name, {
+						get: property.get,
+						set: settable ? property.set : undefined
+					});
+	
+					/* make the property active; it doesn't work if this isn't done (the nature of Kefir.js) */
+					property.run();
+					this.event('destroy').onValue(function () {
+						bus.end();
+					});
+	
+					/* return the property */
+					return property;
+				}
+	
+				/** {@public}{@method}
+	    * Trigger an event for all subscribers.
+	    *
+	    * @param {String} name  - the name of the event stream to trigger
+	    * @value {*}      value - the value to attach to the event
+	    */
+			}, {
+				key: 'trigger',
+				value: function trigger(name, value) {
+	
+					/* does the event stream exist? */
+					U.assert(this._events[name], 'There is no event \'' + name + '\' on this object.');
+	
+					/* push the value to the stream */
+					this._events[name].emit(value);
+				}
+	
+				/** {@public}{@method}
+	    * This method selects an existing stream or property, and then
+	    * either returns it, or creates a subscription to it, depending
+	    * on whether a callback is provided.
+	    *
+	    * @param {String}            name                 - the name of the event or property to subscribe to
+	    * @param {*}                [expectedValue]       - if provided, filters the stream by === equality with this value;
+	    *                                                   this may not be a plain object
+	    * @param {Object}           [options]             - a plain object for providing additional options
+	    * @param {Boolean}          [options.once=false]  - whether the stream ends after one event
+	    * @param {function(*):void} [callback]            - if provided, subscribes to this stream with the this callback
+	    *
+	    * @return {Kefir.Observable|function():undefined} - if no `callback` is provided, the specified event stream
+	    *                                                   or property; otherwise, a function to unsubscribe to said
+	    *                                                   stream or property
+	    */
+			}, {
+				key: 'on',
+				value: function on(name, expectedValue, options, callback) {
+					var argsObj = this._gatherOnArguments(name, expectedValue, options, callback);
+					return this._on(argsObj);
+				}
+	
+				/** {@private}{@method}
+	    * This method does the main work for {@link on}, but accepts
+	    * the parameters as one object, so it doesn't have to deal with parameter ordering.
+	    *
+	    * @return {Kefir.Observable|function():void}
+	    */
+			}, {
+				key: '_on',
+				value: function _on(_ref3) {
+					var name = _ref3.name;
+					var expectedValue = _ref3.expectedValue;
+					var callback = _ref3.callback;
+	
+					/* does an event or property by this name exist? */
+					U.assert(this._events[name] || this._properties[name], 'There is no event or property \'' + name + '\' on this object.');
+	
+					/* process name */
+					var result = this._events[name] || this._properties[name];
+	
+					/* process expectedValue */
+					if (U.isDefined(expectedValue)) {
+						result = result.filter(function (v) {
+							return v === expectedValue;
+						});
+					}
+	
+					/* process callback */
+					if (callback) {
+						result = result.onValue(callback);
+					}
+	
+					return result;
+				}
+	
+				/** {@private}{@method}
+	    * Process the arguments accepted by {@link on}.
+	    *
+	    * @return {Object}
+	    */
+			}, {
+				key: '_gatherOnArguments',
+				value: function _gatherOnArguments() {
+					for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+						args[_key] = arguments[_key];
+					}
+	
+					var result = { name: args.shift() };
+	
+					/* test for expected value argument */
+					if (U.isDefined(args[0]) && !U.isFunction(args[0]) && !U.isPlainObject(args[0])) {
+						result.expectedValue = args.shift();
+					}
+	
+					/* test for callback function */
+					if (U.isDefined(args[0]) && U.isFunction(args[0])) {
+						result.callback = args.shift();
+					}
+	
+					return result;
+				}
+			}]);
+	
+			return KefirSignalHandler;
+		})();
+	
+		return KefirSignalHandler;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
+	
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(2), __webpack_require__(4), __webpack_require__(8), __webpack_require__(9), __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir, TWEEN, KefirJQuery) {
+	
+		/* Kefir jQuery plugin ********************************************************************************************/
+	
+		KefirJQuery.init(Kefir, $);
+	
+		/* EventStream generators *****************************************************************************************/
+	
+		// This method works with events that can have only one subscriber,
+		// that can be un-subscribed by setting the subscriber to `null`.
+		// This function is memoized, so only one subscription is taken,
+		// and the same stream for it returned for each request.
+		Kefir.fromOnNull = U.memoize(function fromOnNull(obj, eventName) {
+			return Kefir.fromBinder(function (emitter) {
+				obj.on(eventName, emitter.emit);
+				return function () {
+					obj.on(eventName, null);
+				};
+			});
+		});
+	
+		var requestAnimationFrameFn = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (f) {
+			window.setTimeout(f, 1000 / 60);
+		};
+		Kefir.animationFrames = function animationFrames() {
+			return Kefir.fromBinder(function (emitter) {
+	
+				/* self-calling animation-frame loop */
+				var subscribed = true;
+				(function iterationFn() {
+					requestAnimationFrameFn(function () {
+						emitter.emit();
+						if (subscribed) {
+							iterationFn();
+						}
+					});
+				})();
+	
+				/* unsubscribe function */
+				return function () {
+					subscribed = false;
+				};
+			});
+		};
+	
+		Kefir.tween = function tween(objStart, objEnd, _ref) {
+			var duration = _ref.duration;
+			var delay = _ref.delay;
+			var easing = _ref.easing;
+	
+			/* the tween */
+			var tw = new TWEEN.Tween(objStart).to(objEnd, duration);
+	
+			/* the returned bus */
+			var bus = Kefir.bus();
+	
+			/* a local function to plug in other streams, keeping track in order to 'end' the bus */
+			var addStream = (function () {
+				var chainedStreams = 0;
+				return function (stream) {
+					chainedStreams += 1;
+					bus.plug(stream);
+					stream.onEnd(function () {
+						chainedStreams -= 1;
+						if (chainedStreams === 0) {
+							bus.end();
+						}
+					});
+				};
+			})();
+	
+			/* main stream */
+			addStream(Kefir.fromBinder(function (emitter) {
+				if (easing) {
+					tw.easing(easing);
+				}
+				if (delay) {
+					tw.delay(delay);
+				}
+				tw.onUpdate(function () {
+					emitter.emit(this);
+				});
+				tw.onComplete(emitter.end);
+			}));
+	
+			/* adding tween-specific properties to the returned bus */
+			bus.tween = tw;
+			bus.start = function () {
+				tw.start();
+				return bus;
+			};
+			bus.chain = function (other) {
+				addStream(other);
+				tw.chain(other.tween);
+				return bus;
+			};
+	
+			/* returning the bus */
+			return bus;
+		};
+	
+		Kefir.keyPress = function keyPress(keyCode) {
+			return $(window).asKefirStream('keypress').filter(function (e) {
+				return e.keyCode === keyCode;
+			});
+		};
+	
+		Kefir.once = function once(value) {
+			return Kefir.fromBinder(function (emitter) {
+				emitter.emit(value);
+				emitter.end();
+			});
+			//return Kefir.constant(value); // TODO: replace all 'once' calls with 'constant' calls; then remove 'once'
+		};
+	
+		Kefir.fromArray = function fromArray(array) {
+			return Kefir.fromBinder(function (emitter) {
+				array.forEach(emitter.emit);
+				emitter.end();
+			});
+		};
+	
+		/* EventStream converters *****************************************************************************************/
+	
+		// This creates a 'window of opportunity' to limit other streams by.
+		// This window is provided by the `pacing` observable. An optional `handler`
+		// parameter can be given to do some setup and some breakdown. It is passed a function as an argument
+		// that should be called *once* in the place where other streams can do their
+		// thing. It returns a function used to wrap other streams. It does not
+		// return a stream.
+		Kefir.limiter = function limiter(pacing) {
+			var handler = arguments.length <= 1 || arguments[1] === undefined ? U.call : arguments[1];
+	
+			var wantedBus = Kefir.bus();
+			var open = Kefir.bus();
+			var close = Kefir.bus();
+	
+			/* takes 'this' stream as pacing for a window of opportunity for other streams */
+			pacing.filterBy(wantedBus.toProperty(false)).onValue(function () {
+				handler(function () {
+					open.emit();
+					wantedBus.emit(false);
+					close.emit();
+				});
+			});
+	
+			/* returns a function to wrap a stream in this wrapper */
+			return function (stream) {
+				var _ref2 = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+	
+				var buffer = _ref2.buffer;
+	
+				wantedBus.plug(stream.mapTo(true));
+				return Kefir.constant(true).take(1).concat(close).flatMapLatest(function () {
+					var accumulator = function accumulator(arr, val) {
+						return buffer ? arr.concat([val]) : [val];
+					};
+					return stream.takeUntilBy(open).reduce(accumulator, []).flatMap(Kefir.fromArray);
+				});
+			};
+		};
+	
+		// This restricts a given stream to a wrapper stream created with the method above.
+		// All its original events are now fired inside the provided window. Set `options.buffer`
+		// to `true` if all its events should be buffered and released inside the next window.
+		// Otherwise, only the last event is retained.
+		Kefir.Observable.prototype.limitedBy = function limitedBy(wrapper, options) {
+			return wrapper(this, options);
+		};
+	
+		// This is a cheap version of the limiter defined above. TODO: use the limiter where this is now used
+		Kefir.Stream.prototype.holdUntil = function holdUntil(pacing) {
+			var _this = this;
+	
+			return Kefir.fromBinder(function (emitter) {
+				var buffer = [];
+				var unsubscribeToThis = _this.onValue(function (value) {
+					buffer.push(value);
+				});
+				var unsubscribeToPacing = pacing.onValue(function () {
+					if (buffer.length > 0) {
+						var oldBuffer = buffer;
+						buffer = [];
+						oldBuffer.forEach(emitter.emit);
+					}
+				});
+				return function () {
+					unsubscribeToThis();
+					unsubscribeToPacing();
+					buffer = null;
+				};
+			});
+		};
+	
+		// This filters an observable to only let through values equal to the given value.
+		Kefir.Observable.prototype.value = function (value, comparator) {
+			comparator = comparator || function (e) {
+				return e === value;
+			};
+			return this.skipDuplicates().filter(comparator);
+		};
+	
+		// This makes a subscription to an observable that doesn't do anything
+		Kefir.Observable.prototype.run = function () {
+			var _this2 = this;
+	
+			var doNothing = function doNothing() {};
+			this.onValue(doNothing);
+			return function () {
+				_this2.offValue(doNothing);
+			};
+		};
+	
+		// This is a 'smart' .stopPropagation, marking events with a label
+		// and skipping those that already have that label.
+		Kefir.Stream.prototype.skipPropagation = function (label) {
+			return this.filter(function (event) {
+				return !U.array(event.originalEvent, '_onlyOnceFor')[label];
+			}).map(function (event) {
+				U.array(event.originalEvent, '_onlyOnceFor')[label] = true;
+			});
+		};
+	
+		// Filter events to only certain keys / buttons. Can be a predicate function or single number.
+		Kefir.Stream.prototype.which = function (buttonId) {
+			var pred = typeof buttonId === 'function' ? buttonId : function (b) {
+				return b === buttonId;
+			};
+			return this.filter(function (e) {
+				return pred(e.which);
+			});
+		};
+	
+		/* EventStream generators *****************************************************************************************/
+	
+		$.fn.mouseDrag = function mouseDrag() {
+			var _ref3 = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	
+			var threshold = _ref3.threshold;
+	
+			return $(this).asKefirStream('mousedown').flatMap(function (mouseDownEvent) {
+				var stream = $(document).asKefirStream('mousemove');
+				if (threshold) {
+					var crossed = false;
+					stream = stream.filter(function (mouseMoveEvent) {
+						// TODO: don't use 'filter', but something like 'skipUntil' or 'flatMap'
+						if (crossed) {
+							return true;
+						}
+						var dx = mouseDownEvent.pageX - mouseMoveEvent.pageX;
+						var dy = mouseDownEvent.pageY - mouseMoveEvent.pageY;
+						if (dx * dx + dy * dy > threshold * threshold) {
+							return crossed = true;
+						}
+						return false;
+					});
+				}
+				return stream.takeUntilBy($(document).asKefirStream('mouseup')).map(function (mouseMoveEvent) {
+					return { mouseDownEvent: mouseDownEvent, mouseMoveEvent: mouseMoveEvent };
+				});
+			});
+		};
+	
+		$.fn.mouseClick = function mouseClick() {
+			var _ref4 = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	
+			var threshold = _ref4.threshold;
+	
+			return $(this).asKefirStream('mousedown').flatMap(function (mouseDownEvent) {
+				var untilStream = $(document).asKefirStream('mousemove');
+				if (threshold) {
+					var crossed = false;
+					untilStream = untilStream.filter(function (mouseMoveEvent) {
+						if (crossed) {
+							return true;
+						}
+						var dx = mouseDownEvent.pageX - mouseMoveEvent.pageX;
+						var dy = mouseDownEvent.pageY - mouseMoveEvent.pageY;
+						if (dx * dx + dy * dy > threshold * threshold) {
+							return crossed = true;
+						}
+						return false;
+					});
+				}
+				return $(document).asKefirStream('mouseup').take(1).takeUntilBy(untilStream);
+			});
+		};
+	
+		$.fn.mouseWheel = function mouseWheel() {
+			return $(this).asKefirStream('mousewheel DOMMouseScroll');
+		};
+	
+		return Kefir;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_8__;
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_9__;
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_10__;
+
+/***/ },
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;"use strict";
 	
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
-		"use strict";
+		'use strict';
 	
 		var _nextId = 0;
 	
 		return function uniqueId(prefix) {
-			return "" + (prefix || "unique-id") + "-" + _nextId++;
+			return (prefix || "unique-id") + "-" + _nextId++;
 		};
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-
-/***/ 62:
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_62__;
-
-/***/ },
-
-/***/ 63:
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_63__;
-
-/***/ },
-
-/***/ 65:
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_65__;
-
-/***/ },
-
-/***/ 66:
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_66__;
-
-/***/ },
-
-/***/ 67:
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_67__;
-
-/***/ },
-
-/***/ 68:
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_68__;
-
-/***/ },
-
-/***/ 77:
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	// load the styles
-	var content = __webpack_require__(78);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(104)(content, {});
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		module.hot.accept("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/D3Vertex.scss", function() {
-			var newContent = require("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/D3Vertex.scss");
-			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-			update(newContent);
-		});
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(3), __webpack_require__(13), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, DeltaJs, defer) {
+		'use strict';
+	
+		/* already cached? */
+		if (window.__apinatomy_core_deltajs) {
+			return window.__apinatomy_core_deltajs;
+		}
+	
+		/* set the cache */
+		var deltaJs = window.__apinatomy_core_deltajs = new DeltaJs();
+		var deferred = defer();
+		deltaJs.selected = deferred.promise;
+		var oldSelect = deltaJs.select;
+		deltaJs.select = function () {
+			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+				args[_key] = arguments[_key];
+			}
+	
+			oldSelect.apply(this, args);
+			deferred.resolve(args);
+		};
+	
+		/* return the delta model that manages all plugins (= deltas) */
+		return window.__apinatomy_core_deltajs;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ },
+/* 13 */
+/***/ function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_13__;
+
+/***/ },
+/* 14 */,
+/* 15 */,
+/* 16 */,
+/* 17 */
+/***/ function(module, exports) {
+
+	module.exports = function() {
+		var list = [];
+		list.toString = function toString() {
+			var result = [];
+			for(var i = 0; i < this.length; i++) {
+				var item = this[i];
+				if(item[2]) {
+					result.push("@media " + item[2] + "{" + item[1] + "}");
+				} else {
+					result.push(item[1]);
+				}
+			}
+			return result.join("");
+		};
+		return list;
 	}
 
 /***/ },
-
-/***/ 78:
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(105)();
-	exports.push([module.id, "", ""]);
-
-/***/ },
-
-/***/ 104:
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -1764,30 +1674,112 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-
-/***/ 105:
+/* 19 */,
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = function() {
-		var list = [];
-		list.toString = function toString() {
-			var result = [];
-			for(var i = 0; i < this.length; i++) {
-				var item = this[i];
-				if(item[2]) {
-					result.push("@media " + item[2] + "{" + item[1] + "}");
-				} else {
-					result.push(item[1]);
-				}
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
+	
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(2), __webpack_require__(4), __webpack_require__(1), __webpack_require__(21)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, ArtefactP) {
+		'use strict';
+	
+		return ArtefactP.then(function (Artefact) {
+	
+			/* however (often) this is loaded, create the class only once */
+			if (U.isDefined(window._amy_D3Vertex)) {
+				return window._amy_D3Vertex;
 			}
-			return result.join("");
-		};
-		return list;
+	
+			window._amy_D3Vertex = Artefact.newSubclass('D3Vertex', function D3Vertex(_ref) {
+				var _this = this;
+	
+				var visible = _ref.visible;
+				var z = _ref.z;
+	
+				/* the coordinate properties */
+				this.newProperty('x', { initial: 10 });
+				this.newProperty('y', { initial: 10 });
+				this.newProperty('z', { initial: z || 0 });
+	
+				/* the 'visible' and 'hidden' properties */
+				this.newProperty('visible', { initial: visible });
+				this.newProperty('hidden').plug(this.p('visible').not());
+				this.p('visible').plug(this.p('hidden').not());
+	
+				/* enact vertex hiding on the DOM */
+				this.p('hidden').merge(this.on('destroy').mapTo(true)).onValue(function (h) {
+					_this.element.toggleClass('hidden', h).toggleClass('visible', !h);
+				});
+			}, Object.defineProperties({
+	
+				updateVisualization: function updateVisualization() {
+					this.element.attr('x', this.x);
+					this.element.attr('y', this.y);
+				}
+	
+			}, {
+				element: {
+					get: function get() {
+						if (!this._element) {
+							this._element = $('\n\t\t\t\t\t\t<svg x="' + this.x + '" y="' + this.y + '" class="vertex ' + this.options.cssClass + '">\n\t\t\t\t\t\t\t<circle class="core" r="' + this.options.radius + '"></circle>\n\t\t\t\t\t\t</svg>\n\t\t\t\t\t');
+						}
+						return this._element;
+					},
+					configurable: true,
+					enumerable: true
+				},
+				graphZIndex: {
+					get: function get() {
+						return this.options.graphZIndex;
+					},
+					configurable: true,
+					enumerable: true
+				}
+			}), {
+				graphZIndex: 200,
+				cssClass: '',
+				radius: 5,
+				visible: true
+			});
+	
+			return window._amy_D3Vertex;
+		}).tap(function (c) {
+			$.circuitboard.D3Vertex = c;
+		});
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ },
+/* 21 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(22);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(18)(content, {});
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		module.hot.accept("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/D3Vertex.scss", function() {
+			var newContent = require("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/D3Vertex.scss");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
 	}
 
-/***/ }
+/***/ },
+/* 22 */
+/***/ function(module, exports, __webpack_require__) {
 
-/******/ })
+	exports = module.exports = __webpack_require__(17)();
+	exports.push([module.id, "", ""]);
+
+/***/ }
+/******/ ])
 });
 ;
 //# sourceMappingURL=D3Vertex.js.map

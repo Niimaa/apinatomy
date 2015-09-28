@@ -42,7 +42,7 @@ define([
 		this.dom = $(`<section/>`).appendTo(origElement);
 
 		/* put the name of the model in the header element */
-		this.model.get('name').then((name)=> { this._p_tileSkin_headerElement.text(name) });
+		//this.model.get('name').then((name)=> { this._p_tileSkin_headerElement.text(name) }); // TEMPORARILY GONE; TODO: put back?
 
 		/* take any css rules from the model and apply them to the tile */
 		this.model.get('tile').get('normal').get('css')
