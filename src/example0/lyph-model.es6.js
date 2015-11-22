@@ -3,6 +3,7 @@ import P from 'bluebird';
 import U from '../util/misc.es6.js';
 import defer from '../util/defer.es6.js';
 import dm from '../util/main-deltajs.es6.js';
+import {getResource_sync} from './resources.es6.js';
 
 
 /* the type of entity we can retrieve with this module */
@@ -14,7 +15,7 @@ let LyphModel = dm.vp('LyphModel', class LyphModel {
 	constructor(fields) { U.extend(this, fields)  }
 	get type()     { return TYPE }
 	getChildIds()  { return this.children }
-	getModels(ids) { return getLyphModels(ids, { host: this._serverHost, port: this._serverPort }) }
+	getModels(ids) { return getLyphModels(ids) }
 });
 
 
@@ -67,21 +68,14 @@ export function getLyphModels(ids, options = {}) {
 	if (options.root && newIds.length === 1 && newIds[0] === 'root') {
 		_getDeferred('root').resolve(new LyphModel({
 			id: 'root',
-			children: [ options.root ],
-			_serverPort: options.port,
-			_serverHost: options.host
+			children: [ options.root ]
 		}));
 	} else {
 
 		/* request and build the model objects belonging to any new ids */
 		if (newIds.length > 0) {
-			P.resolve($.ajax({
-				url: `http://${options.host}:${options.port}/lyphTemplates/${newIds.join(',')}`, //?array=yes&correlations=yes
-				dataType: 'jsonp'
-			})).each((model) => {
+			P.resolve(getResource_sync('lyphTemplates', newIds)).each((model) => {
 				/* resolve the corresponding promise */
-				model._serverPort = options.port;
-				model._serverHost = options.host;
 				_getDeferred(model.id).resolve(new LyphModel(model));
 			}).error((err) => {
 				console.error("There seems to be something wrong with the server.", err);
@@ -99,11 +93,9 @@ export function getLyphModels(ids, options = {}) {
 
 }
 
-export function provideLyphsFromServer(lyphs, options = {}) {
+export function provideLyphsFromServer(lyphs) {
 	lyphs.forEach((model) => {
 		if (preparePromise(model.id).isNew) {
-			model._serverPort = options.port;
-			model._serverHost = options.host;
 			_getDeferred(model.id).resolve(new LyphModel(model));
 		}
 	});

@@ -7,7 +7,7 @@
 		var a = typeof exports === 'object' ? factory(require("jquery"), require("bluebird"), require("chroma-js")) : factory(root["jquery"], root["bluebird"], root["chroma-js"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE_62__, __WEBPACK_EXTERNAL_MODULE_63__, __WEBPACK_EXTERNAL_MODULE_69__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_3__, __WEBPACK_EXTERNAL_MODULE_67__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -55,163 +55,33 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(43);
+	module.exports = __webpack_require__(73);
 
 
 /***/ },
 
-/***/ 9:
-/***/ function(module, exports, __webpack_require__) {
+/***/ 2:
+/***/ function(module, exports) {
 
-	"use strict";
-	
-	!(module.exports = {
-	
-		button: {
-			LEFT: 1,
-			MIDDLE: 2,
-			RIGHT: 3
-		},
-	
-		key: {
-			BACKSPACE: 8,
-			TAB: 9,
-			ENTER: 13,
-			SHIFT: 16,
-			CTRL: 17,
-			ALT: 18,
-			PAUSE: 19,
-			CAPS_LOCK: 20,
-			ESCAPE: 27,
-			SPACE: 32,
-			PAGE_UP: 33,
-			PAGE_DOWN: 34,
-			END: 35,
-			HOME: 36,
-			LEFT_ARROW: 37,
-			UP_ARROW: 38,
-			RIGHT_ARROW: 39,
-			DOWN_ARROW: 40,
-			INSERT: 45,
-			DELETE: 46,
-			0: 48,
-			1: 49,
-			2: 50,
-			3: 51,
-			4: 52,
-			5: 53,
-			6: 54,
-			7: 55,
-			8: 56,
-			9: 57,
-			A: 65,
-			B: 66,
-			C: 67,
-			D: 68,
-			E: 69,
-			F: 70,
-			G: 71,
-			H: 72,
-			I: 73,
-			J: 74,
-			K: 75,
-			L: 76,
-			M: 77,
-			N: 78,
-			O: 79,
-			P: 80,
-			Q: 81,
-			R: 82,
-			S: 83,
-			T: 84,
-			U: 85,
-			V: 86,
-			W: 87,
-			X: 88,
-			Y: 89,
-			Z: 90,
-			LEFT_META: 91,
-			RIGHT_META: 92,
-			SELECT: 93,
-			NUMPAD_0: 96,
-			NUMPAD_1: 97,
-			NUMPAD_2: 98,
-			NUMPAD_3: 99,
-			NUMPAD_4: 100,
-			NUMPAD_5: 101,
-			NUMPAD_6: 102,
-			NUMPAD_7: 103,
-			NUMPAD_8: 104,
-			NUMPAD_9: 105,
-			MULTIPLY: 106,
-			ADD: 107,
-			SUBTRACT: 109,
-			DECIMAL: 110,
-			DIVIDE: 111,
-			F1: 112,
-			F2: 113,
-			F3: 114,
-			F4: 115,
-			F5: 116,
-			F6: 117,
-			F7: 118,
-			F8: 119,
-			F9: 120,
-			F10: 121,
-			F11: 122,
-			F12: 123,
-			NUM_LOCK: 144,
-			SCROLL_LOCK: 145,
-			SEMICOLON: 186,
-			EQUALS: 187,
-			COMMA: 188,
-			DASH: 189,
-			PERIOD: 190,
-			FORWARD_SLASH: 191,
-			GRAVE_ACCENT: 192,
-			OPEN_BRACKET: 219,
-			BACK_SLASH: 220,
-			CLOSE_BRACKET: 221,
-			SINGLE_QUOTE: 222
-		}
-	
-	});
+	module.exports = __WEBPACK_EXTERNAL_MODULE_2__;
 
 /***/ },
 
-/***/ 10:
-/***/ function(module, exports, __webpack_require__) {
+/***/ 3:
+/***/ function(module, exports) {
 
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
-	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(63)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P) {
-		'use strict';
-	
-		return function defer() {
-			var resolve, reject;
-			var promise = new P(function () {
-				resolve = arguments[0];
-				reject = arguments[1];
-			});
-			//noinspection JSUnusedAssignment
-			return {
-				resolve: resolve,
-				reject: reject,
-				promise: promise
-			};
-		};
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	module.exports = __WEBPACK_EXTERNAL_MODULE_3__;
 
 /***/ },
 
-/***/ 15:
+/***/ 4:
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(63), __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, defer) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(3), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, defer) {
 		'use strict';
 	
 		var U = {
@@ -225,7 +95,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 			// create a new subclass, given a superclass, constructor and possible prototype
 			newSubclass: function newSubclass(superClass, constructorMaker) {
-				var prototype = arguments[2] === undefined ? {} : arguments[2];
+				var prototype = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
 	
 				var constructor = constructorMaker(superClass.prototype.constructor);
 				constructor.prototype = Object.create(superClass.prototype);
@@ -340,7 +210,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			// condition that is expected to be true
 			assert: function assert(condition, message) {
 				if (!condition) {
-					throw new Error(message || 'Assertion failed');
+					throw new Error(message || "Assertion failed");
 				}
 			},
 	
@@ -419,15 +289,16 @@ return /******/ (function(modules) { // webpackBootstrap
 			oncePerStack: function oncePerStack(func, context) {
 				var notRunYet = true;
 				var result = function result() {
-					for (var _len6 = arguments.length, args = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
-						args[_key6] = arguments[_key6];
-					}
-	
 					if (notRunYet) {
 						notRunYet = false;
 						setTimeout(function () {
 							notRunYet = true;
 						}, 0);
+	
+						for (var _len6 = arguments.length, args = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+							args[_key6] = arguments[_key6];
+						}
+	
 						func.apply(context || this, args);
 					}
 				};
@@ -595,110 +466,54 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 43:
+/***/ 5:
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(63), __webpack_require__(69), __webpack_require__(15), __webpack_require__(9), __webpack_require__(88)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, color, U, _ref) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P) {
 		'use strict';
 	
-		var button = _ref.button;
-		/* the plugin */
-		var plugin = $.circuitboard.plugin['do']('tile-buttons', {
-			requires: ['core'],
-			after: ['tile-skin']
-		});
-	
-		plugin.add('Tile.prototype.addButton', function (_ref2) {
-			var name = _ref2.name;
-			var icon = _ref2.icon;
-	
-			/* if it's not there yet, create a <div> that holds all the buttons */
-			if (!this._buttonHolder) {
-				U.makePositioned(this.element);
-				this._buttonHolder = $('<div class="tile-button-holder">').appendTo(this.element);
-			}
-	
-			/* create the button itself */
-			var buttonElement = $('<div class="tile-button ' + name + '">').appendTo(this._buttonHolder);
-	
-			/* determine the icon coloring based on background color */
-			(this.skinnedElement || P.resolve(this.element)).then(function (element) {
-				if (typeof icon === 'string') {
-					buttonElement.css('background-image', 'url(' + icon + ')');
-				} else {
-					var lightBackground = color(element.css('backgroundColor')).luminance() > 0.5;
-					buttonElement.addClass(lightBackground ? 'black' : 'white').css('background-image', 'url(' + (lightBackground ? icon.black : icon.white) + ')');
-				}
+		return function defer() {
+			var resolve, reject;
+			var promise = new P(function () {
+				resolve = arguments[0];
+				reject = arguments[1];
 			});
-	
-			/* create the button-click-event */
-			this.newEvent('tile-button:' + name, {
-				source: buttonElement.mouseClick({ threshold: this.circuitboard.options.dragTheshold }).which(button.LEFT).skipPropagation('tile-left-click') // only register this event for the inner-most element
-			});
-	
-			/* return the event-stream for convenient chaining-notation */
-			return this.event('tile-button:' + name);
-		});
+			//noinspection JSUnusedAssignment
+			return {
+				resolve: resolve,
+				reject: reject,
+				promise: promise
+			};
+		};
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
 
-/***/ 62:
-/***/ function(module, exports, __webpack_require__) {
+/***/ 18:
+/***/ function(module, exports) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_62__;
-
-/***/ },
-
-/***/ 63:
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_63__;
-
-/***/ },
-
-/***/ 69:
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_69__;
-
-/***/ },
-
-/***/ 88:
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(89);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(108)(content, {});
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		module.hot.accept("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/features/p-tile-buttons.scss", function() {
-			var newContent = require("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/features/p-tile-buttons.scss");
-			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-			update(newContent);
-		});
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
+	module.exports = function() {
+		var list = [];
+		list.toString = function toString() {
+			var result = [];
+			for(var i = 0; i < this.length; i++) {
+				var item = this[i];
+				if(item[2]) {
+					result.push("@media " + item[2] + "{" + item[1] + "}");
+				} else {
+					result.push(item[1]);
+				}
+			}
+			return result.join("");
+		};
+		return list;
 	}
 
 /***/ },
 
-/***/ 89:
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(109)();
-	exports.push([module.id, ".tile>.tile-button-holder{position:absolute;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-orient:horizontal;-webkit-box-direction:normal;-webkit-flex-direction:row;-ms-flex-direction:row;flex-direction:row;top:2px;right:2px;margin:0;padding:0;}.tile>.tile-button-holder>.tile-button{display:block;background-size:18px;background-repeat:no-repeat;background-position:center;width:20px;height:20px;margin-left:2px;border:solid 1px transparent;}.tile>.tile-button-holder>.tile-button.white:hover{border:dotted 1px white;}.tile>.tile-button-holder>.tile-button.black:hover,.tile>.tile-button-holder>.tile-button:hover{border:dotted 1px black;}.tile:not(:hover)>.tile-button-holder{display:none;}", ""]);
-
-/***/ },
-
-/***/ 108:
+/***/ 19:
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -895,25 +710,212 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 109:
+/***/ 67:
+/***/ function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_67__;
+
+/***/ },
+
+/***/ 73:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = function() {
-		var list = [];
-		list.toString = function toString() {
-			var result = [];
-			for(var i = 0; i < this.length; i++) {
-				var item = this[i];
-				if(item[2]) {
-					result.push("@media " + item[2] + "{" + item[1] + "}");
-				} else {
-					result.push(item[1]);
-				}
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
+	
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(2), __webpack_require__(3), __webpack_require__(67), __webpack_require__(4), __webpack_require__(74), __webpack_require__(75)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P, color, U, _ref) {
+		'use strict';
+	
+		/* the plugin */
+		var button = _ref.button;
+		var plugin = $.circuitboard.plugin['do']('tile-buttons', {
+			requires: ['core'],
+			after: ['tile-skin']
+		});
+	
+		plugin.add('Tile.prototype.addButton', function (_ref2) {
+			var name = _ref2.name;
+			var icon = _ref2.icon;
+	
+			/* if it's not there yet, create a <div> that holds all the buttons */
+			if (!this._buttonHolder) {
+				U.makePositioned(this.element);
+				this._buttonHolder = $('<div class="tile-button-holder">').appendTo(this.element);
 			}
-			return result.join("");
-		};
-		return list;
+	
+			/* create the button itself */
+			var buttonElement = $('<div class="tile-button ' + name + '">').appendTo(this._buttonHolder);
+	
+			/* determine the icon coloring based on background color */
+			(this.skinnedElement || P.resolve(this.element)).then(function (element) {
+				if (typeof icon === 'string') {
+					buttonElement.css('background-image', 'url(' + icon + ')');
+				} else {
+					var lightBackground = color(element.css('backgroundColor')).luminance() > 0.5;
+					buttonElement.addClass(lightBackground ? 'black' : 'white').css('background-image', 'url(' + (lightBackground ? icon.black : icon.white) + ')');
+				}
+			});
+	
+			/* create the button-click-event */
+			this.newEvent('tile-button:' + name, {
+				source: buttonElement.mouseClick({ threshold: this.circuitboard.options.dragTheshold }).which(button.LEFT).skipPropagation('tile-left-click') // only register this event for the inner-most element
+			});
+	
+			/* return the event-stream for convenient chaining-notation */
+			return this.event('tile-button:' + name);
+		});
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ },
+
+/***/ 74:
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var button = {
+		LEFT: 1,
+		MIDDLE: 2,
+		RIGHT: 3
+	};
+	
+	exports.button = button;
+	var key = {
+		BACKSPACE: 8,
+		TAB: 9,
+		ENTER: 13,
+		SHIFT: 16,
+		CTRL: 17,
+		ALT: 18,
+		PAUSE: 19,
+		CAPS_LOCK: 20,
+		ESCAPE: 27,
+		SPACE: 32,
+		PAGE_UP: 33,
+		PAGE_DOWN: 34,
+		END: 35,
+		HOME: 36,
+		LEFT_ARROW: 37,
+		UP_ARROW: 38,
+		RIGHT_ARROW: 39,
+		DOWN_ARROW: 40,
+		INSERT: 45,
+		DELETE: 46,
+		0: 48,
+		1: 49,
+		2: 50,
+		3: 51,
+		4: 52,
+		5: 53,
+		6: 54,
+		7: 55,
+		8: 56,
+		9: 57,
+		A: 65,
+		B: 66,
+		C: 67,
+		D: 68,
+		E: 69,
+		F: 70,
+		G: 71,
+		H: 72,
+		I: 73,
+		J: 74,
+		K: 75,
+		L: 76,
+		M: 77,
+		N: 78,
+		O: 79,
+		P: 80,
+		Q: 81,
+		R: 82,
+		S: 83,
+		T: 84,
+		U: 85,
+		V: 86,
+		W: 87,
+		X: 88,
+		Y: 89,
+		Z: 90,
+		LEFT_META: 91,
+		RIGHT_META: 92,
+		SELECT: 93,
+		NUMPAD_0: 96,
+		NUMPAD_1: 97,
+		NUMPAD_2: 98,
+		NUMPAD_3: 99,
+		NUMPAD_4: 100,
+		NUMPAD_5: 101,
+		NUMPAD_6: 102,
+		NUMPAD_7: 103,
+		NUMPAD_8: 104,
+		NUMPAD_9: 105,
+		MULTIPLY: 106,
+		ADD: 107,
+		SUBTRACT: 109,
+		DECIMAL: 110,
+		DIVIDE: 111,
+		F1: 112,
+		F2: 113,
+		F3: 114,
+		F4: 115,
+		F5: 116,
+		F6: 117,
+		F7: 118,
+		F8: 119,
+		F9: 120,
+		F10: 121,
+		F11: 122,
+		F12: 123,
+		NUM_LOCK: 144,
+		SCROLL_LOCK: 145,
+		SEMICOLON: 186,
+		EQUALS: 187,
+		COMMA: 188,
+		DASH: 189,
+		PERIOD: 190,
+		FORWARD_SLASH: 191,
+		GRAVE_ACCENT: 192,
+		OPEN_BRACKET: 219,
+		BACK_SLASH: 220,
+		CLOSE_BRACKET: 221,
+		SINGLE_QUOTE: 222
+	};
+	exports.key = key;
+
+/***/ },
+
+/***/ 75:
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(76);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(19)(content, {});
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		module.hot.accept("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/features/p-tile-buttons.scss", function() {
+			var newContent = require("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/features/p-tile-buttons.scss");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
 	}
+
+/***/ },
+
+/***/ 76:
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(18)();
+	exports.push([module.id, ".tile > .tile-button-holder {\n  position: absolute;\n  display: -webkit-box;\n  display: -webkit-flex;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -webkit-flex-direction: row;\n      -ms-flex-direction: row;\n          flex-direction: row;\n  top: 2px;\n  right: 2px;\n  margin: 0;\n  padding: 0; }\n\n.tile > .tile-button-holder > .tile-button {\n  display: block;\n  background-size: 18px;\n  background-repeat: no-repeat;\n  background-position: center;\n  width: 20px;\n  height: 20px;\n  margin-left: 2px;\n  border: solid 1px transparent; }\n  .tile > .tile-button-holder > .tile-button.white:hover {\n    border: dotted 1px white; }\n  .tile > .tile-button-holder > .tile-button.black:hover, .tile > .tile-button-holder > .tile-button:hover {\n    border: dotted 1px black; }\n\n.tile:not(:hover) > .tile-button-holder {\n  display: none; }\n", ""]);
 
 /***/ }
 

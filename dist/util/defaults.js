@@ -7,7 +7,7 @@
 		var a = typeof exports === 'object' ? factory(require("jquery"), require("bluebird")) : factory(root["jquery"], root["bluebird"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE_62__, __WEBPACK_EXTERNAL_MODULE_63__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_3__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -55,130 +55,33 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(11);
+	module.exports = __webpack_require__(94);
 
 
 /***/ },
 
-/***/ 10:
-/***/ function(module, exports, __webpack_require__) {
+/***/ 2:
+/***/ function(module, exports) {
 
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
-	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(63)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P) {
-		'use strict';
-	
-		return function defer() {
-			var resolve, reject;
-			var promise = new P(function () {
-				resolve = arguments[0];
-				reject = arguments[1];
-			});
-			//noinspection JSUnusedAssignment
-			return {
-				resolve: resolve,
-				reject: reject,
-				promise: promise
-			};
-		};
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	module.exports = __WEBPACK_EXTERNAL_MODULE_2__;
 
 /***/ },
 
-/***/ 11:
-/***/ function(module, exports, __webpack_require__) {
+/***/ 3:
+/***/ function(module, exports) {
 
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
-	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(15)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U) {
-		'use strict';
-	
-		function deepTransform(val, fn) {
-			if ($.isPlainObject(val) || $.isArray(val)) {
-				$.each(val, function (key, subVal) {
-					var returned = fn(subVal);
-					if (U.isUndefined(returned)) {
-						deepTransform(subVal, fn);
-					} else {
-						val[key] = returned;
-					}
-				});
-			}
-		}
-	
-		var REF_PATTERN = /`([\[\.].+?)`/g;
-	
-		return function defaults(spec, context) {
-	
-			deepTransform(spec, function (val) {
-				if (typeof val === 'string') {
-					var refs = (val.match(REF_PATTERN) || []).map(function (ref) {
-						var strippedRef = ref.substring(1, ref.length - 1);
-						return new Function('refs', 'return refs' + strippedRef);
-					});
-					var expr = val.replace(REF_PATTERN, '(refs$1)');
-					var templateFn = function templateFn(formalParams) {
-						var newFormalParams = formalParams.concat(['return ' + expr]);
-						return U.applyConstructor(Function, newFormalParams);
-					};
-					templateFn.refs = refs;
-					return templateFn;
-				}
-			});
-	
-			//// recursive auxiliary function; returns true if a change to obj was made
-			function withDefaultsAux(defSpec, obj, refs, params) {
-				var change = false;
-				Object.keys(defSpec).forEach(function (key) {
-	
-					if (key in obj) {
-						if ($.isPlainObject(defSpec[key]) && $.isPlainObject(obj[key])) {
-							change = withDefaultsAux(defSpec[key], obj[key], refs, params) || change;
-						}
-					} else if ($.isPlainObject(defSpec[key])) {
-						obj[key] = {};
-						change = withDefaultsAux(defSpec[key], obj[key], refs, params) || change;
-					} else if ($.isFunction(defSpec[key])) {
-						if (defSpec[key].refs.every(function (ref) {
-							return !U.isUndefined(ref(refs));
-						})) {
-							// if none of the references are undefined, assign this 'default'
-							var allparams = $.extend({ refs: refs }, context, params);
-							var formalParams = Object.keys(allparams);
-							var actualParams = formalParams.map(function (fpar) {
-								return allparams[fpar];
-							});
-							var finalFn = defSpec[key](formalParams);
-							obj[key] = finalFn.apply(null, actualParams);
-						}
-					}
-				});
-				return change;
-			}
-	
-			return function withDefaults(obj, params) {
-				var result = U.isUndefined(obj) ? {} : $.extend(true, {}, obj);
-	
-				var change = true;
-				while (change) {
-					change = withDefaultsAux(spec, result, result, params || {});
-				}
-	
-				return result;
-			};
-		};
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	module.exports = __WEBPACK_EXTERNAL_MODULE_3__;
 
 /***/ },
 
-/***/ 15:
+/***/ 4:
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(63), __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, defer) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(3), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, defer) {
 		'use strict';
 	
 		var U = {
@@ -192,7 +95,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 			// create a new subclass, given a superclass, constructor and possible prototype
 			newSubclass: function newSubclass(superClass, constructorMaker) {
-				var prototype = arguments[2] === undefined ? {} : arguments[2];
+				var prototype = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
 	
 				var constructor = constructorMaker(superClass.prototype.constructor);
 				constructor.prototype = Object.create(superClass.prototype);
@@ -307,7 +210,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			// condition that is expected to be true
 			assert: function assert(condition, message) {
 				if (!condition) {
-					throw new Error(message || 'Assertion failed');
+					throw new Error(message || "Assertion failed");
 				}
 			},
 	
@@ -386,15 +289,16 @@ return /******/ (function(modules) { // webpackBootstrap
 			oncePerStack: function oncePerStack(func, context) {
 				var notRunYet = true;
 				var result = function result() {
-					for (var _len6 = arguments.length, args = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
-						args[_key6] = arguments[_key6];
-					}
-	
 					if (notRunYet) {
 						notRunYet = false;
 						setTimeout(function () {
 							notRunYet = true;
 						}, 0);
+	
+						for (var _len6 = arguments.length, args = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+							args[_key6] = arguments[_key6];
+						}
+	
 						func.apply(context || this, args);
 					}
 				};
@@ -562,17 +466,114 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 62:
+/***/ 5:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_62__;
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
+	
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P) {
+		'use strict';
+	
+		return function defer() {
+			var resolve, reject;
+			var promise = new P(function () {
+				resolve = arguments[0];
+				reject = arguments[1];
+			});
+			//noinspection JSUnusedAssignment
+			return {
+				resolve: resolve,
+				reject: reject,
+				promise: promise
+			};
+		};
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
 
-/***/ 63:
+/***/ 94:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_63__;
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
+	
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(2), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U) {
+		'use strict';
+	
+		function deepTransform(val, fn) {
+			if ($.isPlainObject(val) || $.isArray(val)) {
+				$.each(val, function (key, subVal) {
+					var returned = fn(subVal);
+					if (U.isUndefined(returned)) {
+						deepTransform(subVal, fn);
+					} else {
+						val[key] = returned;
+					}
+				});
+			}
+		}
+	
+		var REF_PATTERN = /`([\[\.].+?)`/g;
+	
+		return function defaults(spec, context) {
+	
+			deepTransform(spec, function (val) {
+				if (typeof val === 'string') {
+					var refs = (val.match(REF_PATTERN) || []).map(function (ref) {
+						var strippedRef = ref.substring(1, ref.length - 1);
+						return new Function('refs', 'return refs' + strippedRef);
+					});
+					var expr = val.replace(REF_PATTERN, "(refs$1)");
+					var templateFn = function templateFn(formalParams) {
+						var newFormalParams = formalParams.concat(['return ' + expr]);
+						return U.applyConstructor(Function, newFormalParams);
+					};
+					templateFn.refs = refs;
+					return templateFn;
+				}
+			});
+	
+			//// recursive auxiliary function; returns true if a change to obj was made
+			function withDefaultsAux(defSpec, obj, refs, params) {
+				var change = false;
+				Object.keys(defSpec).forEach(function (key) {
+	
+					if (key in obj) {
+						if ($.isPlainObject(defSpec[key]) && $.isPlainObject(obj[key])) {
+							change = withDefaultsAux(defSpec[key], obj[key], refs, params) || change;
+						}
+					} else if ($.isPlainObject(defSpec[key])) {
+						obj[key] = {};
+						change = withDefaultsAux(defSpec[key], obj[key], refs, params) || change;
+					} else if ($.isFunction(defSpec[key])) {
+						if (defSpec[key].refs.every(function (ref) {
+							return !U.isUndefined(ref(refs));
+						})) {
+							// if none of the references are undefined, assign this 'default'
+							var allparams = $.extend({ refs: refs }, context, params);
+							var formalParams = Object.keys(allparams);
+							var actualParams = formalParams.map(function (fpar) {
+								return allparams[fpar];
+							});
+							var finalFn = defSpec[key](formalParams);
+							obj[key] = finalFn.apply(null, actualParams);
+						}
+					}
+				});
+				return change;
+			}
+	
+			return function withDefaults(obj, params) {
+				var result = U.isUndefined(obj) ? {} : $.extend(true, {}, obj);
+	
+				var change = true;
+				while (change) {
+					change = withDefaultsAux(spec, result, result, params || {});
+				}
+	
+				return result;
+			};
+		};
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }
 

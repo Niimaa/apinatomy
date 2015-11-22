@@ -7,7 +7,7 @@
 		var a = typeof exports === 'object' ? factory(require("jquery")) : factory(root["jquery"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE_62__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_2__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -55,17 +55,24 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(42);
+	module.exports = __webpack_require__(70);
 
 
 /***/ },
 
-/***/ 42:
+/***/ 2:
+/***/ function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_2__;
+
+/***/ },
+
+/***/ 70:
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('tile-button-to-swap-three-d-model', {
@@ -85,8 +92,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 					if (models.length > 1) {
 						_this.addButton({ name: 'swap3dModel', icon: {
-								white: __webpack_require__(106),
-								black: __webpack_require__(107)
+								white: __webpack_require__(71),
+								black: __webpack_require__(72)
 							} }).onValue(function () {
 	
 							// the button switches between the available 3D models on the top level of the tile
@@ -113,21 +120,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 62:
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_62__;
-
-/***/ },
-
-/***/ 106:
+/***/ 71:
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "c485da7e639b4d2d69b187420fc2bf78.png"
 
 /***/ },
 
-/***/ 107:
+/***/ 72:
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "2504fe46b9bfc8deef6a0d6354801b29.png"

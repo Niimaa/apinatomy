@@ -7,7 +7,7 @@
 		var a = typeof exports === 'object' ? factory(require("jquery"), require("bluebird")) : factory(root["jquery"], root["bluebird"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE_62__, __WEBPACK_EXTERNAL_MODULE_63__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_3__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -55,44 +55,33 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(47);
+	module.exports = __webpack_require__(81);
 
 
 /***/ },
 
-/***/ 10:
-/***/ function(module, exports, __webpack_require__) {
+/***/ 2:
+/***/ function(module, exports) {
 
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
-	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(63)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P) {
-		'use strict';
-	
-		return function defer() {
-			var resolve, reject;
-			var promise = new P(function () {
-				resolve = arguments[0];
-				reject = arguments[1];
-			});
-			//noinspection JSUnusedAssignment
-			return {
-				resolve: resolve,
-				reject: reject,
-				promise: promise
-			};
-		};
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	module.exports = __WEBPACK_EXTERNAL_MODULE_2__;
 
 /***/ },
 
-/***/ 15:
+/***/ 3:
+/***/ function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_3__;
+
+/***/ },
+
+/***/ 4:
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(63), __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, defer) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(3), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, defer) {
 		'use strict';
 	
 		var U = {
@@ -106,7 +95,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 			// create a new subclass, given a superclass, constructor and possible prototype
 			newSubclass: function newSubclass(superClass, constructorMaker) {
-				var prototype = arguments[2] === undefined ? {} : arguments[2];
+				var prototype = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
 	
 				var constructor = constructorMaker(superClass.prototype.constructor);
 				constructor.prototype = Object.create(superClass.prototype);
@@ -221,7 +210,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			// condition that is expected to be true
 			assert: function assert(condition, message) {
 				if (!condition) {
-					throw new Error(message || 'Assertion failed');
+					throw new Error(message || "Assertion failed");
 				}
 			},
 	
@@ -300,15 +289,16 @@ return /******/ (function(modules) { // webpackBootstrap
 			oncePerStack: function oncePerStack(func, context) {
 				var notRunYet = true;
 				var result = function result() {
-					for (var _len6 = arguments.length, args = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
-						args[_key6] = arguments[_key6];
-					}
-	
 					if (notRunYet) {
 						notRunYet = false;
 						setTimeout(function () {
 							notRunYet = true;
 						}, 0);
+	
+						for (var _len6 = arguments.length, args = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+							args[_key6] = arguments[_key6];
+						}
+	
 						func.apply(context || this, args);
 					}
 				};
@@ -476,107 +466,54 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 47:
+/***/ 5:
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(15), __webpack_require__(90)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P) {
 		'use strict';
 	
-		var plugin = $.circuitboard.plugin['do']('tile-hidden', {
-			requires: ['tile-open']
-		}).modify('Tile.prototype');
-	
-		/* allows a tile to be `hidden` */
-		plugin.append('construct', function () {
-			var _this = this;
-	
-			/* the 'visible' and 'hidden' properties */
-			this.newProperty('visible', { initial: U.defOr(this.circuitboard.options.initialTileVisibility, true) });
-			this.newProperty('hidden').plug(this.p('visible').not());
-			this.p('visible').plug(this.p('hidden').not());
-	
-			/* set initial visibility */
-			if (this.hidden) {
-				var flexGrowTo = 0;
-				this.element.data('amyFlexGrowTarget', flexGrowTo);
-				this.element.css('display', 'none');
-				this.element.css('flexGrow', flexGrowTo);
-				var rowFlexGrowTo = 0;
-				this.element.parent().children().each(function () {
-					rowFlexGrowTo += parseFloat(U.defOr($(this).data('amyFlexGrowTarget'), 0));
-				});
-				this.element.parent().css('flexGrow', rowFlexGrowTo);
-				if (rowFlexGrowTo > 0) {
-					this.element.parent().css('display', 'flex');
-				} else {
-					this.element.parent().css('display', 'none');
-				}
-			}
-	
-			/* enact tile hiding on the DOM */
-			this.p('hidden').merge(this.on('destroy').mapTo(true)).onValue(function (hidden) {
-	
-				_this.element.toggleClass('hidden', hidden);
-	
-				///* assign the .right-most class */
-				//let ch = this.element.parent().children().filter(`:not(.hidden)`);
-				//ch.removeClass('right-most');
-				//ch.last().addClass('right-most');
+		return function defer() {
+			var resolve, reject;
+			var promise = new P(function () {
+				resolve = arguments[0];
+				reject = arguments[1];
 			});
-		});
+			//noinspection JSUnusedAssignment
+			return {
+				resolve: resolve,
+				reject: reject,
+				promise: promise
+			};
+		};
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
 
-/***/ 62:
-/***/ function(module, exports, __webpack_require__) {
+/***/ 18:
+/***/ function(module, exports) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_62__;
-
-/***/ },
-
-/***/ 63:
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_63__;
-
-/***/ },
-
-/***/ 90:
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(91);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(108)(content, {});
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		module.hot.accept("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/features/p-tile-hidden.scss", function() {
-			var newContent = require("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/features/p-tile-hidden.scss");
-			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-			update(newContent);
-		});
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
+	module.exports = function() {
+		var list = [];
+		list.toString = function toString() {
+			var result = [];
+			for(var i = 0; i < this.length; i++) {
+				var item = this[i];
+				if(item[2]) {
+					result.push("@media " + item[2] + "{" + item[1] + "}");
+				} else {
+					result.push(item[1]);
+				}
+			}
+			return result.join("");
+		};
+		return list;
 	}
 
 /***/ },
 
-/***/ 91:
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(109)();
-	exports.push([module.id, ".circuitboard .tilemap>.tilerow>.tile:last-of-type(:not(.hidden)){margin-right:0 !important;}.circuitboard .tilemap>.tilerow:last-of-type(:not(.hidden)){margin-bottom:0 !important;}", ""]);
-
-/***/ },
-
-/***/ 108:
+/***/ 19:
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -773,25 +710,89 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 109:
+/***/ 81:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = function() {
-		var list = [];
-		list.toString = function toString() {
-			var result = [];
-			for(var i = 0; i < this.length; i++) {
-				var item = this[i];
-				if(item[2]) {
-					result.push("@media " + item[2] + "{" + item[1] + "}");
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
+	
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(2), __webpack_require__(4), __webpack_require__(82)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U) {
+		'use strict';
+	
+		var plugin = $.circuitboard.plugin['do']('tile-hidden', {
+			requires: ['tile-open']
+		}).modify('Tile.prototype');
+	
+		/* allows a tile to be `hidden` */
+		plugin.append('construct', function () {
+			var _this = this;
+	
+			/* the 'visible' and 'hidden' properties */
+			this.newProperty('visible', { initial: U.defOr(this.circuitboard.options.initialTileVisibility, true) });
+			this.newProperty('hidden').plug(this.p('visible').not());
+			this.p('visible').plug(this.p('hidden').not());
+	
+			/* set initial visibility */
+			if (this.hidden) {
+				var flexGrowTo = 0;
+				this.element.data('amyFlexGrowTarget', flexGrowTo);
+				this.element.css('display', 'none');
+				this.element.css('flexGrow', flexGrowTo);
+				var rowFlexGrowTo = 0;
+				this.element.parent().children().each(function () {
+					rowFlexGrowTo += parseFloat(U.defOr($(this).data('amyFlexGrowTarget'), 0));
+				});
+				this.element.parent().css('flexGrow', rowFlexGrowTo);
+				if (rowFlexGrowTo > 0) {
+					this.element.parent().css('display', 'flex');
 				} else {
-					result.push(item[1]);
+					this.element.parent().css('display', 'none');
 				}
 			}
-			return result.join("");
-		};
-		return list;
+	
+			/* enact tile hiding on the DOM */
+			this.p('hidden').merge(this.on('destroy').mapTo(true)).onValue(function (hidden) {
+	
+				_this.element.toggleClass('hidden', hidden);
+	
+				///* assign the .right-most class */
+				//let ch = this.element.parent().children().filter(`:not(.hidden)`);
+				//ch.removeClass('right-most');
+				//ch.last().addClass('right-most');
+			});
+		});
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ },
+
+/***/ 82:
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(83);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(19)(content, {});
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		module.hot.accept("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/features/p-tile-hidden.scss", function() {
+			var newContent = require("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/features/p-tile-hidden.scss");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
 	}
+
+/***/ },
+
+/***/ 83:
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(18)();
+	exports.push([module.id, ".circuitboard .tilemap > .tilerow > .tile:last-of-type(:not(.hidden)) {\n  margin-right: 0 !important; }\n\n.circuitboard .tilemap > .tilerow:last-of-type(:not(.hidden)) {\n  margin-bottom: 0 !important; }\n", ""]);
 
 /***/ }
 

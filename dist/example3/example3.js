@@ -118,8 +118,9 @@
 	}
 	
 	/* fetch query parameters */
-	var root = _utilMiscEs6Js2['default'].getQueryVariable('root') || '161';
-	var port = _utilMiscEs6Js2['default'].getQueryVariable('port') || '5055';
+	var root = _utilMiscEs6Js2['default'].getQueryVariable('root') || '185'; // brain
+	var host = 'open-physiology.org'; // alternative: 'open-physiology.org'
+	var port = _utilMiscEs6Js2['default'].getQueryVariable('port') || '8888';
 	var fmas = _utilMiscEs6Js2['default'].getQueryVariable('fmas') ? _utilMiscEs6Js2['default'].getQueryVariable('fmas').split(',') : null;
 	var original = _utilMiscEs6Js2['default'].getQueryVariable('original') || root;
 	
@@ -127,7 +128,7 @@
 	_circuitboardWidgetEs6Js2['default'].plugin.select('tile-open', 'tile-click-to-open', 'tile-glyphs');
 	
 	///* lyph ids mapped to experiments */
-	//const LYPH_TO_EXPERIMENTS = {
+	//const LYPH_OLD_ID_TO_EXPERIMENTS = {
 	//	// filled in from translation of SCAI to FMA, then to Lyph ID
 	//	13:  ['GSE20291'],
 	//	305: ['E-GEOD-4757', 'E-GEOD-5281', 'GSE9770'],
@@ -153,7 +154,7 @@
 	//};
 	
 	/* lyph ids mapped to experiments */ // NEW INFO FROM CHRISTIAN
-	var LYPH_TO_EXPERIMENTS = {
+	var LYPH_OLD_ID_TO_EXPERIMENTS = {
 		// filled in from translation of SCAI to FMA, then to Lyph ID
 		305: ['E-GEOD-4757', 'E-GEOD-5281'],
 		304: ['E-GEOD-4757', 'E-GEOD-5281'],
@@ -180,7 +181,7 @@
 	_circuitboardWidgetEs6Js2['default'].plugin['do']('show-experiment-glyphs', { 'if': true, after: ['tile-glyphs'] }).append('Tile.prototype.construct', function () {
 		var _this = this;
 	
-		var experimentsForThisLyph = LYPH_TO_EXPERIMENTS[this.model.id];
+		var experimentsForThisLyph = LYPH_OLD_ID_TO_EXPERIMENTS[this.model.oldID];
 		if (!experimentsForThisLyph) {
 			return;
 		}
@@ -250,14 +251,11 @@
 	
 	(0, _exposeJQueryJquery2['default'])(document).ready(function () {
 		(0, _exposeJQueryJquery2['default'])('#three-d-canvas').circuitboard({
-			model: (0, _lyphModelEs6Js.getLyphModels)('root', { root: root, port: port }),
+			model: (0, _lyphModelEs6Js.getLyphModels)('root', { host: host, root: root, port: port }),
 			tileSpacing: 6,
-			weightWhenOpen: 4,
-			filter: function filter(_ref2) {
-				var id = _ref2.id;
-				return id === root;
-			}
-		}).circuitboard('instance').then(function (circuitboard) {
+			weightWhenOpen: 4
+		}). //filter:         ({id}) => id === root // TODO: re-enable?
+		circuitboard('instance').then(function (circuitboard) {
 	
 			console.info('circuitboard loaded');
 	
@@ -268,12 +266,27 @@
 	
 			/* get all lyph models that have experiments */
 			var experimentModelsP = _bluebird2['default'].resolve(_exposeJQueryJquery2['default'].ajax({
-				url: 'http://open-physiology.org:' + port + '/between/?ends=' + Object.keys(LYPH_TO_EXPERIMENTS).join(',') + '&root=' + original,
+				url: 'http://' + host + ':' + port + '/lyphTemplatesByOldID/' + Object.keys(LYPH_OLD_ID_TO_EXPERIMENTS).join(','),
 				dataType: 'jsonp'
-			})).map(function (obj) {
-				return obj.id;
+			})).filter(function (a) {
+				return a;
+			}).map(function (_ref2) {
+				var id = _ref2.id;
+				return id;
+			}).tap(function (ids) {
+				console.log('old ids into new ids:', ids);
 			}).then(function (ids) {
-				return (0, _lyphModelEs6Js.getLyphModels)(ids, { root: root, port: port });
+				return _bluebird2['default'].resolve(_exposeJQueryJquery2['default'].ajax({
+					url: 'http://' + host + ':' + port + '/lyphTemplatesBetween/' + [].concat(_toConsumableArray(ids), [original]).join(','),
+					dataType: 'jsonp'
+				}));
+			}).map(function (_ref3) {
+				var id = _ref3.id;
+				return id;
+			}).tap(function (ids) {
+				console.log('with between:', ids);
+			}).then(function (ids) {
+				return (0, _lyphModelEs6Js.getLyphModels)(ids, { root: root, host: host, port: port });
 			}).map(function (a) {
 				return a;
 			});
@@ -282,10 +295,20 @@
 			var requestedModelsP = _bluebird2['default'].resolve([]);
 			if (fmas) {
 				requestedModelsP = _bluebird2['default'].resolve(_exposeJQueryJquery2['default'].ajax({
-					url: 'http://open-physiology.org:' + port + '/scaimap/?fmas=' + fmas.join(',') + '&pipe=yes&root=' + original,
+					url: 'http://' + host + ':' + port + '/lyphTemplatesByFmaID/' + fmas.join(','),
 					dataType: 'jsonp'
-				})).then(function (response) {
-					return (0, _lyphModelEs6Js.provideLyphsFromServer)(response, { root: root, port: port });
+				})).filter(function (a) {
+					return a;
+				}).map(function (_ref4) {
+					var id = _ref4.id;
+					return id;
+				}).then(function (ids) {
+					return _bluebird2['default'].resolve(_exposeJQueryJquery2['default'].ajax({
+						url: 'http://' + host + ':' + port + '/lyphTemplatesBetween/' + [].concat(_toConsumableArray(ids), [original]).join(','),
+						dataType: 'jsonp'
+					}));
+				}).then(function (response) {
+					return (0, _lyphModelEs6Js.provideLyphsFromServer)(response, { root: root, host: host, port: port });
 				}).map(function (a) {
 					return a;
 				});
@@ -301,8 +324,8 @@
 				var _iteratorError2 = undefined;
 	
 				try {
-					for (var _iterator2 = models.map(function (_ref3) {
-						var id = _ref3.id;
+					for (var _iterator2 = models.map(function (_ref5) {
+						var id = _ref5.id;
 						return circuitboard.tile(id);
 					})[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
 						var tileP = _step2.value;
@@ -335,41 +358,18 @@
 				});
 				if (fmas) {
 					_bluebird2['default'].resolve(_exposeJQueryJquery2['default'].ajax({
-						url: 'http://open-physiology.org:' + port + '/scaimap/?fmas=' + fmas.join(','),
+						url: 'http://' + host + ':' + port + '/lyphTemplatesByFmaID/' + fmas.join(','),
 						dataType: 'jsonp'
-					})).then(function (_ref4) {
-						var results = _ref4.results;
-						return results;
-					}).filter(function (_ref5) {
-						var foundmatch = _ref5.foundmatch;
-						return foundmatch === 'yes';
-					}).each(function (result) {
-						var _iteratorNormalCompletion3 = true;
-						var _didIteratorError3 = false;
-						var _iteratorError3 = undefined;
+					})).filter(function (a) {
+						return a;
+					}).each(function (_ref6) {
+						var id = _ref6.id;
 	
-						try {
-							for (var _iterator3 = result.lyphs[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-								var lyphID = _step3.value.lyphID;
-	
-								circuitboard.tile(lyphID).then(function (tile) {
-									tile.textColor = 0x0000FF;
-								});
-							}
-						} catch (err) {
-							_didIteratorError3 = true;
-							_iteratorError3 = err;
-						} finally {
-							try {
-								if (!_iteratorNormalCompletion3 && _iterator3['return']) {
-									_iterator3['return']();
-								}
-							} finally {
-								if (_didIteratorError3) {
-									throw _iteratorError3;
-								}
-							}
-						}
+						//for (let {id} of result) {
+						circuitboard.tile(id).then(function (tile) {
+							tile.textColor = 0x0000FF;
+						});
+						//}
 					});
 				}
 			});
@@ -404,7 +404,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(4)();
-	exports.push([module.id, "html,body{position:absolute;width:100%;height:100%;margin:0;padding:0;}body{position:absolute;overflow:hidden;}#circuitboard{position:absolute;top:0;left:0;right:0;bottom:0;z-index:1;}div.correlation-box{margin:8px;padding:6px;border:solid 2px;position:relative;}div.correlation-box ul{padding-left:19px;margin:3px 0;}div.correlation-box>input[type=checkbox]{position:absolute;top:-5px;right:-5px;margin:0;padding:0;}.checkbox-bullet{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:start;-webkit-align-items:flex-start;-ms-flex-align:start;align-items:flex-start;width:100%;height:20px;}.checkbox-bullet span:first-child{display:block;width:17px;-webkit-flex-shrink:0;-ms-flex-negative:0;flex-shrink:0;text-align:center;}.checkbox-bullet span:first-child input[type=checkbox]{margin-left:0;margin-right:0;}.checkbox-bullet span:nth-child(2){display:block;-webkit-box-flex:1;-webkit-flex-grow:1;-ms-flex-positive:1;flex-grow:1;margin-left:2px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}#lyph-checkboxes,#clindex-checkboxes{margin:6px;}#three-d-canvas{position:absolute;top:10px;left:10px;right:10px;bottom:10px;margin:0;padding:0;z-index:0;}.tile{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;cursor:pointer;text-align:center;overflow:hidden;border:solid 1px;}.tile>header{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-webkit-justify-content:center;-ms-flex-pack:center;justify-content:center;font-weight:bold;border-width:1px;}.tile.open>header{height:26px;border-style:none none solid none;line-height:26px;font-size:20.8px;white-space:nowrap;overflow:hidden;}.tile:not(.open)>header{border-style:none;}.tile:not(.active){border-style:dotted !important;}.tile>section{-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;user-select:text;}.tile:not(.open)>section{display:none;}.tile.hidden-header>header{display:none !important;}", ""]);
+	exports.push([module.id, "html, body {\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  margin: 0;\n  padding: 0; }\n\nbody {\n  position: absolute;\n  overflow: hidden; }\n\n#circuitboard {\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  z-index: 1; }\n\ndiv.correlation-box {\n  margin: 8px;\n  padding: 6px;\n  border: solid 2px;\n  position: relative; }\n  div.correlation-box ul {\n    padding-left: 19px;\n    margin: 3px 0; }\n  div.correlation-box > input[type=checkbox] {\n    position: absolute;\n    top: -5px;\n    right: -5px;\n    margin: 0;\n    padding: 0; }\n\n.checkbox-bullet {\n  display: -webkit-box;\n  display: -webkit-flex;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: start;\n  -webkit-align-items: flex-start;\n      -ms-flex-align: start;\n          align-items: flex-start;\n  width: 100%;\n  height: 20px; }\n  .checkbox-bullet span:first-child {\n    display: block;\n    width: 17px;\n    -webkit-flex-shrink: 0;\n        -ms-flex-negative: 0;\n            flex-shrink: 0;\n    text-align: center; }\n    .checkbox-bullet span:first-child input[type=checkbox] {\n      margin-left: 0;\n      margin-right: 0; }\n  .checkbox-bullet span:nth-child(2) {\n    display: block;\n    -webkit-box-flex: 1;\n    -webkit-flex-grow: 1;\n        -ms-flex-positive: 1;\n            flex-grow: 1;\n    margin-left: 2px;\n    white-space: nowrap;\n    text-overflow: ellipsis;\n    overflow: hidden; }\n\n#lyph-checkboxes, #clindex-checkboxes {\n  margin: 6px; }\n\n#three-d-canvas {\n  position: absolute;\n  top: 10px;\n  left: 10px;\n  right: 10px;\n  bottom: 10px;\n  margin: 0;\n  padding: 0;\n  z-index: 0; }\n\n.tile {\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n  cursor: pointer;\n  text-align: center;\n  overflow: hidden;\n  border: solid 1px; }\n\n.tile > header {\n  display: -webkit-box;\n  display: -webkit-flex;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: center;\n  -webkit-align-items: center;\n      -ms-flex-align: center;\n          align-items: center;\n  -webkit-box-pack: center;\n  -webkit-justify-content: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  font-weight: bold;\n  border-width: 1px; }\n\n.tile.open > header {\n  height: 26px;\n  border-style: none none solid none;\n  line-height: 26px;\n  font-size: 20.8px;\n  white-space: nowrap;\n  overflow: hidden; }\n\n.tile:not(.open) > header {\n  border-style: none; }\n\n.tile:not(.active) {\n  border-style: dotted !important; }\n\n.tile > section {\n  -webkit-user-select: text;\n     -moz-user-select: text;\n      -ms-user-select: text;\n          user-select: text; }\n\n.tile:not(.open) > section {\n  display: none; }\n\n.tile.hidden-header > header {\n  display: none !important; }\n", ""]);
 
 /***/ },
 /* 4 */
@@ -9875,7 +9875,7 @@
 	 * 
 	 */
 	/**
-	 * bluebird build version 2.10.0
+	 * bluebird build version 2.10.2
 	 * Features enabled: core, race, call_get, generators, map, nodeify, promisify, props, reduce, settle, some, cancel, using, filter, any, each, timers
 	*/
 	!function(e){if(true)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.Promise=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof _dereq_=="function"&&_dereq_;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof _dereq_=="function"&&_dereq_;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
@@ -13309,11 +13309,16 @@
 	        var key = methods[i];
 	        var fn = methods[i+1];
 	        var promisifiedKey = key + suffix;
-	        obj[promisifiedKey] = promisifier === makeNodePromisified
-	                ? makeNodePromisified(key, THIS, key, fn, suffix)
-	                : promisifier(fn, function() {
-	                    return makeNodePromisified(key, THIS, key, fn, suffix);
-	                });
+	        if (promisifier === makeNodePromisified) {
+	            obj[promisifiedKey] =
+	                makeNodePromisified(key, THIS, key, fn, suffix);
+	        } else {
+	            var promisified = promisifier(fn, function() {
+	                return makeNodePromisified(key, THIS, key, fn, suffix);
+	            });
+	            util.notEnumerableProp(promisified, "__isPromisified__", true);
+	            obj[promisifiedKey] = promisified;
+	        }
 	    }
 	    util.toFastProperties(obj);
 	    return obj;
@@ -14134,10 +14139,16 @@
 	
 	var afterTimeout = function (promise, message) {
 	    if (!promise.isPending()) return;
-	    if (typeof message !== "string") {
-	        message = "operation timed out";
+	    
+	    var err;
+	    if(!util.isPrimitive(message) && (message instanceof Error)) {
+	        err = message;
+	    } else {
+	        if (typeof message !== "string") {
+	            message = "operation timed out";
+	        }
+	        err = new TimeoutError(message);
 	    }
-	    var err = new TimeoutError(message);
 	    util.markAsOriginatingFromRejection(err);
 	    promise._attachExtraTrace(err);
 	    promise._cancel(err);
@@ -14764,7 +14775,9 @@
 	        currentQueue = queue;
 	        queue = [];
 	        while (++queueIndex < len) {
-	            currentQueue[queueIndex].run();
+	            if (currentQueue) {
+	                currentQueue[queueIndex].run();
+	            }
 	        }
 	        queueIndex = -1;
 	        len = queue.length;
@@ -14782,7 +14795,7 @@
 	        }
 	    }
 	    queue.push(new Item(fun, args));
-	    if (!draining) {
+	    if (queue.length === 1 && !draining) {
 	        setTimeout(drainQueue, 0);
 	    }
 	};
@@ -14816,7 +14829,6 @@
 	    throw new Error('process.binding is not supported');
 	};
 	
-	// TODO(shtylman)
 	process.cwd = function () { return '/' };
 	process.chdir = function (dir) {
 	    throw new Error('process.chdir is not supported');
@@ -30751,14 +30763,12 @@
 		_createClass(LyphModel, [{
 			key: 'getChildIds',
 			value: function getChildIds() {
-				return this.children.map(function (child) {
-					return child.child.id;
-				});
+				return this.children;
 			}
 		}, {
 			key: 'getModels',
 			value: function getModels(ids) {
-				return getLyphModels(ids, { port: this._serverPort });
+				return getLyphModels(ids, { host: this._serverHost, port: this._serverPort });
 			}
 		}, {
 			key: 'type',
@@ -30804,7 +30814,7 @@
 	
 		/* accept an array of ids or a single id */
 		var returnArray = undefined;
-		if (typeof ids === 'string') {
+		if (typeof ids === 'string' || typeof ids === 'number') {
 			returnArray = false;
 			ids = [ids];
 		} else {
@@ -30822,24 +30832,26 @@
 			return preparePromise(id).isNew;
 		}).forEach(function (id) {
 			newIds.push(id);
-		});
+		}); // TODO: make this code smaller
 	
 		if (options.root && newIds.length === 1 && newIds[0] === 'root') {
 			_getDeferred('root').resolve(new LyphModel({
 				id: 'root',
-				children: [{ child: { id: options.root } }],
-				_serverPort: options.port
+				children: [options.root],
+				_serverPort: options.port,
+				_serverHost: options.host
 			}));
 		} else {
 	
 			/* request and build the model objects belonging to any new ids */
 			if (newIds.length > 0) {
 				_bluebird2['default'].resolve(_jquery2['default'].ajax({
-					url: 'http://open-physiology.org:' + options.port + '/lyph/' + newIds.join(',') + '?array=yes&correlations=yes',
+					url: 'http://' + options.host + ':' + options.port + '/lyphTemplates/' + newIds.join(','), //?array=yes&correlations=yes
 					dataType: 'jsonp'
 				})).each(function (model) {
 					/* resolve the corresponding promise */
 					model._serverPort = options.port;
+					model._serverHost = options.host;
 					_getDeferred(model.id).resolve(new LyphModel(model));
 				}).error(function (err) {
 					console.error("There seems to be something wrong with the server.", err);
@@ -30863,6 +30875,7 @@
 		lyphs.forEach(function (model) {
 			if (preparePromise(model.id).isNew) {
 				model._serverPort = options.port;
+				model._serverHost = options.host;
 				_getDeferred(model.id).resolve(new LyphModel(model));
 			}
 		});
@@ -32583,7 +32596,7 @@
 /* 38 */
 /***/ function(module, exports) {
 
-	module.exports = "// This THREEx helper makes it easy to handle the mouse events in your 3D scene\n//\n// * CHANGES NEEDED\n//   * handle drag/drop\n//   * notify events not object3D - like DOM\n//     * so single object with property\n//   * DONE bubling implement bubling/capturing\n//   * DONE implement event.stopPropagation()\n//   * DONE implement event.type = \"click\" and co\n//   * DONE implement event.target\n//\n// # Lets get started\n//\n// First you include it in your page\n//\n// ```<script src='threex.domevent.js'></script>```\n//\n// # use the object oriented api\n//\n// You bind an event like this\n//\n// ```mesh.on('click', function(object3d){ ... })```\n//\n// To unbind an event, just do\n//\n// ```mesh.off('click', function(object3d){ ... })```\n//\n// As an alternative, there is another naming closer DOM events.\n// Pick the one you like, they are doing the same thing\n//\n// ```mesh.addEventListener('click', function(object3d){ ... })```\n// ```mesh.removeEventListener('click', function(object3d){ ... })```\n//\n// # Supported Events\n//\n// Always in a effort to stay close to usual pratices, the events name are the same as in DOM.\n// The semantic is the same too.\n// Currently, the available events are\n// [click, dblclick, mouseup, mousedown](http://www.quirksmode.org/dom/events/click.html),\n// [mouseover and mouse out](http://www.quirksmode.org/dom/events/mouseover.html).\n//\n// # use the standalone api\n//\n// The object-oriented api modifies THREE.Object3D class.\n// It is a global class, so it may be legitimatly considered unclean by some people.\n// If this bother you, simply do ```THREEx.DomEvents.noConflict()``` and use the\n// standalone API. In fact, the object oriented API is just a thin wrapper\n// on top of the standalone API.\n//\n// First, you instanciate the object\n//\n// ```var domEvent = new THREEx.DomEvent();```\n//\n// Then you bind an event like this\n//\n// ```domEvent.bind(mesh, 'click', function(object3d){ object3d.scale.x *= 2; });```\n//\n// To unbind an event, just do\n//\n// ```domEvent.unbind(mesh, 'click', callback);```\n//\n//\n// # Code\n\n//\n\n/** @namespace */\nvar THREEx\t\t= THREEx \t\t|| {};\n\n// # Constructor\nTHREEx.DomEvents\t= function(camera, domElement)\n{\n\tthis._camera\t= camera || null;\n\tthis._domElement= domElement || document;\n\tthis._projector\t= new THREE.Projector();\n\tthis._selected\t= null;\n\tthis._boundObjs\t= {};\n\t// Bind dom event for mouse and touch\n\tvar _this\t= this;\n\n\tthis._$onClick\t\t= function(){ _this._onClick.apply(_this, arguments);\t\t};\n\tthis._$onDblClick\t= function(){ _this._onDblClick.apply(_this, arguments);\t};\n\tthis._$onMouseMove\t= function(){ _this._onMouseMove.apply(_this, arguments);\t};\n\tthis._$onMouseDown\t= function(){ _this._onMouseDown.apply(_this, arguments);\t};\n\tthis._$onMouseUp\t= function(){ _this._onMouseUp.apply(_this, arguments);\t\t};\n\tthis._$onTouchMove\t= function(){ _this._onTouchMove.apply(_this, arguments);\t};\n\tthis._$onTouchStart\t= function(){ _this._onTouchStart.apply(_this, arguments);\t};\n\tthis._$onTouchEnd\t= function(){ _this._onTouchEnd.apply(_this, arguments);\t};\n\tthis._$onContextmenu\t= function(){ _this._onContextmenu.apply(_this, arguments);\t};\n\tthis._domElement.addEventListener( 'click'\t, this._$onClick\t, false );\n\tthis._domElement.addEventListener( 'dblclick'\t, this._$onDblClick\t, false );\n\tthis._domElement.addEventListener( 'mousemove'\t, this._$onMouseMove\t, false );\n\tthis._domElement.addEventListener( 'mousedown'\t, this._$onMouseDown\t, false );\n\tthis._domElement.addEventListener( 'mouseup'\t, this._$onMouseUp\t, false );\n\tthis._domElement.addEventListener( 'touchmove'\t, this._$onTouchMove\t, false );\n\tthis._domElement.addEventListener( 'touchstart'\t, this._$onTouchStart\t, false );\n\tthis._domElement.addEventListener( 'touchend'\t, this._$onTouchEnd\t, false );\n\tthis._domElement.addEventListener( 'contextmenu', this._$onContextmenu\t, false );\n\n}\n\n// # Destructor\nTHREEx.DomEvents.prototype.destroy\t= function()\n{\n\t// unBind dom event for mouse and touch\n\tthis._domElement.removeEventListener( 'click'\t\t, this._$onClick\t, false );\n\tthis._domElement.removeEventListener( 'dblclick'\t, this._$onDblClick\t, false );\n\tthis._domElement.removeEventListener( 'mousemove'\t, this._$onMouseMove\t, false );\n\tthis._domElement.removeEventListener( 'mousedown'\t, this._$onMouseDown\t, false );\n\tthis._domElement.removeEventListener( 'mouseup'\t\t, this._$onMouseUp\t, false );\n\tthis._domElement.removeEventListener( 'touchmove'\t, this._$onTouchMove\t, false );\n\tthis._domElement.removeEventListener( 'touchstart'\t, this._$onTouchStart\t, false );\n\tthis._domElement.removeEventListener( 'touchend'\t, this._$onTouchEnd\t, false );\n\tthis._domElement.removeEventListener( 'contextmenu'\t, this._$onContextmenu\t, false );\n}\n\nTHREEx.DomEvents.eventNames\t= [\n\t\"click\",\n\t\"dblclick\",\n\t\"mouseover\",\n\t\"mouseout\",\n\t\"mousemove\",\n\t\"mousedown\",\n\t\"mouseup\",\n\t\"contextmenu\"\n];\n\nTHREEx.DomEvents.prototype._getRelativeMouseXY\t= function(domEvent){\n\tvar element = domEvent.target || domEvent.srcElement;\n\tif (element.nodeType === 3) {\n\t\telement = element.parentNode; // Safari fix -- see http://www.quirksmode.org/js/events_properties.html\n\t}\n\n\t//get the real position of an element relative to the page starting point (0, 0)\n\t//credits go to brainjam on answering http://stackoverflow.com/questions/5755312/getting-mouse-position-relative-to-content-area-of-an-element\n\tvar elPosition\t= { x : 0 , y : 0};\n\tvar tmpElement\t= element;\n\t//store padding\n\tvar style\t= getComputedStyle(tmpElement, null);\n\telPosition.y += parseInt(style.getPropertyValue(\"padding-top\"), 10);\n\telPosition.x += parseInt(style.getPropertyValue(\"padding-left\"), 10);\n\t//add positions\n\tdo {\n\t\telPosition.x\t+= tmpElement.offsetLeft;\n\t\telPosition.y\t+= tmpElement.offsetTop;\n\t\tstyle\t\t= getComputedStyle(tmpElement, null);\n\n\t\telPosition.x\t+= parseInt(style.getPropertyValue(\"border-left-width\"), 10);\n\t\telPosition.y\t+= parseInt(style.getPropertyValue(\"border-top-width\"), 10);\n\t} while(tmpElement = tmpElement.offsetParent);\n\n\tvar elDimension\t= {\n\t\twidth\t: (element === window) ? window.innerWidth\t: element.offsetWidth,\n\t\theight\t: (element === window) ? window.innerHeight\t: element.offsetHeight\n\t};\n\n\treturn {\n\t\tx : +((domEvent.pageX - elPosition.x) / elDimension.width ) * 2 - 1,\n\t\ty : -((domEvent.pageY - elPosition.y) / elDimension.height) * 2 + 1\n\t};\n};\n\n\n/********************************************************************************/\n/*\t\tdomevent context\t\t\t\t\t\t*/\n/********************************************************************************/\n\n// handle domevent context in object3d instance\n\nTHREEx.DomEvents.prototype._objectCtxInit\t= function(object3d){\n\tobject3d._3xDomEvent = { object3d: object3d };\n}\nTHREEx.DomEvents.prototype._objectCtxDeinit\t= function(object3d){\n\tdelete object3d._3xDomEvent;\n}\nTHREEx.DomEvents.prototype._objectCtxIsInit\t= function(object3d){\n\treturn object3d._3xDomEvent ? true : false;\n}\nTHREEx.DomEvents.prototype._objectCtxGet\t\t= function(object3d){\n\treturn object3d._3xDomEvent;\n}\n\n/********************************************************************************/\n/*\t\t\t\t\t\t\t\t\t\t*/\n/********************************************************************************/\n\n/**\n * Getter/Setter for camera\n*/\nTHREEx.DomEvents.prototype.camera\t= function(value)\n{\n\tif( value )\tthis._camera\t= value;\n\treturn this._camera;\n}\n\nTHREEx.DomEvents.prototype.bind\t= function(object3d, eventName, callback, useCapture)\n{\n\tconsole.assert( THREEx.DomEvents.eventNames.indexOf(eventName) !== -1, \"not available events:\"+eventName );\n\n\tif( !this._objectCtxIsInit(object3d) )\tthis._objectCtxInit(object3d);\n\tvar objectCtx\t= this._objectCtxGet(object3d);\n\tif( !objectCtx[eventName+'Handlers'] )\tobjectCtx[eventName+'Handlers']\t= [];\n\n\tobjectCtx[eventName+'Handlers'].push({\n\t\tcallback\t: callback,\n\t\tuseCapture\t: useCapture\n\t});\n\n\t// add this object in this._boundObjs\n\tif( this._boundObjs[eventName] === undefined ){\n\t\tthis._boundObjs[eventName]\t= [];\n\t}\n\tthis._boundObjs[eventName].push(object3d);\n}\nTHREEx.DomEvents.prototype.addEventListener\t= THREEx.DomEvents.prototype.bind\n\nTHREEx.DomEvents.prototype.unbind\t= function(object3d, eventName, callback, useCapture)\n{\n\tconsole.assert( THREEx.DomEvents.eventNames.indexOf(eventName) !== -1, \"not available events:\"+eventName );\n\n\tif( !this._objectCtxIsInit(object3d) )\tthis._objectCtxInit(object3d);\n\n\tvar objectCtx\t= this._objectCtxGet(object3d);\n\tif( !objectCtx[eventName+'Handlers'] )\tobjectCtx[eventName+'Handlers']\t= [];\n\n\tvar handlers\t= objectCtx[eventName+'Handlers'];\n\tfor(var i = 0; i < handlers.length; i++){\n\t\tvar handler\t= handlers[i];\n\t\tif( callback != handler.callback )\tcontinue;\n\t\tif( useCapture != handler.useCapture )\tcontinue;\n\t\thandlers.splice(i, 1)\n\t\tbreak;\n\t}\n\t// from this object from this._boundObjs\n\tvar index\t= this._boundObjs[eventName].indexOf(object3d);\n\tconsole.assert( index !== -1 );\n\tthis._boundObjs[eventName].splice(index, 1);\n}\nTHREEx.DomEvents.prototype.removeEventListener\t= THREEx.DomEvents.prototype.unbind\n\nTHREEx.DomEvents.prototype._bound\t= function(eventName, object3d)\n{\n\tvar objectCtx\t= this._objectCtxGet(object3d);\n\tif( !objectCtx )\treturn false;\n\treturn objectCtx[eventName+'Handlers'] ? true : false;\n}\n\n/********************************************************************************/\n/*\t\tonMove\t\t\t\t\t\t\t\t*/\n/********************************************************************************/\n\n// # handle mousemove kind of events\n\nTHREEx.DomEvents.prototype._onMove\t= function(eventName, mouseX, mouseY, origDomEvent)\n{\n//console.log('eventName', eventName, 'boundObjs', this._boundObjs[eventName])\n\t// get objects bound to this event\n\tvar boundObjs\t= this._boundObjs[eventName];\n\tif( boundObjs === undefined || boundObjs.length === 0 )\treturn;\n\t// compute the intersection\n\tvar vector = new THREE.Vector3();\n\tvar raycaster = new THREE.Raycaster();\n\tvar dir = new THREE.Vector3();\n\n\tif ( this._camera instanceof THREE.OrthographicCamera ) {\n\n\t    vector.set( mouseX, mouseY, -1 );\n\t    vector.unproject( this._camera );\n\t    dir.set( 0, 0, - 1 ).transformDirection( this._camera.matrixWorld );\n\t    raycaster.set( vector, dir );\n\n\t} else if ( this._camera instanceof THREE.PerspectiveCamera ) {\n\n\t    vector.set( mouseX, mouseY, 0.5 );\n\t    vector.unproject( this._camera );\n\t    raycaster.set( this._camera.position, vector.sub( this._camera.position ).normalize() );\n\t}\n\n\tvar intersects = raycaster.intersectObjects( boundObjs );\n\n\n\n\tvar oldSelected\t= this._selected;\n\n\tif( intersects.length > 0 ){\n\t\tvar notifyOver, notifyOut, notifyMove;\n\t\tvar intersect\t= intersects[ 0 ];\n\t\tvar newSelected\t= intersect.object;\n\t\tthis._selected\t= newSelected;\n\t\t// if newSelected bound mousemove, notify it\n\t\tnotifyMove\t= this._bound('mousemove', newSelected);\n\n\t\tif( oldSelected != newSelected ){\n\t\t\t// if newSelected bound mouseenter, notify it\n\t\t\tnotifyOver\t= this._bound('mouseover', newSelected);\n\t\t\t// if there is a oldSelect and oldSelected bound mouseleave, notify it\n\t\t\tnotifyOut\t= oldSelected && this._bound('mouseout', oldSelected);\n\t\t}\n\t}else{\n\t\t// if there is a oldSelect and oldSelected bound mouseleave, notify it\n\t\tnotifyOut\t= oldSelected && this._bound('mouseout', oldSelected);\n\t\tthis._selected\t= null;\n\t}\n\n\n\t// notify mouseMove - done at the end with a copy of the list to allow callback to remove handlers\n\tnotifyMove && this._notify('mousemove', newSelected, origDomEvent, intersect);\n\t// notify mouseEnter - done at the end with a copy of the list to allow callback to remove handlers\n\tnotifyOver && this._notify('mouseover', newSelected, origDomEvent, intersect);\n\t// notify mouseLeave - done at the end with a copy of the list to allow callback to remove handlers\n\tnotifyOut  && this._notify('mouseout' , oldSelected, origDomEvent, intersect);\n}\n\n\n/********************************************************************************/\n/*\t\tonEvent\t\t\t\t\t\t\t\t*/\n/********************************************************************************/\n\n// # handle click kind of events\n\nTHREEx.DomEvents.prototype._onEvent\t= function(eventName, mouseX, mouseY, origDomEvent)\n{\n\t//console.log('eventName', eventName, 'boundObjs', this._boundObjs[eventName])\n\t// get objects bound to this event\n\tvar boundObjs\t= this._boundObjs[eventName];\n\tif( boundObjs === undefined || boundObjs.length === 0 )\treturn;\n\t// compute the intersection\n\tvar vector = new THREE.Vector3();\n\tvar raycaster = new THREE.Raycaster();\n\tvar dir = new THREE.Vector3();\n\n\tif ( this._camera instanceof THREE.OrthographicCamera ) {\n\n\t    vector.set( mouseX, mouseY, -1 );\n\t    vector.unproject( this._camera );\n\t    dir.set( 0, 0, - 1 ).transformDirection( this._camera.matrixWorld );\n\t    raycaster.set( vector, dir );\n\n\t} else if ( this._camera instanceof THREE.PerspectiveCamera ) {\n\n\t    vector.set( mouseX, mouseY, 0.5 );\n\t    vector.unproject( this._camera );\n\t    raycaster.set( this._camera.position, vector.sub( this._camera.position ).normalize() );\n\t}\n\n\tvar intersects = raycaster.intersectObjects( boundObjs, true);\n\t// if there are no intersections, return now\n\tif( intersects.length === 0 )\treturn;\n\n\t// added by Michiel Helvensteijn, to allow an Object3D to have a skipDomEvents flag, and to sort by polygonOffset\n\tintersects.sort(function (a, b) {\n\t\tvar af = a.object.material.polygonOffsetFactor;\n\t\tvar bf = b.object.material.polygonOffsetFactor;\n\t\tif (af < bf) { return -1 }\n\t\tif (af > bf) { return  1 }\n\t\treturn 0;\n\t});\n\tvar i;\n\tfor (i = 0; i < intersects.length; ++i) {\n\t\tvar obj = intersects[i].object;\n\t\tvar skipping = false;\n\t\twhile (obj && !skipping) {\n\t\t\tskipping = skipping || obj.skipDomEvents;\n\t\t\tobj = obj.parent;\n\t\t}\n\t\tif (!skipping) { break }\n\t}\n\tif (!intersects[i]) { return }\n\n\t// init some variables\n\tvar intersect\t= intersects[i];\n\tvar object3d\t= intersect.object;\n\tvar objectCtx\t= this._objectCtxGet(object3d);\n\tvar objectParent = object3d.parent;\n\n\n\twhile ( typeof(objectCtx) == 'undefined' && objectParent )\n\t{\n\t    objectCtx = this._objectCtxGet(objectParent);\n\t    objectParent = objectParent.parent;\n\t}\n\tif( !objectCtx )\treturn;\n\n\t// notify handlers\n\tthis._notify(eventName, object3d, origDomEvent, intersect);\n}\n\nTHREEx.DomEvents.prototype._notify\t= function(eventName, object3d, origDomEvent, intersect)\n{\n\tvar objectCtx\t= this._objectCtxGet(object3d);\n\tvar handlers\t= objectCtx ? objectCtx[eventName+'Handlers'] : null;\n\n\t// parameter check\n\tconsole.assert(arguments.length === 4)\n\n\t// do bubbling\n\tif( !objectCtx || !handlers || handlers.length === 0 ){\n\t\tobject3d.parent && this._notify(eventName, object3d.parent, origDomEvent, intersect);\n\t\treturn;\n\t}\n\n\t// notify all handlers\n\tvar handlers\t= objectCtx[eventName+'Handlers'];\n\tfor(var i = 0; i < handlers.length; i++){\n\t\tvar handler\t= handlers[i];\n\t\tvar toPropagate\t= true;\n\t\thandler.callback({\n\t\t\ttype\t\t: eventName,\n\t\t\ttarget\t\t: object3d,\n\t\t\torigDomEvent\t: origDomEvent,\n\t\t\tintersect\t: intersect,\n\t\t\tstopPropagation\t: function(){\n\t\t\t\ttoPropagate\t= false;\n\t\t\t}\n\t\t});\n\t\tif( !toPropagate )\tcontinue;\n\t\t// do bubbling\n\t\tif( handler.useCapture === false ){\n\t\t\tobject3d.parent && this._notify(eventName, object3d.parent, origDomEvent, intersect);\n\t\t}\n\t}\n}\n\n/********************************************************************************/\n/*\t\thandle mouse events\t\t\t\t\t\t*/\n/********************************************************************************/\n// # handle mouse events\n\nTHREEx.DomEvents.prototype._onMouseDown\t= function(event){ return this._onMouseEvent('mousedown', event);\t}\nTHREEx.DomEvents.prototype._onMouseUp\t= function(event){ return this._onMouseEvent('mouseup'\t, event);\t}\n\n\nTHREEx.DomEvents.prototype._onMouseEvent\t= function(eventName, domEvent)\n{\n\tvar mouseCoords = this._getRelativeMouseXY(domEvent);\n\tthis._onEvent(eventName, mouseCoords.x, mouseCoords.y, domEvent);\n}\n\nTHREEx.DomEvents.prototype._onMouseMove\t= function(domEvent)\n{\n\tvar mouseCoords = this._getRelativeMouseXY(domEvent);\n\tthis._onMove('mousemove', mouseCoords.x, mouseCoords.y, domEvent);\n\tthis._onMove('mouseover', mouseCoords.x, mouseCoords.y, domEvent);\n\tthis._onMove('mouseout' , mouseCoords.x, mouseCoords.y, domEvent);\n}\n\nTHREEx.DomEvents.prototype._onClick\t\t= function(event)\n{\n\t// TODO handle touch ?\n\tthis._onMouseEvent('click'\t, event);\n}\nTHREEx.DomEvents.prototype._onDblClick\t\t= function(event)\n{\n\t// TODO handle touch ?\n\tthis._onMouseEvent('dblclick'\t, event);\n}\n\nTHREEx.DomEvents.prototype._onContextmenu\t= function(event)\n{\n\t//TODO don't have a clue about how this should work with touch..\n\tthis._onMouseEvent('contextmenu'\t, event);\n}\n\n/********************************************************************************/\n/*\t\thandle touch events\t\t\t\t\t\t*/\n/********************************************************************************/\n// # handle touch events\n\n\nTHREEx.DomEvents.prototype._onTouchStart\t= function(event){ return this._onTouchEvent('mousedown', event);\t}\nTHREEx.DomEvents.prototype._onTouchEnd\t= function(event){ return this._onTouchEvent('mouseup'\t, event);\t}\n\nTHREEx.DomEvents.prototype._onTouchMove\t= function(domEvent)\n{\n\tif( domEvent.touches.length != 1 )\treturn undefined;\n\n\tdomEvent.preventDefault();\n\n\tvar mouseX\t= +(domEvent.touches[ 0 ].pageX / window.innerWidth ) * 2 - 1;\n\tvar mouseY\t= -(domEvent.touches[ 0 ].pageY / window.innerHeight) * 2 + 1;\n\tthis._onMove('mousemove', mouseX, mouseY, domEvent);\n\tthis._onMove('mouseover', mouseX, mouseY, domEvent);\n\tthis._onMove('mouseout' , mouseX, mouseY, domEvent);\n}\n\nTHREEx.DomEvents.prototype._onTouchEvent\t= function(eventName, domEvent)\n{\n\tif( domEvent.touches.length != 1 )\treturn undefined;\n\n\tdomEvent.preventDefault();\n\n\tvar mouseX\t= +(domEvent.touches[ 0 ].pageX / window.innerWidth ) * 2 - 1;\n\tvar mouseY\t= -(domEvent.touches[ 0 ].pageY / window.innerHeight) * 2 + 1;\n\tthis._onEvent(eventName, mouseX, mouseY, domEvent);\n}\n"
+	module.exports = "// This THREEx helper makes it easy to handle the mouse events in your 3D scene\n//\n// * CHANGES NEEDED\n//   * handle drag/drop\n//   * notify events not object3D - like DOM\n//     * so single object with property\n//   * DONE bubling implement bubling/capturing\n//   * DONE implement event.stopPropagation()\n//   * DONE implement event.type = \"click\" and co\n//   * DONE implement event.target\n//\n// # Lets get started\n//\n// First you include it in your page\n//\n// ```<script src='threex.domevent.js'></script>```\n//\n// # use the object oriented api\n//\n// You bind an event like this\n//\n// ```mesh.on('click', function(object3d){ ... })```\n//\n// To unbind an event, just do\n//\n// ```mesh.off('click', function(object3d){ ... })```\n//\n// As an alternative, there is another naming closer DOM events.\n// Pick the one you like, they are doing the same thing\n//\n// ```mesh.addEventListener('click', function(object3d){ ... })```\n// ```mesh.removeEventListener('click', function(object3d){ ... })```\n//\n// # Supported Events\n//\n// Always in a effort to stay close to usual pratices, the events name are the same as in DOM.\n// The semantic is the same too.\n// Currently, the available events are\n// [click, dblclick, mouseup, mousedown](http://www.quirksmode.org/dom/events/click.html),\n// [mouseover and mouse out](http://www.quirksmode.org/dom/events/mouseover.html).\n//\n// # use the standalone api\n//\n// The object-oriented api modifies THREE.Object3D class.\n// It is a global class, so it may be legitimatly considered unclean by some people.\n// If this bother you, simply do ```THREEx.DomEvents.noConflict()``` and use the\n// standalone API. In fact, the object oriented API is just a thin wrapper\n// on top of the standalone API.\n//\n// First, you instanciate the object\n//\n// ```var domEvent = new THREEx.DomEvent();```\n//\n// Then you bind an event like this\n//\n// ```domEvent.bind(mesh, 'click', function(object3d){ object3d.scale.x *= 2; });```\n//\n// To unbind an event, just do\n//\n// ```domEvent.unbind(mesh, 'click', callback);```\n//\n//\n// # Code\n\n//\n\n/** @namespace */\nvar THREEx\t\t= THREEx \t\t|| {};\n\n// # Constructor\nTHREEx.DomEvents\t= function(camera, domElement)\n{\n\tthis._camera\t= camera || null;\n\tthis._domElement= domElement || document;\n\tthis._projector\t= new THREE.Projector();\n\tthis._selected\t= null;\n\tthis._boundObjs\t= {};\n\t// Bind dom event for mouse and touch\n\tvar _this\t= this;\n\n\tthis._$onClick\t\t= function(){ _this._onClick.apply(_this, arguments);\t\t};\n\tthis._$onDblClick\t= function(){ _this._onDblClick.apply(_this, arguments);\t};\n\tthis._$onMouseMove\t= function(){ _this._onMouseMove.apply(_this, arguments);\t};\n\tthis._$onMouseDown\t= function(){ _this._onMouseDown.apply(_this, arguments);\t};\n\tthis._$onMouseUp\t= function(){ _this._onMouseUp.apply(_this, arguments);\t\t};\n\tthis._$onTouchMove\t= function(){ _this._onTouchMove.apply(_this, arguments);\t};\n\tthis._$onTouchStart\t= function(){ _this._onTouchStart.apply(_this, arguments);\t};\n\tthis._$onTouchEnd\t= function(){ _this._onTouchEnd.apply(_this, arguments);\t};\n\tthis._$onContextmenu\t= function(){ _this._onContextmenu.apply(_this, arguments);\t};\n\tthis._domElement.addEventListener( 'click'\t, this._$onClick\t, false );\n\tthis._domElement.addEventListener( 'dblclick'\t, this._$onDblClick\t, false );\n\tthis._domElement.addEventListener( 'mousemove'\t, this._$onMouseMove\t, false );\n\tthis._domElement.addEventListener( 'mousedown'\t, this._$onMouseDown\t, false );\n\tthis._domElement.addEventListener( 'mouseup'\t, this._$onMouseUp\t, false );\n\tthis._domElement.addEventListener( 'touchmove'\t, this._$onTouchMove\t, false );\n\tthis._domElement.addEventListener( 'touchstart'\t, this._$onTouchStart\t, false );\n\tthis._domElement.addEventListener( 'touchend'\t, this._$onTouchEnd\t, false );\n\tthis._domElement.addEventListener( 'contextmenu', this._$onContextmenu\t, false );\n\n}\n\n// # Destructor\nTHREEx.DomEvents.prototype.destroy\t= function()\n{\n\t// unBind dom event for mouse and touch\n\tthis._domElement.removeEventListener( 'click'\t\t, this._$onClick\t, false );\n\tthis._domElement.removeEventListener( 'dblclick'\t, this._$onDblClick\t, false );\n\tthis._domElement.removeEventListener( 'mousemove'\t, this._$onMouseMove\t, false );\n\tthis._domElement.removeEventListener( 'mousedown'\t, this._$onMouseDown\t, false );\n\tthis._domElement.removeEventListener( 'mouseup'\t\t, this._$onMouseUp\t, false );\n\tthis._domElement.removeEventListener( 'touchmove'\t, this._$onTouchMove\t, false );\n\tthis._domElement.removeEventListener( 'touchstart'\t, this._$onTouchStart\t, false );\n\tthis._domElement.removeEventListener( 'touchend'\t, this._$onTouchEnd\t, false );\n\tthis._domElement.removeEventListener( 'contextmenu'\t, this._$onContextmenu\t, false );\n}\n\nTHREEx.DomEvents.eventNames\t= [\n\t\"click\",\n\t\"dblclick\",\n\t\"mouseover\",\n\t\"mouseout\",\n\t\"mousemove\",\n\t\"mousedown\",\n\t\"mouseup\",\n\t\"contextmenu\"\n];\n\nTHREEx.DomEvents.prototype._getRelativeMouseXY\t= function(domEvent){\n\tvar element = domEvent.target || domEvent.srcElement;\n\tif (element.nodeType === 3) {\n\t\telement = element.parentNode; // Safari fix -- see http://www.quirksmode.org/js/events_properties.html\n\t}\n\n\t//get the real position of an element relative to the page starting point (0, 0)\n\t//credits go to brainjam on answering http://stackoverflow.com/questions/5755312/getting-mouse-position-relative-to-content-area-of-an-element\n\tvar elPosition\t= { x : 0 , y : 0};\n\tvar tmpElement\t= element;\n\t//store padding\n\tvar style\t= getComputedStyle(tmpElement, null);\n\telPosition.y += parseInt(style.getPropertyValue(\"padding-top\"), 10);\n\telPosition.x += parseInt(style.getPropertyValue(\"padding-left\"), 10);\n\t//add positions\n\tdo {\n\t\telPosition.x\t+= tmpElement.offsetLeft;\n\t\telPosition.y\t+= tmpElement.offsetTop;\n\t\tstyle\t\t= getComputedStyle(tmpElement, null);\n\n\t\telPosition.x\t+= parseInt(style.getPropertyValue(\"border-left-width\"), 10);\n\t\telPosition.y\t+= parseInt(style.getPropertyValue(\"border-top-width\"), 10);\n\t} while(tmpElement = tmpElement.offsetParent);\n\n\tvar elDimension\t= {\n\t\twidth\t: (element === window) ? window.innerWidth\t: element.offsetWidth,\n\t\theight\t: (element === window) ? window.innerHeight\t: element.offsetHeight\n\t};\n\n\treturn {\n\t\tx : +((domEvent.pageX - elPosition.x) / elDimension.width ) * 2 - 1,\n\t\ty : -((domEvent.pageY - elPosition.y) / elDimension.height) * 2 + 1\n\t};\n};\n\n\n/********************************************************************************/\n/*\t\tdomevent context\t\t\t\t\t\t*/\n/********************************************************************************/\n\n// handle domevent context in object3d instance\n\nTHREEx.DomEvents.prototype._objectCtxInit\t= function(object3d){\n\tobject3d._3xDomEvent = { object3d: object3d };\n}\nTHREEx.DomEvents.prototype._objectCtxDeinit\t= function(object3d){\n\tdelete object3d._3xDomEvent;\n}\nTHREEx.DomEvents.prototype._objectCtxIsInit\t= function(object3d){\n\treturn object3d._3xDomEvent ? true : false;\n}\nTHREEx.DomEvents.prototype._objectCtxGet\t\t= function(object3d){\n\treturn object3d._3xDomEvent;\n}\n\n/********************************************************************************/\n/*\t\t\t\t\t\t\t\t\t\t*/\n/********************************************************************************/\n\n/**\n * Getter/Setter for camera\n*/\nTHREEx.DomEvents.prototype.camera\t= function(value)\n{\n\tif( value )\tthis._camera\t= value;\n\treturn this._camera;\n}\n\nTHREEx.DomEvents.prototype.bind\t= function(object3d, eventName, callback, useCapture)\n{\n\tconsole.assert( THREEx.DomEvents.eventNames.indexOf(eventName) !== -1, \"not available events:\"+eventName );\n\n\tif( !this._objectCtxIsInit(object3d) )\tthis._objectCtxInit(object3d);\n\tvar objectCtx\t= this._objectCtxGet(object3d);\n\tif( !objectCtx[eventName+'Handlers'] )\tobjectCtx[eventName+'Handlers']\t= [];\n\n\tobjectCtx[eventName+'Handlers'].push({\n\t\tcallback\t: callback,\n\t\tuseCapture\t: useCapture\n\t});\n\n\t// add this object in this._boundObjs\n\tif( this._boundObjs[eventName] === undefined ){\n\t\tthis._boundObjs[eventName]\t= [];\n\t}\n\tthis._boundObjs[eventName].push(object3d);\n}\nTHREEx.DomEvents.prototype.addEventListener\t= THREEx.DomEvents.prototype.bind\n\nTHREEx.DomEvents.prototype.unbind\t= function(object3d, eventName, callback, useCapture)\n{\n\tconsole.assert( THREEx.DomEvents.eventNames.indexOf(eventName) !== -1, \"not available events:\"+eventName );\n\n\tif( !this._objectCtxIsInit(object3d) )\tthis._objectCtxInit(object3d);\n\n\tvar objectCtx\t= this._objectCtxGet(object3d);\n\tif( !objectCtx[eventName+'Handlers'] )\tobjectCtx[eventName+'Handlers']\t= [];\n\n\tvar handlers\t= objectCtx[eventName+'Handlers'];\n\tfor(var i = 0; i < handlers.length; i++){\n\t\tvar handler\t= handlers[i];\n\t\tif( callback != handler.callback )\tcontinue;\n\t\tif( useCapture != handler.useCapture )\tcontinue;\n\t\thandlers.splice(i, 1)\n\t\tbreak;\n\t}\n\t// from this object from this._boundObjs\n\tvar index\t= this._boundObjs[eventName].indexOf(object3d);\n\tconsole.assert( index !== -1 );\n\tthis._boundObjs[eventName].splice(index, 1);\n}\nTHREEx.DomEvents.prototype.removeEventListener\t= THREEx.DomEvents.prototype.unbind\n\nTHREEx.DomEvents.prototype._bound\t= function(eventName, object3d)\n{\n\tvar objectCtx\t= this._objectCtxGet(object3d);\n\tif( !objectCtx )\treturn false;\n\treturn objectCtx[eventName+'Handlers'] ? true : false;\n}\n\n/********************************************************************************/\n/*\t\tonMove\t\t\t\t\t\t\t\t*/\n/********************************************************************************/\n\n// # handle mousemove kind of events\n\nTHREEx.DomEvents.prototype._onMove\t= function(eventName, mouseX, mouseY, origDomEvent)\n{\n//console.log('eventName', eventName, 'boundObjs', this._boundObjs[eventName])\n\t// get objects bound to this event\n\tvar boundObjs\t= this._boundObjs[eventName];\n\tif( boundObjs === undefined || boundObjs.length === 0 )\treturn;\n\t// compute the intersection\n\tvar vector = new THREE.Vector3();\n\tvar raycaster = new THREE.Raycaster();\n\tvar dir = new THREE.Vector3();\n\n\tif ( this._camera instanceof THREE.OrthographicCamera ) {\n\n\t    vector.set( mouseX, mouseY, -1 );\n\t    vector.unproject( this._camera );\n\t    dir.set( 0, 0, - 1 ).transformDirection( this._camera.matrixWorld );\n\t    raycaster.set( vector, dir );\n\n\t} else if ( this._camera instanceof THREE.PerspectiveCamera ) {\n\n\t    vector.set( mouseX, mouseY, 0.5 );\n\t    vector.unproject( this._camera );\n\t    raycaster.set( this._camera.position, vector.sub( this._camera.position ).normalize() );\n\t}\n\n\tvar intersects = raycaster.intersectObjects( boundObjs );\n\n\n\n\tvar oldSelected\t= this._selected;\n\n\tif( intersects.length > 0 ){\n\t\tvar notifyOver, notifyOut, notifyMove;\n\t\tvar intersect\t= intersects[ 0 ];\n\t\tvar newSelected\t= intersect.object;\n\t\tthis._selected\t= newSelected;\n\t\t// if newSelected bound mousemove, notify it\n\t\tnotifyMove\t= this._bound('mousemove', newSelected);\n\n\t\tif( oldSelected != newSelected ){\n\t\t\t// if newSelected bound mouseenter, notify it\n\t\t\tnotifyOver\t= this._bound('mouseover', newSelected);\n\t\t\t// if there is a oldSelect and oldSelected bound mouseleave, notify it\n\t\t\tnotifyOut\t= oldSelected && this._bound('mouseout', oldSelected);\n\t\t}\n\t}else{\n\t\t// if there is a oldSelect and oldSelected bound mouseleave, notify it\n\t\tnotifyOut\t= oldSelected && this._bound('mouseout', oldSelected);\n\t\tthis._selected\t= null;\n\t}\n\n\n\t// notify mouseMove - done at the end with a copy of the list to allow callback to remove handlers\n\tnotifyMove && this._notify('mousemove', newSelected, origDomEvent, intersect);\n\t// notify mouseEnter - done at the end with a copy of the list to allow callback to remove handlers\n\tnotifyOver && this._notify('mouseover', newSelected, origDomEvent, intersect);\n\t// notify mouseLeave - done at the end with a copy of the list to allow callback to remove handlers\n\tnotifyOut  && this._notify('mouseout' , oldSelected, origDomEvent, intersect);\n}\n\n\n/********************************************************************************/\n/*\t\tonEvent\t\t\t\t\t\t\t\t*/\n/********************************************************************************/\n\n// # handle click kind of events\n\nTHREEx.DomEvents.prototype._onEvent\t= function(eventName, mouseX, mouseY, origDomEvent)\n{\n\t//console.log('eventName', eventName, 'boundObjs', this._boundObjs[eventName])\n\t// get objects bound to this event\n\tvar boundObjs\t= this._boundObjs[eventName];\n\tif( boundObjs === undefined || boundObjs.length === 0 )\treturn;\n\t// compute the intersection\n\tvar vector = new THREE.Vector3();\n\tvar raycaster = new THREE.Raycaster();\n\tvar dir = new THREE.Vector3();\n\n\tif ( this._camera instanceof THREE.OrthographicCamera ) {\n\n\t    vector.set( mouseX, mouseY, -1 );\n\t    vector.unproject( this._camera );\n\t    dir.set( 0, 0, - 1 ).transformDirection( this._camera.matrixWorld );\n\t    raycaster.set( vector, dir );\n\n\t} else if ( this._camera instanceof THREE.PerspectiveCamera ) {\n\n\t    vector.set( mouseX, mouseY, 0.5 );\n\t    vector.unproject( this._camera );\n\t    raycaster.set( this._camera.position, vector.sub( this._camera.position ).normalize() );\n\t}\n\n\tvar intersects = raycaster.intersectObjects( boundObjs, true);\n\t// if there are no intersections, return now\n\tif( intersects.length === 0 )\treturn;\n\n\t////////////////////////////////////////////////////////////////////////////////////////////////////////////////////\n\t// added by mhelvens, to sort by polygonOffset, and to allow an Object3D to have a skipDomEvents flag\n\t//\n\tintersects.sort(function (a, b) {\n\t\tvar af = a.object.material.polygonOffsetFactor;\n\t\tvar bf = b.object.material.polygonOffsetFactor;\n\t\tif (af < bf) { return -1 }\n\t\tif (af > bf) { return  1 }\n\t\treturn 0;\n\t});\n\tvar i;\n\tfor (i = 0; i < intersects.length; ++i) {\n\t\tvar obj = intersects[i].object;\n\t\tvar skipping = false;\n\t\twhile (obj && !skipping) {\n\t\t\tskipping = skipping || obj.skipDomEvents;\n\t\t\tobj = obj.parent;\n\t\t}\n\t\tif (!skipping) { break }\n\t}\n\tif (!intersects[i]) { return }\n\n\t// init some variables\n\tvar intersect\t= intersects[i];\n\tvar object3d\t= intersect.object;\n\tvar objectCtx\t= this._objectCtxGet(object3d);\n\tvar objectParent = object3d.parent;\n\n\n\twhile ( typeof(objectCtx) == 'undefined' && objectParent )\n\t{\n\t    objectCtx = this._objectCtxGet(objectParent);\n\t    objectParent = objectParent.parent;\n\t}\n\tif( !objectCtx )\treturn;\n\t//\n\t////////////////////////////////////////////////////////////////////////////////////////////////////////////////////\n\n\t// notify handlers\n\tthis._notify(eventName, object3d, origDomEvent, intersect);\n}\n\nTHREEx.DomEvents.prototype._notify\t= function(eventName, object3d, origDomEvent, intersect)\n{\n\tvar objectCtx\t= this._objectCtxGet(object3d);\n\tvar handlers\t= objectCtx ? objectCtx[eventName+'Handlers'] : null;\n\n\t// parameter check\n\tconsole.assert(arguments.length === 4)\n\n\t// do bubbling\n\tif( !objectCtx || !handlers || handlers.length === 0 ){\n\t\tobject3d.parent && this._notify(eventName, object3d.parent, origDomEvent, intersect);\n\t\treturn;\n\t}\n\n\t// notify all handlers\n\tvar handlers\t= objectCtx[eventName+'Handlers'];\n\tfor(var i = 0; i < handlers.length; i++){\n\t\tvar handler\t= handlers[i];\n\t\tvar toPropagate\t= true;\n\t\thandler.callback({\n\t\t\ttype\t\t: eventName,\n\t\t\ttarget\t\t: object3d,\n\t\t\torigDomEvent\t: origDomEvent,\n\t\t\tintersect\t: intersect,\n\t\t\tstopPropagation\t: function(){\n\t\t\t\ttoPropagate\t= false;\n\t\t\t}\n\t\t});\n\t\tif( !toPropagate )\tcontinue;\n\t\t// do bubbling\n\t\tif( handler.useCapture === false ){\n\t\t\tobject3d.parent && this._notify(eventName, object3d.parent, origDomEvent, intersect);\n\t\t}\n\t}\n}\n\n/********************************************************************************/\n/*\t\thandle mouse events\t\t\t\t\t\t*/\n/********************************************************************************/\n// # handle mouse events\n\nTHREEx.DomEvents.prototype._onMouseDown\t= function(event){ return this._onMouseEvent('mousedown', event);\t}\nTHREEx.DomEvents.prototype._onMouseUp\t= function(event){ return this._onMouseEvent('mouseup'\t, event);\t}\n\n\nTHREEx.DomEvents.prototype._onMouseEvent\t= function(eventName, domEvent)\n{\n\tvar mouseCoords = this._getRelativeMouseXY(domEvent);\n\tthis._onEvent(eventName, mouseCoords.x, mouseCoords.y, domEvent);\n}\n\nTHREEx.DomEvents.prototype._onMouseMove\t= function(domEvent)\n{\n\tvar mouseCoords = this._getRelativeMouseXY(domEvent);\n\tthis._onMove('mousemove', mouseCoords.x, mouseCoords.y, domEvent);\n\tthis._onMove('mouseover', mouseCoords.x, mouseCoords.y, domEvent);\n\tthis._onMove('mouseout' , mouseCoords.x, mouseCoords.y, domEvent);\n}\n\nTHREEx.DomEvents.prototype._onClick\t\t= function(event)\n{\n\t// TODO handle touch ?\n\tthis._onMouseEvent('click'\t, event);\n}\nTHREEx.DomEvents.prototype._onDblClick\t\t= function(event)\n{\n\t// TODO handle touch ?\n\tthis._onMouseEvent('dblclick'\t, event);\n}\n\nTHREEx.DomEvents.prototype._onContextmenu\t= function(event)\n{\n\t//TODO don't have a clue about how this should work with touch..\n\tthis._onMouseEvent('contextmenu'\t, event);\n}\n\n/********************************************************************************/\n/*\t\thandle touch events\t\t\t\t\t\t*/\n/********************************************************************************/\n// # handle touch events\n\n\nTHREEx.DomEvents.prototype._onTouchStart\t= function(event){ return this._onTouchEvent('mousedown', event);\t}\nTHREEx.DomEvents.prototype._onTouchEnd\t= function(event){ return this._onTouchEvent('mouseup'\t, event);\t}\n\nTHREEx.DomEvents.prototype._onTouchMove\t= function(domEvent)\n{\n\tif( domEvent.touches.length != 1 )\treturn undefined;\n\n\tdomEvent.preventDefault();\n\n\tvar mouseX\t= +(domEvent.touches[ 0 ].pageX / window.innerWidth ) * 2 - 1;\n\tvar mouseY\t= -(domEvent.touches[ 0 ].pageY / window.innerHeight) * 2 + 1;\n\tthis._onMove('mousemove', mouseX, mouseY, domEvent);\n\tthis._onMove('mouseover', mouseX, mouseY, domEvent);\n\tthis._onMove('mouseout' , mouseX, mouseY, domEvent);\n}\n\nTHREEx.DomEvents.prototype._onTouchEvent\t= function(eventName, domEvent)\n{\n\tif( domEvent.touches.length != 1 )\treturn undefined;\n\n\tdomEvent.preventDefault();\n\n\tvar mouseX\t= +(domEvent.touches[ 0 ].pageX / window.innerWidth ) * 2 - 1;\n\tvar mouseY\t= -(domEvent.touches[ 0 ].pageY / window.innerHeight) * 2 + 1;\n\tthis._onEvent(eventName, mouseX, mouseY, domEvent);\n}\n"
 
 /***/ },
 /* 39 */

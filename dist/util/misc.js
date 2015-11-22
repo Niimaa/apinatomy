@@ -7,7 +7,7 @@
 		var a = typeof exports === 'object' ? factory(require("bluebird")) : factory(root["bluebird"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE_63__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_3__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -50,49 +50,30 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	return __webpack_require__(0);
 /******/ })
 /************************************************************************/
-/******/ ({
-
-/***/ 0:
+/******/ ([
+/* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(15);
+	module.exports = __webpack_require__(4);
 
 
 /***/ },
+/* 1 */,
+/* 2 */,
+/* 3 */
+/***/ function(module, exports) {
 
-/***/ 10:
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
-	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(63)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P) {
-		'use strict';
-	
-		return function defer() {
-			var resolve, reject;
-			var promise = new P(function () {
-				resolve = arguments[0];
-				reject = arguments[1];
-			});
-			//noinspection JSUnusedAssignment
-			return {
-				resolve: resolve,
-				reject: reject,
-				promise: promise
-			};
-		};
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	module.exports = __WEBPACK_EXTERNAL_MODULE_3__;
 
 /***/ },
-
-/***/ 15:
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(63), __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, defer) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(3), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, defer) {
 		'use strict';
 	
 		var U = {
@@ -106,7 +87,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 			// create a new subclass, given a superclass, constructor and possible prototype
 			newSubclass: function newSubclass(superClass, constructorMaker) {
-				var prototype = arguments[2] === undefined ? {} : arguments[2];
+				var prototype = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
 	
 				var constructor = constructorMaker(superClass.prototype.constructor);
 				constructor.prototype = Object.create(superClass.prototype);
@@ -221,7 +202,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			// condition that is expected to be true
 			assert: function assert(condition, message) {
 				if (!condition) {
-					throw new Error(message || 'Assertion failed');
+					throw new Error(message || "Assertion failed");
 				}
 			},
 	
@@ -300,15 +281,16 @@ return /******/ (function(modules) { // webpackBootstrap
 			oncePerStack: function oncePerStack(func, context) {
 				var notRunYet = true;
 				var result = function result() {
-					for (var _len6 = arguments.length, args = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
-						args[_key6] = arguments[_key6];
-					}
-	
 					if (notRunYet) {
 						notRunYet = false;
 						setTimeout(function () {
 							notRunYet = true;
 						}, 0);
+	
+						for (var _len6 = arguments.length, args = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+							args[_key6] = arguments[_key6];
+						}
+	
 						func.apply(context || this, args);
 					}
 				};
@@ -475,15 +457,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-
-/***/ 63:
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_63__;
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
+	
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P) {
+		'use strict';
+	
+		return function defer() {
+			var resolve, reject;
+			var promise = new P(function () {
+				resolve = arguments[0];
+				reject = arguments[1];
+			});
+			//noinspection JSUnusedAssignment
+			return {
+				resolve: resolve,
+				reject: reject,
+				promise: promise
+			};
+		};
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }
-
-/******/ })
+/******/ ])
 });
 ;
 //# sourceMappingURL=misc.js.map

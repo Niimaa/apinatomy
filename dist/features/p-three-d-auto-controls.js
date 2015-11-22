@@ -1,13 +1,13 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("jquery"), require("bluebird"), require("three-js"), require("tweenjs"));
+		module.exports = factory(require("jquery"), require("bluebird"), require("tweenjs"), require("three-js"));
 	else if(typeof define === 'function' && define.amd)
-		define(["jquery", "bluebird", "three-js", "tweenjs"], factory);
+		define(["jquery", "bluebird", "tweenjs", "three-js"], factory);
 	else {
-		var a = typeof exports === 'object' ? factory(require("jquery"), require("bluebird"), require("three-js"), require("tweenjs")) : factory(root["jquery"], root["bluebird"], root["three-js"], root["tweenjs"]);
+		var a = typeof exports === 'object' ? factory(require("jquery"), require("bluebird"), require("tweenjs"), require("three-js")) : factory(root["jquery"], root["bluebird"], root["tweenjs"], root["three-js"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE_62__, __WEBPACK_EXTERNAL_MODULE_63__, __WEBPACK_EXTERNAL_MODULE_64__, __WEBPACK_EXTERNAL_MODULE_66__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_3__, __WEBPACK_EXTERNAL_MODULE_9__, __WEBPACK_EXTERNAL_MODULE_15__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -55,44 +55,33 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(27);
+	module.exports = __webpack_require__(46);
 
 
 /***/ },
 
-/***/ 10:
-/***/ function(module, exports, __webpack_require__) {
+/***/ 2:
+/***/ function(module, exports) {
 
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
-	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(63)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P) {
-		'use strict';
-	
-		return function defer() {
-			var resolve, reject;
-			var promise = new P(function () {
-				resolve = arguments[0];
-				reject = arguments[1];
-			});
-			//noinspection JSUnusedAssignment
-			return {
-				resolve: resolve,
-				reject: reject,
-				promise: promise
-			};
-		};
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	module.exports = __WEBPACK_EXTERNAL_MODULE_2__;
 
 /***/ },
 
-/***/ 15:
+/***/ 3:
+/***/ function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_3__;
+
+/***/ },
+
+/***/ 4:
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(63), __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, defer) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(3), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, defer) {
 		'use strict';
 	
 		var U = {
@@ -106,7 +95,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 			// create a new subclass, given a superclass, constructor and possible prototype
 			newSubclass: function newSubclass(superClass, constructorMaker) {
-				var prototype = arguments[2] === undefined ? {} : arguments[2];
+				var prototype = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
 	
 				var constructor = constructorMaker(superClass.prototype.constructor);
 				constructor.prototype = Object.create(superClass.prototype);
@@ -221,7 +210,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			// condition that is expected to be true
 			assert: function assert(condition, message) {
 				if (!condition) {
-					throw new Error(message || 'Assertion failed');
+					throw new Error(message || "Assertion failed");
 				}
 			},
 	
@@ -300,15 +289,16 @@ return /******/ (function(modules) { // webpackBootstrap
 			oncePerStack: function oncePerStack(func, context) {
 				var notRunYet = true;
 				var result = function result() {
-					for (var _len6 = arguments.length, args = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
-						args[_key6] = arguments[_key6];
-					}
-	
 					if (notRunYet) {
 						notRunYet = false;
 						setTimeout(function () {
 							notRunYet = true;
 						}, 0);
+	
+						for (var _len6 = arguments.length, args = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+							args[_key6] = arguments[_key6];
+						}
+	
 						func.apply(context || this, args);
 					}
 				};
@@ -476,12 +466,51 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 27:
+/***/ 5:
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(15), __webpack_require__(63), __webpack_require__(64), __webpack_require__(66)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, P, THREE, TWEEN) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P) {
+		'use strict';
+	
+		return function defer() {
+			var resolve, reject;
+			var promise = new P(function () {
+				resolve = arguments[0];
+				reject = arguments[1];
+			});
+			//noinspection JSUnusedAssignment
+			return {
+				resolve: resolve,
+				reject: reject,
+				promise: promise
+			};
+		};
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ },
+
+/***/ 9:
+/***/ function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_9__;
+
+/***/ },
+
+/***/ 15:
+/***/ function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_15__;
+
+/***/ },
+
+/***/ 46:
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
+	
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(2), __webpack_require__(4), __webpack_require__(3), __webpack_require__(15), __webpack_require__(9)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, P, THREE, TWEEN) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('three-d-auto-controls', {
@@ -532,34 +561,6 @@ return /******/ (function(modules) { // webpackBootstrap
 		//
 		//});
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ },
-
-/***/ 62:
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_62__;
-
-/***/ },
-
-/***/ 63:
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_63__;
-
-/***/ },
-
-/***/ 64:
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_64__;
-
-/***/ },
-
-/***/ 66:
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_66__;
 
 /***/ }
 

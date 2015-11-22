@@ -1,13 +1,13 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("jquery"), require("bluebird"), require("three-js"), require("kefir"), require("tweenjs"), require("kefir-jquery"));
+		module.exports = factory(require("jquery"), require("bluebird"), require("kefir"), require("tweenjs"), require("kefir-jquery"), require("three-js"));
 	else if(typeof define === 'function' && define.amd)
-		define(["jquery", "bluebird", "three-js", "kefir", "tweenjs", "kefir-jquery"], factory);
+		define(["jquery", "bluebird", "kefir", "tweenjs", "kefir-jquery", "three-js"], factory);
 	else {
-		var a = typeof exports === 'object' ? factory(require("jquery"), require("bluebird"), require("three-js"), require("kefir"), require("tweenjs"), require("kefir-jquery")) : factory(root["jquery"], root["bluebird"], root["three-js"], root["kefir"], root["tweenjs"], root["kefir-jquery"]);
+		var a = typeof exports === 'object' ? factory(require("jquery"), require("bluebird"), require("kefir"), require("tweenjs"), require("kefir-jquery"), require("three-js")) : factory(root["jquery"], root["bluebird"], root["kefir"], root["tweenjs"], root["kefir-jquery"], root["three-js"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE_62__, __WEBPACK_EXTERNAL_MODULE_63__, __WEBPACK_EXTERNAL_MODULE_64__, __WEBPACK_EXTERNAL_MODULE_65__, __WEBPACK_EXTERNAL_MODULE_66__, __WEBPACK_EXTERNAL_MODULE_67__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_3__, __WEBPACK_EXTERNAL_MODULE_8__, __WEBPACK_EXTERNAL_MODULE_9__, __WEBPACK_EXTERNAL_MODULE_10__, __WEBPACK_EXTERNAL_MODULE_15__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -50,366 +50,35 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	return __webpack_require__(0);
 /******/ })
 /************************************************************************/
-/******/ ({
-
-/***/ 0:
+/******/ ([
+/* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(26);
+	module.exports = __webpack_require__(42);
 
 
 /***/ },
+/* 1 */,
+/* 2 */
+/***/ function(module, exports) {
 
-/***/ 10:
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
-	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(63)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P) {
-		'use strict';
-	
-		return function defer() {
-			var resolve, reject;
-			var promise = new P(function () {
-				resolve = arguments[0];
-				reject = arguments[1];
-			});
-			//noinspection JSUnusedAssignment
-			return {
-				resolve: resolve,
-				reject: reject,
-				promise: promise
-			};
-		};
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	module.exports = __WEBPACK_EXTERNAL_MODULE_2__;
 
 /***/ },
+/* 3 */
+/***/ function(module, exports) {
 
-/***/ 12:
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
-	
-	function _slicedToArray(arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }
-	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(15), __webpack_require__(65), __webpack_require__(66), __webpack_require__(67)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir, TWEEN, KefirJQuery) {
-	
-		/* Kefir jQuery plugin ********************************************************************************************/
-	
-		KefirJQuery.init(Kefir, $);
-	
-		/* EventStream generators *****************************************************************************************/
-	
-		// This method works with events that can have only one subscriber,
-		// that can be un-subscribed by setting the subscriber to `null`.
-		// This function is memoized, so only one subscription is taken,
-		// and the same stream for it returned for each request.
-		Kefir.fromOnNull = U.memoize(function fromOnNull(obj, eventName) {
-			return Kefir.fromBinder(function (emitter) {
-				obj.on(eventName, emitter.emit);
-				return function () {
-					obj.on(eventName, null);
-				};
-			});
-		});
-	
-		var requestAnimationFrameFn = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (f) {
-			window.setTimeout(f, 1000 / 60);
-		};
-		Kefir.animationFrames = function animationFrames() {
-			return Kefir.fromBinder(function (emitter) {
-	
-				/* self-calling animation-frame loop */
-				var subscribed = true;
-				(function iterationFn() {
-					requestAnimationFrameFn(function () {
-						emitter.emit();
-						if (subscribed) {
-							iterationFn();
-						}
-					});
-				})();
-	
-				/* unsubscribe function */
-				return function () {
-					subscribed = false;
-				};
-			});
-		};
-	
-		Kefir.tween = function tween(objStart, objEnd, _ref) {
-			var duration = _ref.duration;
-			var delay = _ref.delay;
-			var easing = _ref.easing;
-	
-			/* the tween */
-			var tw = new TWEEN.Tween(objStart).to(objEnd, duration);
-	
-			/* the returned bus */
-			var bus = Kefir.bus();
-	
-			/* a local function to plug in other streams, keeping track in order to 'end' the bus */
-			var addStream = (function () {
-				var chainedStreams = 0;
-				return function (stream) {
-					chainedStreams += 1;
-					bus.plug(stream);
-					stream.onEnd(function () {
-						chainedStreams -= 1;
-						if (chainedStreams === 0) {
-							bus.end();
-						}
-					});
-				};
-			})();
-	
-			/* main stream */
-			addStream(Kefir.fromBinder(function (emitter) {
-				if (easing) {
-					tw.easing(easing);
-				}
-				if (delay) {
-					tw.delay(delay);
-				}
-				tw.onUpdate(function () {
-					emitter.emit(this);
-				});
-				tw.onComplete(emitter.end);
-			}));
-	
-			/* adding tween-specific properties to the returned bus */
-			bus.tween = tw;
-			bus.start = function () {
-				tw.start();
-				return bus;
-			};
-			bus.chain = function (other) {
-				addStream(other);
-				tw.chain(other.tween);
-				return bus;
-			};
-	
-			/* returning the bus */
-			return bus;
-		};
-	
-		Kefir.keyPress = function keyPress(keyCode) {
-			return $(window).asKefirStream('keypress').filter(function (e) {
-				return e.keyCode === keyCode;
-			});
-		};
-	
-		Kefir.once = function once(value) {
-			return Kefir.fromBinder(function (emitter) {
-				emitter.emit(value);
-				emitter.end();
-			});
-			//return Kefir.constant(value); // TODO: replace all 'once' calls with 'constant' calls; then remove 'once'
-		};
-	
-		Kefir.fromArray = function fromArray(array) {
-			return Kefir.fromBinder(function (emitter) {
-				array.forEach(emitter.emit);
-				emitter.end();
-			});
-		};
-	
-		/* EventStream converters *****************************************************************************************/
-	
-		// This creates a 'window of opportunity' to limit other streams by.
-		// This window is provided by the `pacing` observable. An optional `handler`
-		// parameter can be given to do some setup and some breakdown. It is passed a function as an argument
-		// that should be called *once* in the place where other streams can do their
-		// thing. It returns a function used to wrap other streams. It does not
-		// return a stream.
-		Kefir.limiter = function limiter(pacing) {
-			var handler = arguments[1] === undefined ? U.call : arguments[1];
-	
-			var wantedBus = Kefir.bus();
-			var open = Kefir.bus();
-			var close = Kefir.bus();
-	
-			/* takes 'this' stream as pacing for a window of opportunity for other streams */
-			pacing.filterBy(wantedBus.toProperty(false)).onValue(function () {
-				handler(function () {
-					open.emit();
-					wantedBus.emit(false);
-					close.emit();
-				});
-			});
-	
-			/* returns a function to wrap a stream in this wrapper */
-			return function (stream) {
-				var _ref2 = arguments[1] === undefined ? {} : arguments[1];
-	
-				var buffer = _ref2.buffer;
-	
-				wantedBus.plug(stream.mapTo(true));
-				return Kefir.constant(true).take(1).concat(close).flatMapLatest(function () {
-					var accumulator = function accumulator(arr, val) {
-						return buffer ? arr.concat([val]) : [val];
-					};
-					return stream.takeUntilBy(open).reduce(accumulator, []).flatMap(Kefir.fromArray);
-				});
-			};
-		};
-	
-		// This restricts a given stream to a wrapper stream created with the method above.
-		// All its original events are now fired inside the provided window. Set `options.buffer`
-		// to `true` if all its events should be buffered and released inside the next window.
-		// Otherwise, only the last event is retained.
-		Kefir.Observable.prototype.limitedBy = function limitedBy(wrapper, options) {
-			return wrapper(this, options);
-		};
-	
-		// convert to a stream of 1-or-2 element arrays;
-		// the first is just the element at that point in the stream
-		// the second is the previous element in the stream, if there is one
-		Kefir.Observable.prototype.newOld = function newOld() {
-			return Kefir.fromArray([null, null]).concat(this).slidingWindow(2).map(function (_ref3) {
-				var _ref32 = _slicedToArray(_ref3, 2);
-	
-				var a = _ref32[0];
-				var b = _ref32[1];
-				return [b, a];
-			});
-		};
-	
-		// This is a cheap version of the limiter defined above. TODO: use the limiter where this is now used
-		Kefir.Stream.prototype.holdUntil = function holdUntil(pacing) {
-			var _this = this;
-	
-			return Kefir.fromBinder(function (emitter) {
-				var buffer = [];
-				var unsubscribeToThis = _this.onValue(function (value) {
-					buffer.push(value);
-				});
-				var unsubscribeToPacing = pacing.onValue(function () {
-					if (buffer.length > 0) {
-						var oldBuffer = buffer;
-						buffer = [];
-						oldBuffer.forEach(emitter.emit);
-					}
-				});
-				return function () {
-					unsubscribeToThis();
-					unsubscribeToPacing();
-					buffer = null;
-				};
-			});
-		};
-	
-		// This filters an observable to only let through values equal to the given value.
-		Kefir.Observable.prototype.value = function (value, comparator) {
-			comparator = comparator || function (e) {
-				return e === value;
-			};
-			return this.skipDuplicates().filter(comparator);
-		};
-	
-		// This makes a subscription to an observable that doesn't do anything
-		Kefir.Observable.prototype.run = function () {
-			var _this2 = this;
-	
-			var doNothing = function doNothing() {};
-			this.onValue(doNothing);
-			return function () {
-				_this2.offValue(doNothing);
-			};
-		};
-	
-		// This is a 'smart' .stopPropagation, marking events with a label
-		// and skipping those that already have that label.
-		Kefir.Stream.prototype.skipPropagation = function (label) {
-			return this.filter(function (event) {
-				return !U.array(event.originalEvent, '_onlyOnceFor')[label];
-			}).map(function (event) {
-				U.array(event.originalEvent, '_onlyOnceFor')[label] = true;
-			});
-		};
-	
-		// Filter events to only certain keys / buttons. Can be a predicate function or single number.
-		Kefir.Stream.prototype.which = function (buttonId) {
-			var pred = typeof buttonId === 'function' ? buttonId : function (b) {
-				return b === buttonId;
-			};
-			return this.filter(function (e) {
-				return pred(e.which);
-			});
-		};
-	
-		/* EventStream generators *****************************************************************************************/
-	
-		$.fn.mouseDrag = function mouseDrag() {
-			var _ref4 = arguments[0] === undefined ? {} : arguments[0];
-	
-			var threshold = _ref4.threshold;
-	
-			return $(this).asKefirStream('mousedown').flatMap(function (mouseDownEvent) {
-				var stream = $(document).asKefirStream('mousemove');
-				if (threshold) {
-					var crossed = false;
-					stream = stream.filter(function (mouseMoveEvent) {
-						// TODO: don't use 'filter', but something like 'skipUntil' or 'flatMap'
-						if (crossed) {
-							return true;
-						}
-						var dx = mouseDownEvent.pageX - mouseMoveEvent.pageX;
-						var dy = mouseDownEvent.pageY - mouseMoveEvent.pageY;
-						if (dx * dx + dy * dy > threshold * threshold) {
-							return crossed = true;
-						}
-						return false;
-					});
-				}
-				return stream.takeUntilBy($(document).asKefirStream('mouseup')).map(function (mouseMoveEvent) {
-					return { mouseDownEvent: mouseDownEvent, mouseMoveEvent: mouseMoveEvent };
-				});
-			});
-		};
-	
-		$.fn.mouseClick = function mouseClick() {
-			var _ref5 = arguments[0] === undefined ? {} : arguments[0];
-	
-			var threshold = _ref5.threshold;
-	
-			return $(this).asKefirStream('mousedown').flatMap(function (mouseDownEvent) {
-				var untilStream = $(document).asKefirStream('mousemove');
-				if (threshold) {
-					var crossed = false;
-					untilStream = untilStream.filter(function (mouseMoveEvent) {
-						if (crossed) {
-							return true;
-						}
-						var dx = mouseDownEvent.pageX - mouseMoveEvent.pageX;
-						var dy = mouseDownEvent.pageY - mouseMoveEvent.pageY;
-						if (dx * dx + dy * dy > threshold * threshold) {
-							return crossed = true;
-						}
-						return false;
-					});
-				}
-				return $(document).asKefirStream('mouseup').take(1).takeUntilBy(untilStream);
-			});
-		};
-	
-		$.fn.mouseWheel = function mouseWheel() {
-			return $(this).asKefirStream('mousewheel DOMMouseScroll');
-		};
-	
-		return Kefir;
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	module.exports = __WEBPACK_EXTERNAL_MODULE_3__;
 
 /***/ },
-
-/***/ 15:
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(63), __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, defer) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(3), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, defer) {
 		'use strict';
 	
 		var U = {
@@ -423,7 +92,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 			// create a new subclass, given a superclass, constructor and possible prototype
 			newSubclass: function newSubclass(superClass, constructorMaker) {
-				var prototype = arguments[2] === undefined ? {} : arguments[2];
+				var prototype = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
 	
 				var constructor = constructorMaker(superClass.prototype.constructor);
 				constructor.prototype = Object.create(superClass.prototype);
@@ -538,7 +207,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			// condition that is expected to be true
 			assert: function assert(condition, message) {
 				if (!condition) {
-					throw new Error(message || 'Assertion failed');
+					throw new Error(message || "Assertion failed");
 				}
 			},
 	
@@ -617,15 +286,16 @@ return /******/ (function(modules) { // webpackBootstrap
 			oncePerStack: function oncePerStack(func, context) {
 				var notRunYet = true;
 				var result = function result() {
-					for (var _len6 = arguments.length, args = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
-						args[_key6] = arguments[_key6];
-					}
-	
 					if (notRunYet) {
 						notRunYet = false;
 						setTimeout(function () {
 							notRunYet = true;
 						}, 0);
+	
+						for (var _len6 = arguments.length, args = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+							args[_key6] = arguments[_key6];
+						}
+	
 						func.apply(context || this, args);
 					}
 				};
@@ -792,15 +462,624 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-
-/***/ 26:
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	function _slicedToArray(arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P) {
+		'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(64), __webpack_require__(15), __webpack_require__(12), __webpack_require__(72), __webpack_require__(86)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, THREE, U, Kefir) {
+		return function defer() {
+			var resolve, reject;
+			var promise = new P(function () {
+				resolve = arguments[0];
+				reject = arguments[1];
+			});
+			//noinspection JSUnusedAssignment
+			return {
+				resolve: resolve,
+				reject: reject,
+				promise: promise
+			};
+		};
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ },
+/* 6 */,
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
+	
+	var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
+	
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(2), __webpack_require__(4), __webpack_require__(8), __webpack_require__(9), __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir, TWEEN, KefirJQuery) {
+	
+		/* Kefir jQuery plugin ********************************************************************************************/
+	
+		KefirJQuery.init(Kefir, $);
+	
+		/* EventStream generators *****************************************************************************************/
+	
+		// This method works with events that can have only one subscriber,
+		// that can be un-subscribed by setting the subscriber to `null`.
+		// This function is memoized, so only one subscription is taken,
+		// and the same stream for it returned for each request.
+		Kefir.fromOnNull = U.memoize(function fromOnNull(obj, eventName) {
+			return Kefir.fromBinder(function (emitter) {
+				obj.on(eventName, emitter.emit);
+				return function () {
+					obj.on(eventName, null);
+				};
+			});
+		});
+	
+		var requestAnimationFrameFn = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (f) {
+			window.setTimeout(f, 1000 / 60);
+		};
+		Kefir.animationFrames = function animationFrames() {
+			return Kefir.fromBinder(function (emitter) {
+	
+				/* self-calling animation-frame loop */
+				var subscribed = true;
+				(function iterationFn() {
+					requestAnimationFrameFn(function () {
+						emitter.emit();
+						if (subscribed) {
+							iterationFn();
+						}
+					});
+				})();
+	
+				/* unsubscribe function */
+				return function () {
+					subscribed = false;
+				};
+			});
+		};
+	
+		Kefir.tween = function tween(objStart, objEnd, _ref) {
+			var duration = _ref.duration;
+			var delay = _ref.delay;
+			var easing = _ref.easing;
+	
+			/* the tween */
+			var tw = new TWEEN.Tween(objStart).to(objEnd, duration);
+	
+			/* the returned bus */
+			var bus = Kefir.bus();
+	
+			/* a local function to plug in other streams, keeping track in order to 'end' the bus */
+			var addStream = (function () {
+				var chainedStreams = 0;
+				return function (stream) {
+					chainedStreams += 1;
+					bus.plug(stream);
+					stream.onEnd(function () {
+						chainedStreams -= 1;
+						if (chainedStreams === 0) {
+							bus.end();
+						}
+					});
+				};
+			})();
+	
+			/* main stream */
+			addStream(Kefir.fromBinder(function (emitter) {
+				if (easing) {
+					tw.easing(easing);
+				}
+				if (delay) {
+					tw.delay(delay);
+				}
+				tw.onUpdate(function () {
+					emitter.emit(this);
+				});
+				tw.onComplete(emitter.end);
+			}));
+	
+			/* adding tween-specific properties to the returned bus */
+			bus.tween = tw;
+			bus.start = function () {
+				tw.start();
+				return bus;
+			};
+			bus.chain = function (other) {
+				addStream(other);
+				tw.chain(other.tween);
+				return bus;
+			};
+	
+			/* returning the bus */
+			return bus;
+		};
+	
+		Kefir.keyPress = function keyPress(keyCode) {
+			return $(window).asKefirStream('keypress').filter(function (e) {
+				return e.keyCode === keyCode;
+			});
+		};
+	
+		Kefir.once = function once(value) {
+			return Kefir.fromBinder(function (emitter) {
+				emitter.emit(value);
+				emitter.end();
+			});
+			//return Kefir.constant(value); // TODO: replace all 'once' calls with 'constant' calls; then remove 'once'
+		};
+	
+		Kefir.fromArray = function fromArray(array) {
+			return Kefir.fromBinder(function (emitter) {
+				array.forEach(emitter.emit);
+				emitter.end();
+			});
+		};
+	
+		/* EventStream converters *****************************************************************************************/
+	
+		// This creates a 'window of opportunity' to limit other streams by.
+		// This window is provided by the `pacing` observable. An optional `handler`
+		// parameter can be given to do some setup and some breakdown. It is passed a function as an argument
+		// that should be called *once* in the place where other streams can do their
+		// thing. It returns a function used to wrap other streams. It does not
+		// return a stream.
+		Kefir.limiter = function limiter(pacing) {
+			var handler = arguments.length <= 1 || arguments[1] === undefined ? U.call : arguments[1];
+	
+			var wantedBus = Kefir.bus();
+			var open = Kefir.bus();
+			var close = Kefir.bus();
+	
+			/* takes 'this' stream as pacing for a window of opportunity for other streams */
+			pacing.filterBy(wantedBus.toProperty(false)).onValue(function () {
+				handler(function () {
+					open.emit();
+					wantedBus.emit(false);
+					close.emit();
+				});
+			});
+	
+			/* returns a function to wrap a stream in this wrapper */
+			return function (stream) {
+				var _ref2 = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+	
+				var buffer = _ref2.buffer;
+	
+				wantedBus.plug(stream.mapTo(true));
+				return Kefir.constant(true).take(1).concat(close).flatMapLatest(function () {
+					var accumulator = function accumulator(arr, val) {
+						return buffer ? arr.concat([val]) : [val];
+					};
+					return stream.takeUntilBy(open).reduce(accumulator, []).flatMap(Kefir.fromArray);
+				});
+			};
+		};
+	
+		// This restricts a given stream to a wrapper stream created with the method above.
+		// All its original events are now fired inside the provided window. Set `options.buffer`
+		// to `true` if all its events should be buffered and released inside the next window.
+		// Otherwise, only the last event is retained.
+		Kefir.Observable.prototype.limitedBy = function limitedBy(wrapper, options) {
+			return wrapper(this, options);
+		};
+	
+		// convert to a stream of 1-or-2 element arrays;
+		// the first is just the element at that point in the stream
+		// the second is the previous element in the stream, if there is one
+		Kefir.Observable.prototype.newOld = function newOld() {
+			return Kefir.fromArray([null, null]).concat(this).slidingWindow(2).map(function (_ref3) {
+				var _ref32 = _slicedToArray(_ref3, 2);
+	
+				var a = _ref32[0];
+				var b = _ref32[1];
+				return [b, a];
+			});
+		};
+	
+		// This is a cheap version of the limiter defined above. TODO: use the limiter where this is now used
+		Kefir.Stream.prototype.holdUntil = function holdUntil(pacing) {
+			var _this = this;
+	
+			return Kefir.fromBinder(function (emitter) {
+				var buffer = [];
+				var unsubscribeToThis = _this.onValue(function (value) {
+					buffer.push(value);
+				});
+				var unsubscribeToPacing = pacing.onValue(function () {
+					if (buffer.length > 0) {
+						var oldBuffer = buffer;
+						buffer = [];
+						oldBuffer.forEach(emitter.emit);
+					}
+				});
+				return function () {
+					unsubscribeToThis();
+					unsubscribeToPacing();
+					buffer = null;
+				};
+			});
+		};
+	
+		// This filters an observable to only let through values equal to the given value.
+		Kefir.Observable.prototype.value = function (value, comparator) {
+			comparator = comparator || function (e) {
+				return e === value;
+			};
+			return this.skipDuplicates().filter(comparator);
+		};
+	
+		// This makes a subscription to an observable that doesn't do anything
+		Kefir.Observable.prototype.run = function () {
+			var _this2 = this;
+	
+			var doNothing = function doNothing() {};
+			this.onValue(doNothing);
+			return function () {
+				_this2.offValue(doNothing);
+			};
+		};
+	
+		// This is a 'smart' .stopPropagation, marking events with a label
+		// and skipping those that already have that label.
+		Kefir.Stream.prototype.skipPropagation = function (label) {
+			return this.filter(function (event) {
+				return !U.array(event.originalEvent, '_onlyOnceFor')[label];
+			}).map(function (event) {
+				U.array(event.originalEvent, '_onlyOnceFor')[label] = true;
+			});
+		};
+	
+		// Filter events to only certain keys / buttons. Can be a predicate function or single number.
+		Kefir.Stream.prototype.which = function (buttonId) {
+			var pred = typeof buttonId === 'function' ? buttonId : function (b) {
+				return b === buttonId;
+			};
+			return this.filter(function (e) {
+				return pred(e.which);
+			});
+		};
+	
+		/* EventStream generators *****************************************************************************************/
+	
+		$.fn.mouseDrag = function mouseDrag() {
+			var _ref4 = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	
+			var threshold = _ref4.threshold;
+	
+			return $(this).asKefirStream('mousedown').flatMap(function (mouseDownEvent) {
+				var stream = $(document).asKefirStream('mousemove');
+				if (threshold) {
+					var crossed = false;
+					stream = stream.filter(function (mouseMoveEvent) {
+						// TODO: don't use 'filter', but something like 'skipUntil' or 'flatMap'
+						if (crossed) {
+							return true;
+						}
+						var dx = mouseDownEvent.pageX - mouseMoveEvent.pageX;
+						var dy = mouseDownEvent.pageY - mouseMoveEvent.pageY;
+						if (dx * dx + dy * dy > threshold * threshold) {
+							return crossed = true;
+						}
+						return false;
+					});
+				}
+				return stream.takeUntilBy($(document).asKefirStream('mouseup')).map(function (mouseMoveEvent) {
+					return { mouseDownEvent: mouseDownEvent, mouseMoveEvent: mouseMoveEvent };
+				});
+			});
+		};
+	
+		$.fn.mouseClick = function mouseClick() {
+			var _ref5 = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	
+			var threshold = _ref5.threshold;
+	
+			return $(this).asKefirStream('mousedown').flatMap(function (mouseDownEvent) {
+				var untilStream = $(document).asKefirStream('mousemove');
+				if (threshold) {
+					var crossed = false;
+					untilStream = untilStream.filter(function (mouseMoveEvent) {
+						if (crossed) {
+							return true;
+						}
+						var dx = mouseDownEvent.pageX - mouseMoveEvent.pageX;
+						var dy = mouseDownEvent.pageY - mouseMoveEvent.pageY;
+						if (dx * dx + dy * dy > threshold * threshold) {
+							return crossed = true;
+						}
+						return false;
+					});
+				}
+				return $(document).asKefirStream('mouseup').take(1).takeUntilBy(untilStream);
+			});
+		};
+	
+		$.fn.mouseWheel = function mouseWheel() {
+			return $(this).asKefirStream('mousewheel DOMMouseScroll');
+		};
+	
+		return Kefir;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_8__;
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_9__;
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_10__;
+
+/***/ },
+/* 11 */,
+/* 12 */,
+/* 13 */,
+/* 14 */,
+/* 15 */
+/***/ function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_15__;
+
+/***/ },
+/* 16 */,
+/* 17 */,
+/* 18 */
+/***/ function(module, exports) {
+
+	module.exports = function() {
+		var list = [];
+		list.toString = function toString() {
+			var result = [];
+			for(var i = 0; i < this.length; i++) {
+				var item = this[i];
+				if(item[2]) {
+					result.push("@media " + item[2] + "{" + item[1] + "}");
+				} else {
+					result.push(item[1]);
+				}
+			}
+			return result.join("");
+		};
+		return list;
+	}
+
+/***/ },
+/* 19 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	var stylesInDom = {},
+		memoize = function(fn) {
+			var memo;
+			return function () {
+				if (typeof memo === "undefined") memo = fn.apply(this, arguments);
+				return memo;
+			};
+		},
+		isIE9 = memoize(function() {
+			return /msie 9\b/.test(window.navigator.userAgent.toLowerCase());
+		}),
+		getHeadElement = memoize(function () {
+			return document.head || document.getElementsByTagName("head")[0];
+		}),
+		singletonElement = null,
+		singletonCounter = 0;
+	
+	module.exports = function(list, options) {
+		if(false) {
+			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
+		}
+	
+		options = options || {};
+		// Force single-tag solution on IE9, which has a hard limit on the # of <style>
+		// tags it will allow on a page
+		if (typeof options.singleton === "undefined") options.singleton = isIE9();
+	
+		var styles = listToStyles(list);
+		addStylesToDom(styles, options);
+	
+		return function update(newList) {
+			var mayRemove = [];
+			for(var i = 0; i < styles.length; i++) {
+				var item = styles[i];
+				var domStyle = stylesInDom[item.id];
+				domStyle.refs--;
+				mayRemove.push(domStyle);
+			}
+			if(newList) {
+				var newStyles = listToStyles(newList);
+				addStylesToDom(newStyles, options);
+			}
+			for(var i = 0; i < mayRemove.length; i++) {
+				var domStyle = mayRemove[i];
+				if(domStyle.refs === 0) {
+					for(var j = 0; j < domStyle.parts.length; j++)
+						domStyle.parts[j]();
+					delete stylesInDom[domStyle.id];
+				}
+			}
+		};
+	}
+	
+	function addStylesToDom(styles, options) {
+		for(var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+			if(domStyle) {
+				domStyle.refs++;
+				for(var j = 0; j < domStyle.parts.length; j++) {
+					domStyle.parts[j](item.parts[j]);
+				}
+				for(; j < item.parts.length; j++) {
+					domStyle.parts.push(addStyle(item.parts[j], options));
+				}
+			} else {
+				var parts = [];
+				for(var j = 0; j < item.parts.length; j++) {
+					parts.push(addStyle(item.parts[j], options));
+				}
+				stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+			}
+		}
+	}
+	
+	function listToStyles(list) {
+		var styles = [];
+		var newStyles = {};
+		for(var i = 0; i < list.length; i++) {
+			var item = list[i];
+			var id = item[0];
+			var css = item[1];
+			var media = item[2];
+			var sourceMap = item[3];
+			var part = {css: css, media: media, sourceMap: sourceMap};
+			if(!newStyles[id])
+				styles.push(newStyles[id] = {id: id, parts: [part]});
+			else
+				newStyles[id].parts.push(part);
+		}
+		return styles;
+	}
+	
+	function createStyleElement() {
+		var styleElement = document.createElement("style");
+		var head = getHeadElement();
+		styleElement.type = "text/css";
+		head.appendChild(styleElement);
+		return styleElement;
+	}
+	
+	function addStyle(obj, options) {
+		var styleElement, update, remove;
+	
+		if (options.singleton) {
+			var styleIndex = singletonCounter++;
+			styleElement = singletonElement || (singletonElement = createStyleElement());
+			update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
+			remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
+		} else {
+			styleElement = createStyleElement();
+			update = applyToTag.bind(null, styleElement);
+			remove = function () {
+				styleElement.parentNode.removeChild(styleElement);
+			};
+		}
+	
+		update(obj);
+	
+		return function updateStyle(newObj) {
+			if(newObj) {
+				if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
+					return;
+				update(obj = newObj);
+			} else {
+				remove();
+			}
+		};
+	}
+	
+	function replaceText(source, id, replacement) {
+		var boundaries = ["/** >>" + id + " **/", "/** " + id + "<< **/"];
+		var start = source.lastIndexOf(boundaries[0]);
+		var wrappedReplacement = replacement
+			? (boundaries[0] + replacement + boundaries[1])
+			: "";
+		if (source.lastIndexOf(boundaries[0]) >= 0) {
+			var end = source.lastIndexOf(boundaries[1]) + boundaries[1].length;
+			return source.slice(0, start) + wrappedReplacement + source.slice(end);
+		} else {
+			return source + wrappedReplacement;
+		}
+	}
+	
+	function applyToSingletonTag(styleElement, index, remove, obj) {
+		var css = remove ? "" : obj.css;
+	
+		if(styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = replaceText(styleElement.styleSheet.cssText, index, css);
+		} else {
+			var cssNode = document.createTextNode(css);
+			var childNodes = styleElement.childNodes;
+			if (childNodes[index]) styleElement.removeChild(childNodes[index]);
+			if (childNodes.length) {
+				styleElement.insertBefore(cssNode, childNodes[index]);
+			} else {
+				styleElement.appendChild(cssNode);
+			}
+		}
+	}
+	
+	function applyToTag(styleElement, obj) {
+		var css = obj.css;
+		var media = obj.media;
+		var sourceMap = obj.sourceMap;
+	
+		if(sourceMap && typeof btoa === "function") {
+			try {
+				css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(JSON.stringify(sourceMap)) + " */";
+				css = "@import url(\"data:text/css;base64," + btoa(css) + "\")";
+			} catch(e) {}
+		}
+	
+		if(media) {
+			styleElement.setAttribute("media", media)
+		}
+	
+		if(styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = css;
+		} else {
+			while(styleElement.firstChild) {
+				styleElement.removeChild(styleElement.firstChild);
+			}
+			styleElement.appendChild(document.createTextNode(css));
+		}
+	}
+
+
+/***/ },
+/* 20 */,
+/* 21 */,
+/* 22 */,
+/* 23 */,
+/* 24 */,
+/* 25 */,
+/* 26 */,
+/* 27 */,
+/* 28 */,
+/* 29 */,
+/* 30 */,
+/* 31 */,
+/* 32 */,
+/* 33 */,
+/* 34 */,
+/* 35 */,
+/* 36 */,
+/* 37 */,
+/* 38 */,
+/* 39 */,
+/* 40 */,
+/* 41 */,
+/* 42 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
+	
+	var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
+	
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(2), __webpack_require__(15), __webpack_require__(4), __webpack_require__(7), __webpack_require__(43), __webpack_require__(44)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, THREE, U, Kefir) {
 		'use strict';
 	
 		/* the plugin */
@@ -828,7 +1107,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 			/* test for browser support */
 			if (!browserSupport()) {
-				console.warn('This browser doesn\'t seem to have WebGL support.'); // TODO: add "ApiNATOMY will not be 3D"
+				console.warn("This browser doesn't seem to have WebGL support."); // TODO: add "ApiNATOMY will not be 3D"
 				return;
 			}
 	
@@ -839,7 +1118,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 				var oldCanvas = _ref2[0];
 				var newCanvas = _ref2[1];
-				// TODO: use '.diff'
+	
 				if (oldCanvas) {
 					oldCanvas.removeClass('three-d-canvas');
 				}
@@ -897,12 +1176,12 @@ return /******/ (function(modules) { // webpackBootstrap
 				});
 	
 				/* lighting */
-				_this._p_threeD_scene.add(new THREE.AmbientLight(1052720)).add((function () {
-					var light = new THREE.PointLight(16777215, 2, 0);
+				_this._p_threeD_scene.add(new THREE.AmbientLight(0x101030)).add((function () {
+					var light = new THREE.PointLight(0xffffff, 2, 0);
 					light.position.set(-2000, -2000, 2000);
 					return light;
 				})()).add((function () {
-					var light = new THREE.PointLight(16777215, 1, 0);
+					var light = new THREE.PointLight(0xffffff, 1, 0);
 					light.position.set(2000, 2000, -1000);
 					return light;
 				})());
@@ -984,7 +1263,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 					/* directional light to cast shadows */
 					_this._p_threeD_scene.add((function () {
-						var light = new THREE.DirectionalLight(16777215);
+						var light = new THREE.DirectionalLight(0xffffff);
 						light.position.set(0, 0, 1000);
 						light.castShadow = true;
 						light.onlyShadow = true;
@@ -1144,53 +1423,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-
-/***/ 62:
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_62__;
-
-/***/ },
-
-/***/ 63:
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_63__;
-
-/***/ },
-
-/***/ 64:
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_64__;
-
-/***/ },
-
-/***/ 65:
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_65__;
-
-/***/ },
-
-/***/ 66:
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_66__;
-
-/***/ },
-
-/***/ 67:
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_67__;
-
-/***/ },
-
-/***/ 72:
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(64)], __WEBPACK_AMD_DEFINE_RESULT__ = function (THREE) {
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(15)], __WEBPACK_AMD_DEFINE_RESULT__ = function (THREE) {
 		'use strict';
 	
 		/**
@@ -1442,17 +1678,16 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-
-/***/ 86:
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(87);
+	var content = __webpack_require__(45);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(108)(content, {});
+	var update = __webpack_require__(19)(content, {});
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
@@ -1466,235 +1701,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-
-/***/ 87:
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(109)();
-	exports.push([module.id, ".three-d-canvas>div>div{z-index:0;}.three-d-canvas>div>canvas{z-index:1;}.three-d-canvas>div>canvas,.three-d-canvas>div>div{display:block;position:absolute;top:0;left:0;right:0;bottom:0;margin:0;pointer-events:none;}.three-d-canvas>div>canvas>.circuitboard,.three-d-canvas>div>div>.circuitboard{pointer-events:visible;-webkit-backface-visibility:hidden;backface-visibility:hidden;}", ""]);
-
-/***/ },
-
-/***/ 108:
-/***/ function(module, exports, __webpack_require__) {
-
-	/*
-		MIT License http://www.opensource.org/licenses/mit-license.php
-		Author Tobias Koppers @sokra
-	*/
-	var stylesInDom = {},
-		memoize = function(fn) {
-			var memo;
-			return function () {
-				if (typeof memo === "undefined") memo = fn.apply(this, arguments);
-				return memo;
-			};
-		},
-		isIE9 = memoize(function() {
-			return /msie 9\b/.test(window.navigator.userAgent.toLowerCase());
-		}),
-		getHeadElement = memoize(function () {
-			return document.head || document.getElementsByTagName("head")[0];
-		}),
-		singletonElement = null,
-		singletonCounter = 0;
-	
-	module.exports = function(list, options) {
-		if(false) {
-			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
-		}
-	
-		options = options || {};
-		// Force single-tag solution on IE9, which has a hard limit on the # of <style>
-		// tags it will allow on a page
-		if (typeof options.singleton === "undefined") options.singleton = isIE9();
-	
-		var styles = listToStyles(list);
-		addStylesToDom(styles, options);
-	
-		return function update(newList) {
-			var mayRemove = [];
-			for(var i = 0; i < styles.length; i++) {
-				var item = styles[i];
-				var domStyle = stylesInDom[item.id];
-				domStyle.refs--;
-				mayRemove.push(domStyle);
-			}
-			if(newList) {
-				var newStyles = listToStyles(newList);
-				addStylesToDom(newStyles, options);
-			}
-			for(var i = 0; i < mayRemove.length; i++) {
-				var domStyle = mayRemove[i];
-				if(domStyle.refs === 0) {
-					for(var j = 0; j < domStyle.parts.length; j++)
-						domStyle.parts[j]();
-					delete stylesInDom[domStyle.id];
-				}
-			}
-		};
-	}
-	
-	function addStylesToDom(styles, options) {
-		for(var i = 0; i < styles.length; i++) {
-			var item = styles[i];
-			var domStyle = stylesInDom[item.id];
-			if(domStyle) {
-				domStyle.refs++;
-				for(var j = 0; j < domStyle.parts.length; j++) {
-					domStyle.parts[j](item.parts[j]);
-				}
-				for(; j < item.parts.length; j++) {
-					domStyle.parts.push(addStyle(item.parts[j], options));
-				}
-			} else {
-				var parts = [];
-				for(var j = 0; j < item.parts.length; j++) {
-					parts.push(addStyle(item.parts[j], options));
-				}
-				stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
-			}
-		}
-	}
-	
-	function listToStyles(list) {
-		var styles = [];
-		var newStyles = {};
-		for(var i = 0; i < list.length; i++) {
-			var item = list[i];
-			var id = item[0];
-			var css = item[1];
-			var media = item[2];
-			var sourceMap = item[3];
-			var part = {css: css, media: media, sourceMap: sourceMap};
-			if(!newStyles[id])
-				styles.push(newStyles[id] = {id: id, parts: [part]});
-			else
-				newStyles[id].parts.push(part);
-		}
-		return styles;
-	}
-	
-	function createStyleElement() {
-		var styleElement = document.createElement("style");
-		var head = getHeadElement();
-		styleElement.type = "text/css";
-		head.appendChild(styleElement);
-		return styleElement;
-	}
-	
-	function addStyle(obj, options) {
-		var styleElement, update, remove;
-	
-		if (options.singleton) {
-			var styleIndex = singletonCounter++;
-			styleElement = singletonElement || (singletonElement = createStyleElement());
-			update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
-			remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
-		} else {
-			styleElement = createStyleElement();
-			update = applyToTag.bind(null, styleElement);
-			remove = function () {
-				styleElement.parentNode.removeChild(styleElement);
-			};
-		}
-	
-		update(obj);
-	
-		return function updateStyle(newObj) {
-			if(newObj) {
-				if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
-					return;
-				update(obj = newObj);
-			} else {
-				remove();
-			}
-		};
-	}
-	
-	function replaceText(source, id, replacement) {
-		var boundaries = ["/** >>" + id + " **/", "/** " + id + "<< **/"];
-		var start = source.lastIndexOf(boundaries[0]);
-		var wrappedReplacement = replacement
-			? (boundaries[0] + replacement + boundaries[1])
-			: "";
-		if (source.lastIndexOf(boundaries[0]) >= 0) {
-			var end = source.lastIndexOf(boundaries[1]) + boundaries[1].length;
-			return source.slice(0, start) + wrappedReplacement + source.slice(end);
-		} else {
-			return source + wrappedReplacement;
-		}
-	}
-	
-	function applyToSingletonTag(styleElement, index, remove, obj) {
-		var css = remove ? "" : obj.css;
-	
-		if(styleElement.styleSheet) {
-			styleElement.styleSheet.cssText = replaceText(styleElement.styleSheet.cssText, index, css);
-		} else {
-			var cssNode = document.createTextNode(css);
-			var childNodes = styleElement.childNodes;
-			if (childNodes[index]) styleElement.removeChild(childNodes[index]);
-			if (childNodes.length) {
-				styleElement.insertBefore(cssNode, childNodes[index]);
-			} else {
-				styleElement.appendChild(cssNode);
-			}
-		}
-	}
-	
-	function applyToTag(styleElement, obj) {
-		var css = obj.css;
-		var media = obj.media;
-		var sourceMap = obj.sourceMap;
-	
-		if(sourceMap && typeof btoa === "function") {
-			try {
-				css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(JSON.stringify(sourceMap)) + " */";
-				css = "@import url(\"data:text/css;base64," + btoa(css) + "\")";
-			} catch(e) {}
-		}
-	
-		if(media) {
-			styleElement.setAttribute("media", media)
-		}
-	
-		if(styleElement.styleSheet) {
-			styleElement.styleSheet.cssText = css;
-		} else {
-			while(styleElement.firstChild) {
-				styleElement.removeChild(styleElement.firstChild);
-			}
-			styleElement.appendChild(document.createTextNode(css));
-		}
-	}
-
-
-/***/ },
-
-/***/ 109:
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = function() {
-		var list = [];
-		list.toString = function toString() {
-			var result = [];
-			for(var i = 0; i < this.length; i++) {
-				var item = this[i];
-				if(item[2]) {
-					result.push("@media " + item[2] + "{" + item[1] + "}");
-				} else {
-					result.push(item[1]);
-				}
-			}
-			return result.join("");
-		};
-		return list;
-	}
+	exports = module.exports = __webpack_require__(18)();
+	exports.push([module.id, ".three-d-canvas > div > div {\n  z-index: 0; }\n\n.three-d-canvas > div > canvas {\n  z-index: 1; }\n\n.three-d-canvas > div > canvas, .three-d-canvas > div > div {\n  display: block;\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  margin: 0;\n  pointer-events: none; }\n  .three-d-canvas > div > canvas > .circuitboard, .three-d-canvas > div > div > .circuitboard {\n    pointer-events: visible;\n    -webkit-backface-visibility: hidden;\n            backface-visibility: hidden; }\n", ""]);
 
 /***/ }
-
-/******/ })
+/******/ ])
 });
 ;
 //# sourceMappingURL=p-three-d.js.map

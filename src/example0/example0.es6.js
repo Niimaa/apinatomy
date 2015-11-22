@@ -1,5 +1,5 @@
 /* styling */
-import './example.scss';
+import './example0.scss';
 
 
 /* libraries */
@@ -9,6 +9,7 @@ import U from '../util/misc.es6.js';
 import Kefir from '../util/kefir-and-eggs.es6.js';
 import KefirSignalHandler from '../util/kefir-signal-handler.es6.js';
 import {button} from '../util/codes.es6.js';
+import {preloadAllResources, getResource_sync, getAllResources_sync} from './resources.es6.js';
 
 import GoldenLayout from 'golden-layout';
 import 'golden-layout/src/css/goldenlayout-base.css';
@@ -18,8 +19,8 @@ import 'golden-layout/src/css/goldenlayout-light-theme.css';
 /* load the circuitboard, model loader and plugins */
 import circuitboard from '../circuitboard.es6.js';
 //import getFmaModels from './fma-model.es6.js';
-import getLyphModels from './lyph-model.es6.js';
-import fetchPathsFn  from '../util/path-model.es6.js';
+import {getLyphModels} from './lyph-model.es6.js';
+//import fetchPathsFn    from '../util/path-model.es6.js';
 import '../features/p-core.es6.js';
 import '../features/p-tile-skin.es6.js';
 import '../features/p-tile-spacing.es6.js';
@@ -46,7 +47,7 @@ import '../features/p-tile-child-count-if-closed.es6.js';
 import '../features/p-tile-correlation-count-if-closed.es6.js';
 import '../features/p-tile-glyphs.es6.js';
 import '../features/p-d3.es6.js';
-import '../features/p-connectivity.es6.js';
+//import '../features/p-connectivity.es6.js';
 
 //import '../features/p-ppi.es6.js';
 //import '../features/p-three-d.es6.js';
@@ -69,10 +70,13 @@ import '../features/p-connectivity.es6.js';
 //import '../features/p-tile-button-to-point-camera.es6.js';
 
 
+import './shims.es6.js';
+
 
 /* fetch query parameters */
-const root = U.getQueryVariable('root') || '1';
-const port = U.getQueryVariable('port') || '5056';
+const root = U.getQueryVariable('root') ||  185;
+const host = U.getQueryVariable('host') || 'localhost'; // alternative; 'open-physiology.org'
+const port = U.getQueryVariable('port') || '8888';
 
 
 
@@ -157,7 +161,7 @@ const port = U.getQueryVariable('port') || '5056';
 
 /* a promise for all clinical indices */
 let allClIndices = P.resolve($.ajax({
-	url: `http://open-physiology.org:${port}/all_clinical_indices/`,
+	url: `http://${host}:${port}/clinicalIndices`,
 	dataType: 'jsonp'
 })).get('results').error((err) => {
 	console.error("There seems to be something wrong with the server.", err);
@@ -175,8 +179,8 @@ circuitboard.plugin.do('start-brain-open', { if: true, after: ['tile-open', 'til
 
 
 /* load all tiles immediately */
-	// this does it recursively, which implies many server queries;
-	// TODO: arrange a single command for this
+// this does it recursively, which implies many server queries;
+// TODO: arrange a single command for this
 circuitboard.plugin.do('start-tiles-loaded', { if: true, after: ['core'] })
 	.append('Tile.prototype.construct', function () {
 		this.populateInnerTilemap();
@@ -217,8 +221,8 @@ circuitboard.plugin.select(
 	'tile-button-to-unhide-children',
 	'tile-child-count-if-closed',
 	'tile-correlation-count-if-closed',
-	'tile-glyphs',
-	'connectivity'
+	'tile-glyphs'
+	//'connectivity'
 
 	//'three-d-manual-controls',
 	//'three-d-auto-controls',
@@ -232,24 +236,88 @@ circuitboard.plugin.select(
 
 $(document).ready(() => {
 
-	$('#circuitboard').circuitboard({
+
+	let X = {
+		correlations:    {},
+		clinicalIndices: {},
+		locatedMeasures: {},
+		lyphTemplates:   {},
+		publications:    {}
+	};
+
+
+	preloadAllResources({host, port}).then(() => $('#circuitboard').circuitboard({
 		model:          getLyphModels('root', { root, port }),
-		fetchPaths:     fetchPathsFn({ port }),
+		//fetchPaths:     fetchPathsFn({ port }),
 		tileSpacing:    8,
 		tilemapMargin:  8,
 		weightWhenOpen: 4,
 		initialTileVisibility: false
-	}).circuitboard('instance').then(function (circuitboard) {
+	}).circuitboard('instance')).then(function (circuitboard) {
 
 
 		console.info('circuitboard loaded');
 
 
-		/* local storage of important entities */
-		let clIndices = new Map();
-		let correlations = new Map();
-		let locatedMeasures = new Map();
+		/* completely preparing the resources in a synchronous way */
+		for (let type of Object.keys(X)) {
+			for (let v of getAllResources_sync(type)) {
+				let newV = new KefirSignalHandler();
+				U.extend(newV, v);
+				newV.newProperty('visible', { settable: true, initial: false });
+				X[type][v.id] = newV;
+			}
+		}
+		for (let correlation of Object.values(X.correlations)) {
+			correlation.publication = X.publications[correlation.publication];
+			correlation.locatedMeasures = correlation.locatedMeasures.map(id => X.locatedMeasures[id]);
+			correlation.clinicalIndices = correlation.clinicalIndices.map(id => X.clinicalIndices[id]);
+			correlation.color = Math.floor(Math.random() * 0xffffff);
+			correlation.clIndexVisibleCounter = 0;
+		}
+		for (let clinicalIndex of Object.values(X.clinicalIndices)) {
+			clinicalIndex.correlations = clinicalIndex.correlations.map(id => X.correlations[id]);
+		}
+		for (let locatedMeasure of Object.values(X.locatedMeasures)) {
+			locatedMeasure.lyphTemplate = X.lyphTemplates[locatedMeasure.lyphTemplate];
+			locatedMeasure.correlations = locatedMeasure.correlations.map(id => X.correlations[id]);
+			locatedMeasure.tile = circuitboard.tile(locatedMeasure.lyphTemplate.id);
+			locatedMeasure.correlationVisibleCounter = 0;
+		}
+		for (let lyphTemplate of Object.values(X.lyphTemplates)) {
+			lyphTemplate.locatedMeasures = lyphTemplate.locatedMeasures.map(id => X.locatedMeasures[id]);
+		}
+		for (let publication of Object.values(X.publications)) {
+			publication.correlations = publication.correlations.map(id => X.correlations[id]);
+		}
 
+
+
+
+
+		/* the new way of building the page with synchronously loaded resources */
+		//////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////////
+
+
+		/* propagating tile visibility and open-ness */
+		circuitboard.newTiles.onValue((tile) => {
+			setTimeout(() => {
+				tile.p('visible').onValue((visible) => {
+					if (visible) {
+						let parent = tile.closestAncestorByType('Tile');
+						if (parent) {
+							parent.open = true;
+							parent.visible = true;
+						}
+					} else {
+						for (let child of tile.closestDescendantsByType('Tile')) {
+							child.visible = false;
+						}
+					}
+				});
+			});
+		});
 
 		/* creating a checkbox */
 		function createCheckbox(label) {
@@ -275,7 +343,6 @@ $(document).ready(() => {
 			return result;
 		}
 
-
 		/* creating a box representing a correlation */
 		function correlationBox(correlation) {
 			let result = { correlation };
@@ -283,8 +350,6 @@ $(document).ready(() => {
 			result.element = $('<div>')
 				.addClass('correlation-box')
 				.css('borderColor', `#${decimalToHex(correlation.color, 6)}`);
-			result.pubmedId    = correlation.pubmed.id    === 'autogen' ?  24224044  : correlation.pubmed.id;
-			result.pubmedTitle = correlation.pubmed.title === 'autogen' ? '24224044' : correlation.pubmed.title;
 
 			/* create correlation checkbox */
 			let checkbox = createCheckbox();
@@ -298,173 +363,67 @@ $(document).ready(() => {
 				.append(checkbox.element)
 				.append(`
 					<div style="margin-bottom: 5px; font-weight: bold;">
-						Pubmed ID: <a target="_blank" href="http://www.ncbi.nlm.nih.gov/pubmed/${result.pubmedId}">${result.pubmedTitle}</a>
+						<a target="_blank" href="${correlation.publication.uri}">${correlation.publication.title}</a>
 					</div>
 				`);
 
 			/* add located measures */
-			for (let variable of correlation.variables) {
-				if (variable.type === 'located measure') {
-					result.element.append(`
-						<div class="checkbox-bullet" title="${variable.quality} of ${variable['location name']}">
-							<span>&#8226;</span>
-							<span style="font-style: italic">${variable.quality} of ${variable['location name']}</span>
-						</div>
-					`);
-				}
+			for (let locatedMeasure of correlation.locatedMeasures) {
+				result.element.append(`
+					<div class="checkbox-bullet" title="${locatedMeasure.quality} of ${locatedMeasure.lyphTemplate.name}">
+						<span>&#8226;</span>
+						<span style="font-style: italic">${locatedMeasure.quality} of ${locatedMeasure.lyphTemplate.name}</span>
+					</div>
+				`);
 			}
 
 			/* add clinical indices */
-			for (let variable of correlation.variables) {
-				if (variable.type === 'clinical index') {
-					let clIndex = clIndices.get(variable.clindex);
-					let clIndexCheckbox = createCheckbox(clIndex['clindex label']);
-					clIndexCheckbox.p('checked').plug(clIndex.p('visible'));
-					clIndex.p('visible').plug(clIndexCheckbox.p('checked'));
-					result.element.append(clIndexCheckbox.element);
-				}
+			for (let variable of correlation.clinicalIndices) {
+				let clIndexCheckbox = createCheckbox(variable.title);
+				clIndexCheckbox.p('checked').plug(variable.p('visible'));
+				variable.p('visible').plug(clIndexCheckbox.p('checked'));
+				result.element.append(clIndexCheckbox.element);
 			}
 
 			return result;
 		}
 
-
-		/* propagating tile visibility and open-ness */
-		circuitboard.newTiles.onValue((tile) => {
-			setTimeout(() => {
-				tile.p('visible').onValue((visible) => {
-					if (visible) {
-						let parent = tile.closestAncestorByType('Tile');
-						if (parent) {
-							parent.open = true;
-							parent.visible = true;
-						}
-					} else {
-						for (let child of tile.closestDescendantsByType('Tile')) {
-							child.visible = false;
-						}
-					}
-				});
-			});
-		});
-
-
-		/* tracking correlations */
-		let newCorrelations = Kefir.bus();
-		circuitboard.newTiles.onValue((tile) => {
-			tile.model.then((model) => {
-				for (let correlation of model.correlations) {
-					if (!correlations.has(correlation.id)) {
-
-						/* signal handling */
-						let newCorrelation = new KefirSignalHandler();
-						U.extend(newCorrelation, correlation);
-
-						/* visibility */
-						newCorrelation.newProperty('visible', { settable: true, initial: false });
-
-						/* random color */
-						newCorrelation.color = Math.floor(Math.random() * 0xffffff);
-
-						/* register new correlation*/
-						correlations.set(newCorrelation.id, newCorrelation);
-						newCorrelations.emit(newCorrelation);
-
-					}
-				}
-			});
-		});
-
-
-		///* printing the list of all visible correlations to the console */// TODO: comment out this debugging stuff
-		//let visibleCorrelations = new Set();
-		//let lastVisibleCorrelationCount = -1;
-		//newCorrelations.onValue((correlation) => {
-		//	correlation.p('visible').onValue((v) => {
-		//		if (v) { visibleCorrelations.add(correlation) }
-		//		else { visibleCorrelations.delete(correlation) }
-		//		if (lastVisibleCorrelationCount !== visibleCorrelations.size) {
-		//			console.log([...visibleCorrelations].map(vc => vc.id));
-		//			lastVisibleCorrelationCount = visibleCorrelations.size;
-		//		}
-		//	});
-		//});
-
-
-		/* tracking located measures */
-		let newLocatedMeasures = Kefir.bus();
-		let newCorrelationLocatedMeasures = Kefir.bus();
-		newCorrelations.onValue((correlation) => {
-			for (let variable of correlation.variables) {
-				if (variable.type === 'located measure') {
-					//const varKey = `${variable.quality} -- ${variable.location}`;
-					const varKey = `${correlation.id} -- ${variable.quality} -- ${variable.location}`;
-					if (!locatedMeasures.has(varKey)) {
-
-						/* signal handling */
-						let newLocatedMeasure = new KefirSignalHandler();
-						U.extend(newLocatedMeasure, variable);
-
-						/* visibility */
-						newLocatedMeasure.newProperty('visible', { settable: true, initial: false });
-
-						/* tile */
-						newLocatedMeasure.tile = circuitboard.tile(newLocatedMeasure.location);
-
-						/* correlations */
-						// right now, every located measure has only one correlation, but this may change, so we're using a Set
-						newLocatedMeasure.correlations = new Set();
-						newLocatedMeasure.correlationVisibleCounter = 0;
-
-						/* register new located measure */
-						locatedMeasures.set(varKey, newLocatedMeasure);
-						newLocatedMeasures.emit(newLocatedMeasure);
-
-					}
-					let locatedMeasure = locatedMeasures.get(varKey);
-					locatedMeasure.correlations.add(correlation);
-					newCorrelationLocatedMeasures.emit({ correlation, locatedMeasure });
-				}
-			}
-		});
-
-
 		/* establish relation between located measures and correlations */
-		newCorrelationLocatedMeasures.onValue(({correlation, locatedMeasure}) => {
-			correlation.p('visible').value(true).onValue(() => {
-				locatedMeasure.correlationVisibleCounter += 1;
-				locatedMeasure.visible = true;
-				setTimeout(() => {
-					correlation.p('visible').value(false).take(1).onValue(() => {
-						locatedMeasure.correlationVisibleCounter -= 1;
-						if (locatedMeasure.correlationVisibleCounter === 0) {
-							locatedMeasure.visible = false;
-						}
+		for (let correlation of Object.values(X.correlations)) {
+			for (let locatedMeasure of correlation.locatedMeasures) {
+				correlation.p('visible').value(true).onValue(() => {
+					locatedMeasure.correlationVisibleCounter += 1;
+					locatedMeasure.visible = true;
+					setTimeout(() => {
+						correlation.p('visible').value(false).take(1).onValue(() => {
+							locatedMeasure.correlationVisibleCounter -= 1;
+							if (locatedMeasure.correlationVisibleCounter === 0) {
+								locatedMeasure.visible = false;
+							}
+						});
 					});
 				});
-			});
-			locatedMeasure.p('visible').value(false).onValue(() => {
-				correlation.visible = false;
-			});
-		});
+				locatedMeasure.p('visible').value(false).onValue(() => {
+					correlation.visible = false;
+				});
+			}
+		}
 
-
-		/* glyphs for locate measures */
-		newLocatedMeasures.onValue((locatedMeasure) => {
+		/* glyphs for located measures */
+		for (let locatedMeasure of Object.values(X.locatedMeasures)) {
 			locatedMeasure.tile.then((tile) => {
-
 				/* the glyph */
 				let glyph = tile.addGlyph({
-					tooltipText: `${locatedMeasure.quality} of ${locatedMeasure['location name']} `
-					           + `(correlation ${[...locatedMeasure.correlations].map(c => c.id)})`,
+					tooltipText: `${locatedMeasure.quality} of ${locatedMeasure.lyphTemplate.name} `
+					+ `(correlation ${[...locatedMeasure.correlations].map(c => c.id).join(', ')})`,
 					shape: 'square'
 				});
 
 				/* the color of the glyph */
 				// using the color of only one correlation (there is only one per located measure right now anyway)
 				glyph.element.children()
-					.css('fill',   '#' + decimalToHex([...locatedMeasure.correlations][0].color, 6))
-					.css('stroke', '#' + decimalToHex([...locatedMeasure.correlations][0].color, 6));
+					.css('fill',   '#' + decimalToHex(locatedMeasure.correlations[0].color, 6))
+					.css('stroke', '#' + decimalToHex(locatedMeasure.correlations[0].color, 6));
 
 				/* clicking on a glyph populates the info-box */
 				glyph.element.children().click(() => {
@@ -488,109 +447,61 @@ $(document).ready(() => {
 				});
 
 			});
-		});
-
-
-		/* clinical indices */
-		let newClIndices = Kefir.bus();
-		let newCorrelationClIndices = Kefir.bus();
-		function registerClIndex(variable) {
-			/* normalize member names (server sends different structures depending on query) */
-			if (!variable.clindex) {
-				variable.clindex = variable.index;
-				variable['clindex label'] = variable.label;
-			}
-
-			/* signal handling */
-			let newClIndex = new KefirSignalHandler();
-			U.extend(newClIndex, variable);
-
-			/* visibility */
-			newClIndex.newProperty('visible', { settable: true, initial: false });
-
-			/* has correlations */
-			newClIndex.newProperty('hasCorrelations', { settable: true, initial: false });
-
-			/* correlations */
-			newClIndex.correlations = new Set();
-			newClIndex.correlationVisibleCounter = 0;
-
-			/* register new clinical index */
-			clIndices.set(newClIndex.clindex, newClIndex);
-			newClIndices.emit(newClIndex);
 		}
-		// processing clinical indices that have no correlations attached
-		Kefir.fromBinder(({emit, end}) => { allClIndices.each(emit).then(end) })
-			.filter((variable) => (variable['correlation count'] === "0"))
-			.onValue(registerClIndex);
-		// processing clinical indices through connected correlations
-		newCorrelations.onValue((correlation) => {
-			for (let variable of correlation.variables) {
-				if (variable.type === 'clinical index' && variable.clindex !== "") {
-					if (!clIndices.has(variable.clindex)) {
-						registerClIndex(variable);
-					}
-					let clIndex = clIndices.get(variable.clindex);
-					clIndex.hasCorrelations = true;
-					clIndex.correlations.add(correlation);
-					newCorrelationClIndices.emit({ clIndex, correlation });
-				}
-			}
-			correlation.clIndexVisibleCounter = 0;
-		});
-
 
 		/* establish relation between clinical indices and correlations */
-		newCorrelationClIndices.onValue(({clIndex, correlation}) => {
-			clIndex.p('visible').value(true).onValue(() => {
-				correlation.clIndexVisibleCounter += 1;
-				correlation.visible = true;
-				setTimeout(() => {
-					clIndex.p('visible').value(false).take(1).onValue(() => {
-						correlation.clIndexVisibleCounter -= 1;
-						if (correlation.clIndexVisibleCounter === 0) {
-							correlation.visible = false;
-						}
+		for (let correlation of Object.values(X.correlations)) {
+			for (let clinicalIndex of correlation.clinicalIndices) {
+				clinicalIndex.p('visible').value(true).onValue(() => {
+					correlation.clIndexVisibleCounter += 1;
+					correlation.visible = true;
+					setTimeout(() => {
+						clinicalIndex.p('visible').value(false).take(1).onValue(() => {
+							correlation.clIndexVisibleCounter -= 1;
+							if (correlation.clIndexVisibleCounter === 0) {
+								correlation.visible = false;
+							}
+						});
 					});
 				});
-			});
-			correlation.p('visible').value(false).onValue(() => {
-				clIndex.visible = false;
-			});
-		});
-
+				correlation.p('visible').value(false).onValue(() => {
+					clinicalIndex.visible = false;
+				});
+			}
+		}
 
 		/* clinical index checkboxes */
-		let clIndexCBs = $('#clindex-checkboxes');
+		let clIndexCheckboxesElement = $('#clindex-checkboxes');
 		let clIndexCheckboxes = new Map();
-		newClIndices.onValue((clIndex) => {
+		for (let clinicalIndex of Object.values(X.clinicalIndices)) {
 			/* create and register checkbox */
-			let checkbox = createCheckbox(clIndex['clindex label']);
-			clIndexCheckboxes.set(clIndex.clindex, checkbox);
+			let checkbox = createCheckbox(clinicalIndex.title);
+			clIndexCheckboxes.set(clinicalIndex.id, checkbox);
 
 			/* sync clindex visibility with checkbox checked-ness */
-			checkbox.p('checked').plug(clIndex.p('visible'));
-			clIndex.p('visible').plug(checkbox.p('checked'));
+			checkbox.p('checked').plug(clinicalIndex.p('visible'));
+			clinicalIndex.p('visible').plug(checkbox.p('checked'));
 
 			/* hide checkbox if there are no connected correlations */
-			clIndex.p('hasCorrelations').onValue((hasC) => {
-				checkbox.input.css('visibility', hasC ? 'visible' : 'hidden');
-				checkbox.input.prop('disabled', !hasC);
-			});
+			if (clinicalIndex.correlations.length > 0) {
+				checkbox.input.css('visibility', 'visible');
+			} else {
+				checkbox.input.css('visibility', 'hidden');
+				checkbox.input.prop('disabled', true);
+			}
 
 			/* sort the checkbox-list */
-			sortElements(clIndexCBs, clIndexCheckboxes, cb => cb[1].label, cb => cb[1].element);
-		});
-
+			sortElements(clIndexCheckboxesElement, clIndexCheckboxes, cb => cb[1].title, cb => cb[1].element); // TODO: title / label?
+		}
 
 		/* lyph checkboxes */
-		let lyphCBs = $('#lyph-checkboxes');
+		let lyphCheckboxesElement = $('#lyph-checkboxes');
 		circuitboard.newTiles.onValue((tile) => {
 			tile.model.then((model) => {
 
 				/* create checkbox */
 				let checkbox = createCheckbox(model.name);
-				checkbox.checked = (tile.model.id === root);
+				checkbox.checked = (model.id === root);
 
 				/* sync tile visibility with checkbox checked-ness */
 				checkbox.p('checked').plug(tile.p('visible'));
@@ -602,21 +513,19 @@ $(document).ready(() => {
 						<div class="checkbox-indenter" style="margin-left: 18px"></div>
 					</div>
 				`).prepend(checkbox.element);
-				if (model.id === root) { lyphCBs.append(checkboxSubtree) }
+				if (model.id === root) { lyphCheckboxesElement.append(checkboxSubtree) }
 				else { tile.closestAncestorByType('Tile')._lyphCheckbox.children('.checkbox-indenter').append(checkboxSubtree) }
 
 			});
 		});
 
-
 		/* all correlations */
 		let correlationBoxes = [];
 		let correlationTab = $('#correlations');
-		newCorrelations.onValue((correlation) => {
+		for (let correlation of Object.values(X.correlations)) {
 			correlationBoxes.push(correlationBox(correlation));
-			sortElements(correlationTab, correlationBoxes, b => b.pubmedTitle, b => b.element);
-		});
-
+			sortElements(correlationTab, correlationBoxes, b => b.correlation.publication.title, b => b.element);
+		}
 
 		/* clicking tile correlation counters */
 		circuitboard.newTiles.onValue((tile) => {
@@ -625,9 +534,9 @@ $(document).ready(() => {
 
 					let correlationsToShow = new Map();
 					tile.traverseArtefactsByType('Tile', (descendant) => {
-						for (let correlation of descendant.model.value().correlations) {
+						for (let correlation of X.lyphTemplates[descendant.model.id].correlations) {
 							if (!correlationsToShow.has(correlation.id)) {
-								correlationsToShow.set(correlation.id, correlations.get(correlation.id));
+								correlationsToShow.set(correlation.id, correlation);
 							}
 						}
 					});
@@ -638,11 +547,30 @@ $(document).ready(() => {
 					for (let [, correlation] of correlationsToShow) {
 						boxes.push(correlationBox(correlation));
 					}
-					sortElements(infoBox, boxes, b => b.pubmedTitle, b => b.element);
+					sortElements(infoBox, boxes, b => b.correlation.publication.title, b => b.element);
 
 				});
 			});
 		});
+
+
+
+
+
+		//////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 	});

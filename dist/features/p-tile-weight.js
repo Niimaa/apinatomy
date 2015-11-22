@@ -7,7 +7,7 @@
 		var a = typeof exports === 'object' ? factory(require("jquery")) : factory(root["jquery"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE_62__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_2__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -55,17 +55,24 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(60);
+	module.exports = __webpack_require__(106);
 
 
 /***/ },
 
-/***/ 60:
+/***/ 2:
+/***/ function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_2__;
+
+/***/ },
+
+/***/ 106:
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('tile-weight', {
@@ -74,23 +81,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 		/*  gives tiles a `weight` which reflects the screen area they take up  */
 		/*  in relation to other tiles in the same tilemap                      */
-		plugin.append('construct', function () {});
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+		plugin.append('construct', function () {
 	
-	// TODO: this is now done in 'tile-grow-when-' deltas
-
-	///* the 'weight' observable */
-	//this.newProperty('weight', { initial: 1 });
-
-	///* enact 'weight' on the DOM */
-	//this.p('weight').onValue((w) => { this.element.amyNestedFlexGrow(w) });
-
-/***/ },
-
-/***/ 62:
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_62__;
+			// TODO: this is now done in 'tile-grow-when-' deltas
+	
+			///* the 'weight' observable */
+			//this.newProperty('weight', { initial: 1 });
+	
+			///* enact 'weight' on the DOM */
+			//this.p('weight').onValue((w) => { this.element.amyNestedFlexGrow(w) });
+	
+		});
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }
 

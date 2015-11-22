@@ -33,8 +33,9 @@ function decimalToHex(d, padding) {
 
 
 /* fetch query parameters */
-const root     = U.getQueryVariable('root') || '161';
-const port     = U.getQueryVariable('port') || '5055';
+const root     = U.getQueryVariable('root') || '185'; // brain
+const host     = 'open-physiology.org'; // alternative: 'open-physiology.org'
+const port     = U.getQueryVariable('port') || '8888';
 const fmas     = U.getQueryVariable('fmas') ? U.getQueryVariable('fmas').split(',') : null;
 const original = U.getQueryVariable('original') || root;
 
@@ -48,7 +49,7 @@ circuitboard.plugin.select(
 
 
 ///* lyph ids mapped to experiments */
-//const LYPH_TO_EXPERIMENTS = {
+//const LYPH_OLD_ID_TO_EXPERIMENTS = {
 //	// filled in from translation of SCAI to FMA, then to Lyph ID
 //	13:  ['GSE20291'],
 //	305: ['E-GEOD-4757', 'E-GEOD-5281', 'GSE9770'],
@@ -76,7 +77,7 @@ circuitboard.plugin.select(
 
 
 /* lyph ids mapped to experiments */ // NEW INFO FROM CHRISTIAN
-const LYPH_TO_EXPERIMENTS = {
+const LYPH_OLD_ID_TO_EXPERIMENTS = {
 	// filled in from translation of SCAI to FMA, then to Lyph ID
 	305: ['E-GEOD-4757', 'E-GEOD-5281'],
 	304: ['E-GEOD-4757', 'E-GEOD-5281'],
@@ -105,7 +106,7 @@ let experiments = {};
 circuitboard.plugin.do('show-experiment-glyphs', { if: true, after: ['tile-glyphs'] })
 	.append('Tile.prototype.construct', function () {
 
-		let experimentsForThisLyph = LYPH_TO_EXPERIMENTS[this.model.id];
+		let experimentsForThisLyph = LYPH_OLD_ID_TO_EXPERIMENTS[this.model.oldID];
 		if (!experimentsForThisLyph) { return }
 		for (let experimentID of experimentsForThisLyph) {
 
@@ -149,10 +150,10 @@ circuitboard.plugin.do('show-experiment-glyphs', { if: true, after: ['tile-glyph
 
 $(document).ready(() => {
 	$('#three-d-canvas').circuitboard({
-		model:          getLyphModels('root', { root, port }),
+		model:          getLyphModels('root', { host, root, port }),
 		tileSpacing:    6,
 		weightWhenOpen: 4,
-		filter:         ({id}) => id === root
+		//filter:         ({id}) => id === root // TODO: re-enable?
 	}).circuitboard('instance').then(function (circuitboard) {
 
 
@@ -163,51 +164,59 @@ $(document).ready(() => {
 		circuitboard.options.filter = (model) => (allowedModels.indexOf(model) !== -1);
 
 
+
+
+
+
 		/* get all lyph models that have experiments */
 		let experimentModelsP = P.resolve($.ajax({
-			url: `http://open-physiology.org:${port}/between/?ends=${Object.keys(LYPH_TO_EXPERIMENTS).join(',')}&root=${original}`,
+			url: `http://${host}:${port}/lyphTemplatesByOldID/${Object.keys(LYPH_OLD_ID_TO_EXPERIMENTS).join(',')}`,
 			dataType: 'jsonp'
-		})).map(obj=>obj.id).then((ids) => getLyphModels(ids, {root, port})).map(a=>a);
-
+		})).filter(a=>a).map(({id}) => id).tap((ids) => { console.log('old ids into new ids:', ids) }).then((ids) => P.resolve($.ajax({
+			url: `http://${host}:${port}/lyphTemplatesBetween/${[...ids, original].join(',')}`,
+			dataType: 'jsonp'
+		}))).map(({id}) => id).tap((ids) => { console.log('with between:', ids) }).then((ids) => getLyphModels(ids, {root, host, port})).map(a=>a);
 
 		/* get all lyph models belonging to the given fma ids */
 		let requestedModelsP = P.resolve([]);
 		if (fmas) {
 			requestedModelsP = P.resolve($.ajax({
-				url: `http://open-physiology.org:${port}/scaimap/?fmas=${fmas.join(',')}&pipe=yes&root=${original}`,
+				url: `http://${host}:${port}/lyphTemplatesByFmaID/${fmas.join(',')}`,
 				dataType: 'jsonp'
-			})).then((response) => provideLyphsFromServer(response, {root, port})).map(a => a);
+			})).filter(a=>a).map(({id}) => id).then((ids) => P.resolve($.ajax({
+				url: `http://${host}:${port}/lyphTemplatesBetween/${[...ids, original].join(',')}`,
+				dataType: 'jsonp'
+			}))).then((response) => provideLyphsFromServer(response, {root, host, port})).map(a=>a);
 		}
 
 		/* open up all relevant tiles */
-		P.join(experimentModelsP, requestedModelsP,
-			(experimentModels, requestedModels) => [...experimentModels, ...requestedModels]).then((models) => {
-				allowedModels.push(...models);
-				for (let tileP of models.map(({id}) => circuitboard.tile(id))) {
-					tileP.then((tile) => {
-						let parentTile = tile.closestAncestorByType('Tile');
-						if (parentTile) {
-							parentTile.open = true;
-							tile.populateInnerTilemap();
-						}
-					});
-				}
-				circuitboard.tile(root).then((tile) => {
-					tile.populateInnerTilemap();
+		P.join(experimentModelsP, requestedModelsP, (experimentModels, requestedModels) => [...experimentModels, ...requestedModels]).then((models) => {
+			allowedModels.push(...models);
+			for (let tileP of models.map(({id}) => circuitboard.tile(id))) {
+				tileP.then((tile) => {
+					let parentTile = tile.closestAncestorByType('Tile');
+					if (parentTile) {
+						parentTile.open = true;
+						tile.populateInnerTilemap();
+					}
 				});
-				if (fmas) {
-					P.resolve($.ajax({
-						url: `http://open-physiology.org:${port}/scaimap/?fmas=${fmas.join(',')}`,
-						dataType: 'jsonp'
-					})).then(({results})=>results).filter(({foundmatch}) => foundmatch === 'yes').each((result) => {
-						for (let {lyphID} of result.lyphs) {
-							circuitboard.tile(lyphID).then((tile) => {
-								tile.textColor = 0x0000FF;
-							});
-						}
-					});
-				}
+			}
+			circuitboard.tile(root).then((tile) => {
+				tile.populateInnerTilemap();
 			});
+			if (fmas) {
+				P.resolve($.ajax({
+					url: `http://${host}:${port}/lyphTemplatesByFmaID/${fmas.join(',')}`,
+					dataType: 'jsonp'
+				})).filter(a=>a).each(({id}) => {
+					//for (let {id} of result) {
+						circuitboard.tile(id).then((tile) => {
+							tile.textColor = 0x0000FF;
+						});
+					//}
+				});
+			}
+		});
 
 	});
 });

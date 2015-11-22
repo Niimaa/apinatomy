@@ -13,7 +13,7 @@
     <file url="file://$PROJECT_DIR$/package.json" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/Artefact.es6.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/circuitboard.es6.js" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/example/fma-model.es6.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/example0/fma-model.es6.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/features/p-d3.es6.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/features/p-position-tracking.es6.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/features/p-ppi.es6.js" charset="UTF-8" />
@@ -45,5 +45,6 @@
     <file url="file://$PROJECT_DIR$/src/util/put-css-rules.es6.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/util/traverse-dag.es6.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/util/unique-id.es6.js" charset="UTF-8" />
+    <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

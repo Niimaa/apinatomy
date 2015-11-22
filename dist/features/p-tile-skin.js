@@ -7,7 +7,7 @@
 		var a = typeof exports === 'object' ? factory(require("jquery"), require("bluebird"), require("kefir"), require("tweenjs"), require("kefir-jquery"), require("chroma-js")) : factory(root["jquery"], root["bluebird"], root["kefir"], root["tweenjs"], root["kefir-jquery"], root["chroma-js"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE_62__, __WEBPACK_EXTERNAL_MODULE_63__, __WEBPACK_EXTERNAL_MODULE_65__, __WEBPACK_EXTERNAL_MODULE_66__, __WEBPACK_EXTERNAL_MODULE_67__, __WEBPACK_EXTERNAL_MODULE_69__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_3__, __WEBPACK_EXTERNAL_MODULE_8__, __WEBPACK_EXTERNAL_MODULE_9__, __WEBPACK_EXTERNAL_MODULE_10__, __WEBPACK_EXTERNAL_MODULE_67__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -55,447 +55,33 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(55);
+	module.exports = __webpack_require__(93);
 
 
 /***/ },
 
-/***/ 10:
-/***/ function(module, exports, __webpack_require__) {
+/***/ 2:
+/***/ function(module, exports) {
 
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
-	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(63)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P) {
-		'use strict';
-	
-		return function defer() {
-			var resolve, reject;
-			var promise = new P(function () {
-				resolve = arguments[0];
-				reject = arguments[1];
-			});
-			//noinspection JSUnusedAssignment
-			return {
-				resolve: resolve,
-				reject: reject,
-				promise: promise
-			};
-		};
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	module.exports = __WEBPACK_EXTERNAL_MODULE_2__;
 
 /***/ },
 
-/***/ 11:
-/***/ function(module, exports, __webpack_require__) {
+/***/ 3:
+/***/ function(module, exports) {
 
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
-	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(15)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U) {
-		'use strict';
-	
-		function deepTransform(val, fn) {
-			if ($.isPlainObject(val) || $.isArray(val)) {
-				$.each(val, function (key, subVal) {
-					var returned = fn(subVal);
-					if (U.isUndefined(returned)) {
-						deepTransform(subVal, fn);
-					} else {
-						val[key] = returned;
-					}
-				});
-			}
-		}
-	
-		var REF_PATTERN = /`([\[\.].+?)`/g;
-	
-		return function defaults(spec, context) {
-	
-			deepTransform(spec, function (val) {
-				if (typeof val === 'string') {
-					var refs = (val.match(REF_PATTERN) || []).map(function (ref) {
-						var strippedRef = ref.substring(1, ref.length - 1);
-						return new Function('refs', 'return refs' + strippedRef);
-					});
-					var expr = val.replace(REF_PATTERN, '(refs$1)');
-					var templateFn = function templateFn(formalParams) {
-						var newFormalParams = formalParams.concat(['return ' + expr]);
-						return U.applyConstructor(Function, newFormalParams);
-					};
-					templateFn.refs = refs;
-					return templateFn;
-				}
-			});
-	
-			//// recursive auxiliary function; returns true if a change to obj was made
-			function withDefaultsAux(defSpec, obj, refs, params) {
-				var change = false;
-				Object.keys(defSpec).forEach(function (key) {
-	
-					if (key in obj) {
-						if ($.isPlainObject(defSpec[key]) && $.isPlainObject(obj[key])) {
-							change = withDefaultsAux(defSpec[key], obj[key], refs, params) || change;
-						}
-					} else if ($.isPlainObject(defSpec[key])) {
-						obj[key] = {};
-						change = withDefaultsAux(defSpec[key], obj[key], refs, params) || change;
-					} else if ($.isFunction(defSpec[key])) {
-						if (defSpec[key].refs.every(function (ref) {
-							return !U.isUndefined(ref(refs));
-						})) {
-							// if none of the references are undefined, assign this 'default'
-							var allparams = $.extend({ refs: refs }, context, params);
-							var formalParams = Object.keys(allparams);
-							var actualParams = formalParams.map(function (fpar) {
-								return allparams[fpar];
-							});
-							var finalFn = defSpec[key](formalParams);
-							obj[key] = finalFn.apply(null, actualParams);
-						}
-					}
-				});
-				return change;
-			}
-	
-			return function withDefaults(obj, params) {
-				var result = U.isUndefined(obj) ? {} : $.extend(true, {}, obj);
-	
-				var change = true;
-				while (change) {
-					change = withDefaultsAux(spec, result, result, params || {});
-				}
-	
-				return result;
-			};
-		};
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	module.exports = __WEBPACK_EXTERNAL_MODULE_3__;
 
 /***/ },
 
-/***/ 12:
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
-	
-	function _slicedToArray(arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }
-	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(15), __webpack_require__(65), __webpack_require__(66), __webpack_require__(67)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir, TWEEN, KefirJQuery) {
-	
-		/* Kefir jQuery plugin ********************************************************************************************/
-	
-		KefirJQuery.init(Kefir, $);
-	
-		/* EventStream generators *****************************************************************************************/
-	
-		// This method works with events that can have only one subscriber,
-		// that can be un-subscribed by setting the subscriber to `null`.
-		// This function is memoized, so only one subscription is taken,
-		// and the same stream for it returned for each request.
-		Kefir.fromOnNull = U.memoize(function fromOnNull(obj, eventName) {
-			return Kefir.fromBinder(function (emitter) {
-				obj.on(eventName, emitter.emit);
-				return function () {
-					obj.on(eventName, null);
-				};
-			});
-		});
-	
-		var requestAnimationFrameFn = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (f) {
-			window.setTimeout(f, 1000 / 60);
-		};
-		Kefir.animationFrames = function animationFrames() {
-			return Kefir.fromBinder(function (emitter) {
-	
-				/* self-calling animation-frame loop */
-				var subscribed = true;
-				(function iterationFn() {
-					requestAnimationFrameFn(function () {
-						emitter.emit();
-						if (subscribed) {
-							iterationFn();
-						}
-					});
-				})();
-	
-				/* unsubscribe function */
-				return function () {
-					subscribed = false;
-				};
-			});
-		};
-	
-		Kefir.tween = function tween(objStart, objEnd, _ref) {
-			var duration = _ref.duration;
-			var delay = _ref.delay;
-			var easing = _ref.easing;
-	
-			/* the tween */
-			var tw = new TWEEN.Tween(objStart).to(objEnd, duration);
-	
-			/* the returned bus */
-			var bus = Kefir.bus();
-	
-			/* a local function to plug in other streams, keeping track in order to 'end' the bus */
-			var addStream = (function () {
-				var chainedStreams = 0;
-				return function (stream) {
-					chainedStreams += 1;
-					bus.plug(stream);
-					stream.onEnd(function () {
-						chainedStreams -= 1;
-						if (chainedStreams === 0) {
-							bus.end();
-						}
-					});
-				};
-			})();
-	
-			/* main stream */
-			addStream(Kefir.fromBinder(function (emitter) {
-				if (easing) {
-					tw.easing(easing);
-				}
-				if (delay) {
-					tw.delay(delay);
-				}
-				tw.onUpdate(function () {
-					emitter.emit(this);
-				});
-				tw.onComplete(emitter.end);
-			}));
-	
-			/* adding tween-specific properties to the returned bus */
-			bus.tween = tw;
-			bus.start = function () {
-				tw.start();
-				return bus;
-			};
-			bus.chain = function (other) {
-				addStream(other);
-				tw.chain(other.tween);
-				return bus;
-			};
-	
-			/* returning the bus */
-			return bus;
-		};
-	
-		Kefir.keyPress = function keyPress(keyCode) {
-			return $(window).asKefirStream('keypress').filter(function (e) {
-				return e.keyCode === keyCode;
-			});
-		};
-	
-		Kefir.once = function once(value) {
-			return Kefir.fromBinder(function (emitter) {
-				emitter.emit(value);
-				emitter.end();
-			});
-			//return Kefir.constant(value); // TODO: replace all 'once' calls with 'constant' calls; then remove 'once'
-		};
-	
-		Kefir.fromArray = function fromArray(array) {
-			return Kefir.fromBinder(function (emitter) {
-				array.forEach(emitter.emit);
-				emitter.end();
-			});
-		};
-	
-		/* EventStream converters *****************************************************************************************/
-	
-		// This creates a 'window of opportunity' to limit other streams by.
-		// This window is provided by the `pacing` observable. An optional `handler`
-		// parameter can be given to do some setup and some breakdown. It is passed a function as an argument
-		// that should be called *once* in the place where other streams can do their
-		// thing. It returns a function used to wrap other streams. It does not
-		// return a stream.
-		Kefir.limiter = function limiter(pacing) {
-			var handler = arguments[1] === undefined ? U.call : arguments[1];
-	
-			var wantedBus = Kefir.bus();
-			var open = Kefir.bus();
-			var close = Kefir.bus();
-	
-			/* takes 'this' stream as pacing for a window of opportunity for other streams */
-			pacing.filterBy(wantedBus.toProperty(false)).onValue(function () {
-				handler(function () {
-					open.emit();
-					wantedBus.emit(false);
-					close.emit();
-				});
-			});
-	
-			/* returns a function to wrap a stream in this wrapper */
-			return function (stream) {
-				var _ref2 = arguments[1] === undefined ? {} : arguments[1];
-	
-				var buffer = _ref2.buffer;
-	
-				wantedBus.plug(stream.mapTo(true));
-				return Kefir.constant(true).take(1).concat(close).flatMapLatest(function () {
-					var accumulator = function accumulator(arr, val) {
-						return buffer ? arr.concat([val]) : [val];
-					};
-					return stream.takeUntilBy(open).reduce(accumulator, []).flatMap(Kefir.fromArray);
-				});
-			};
-		};
-	
-		// This restricts a given stream to a wrapper stream created with the method above.
-		// All its original events are now fired inside the provided window. Set `options.buffer`
-		// to `true` if all its events should be buffered and released inside the next window.
-		// Otherwise, only the last event is retained.
-		Kefir.Observable.prototype.limitedBy = function limitedBy(wrapper, options) {
-			return wrapper(this, options);
-		};
-	
-		// convert to a stream of 1-or-2 element arrays;
-		// the first is just the element at that point in the stream
-		// the second is the previous element in the stream, if there is one
-		Kefir.Observable.prototype.newOld = function newOld() {
-			return Kefir.fromArray([null, null]).concat(this).slidingWindow(2).map(function (_ref3) {
-				var _ref32 = _slicedToArray(_ref3, 2);
-	
-				var a = _ref32[0];
-				var b = _ref32[1];
-				return [b, a];
-			});
-		};
-	
-		// This is a cheap version of the limiter defined above. TODO: use the limiter where this is now used
-		Kefir.Stream.prototype.holdUntil = function holdUntil(pacing) {
-			var _this = this;
-	
-			return Kefir.fromBinder(function (emitter) {
-				var buffer = [];
-				var unsubscribeToThis = _this.onValue(function (value) {
-					buffer.push(value);
-				});
-				var unsubscribeToPacing = pacing.onValue(function () {
-					if (buffer.length > 0) {
-						var oldBuffer = buffer;
-						buffer = [];
-						oldBuffer.forEach(emitter.emit);
-					}
-				});
-				return function () {
-					unsubscribeToThis();
-					unsubscribeToPacing();
-					buffer = null;
-				};
-			});
-		};
-	
-		// This filters an observable to only let through values equal to the given value.
-		Kefir.Observable.prototype.value = function (value, comparator) {
-			comparator = comparator || function (e) {
-				return e === value;
-			};
-			return this.skipDuplicates().filter(comparator);
-		};
-	
-		// This makes a subscription to an observable that doesn't do anything
-		Kefir.Observable.prototype.run = function () {
-			var _this2 = this;
-	
-			var doNothing = function doNothing() {};
-			this.onValue(doNothing);
-			return function () {
-				_this2.offValue(doNothing);
-			};
-		};
-	
-		// This is a 'smart' .stopPropagation, marking events with a label
-		// and skipping those that already have that label.
-		Kefir.Stream.prototype.skipPropagation = function (label) {
-			return this.filter(function (event) {
-				return !U.array(event.originalEvent, '_onlyOnceFor')[label];
-			}).map(function (event) {
-				U.array(event.originalEvent, '_onlyOnceFor')[label] = true;
-			});
-		};
-	
-		// Filter events to only certain keys / buttons. Can be a predicate function or single number.
-		Kefir.Stream.prototype.which = function (buttonId) {
-			var pred = typeof buttonId === 'function' ? buttonId : function (b) {
-				return b === buttonId;
-			};
-			return this.filter(function (e) {
-				return pred(e.which);
-			});
-		};
-	
-		/* EventStream generators *****************************************************************************************/
-	
-		$.fn.mouseDrag = function mouseDrag() {
-			var _ref4 = arguments[0] === undefined ? {} : arguments[0];
-	
-			var threshold = _ref4.threshold;
-	
-			return $(this).asKefirStream('mousedown').flatMap(function (mouseDownEvent) {
-				var stream = $(document).asKefirStream('mousemove');
-				if (threshold) {
-					var crossed = false;
-					stream = stream.filter(function (mouseMoveEvent) {
-						// TODO: don't use 'filter', but something like 'skipUntil' or 'flatMap'
-						if (crossed) {
-							return true;
-						}
-						var dx = mouseDownEvent.pageX - mouseMoveEvent.pageX;
-						var dy = mouseDownEvent.pageY - mouseMoveEvent.pageY;
-						if (dx * dx + dy * dy > threshold * threshold) {
-							return crossed = true;
-						}
-						return false;
-					});
-				}
-				return stream.takeUntilBy($(document).asKefirStream('mouseup')).map(function (mouseMoveEvent) {
-					return { mouseDownEvent: mouseDownEvent, mouseMoveEvent: mouseMoveEvent };
-				});
-			});
-		};
-	
-		$.fn.mouseClick = function mouseClick() {
-			var _ref5 = arguments[0] === undefined ? {} : arguments[0];
-	
-			var threshold = _ref5.threshold;
-	
-			return $(this).asKefirStream('mousedown').flatMap(function (mouseDownEvent) {
-				var untilStream = $(document).asKefirStream('mousemove');
-				if (threshold) {
-					var crossed = false;
-					untilStream = untilStream.filter(function (mouseMoveEvent) {
-						if (crossed) {
-							return true;
-						}
-						var dx = mouseDownEvent.pageX - mouseMoveEvent.pageX;
-						var dy = mouseDownEvent.pageY - mouseMoveEvent.pageY;
-						if (dx * dx + dy * dy > threshold * threshold) {
-							return crossed = true;
-						}
-						return false;
-					});
-				}
-				return $(document).asKefirStream('mouseup').take(1).takeUntilBy(untilStream);
-			});
-		};
-	
-		$.fn.mouseWheel = function mouseWheel() {
-			return $(this).asKefirStream('mousewheel DOMMouseScroll');
-		};
-	
-		return Kefir;
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ },
-
-/***/ 15:
+/***/ 4:
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(63), __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, defer) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(3), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P, defer) {
 		'use strict';
 	
 		var U = {
@@ -509,7 +95,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 			// create a new subclass, given a superclass, constructor and possible prototype
 			newSubclass: function newSubclass(superClass, constructorMaker) {
-				var prototype = arguments[2] === undefined ? {} : arguments[2];
+				var prototype = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
 	
 				var constructor = constructorMaker(superClass.prototype.constructor);
 				constructor.prototype = Object.create(superClass.prototype);
@@ -624,7 +210,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			// condition that is expected to be true
 			assert: function assert(condition, message) {
 				if (!condition) {
-					throw new Error(message || 'Assertion failed');
+					throw new Error(message || "Assertion failed");
 				}
 			},
 	
@@ -703,15 +289,16 @@ return /******/ (function(modules) { // webpackBootstrap
 			oncePerStack: function oncePerStack(func, context) {
 				var notRunYet = true;
 				var result = function result() {
-					for (var _len6 = arguments.length, args = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
-						args[_key6] = arguments[_key6];
-					}
-	
 					if (notRunYet) {
 						notRunYet = false;
 						setTimeout(function () {
 							notRunYet = true;
 						}, 0);
+	
+						for (var _len6 = arguments.length, args = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+							args[_key6] = arguments[_key6];
+						}
+	
 						func.apply(context || this, args);
 					}
 				};
@@ -879,210 +466,392 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 18:
+/***/ 5:
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = function (P) {
 		'use strict';
 	
-		//
-		// takes an object mapping 'selector' → 'property' → 'value' and
-		// applies it as a set of CSS rules to the descendants of the current element
-		//
-		$.fn.extend({
-			amyPutCssRules: function amyPutCssRules(rules) {
-				var _this = this;
-	
-				$.each(rules, function (selector, css) {
-					var context;
-					if (selector.trim() === '&') {
-						context = _this;
-					} else if (selector.trim().charAt(0) === '&') {
-						context = _this.find(selector.trim().substr(1).trim());
-					} else {
-						context = _this.find(selector);
-					}
-					context.css(css);
-				});
-			}
-		});
+		return function defer() {
+			var resolve, reject;
+			var promise = new P(function () {
+				resolve = arguments[0];
+				reject = arguments[1];
+			});
+			//noinspection JSUnusedAssignment
+			return {
+				resolve: resolve,
+				reject: reject,
+				promise: promise
+			};
+		};
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
 
-/***/ 55:
+/***/ 7:
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	function _slicedToArray(arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }
+	var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(69), __webpack_require__(15), __webpack_require__(12), __webpack_require__(11), __webpack_require__(18), __webpack_require__(94)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, color, U, Kefir, defaults) {
-		'use strict';
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(2), __webpack_require__(4), __webpack_require__(8), __webpack_require__(9), __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U, Kefir, TWEEN, KefirJQuery) {
 	
-		var plugin = $.circuitboard.plugin['do']('tile-skin', {
-			requires: ['tile-open', 'position-tracking']
-		}).modify('Tile.prototype');
+		/* Kefir jQuery plugin ********************************************************************************************/
 	
-		/* tile styling defaults generator */
-		var applyStyleDefaults = defaults({
-			'&': {
-				backgroundColor: ' parentBackgroundColor || \'darkgray\'                                                                                                                                       ',
-				borderColor: ' color(`[\'&\'].backgroundColor`).luminance() > 0.5  &&  color(`[\'&\'].backgroundColor`).darken(30).css()  ||  color(`[\'&\'].backgroundColor`).brighten(30).css() ',
-				color: ' color(`[\'&\'].backgroundColor`).luminance() > 0.5  &&  \'black\'                                          ||  \'white\'                                           '
-			},
-			'& > header': {
-				borderColor: ' `[\'&\'].borderColor` '
-			},
-			'& > icon-btn': {
-				backgroundColor: ' `[\'&\'].backgroundColor` '
-			}
-		}, { color: color, parentBackgroundColor: null });
+		KefirJQuery.init(Kefir, $);
 	
-		/* make tiles look nice, with a header, content section, and CSS styling derived from the model */
-		plugin.append('construct', function () {
-			var _this = this;
+		/* EventStream generators *****************************************************************************************/
 	
-			/*  create the header and content elements, and reroute the  */
-			/* 'dom' property to the new content element                 */
-			var origElement = this.dom;
-			origElement.addClass('skinned-tile');
-			this._p_tileSkin_headerElement = $('<header/>').appendTo(origElement);
-			this.dom = $('<section/>').appendTo(origElement);
-	
-			/* put the name of the model in the header element */
-			//this._p_tileSkin_headerElement.text(this.model.id);
-			this.model.then(function (model) {
-				_this._p_tileSkin_headerElement.text(model.name);
-				_this._p_tileSkin_headerElement.attr('title', '' + model.id + ' - ' + model.name + ' (' + model['correlation count'] + ' correlations) (' + model.children.length + ' child lyphs)');
+		// This method works with events that can have only one subscriber,
+		// that can be un-subscribed by setting the subscriber to `null`.
+		// This function is memoized, so only one subscription is taken,
+		// and the same stream for it returned for each request.
+		Kefir.fromOnNull = U.memoize(function fromOnNull(obj, eventName) {
+			return Kefir.fromBinder(function (emitter) {
+				obj.on(eventName, emitter.emit);
+				return function () {
+					obj.on(eventName, null);
+				};
 			});
+		});
 	
-			/* take any css rules from the model and apply them to the tile */
-			this.skinnedElement = this.model.get('tile').get('normal').get('css')['catch'](function () {
-				return {};
-			}) // There is no given css object? Then use an empty object.
-			.then(function (css) {
-				var parent = _this.closestAncestorByType('Tile');
-				if (parent) {
-					return parent.skinnedElement.then(function (skinnedParentElement) {
-						var parentBackgroundColor = color(skinnedParentElement.css('backgroundColor')).luminance() > 0.5 ? 'darkgray' : 'lightgray';
-						_this.element.amyPutCssRules(applyStyleDefaults(css, { parentBackgroundColor: parentBackgroundColor }));
-						return _this.element;
+		var requestAnimationFrameFn = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (f) {
+			window.setTimeout(f, 1000 / 60);
+		};
+		Kefir.animationFrames = function animationFrames() {
+			return Kefir.fromBinder(function (emitter) {
+	
+				/* self-calling animation-frame loop */
+				var subscribed = true;
+				(function iterationFn() {
+					requestAnimationFrameFn(function () {
+						emitter.emit();
+						if (subscribed) {
+							iterationFn();
+						}
 					});
-				} else {
-					_this.element.amyPutCssRules(applyStyleDefaults(css, { parentBackgroundColor: null }));
-					return _this.element;
+				})();
+	
+				/* unsubscribe function */
+				return function () {
+					subscribed = false;
+				};
+			});
+		};
+	
+		Kefir.tween = function tween(objStart, objEnd, _ref) {
+			var duration = _ref.duration;
+			var delay = _ref.delay;
+			var easing = _ref.easing;
+	
+			/* the tween */
+			var tw = new TWEEN.Tween(objStart).to(objEnd, duration);
+	
+			/* the returned bus */
+			var bus = Kefir.bus();
+	
+			/* a local function to plug in other streams, keeping track in order to 'end' the bus */
+			var addStream = (function () {
+				var chainedStreams = 0;
+				return function (stream) {
+					chainedStreams += 1;
+					bus.plug(stream);
+					stream.onEnd(function () {
+						chainedStreams -= 1;
+						if (chainedStreams === 0) {
+							bus.end();
+						}
+					});
+				};
+			})();
+	
+			/* main stream */
+			addStream(Kefir.fromBinder(function (emitter) {
+				if (easing) {
+					tw.easing(easing);
 				}
-			});
-	
-			/* when the tile is closed, make the font size dynamic */
-			Kefir.merge([this.on('size').filterBy(this.p('open').not()), this.p('open').value(false).map(function () {
-				return _this.size;
-			})]).onValue(function (size) {
-				_this._p_tileSkin_headerElement // formula gotten experimentally
-				.css('fontSize', Math.min(0.2 * Math.pow(size.height, 1.01), 0.13 * Math.pow(size.width, 1.01)));
-				// We're growing / shrinking the font size in proportion to the (1.01)st power of the tile size.
-				// Making the font grow/shrink just a tiny bit faster than the tile prevents an awkward 'flickering'
-				// between different line-breaks that would otherwise happen sometimes.
-			});
-	
-			/* the 'headerSize' observable */
-			this.newProperty('headerSize', {
-				settable: false,
-				isEqual: U.Size.equals
-			}).plug(Kefir.combine([this.p('size'), this.p('fullyOpen'), this.p('fullyClosed')]).map(function (_ref) {
-				var _ref2 = _slicedToArray(_ref, 1);
-	
-				var size = _ref2[0];
-				return new U.Size(_this._p_tileSkin_headerElement.height(), size.width);
+				if (delay) {
+					tw.delay(delay);
+				}
+				tw.onUpdate(function () {
+					emitter.emit(this);
+				});
+				tw.onComplete(emitter.end);
 			}));
 	
-			/* the 'headerPosition' observable */
-			this.newProperty('headerPosition', {
-				settable: false
-			}).plug(this.on('position'));
-		});
+			/* adding tween-specific properties to the returned bus */
+			bus.tween = tw;
+			bus.start = function () {
+				tw.start();
+				return bus;
+			};
+			bus.chain = function (other) {
+				addStream(other);
+				tw.chain(other.tween);
+				return bus;
+			};
+	
+			/* returning the bus */
+			return bus;
+		};
+	
+		Kefir.keyPress = function keyPress(keyCode) {
+			return $(window).asKefirStream('keypress').filter(function (e) {
+				return e.keyCode === keyCode;
+			});
+		};
+	
+		Kefir.once = function once(value) {
+			return Kefir.fromBinder(function (emitter) {
+				emitter.emit(value);
+				emitter.end();
+			});
+			//return Kefir.constant(value); // TODO: replace all 'once' calls with 'constant' calls; then remove 'once'
+		};
+	
+		Kefir.fromArray = function fromArray(array) {
+			return Kefir.fromBinder(function (emitter) {
+				array.forEach(emitter.emit);
+				emitter.end();
+			});
+		};
+	
+		/* EventStream converters *****************************************************************************************/
+	
+		// This creates a 'window of opportunity' to limit other streams by.
+		// This window is provided by the `pacing` observable. An optional `handler`
+		// parameter can be given to do some setup and some breakdown. It is passed a function as an argument
+		// that should be called *once* in the place where other streams can do their
+		// thing. It returns a function used to wrap other streams. It does not
+		// return a stream.
+		Kefir.limiter = function limiter(pacing) {
+			var handler = arguments.length <= 1 || arguments[1] === undefined ? U.call : arguments[1];
+	
+			var wantedBus = Kefir.bus();
+			var open = Kefir.bus();
+			var close = Kefir.bus();
+	
+			/* takes 'this' stream as pacing for a window of opportunity for other streams */
+			pacing.filterBy(wantedBus.toProperty(false)).onValue(function () {
+				handler(function () {
+					open.emit();
+					wantedBus.emit(false);
+					close.emit();
+				});
+			});
+	
+			/* returns a function to wrap a stream in this wrapper */
+			return function (stream) {
+				var _ref2 = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+	
+				var buffer = _ref2.buffer;
+	
+				wantedBus.plug(stream.mapTo(true));
+				return Kefir.constant(true).take(1).concat(close).flatMapLatest(function () {
+					var accumulator = function accumulator(arr, val) {
+						return buffer ? arr.concat([val]) : [val];
+					};
+					return stream.takeUntilBy(open).reduce(accumulator, []).flatMap(Kefir.fromArray);
+				});
+			};
+		};
+	
+		// This restricts a given stream to a wrapper stream created with the method above.
+		// All its original events are now fired inside the provided window. Set `options.buffer`
+		// to `true` if all its events should be buffered and released inside the next window.
+		// Otherwise, only the last event is retained.
+		Kefir.Observable.prototype.limitedBy = function limitedBy(wrapper, options) {
+			return wrapper(this, options);
+		};
+	
+		// convert to a stream of 1-or-2 element arrays;
+		// the first is just the element at that point in the stream
+		// the second is the previous element in the stream, if there is one
+		Kefir.Observable.prototype.newOld = function newOld() {
+			return Kefir.fromArray([null, null]).concat(this).slidingWindow(2).map(function (_ref3) {
+				var _ref32 = _slicedToArray(_ref3, 2);
+	
+				var a = _ref32[0];
+				var b = _ref32[1];
+				return [b, a];
+			});
+		};
+	
+		// This is a cheap version of the limiter defined above. TODO: use the limiter where this is now used
+		Kefir.Stream.prototype.holdUntil = function holdUntil(pacing) {
+			var _this = this;
+	
+			return Kefir.fromBinder(function (emitter) {
+				var buffer = [];
+				var unsubscribeToThis = _this.onValue(function (value) {
+					buffer.push(value);
+				});
+				var unsubscribeToPacing = pacing.onValue(function () {
+					if (buffer.length > 0) {
+						var oldBuffer = buffer;
+						buffer = [];
+						oldBuffer.forEach(emitter.emit);
+					}
+				});
+				return function () {
+					unsubscribeToThis();
+					unsubscribeToPacing();
+					buffer = null;
+				};
+			});
+		};
+	
+		// This filters an observable to only let through values equal to the given value.
+		Kefir.Observable.prototype.value = function (value, comparator) {
+			comparator = comparator || function (e) {
+				return e === value;
+			};
+			return this.skipDuplicates().filter(comparator);
+		};
+	
+		// This makes a subscription to an observable that doesn't do anything
+		Kefir.Observable.prototype.run = function () {
+			var _this2 = this;
+	
+			var doNothing = function doNothing() {};
+			this.onValue(doNothing);
+			return function () {
+				_this2.offValue(doNothing);
+			};
+		};
+	
+		// This is a 'smart' .stopPropagation, marking events with a label
+		// and skipping those that already have that label.
+		Kefir.Stream.prototype.skipPropagation = function (label) {
+			return this.filter(function (event) {
+				return !U.array(event.originalEvent, '_onlyOnceFor')[label];
+			}).map(function (event) {
+				U.array(event.originalEvent, '_onlyOnceFor')[label] = true;
+			});
+		};
+	
+		// Filter events to only certain keys / buttons. Can be a predicate function or single number.
+		Kefir.Stream.prototype.which = function (buttonId) {
+			var pred = typeof buttonId === 'function' ? buttonId : function (b) {
+				return b === buttonId;
+			};
+			return this.filter(function (e) {
+				return pred(e.which);
+			});
+		};
+	
+		/* EventStream generators *****************************************************************************************/
+	
+		$.fn.mouseDrag = function mouseDrag() {
+			var _ref4 = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	
+			var threshold = _ref4.threshold;
+	
+			return $(this).asKefirStream('mousedown').flatMap(function (mouseDownEvent) {
+				var stream = $(document).asKefirStream('mousemove');
+				if (threshold) {
+					var crossed = false;
+					stream = stream.filter(function (mouseMoveEvent) {
+						// TODO: don't use 'filter', but something like 'skipUntil' or 'flatMap'
+						if (crossed) {
+							return true;
+						}
+						var dx = mouseDownEvent.pageX - mouseMoveEvent.pageX;
+						var dy = mouseDownEvent.pageY - mouseMoveEvent.pageY;
+						if (dx * dx + dy * dy > threshold * threshold) {
+							return crossed = true;
+						}
+						return false;
+					});
+				}
+				return stream.takeUntilBy($(document).asKefirStream('mouseup')).map(function (mouseMoveEvent) {
+					return { mouseDownEvent: mouseDownEvent, mouseMoveEvent: mouseMoveEvent };
+				});
+			});
+		};
+	
+		$.fn.mouseClick = function mouseClick() {
+			var _ref5 = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	
+			var threshold = _ref5.threshold;
+	
+			return $(this).asKefirStream('mousedown').flatMap(function (mouseDownEvent) {
+				var untilStream = $(document).asKefirStream('mousemove');
+				if (threshold) {
+					var crossed = false;
+					untilStream = untilStream.filter(function (mouseMoveEvent) {
+						if (crossed) {
+							return true;
+						}
+						var dx = mouseDownEvent.pageX - mouseMoveEvent.pageX;
+						var dy = mouseDownEvent.pageY - mouseMoveEvent.pageY;
+						if (dx * dx + dy * dy > threshold * threshold) {
+							return crossed = true;
+						}
+						return false;
+					});
+				}
+				return $(document).asKefirStream('mouseup').take(1).takeUntilBy(untilStream);
+			});
+		};
+	
+		$.fn.mouseWheel = function mouseWheel() {
+			return $(this).asKefirStream('mousewheel DOMMouseScroll');
+		};
+	
+		return Kefir;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
 
-/***/ 62:
-/***/ function(module, exports, __webpack_require__) {
+/***/ 8:
+/***/ function(module, exports) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_62__;
-
-/***/ },
-
-/***/ 63:
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_63__;
+	module.exports = __WEBPACK_EXTERNAL_MODULE_8__;
 
 /***/ },
 
-/***/ 65:
-/***/ function(module, exports, __webpack_require__) {
+/***/ 9:
+/***/ function(module, exports) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_65__;
-
-/***/ },
-
-/***/ 66:
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_66__;
+	module.exports = __WEBPACK_EXTERNAL_MODULE_9__;
 
 /***/ },
 
-/***/ 67:
-/***/ function(module, exports, __webpack_require__) {
+/***/ 10:
+/***/ function(module, exports) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_67__;
-
-/***/ },
-
-/***/ 69:
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_69__;
+	module.exports = __WEBPACK_EXTERNAL_MODULE_10__;
 
 /***/ },
 
-/***/ 94:
-/***/ function(module, exports, __webpack_require__) {
+/***/ 18:
+/***/ function(module, exports) {
 
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(95);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(108)(content, {});
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		module.hot.accept("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/features/p-tile-skin.scss", function() {
-			var newContent = require("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/features/p-tile-skin.scss");
-			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-			update(newContent);
-		});
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
+	module.exports = function() {
+		var list = [];
+		list.toString = function toString() {
+			var result = [];
+			for(var i = 0; i < this.length; i++) {
+				var item = this[i];
+				if(item[2]) {
+					result.push("@media " + item[2] + "{" + item[1] + "}");
+				} else {
+					result.push(item[1]);
+				}
+			}
+			return result.join("");
+		};
+		return list;
 	}
 
 /***/ },
 
-/***/ 95:
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(109)();
-	exports.push([module.id, ".skinned-tile{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-box-orient:vertical;-webkit-box-direction:normal;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column;}.skinned-tile>header{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-webkit-justify-content:center;-ms-flex-pack:center;justify-content:center;font-weight:bold;border-width:1px;overflow:hidden;}.skinned-tile.open>header{height:26px;border-style:none none solid none;line-height:26px;font-size:19.5px !important;white-space:nowrap;}.skinned-tile:not(.open)>header{-webkit-box-flex:1;-webkit-flex-grow:1;-ms-flex-positive:1;flex-grow:1;padding:0 5px;}.skinned-tile>section{-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;user-select:text;}.skinned-tile.open>section{-webkit-box-flex:1;-webkit-flex-grow:1;-ms-flex-positive:1;flex-grow:1;opacity:1;}.skinned-tile:not(.open)>section{opacity:0;}", ""]);
-
-/***/ },
-
-/***/ 108:
+/***/ 19:
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -1279,25 +1048,257 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 109:
+/***/ 67:
+/***/ function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_67__;
+
+/***/ },
+
+/***/ 93:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = function() {
-		var list = [];
-		list.toString = function toString() {
-			var result = [];
-			for(var i = 0; i < this.length; i++) {
-				var item = this[i];
-				if(item[2]) {
-					result.push("@media " + item[2] + "{" + item[1] + "}");
-				} else {
-					result.push(item[1]);
-				}
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
+	
+	var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
+	
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(2), __webpack_require__(67), __webpack_require__(4), __webpack_require__(7), __webpack_require__(94), __webpack_require__(95), __webpack_require__(96)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, color, U, Kefir, defaults) {
+		'use strict';
+	
+		var plugin = $.circuitboard.plugin['do']('tile-skin', {
+			requires: ['tile-open', 'position-tracking']
+		}).modify('Tile.prototype');
+	
+		/* tile styling defaults generator */
+		var applyStyleDefaults = defaults({
+			'&': {
+				backgroundColor: " parentBackgroundColor || 'darkgray'                                                                                                                                       ",
+				borderColor: " color(`['&'].backgroundColor`).luminance() > 0.5  &&  color(`['&'].backgroundColor`).darken(30).css()  ||  color(`['&'].backgroundColor`).brighten(30).css() ",
+				color: " color(`['&'].backgroundColor`).luminance() > 0.5  &&  'black'                                          ||  'white'                                           "
+			},
+			'& > header': {
+				borderColor: " `['&'].borderColor` "
+			},
+			'& > icon-btn': {
+				backgroundColor: " `['&'].backgroundColor` "
 			}
-			return result.join("");
+		}, { color: color, parentBackgroundColor: null });
+	
+		/* make tiles look nice, with a header, content section, and CSS styling derived from the model */
+		plugin.append('construct', function () {
+			var _this = this;
+	
+			/*  create the header and content elements, and reroute the  */
+			/* 'dom' property to the new content element                 */
+			var origElement = this.dom;
+			origElement.addClass('skinned-tile');
+			this._p_tileSkin_headerElement = $('<header/>').appendTo(origElement);
+			this.dom = $('<section/>').appendTo(origElement);
+	
+			/* put the name of the model in the header element */
+			//this._p_tileSkin_headerElement.text(this.model.id);
+			this.model.then(function (model) {
+				_this._p_tileSkin_headerElement.text(model.name);
+				_this._p_tileSkin_headerElement.attr('title', model.id + ' - ' + model.name + ' (' + model.children.length + ' child lyphs)');
+			});
+	
+			/* take any css rules from the model and apply them to the tile */
+			this.skinnedElement = this.model.get('tile').get('normal').get('css')['catch'](function () {
+				return {};
+			}) // There is no given css object? Then use an empty object.
+			.then(function (css) {
+				var parent = _this.closestAncestorByType('Tile');
+				if (parent) {
+					return parent.skinnedElement.then(function (skinnedParentElement) {
+						var parentBackgroundColor = color(skinnedParentElement.css('backgroundColor')).luminance() > 0.5 ? 'darkgray' : 'lightgray';
+						_this.element.amyPutCssRules(applyStyleDefaults(css, { parentBackgroundColor: parentBackgroundColor }));
+						return _this.element;
+					});
+				} else {
+					_this.element.amyPutCssRules(applyStyleDefaults(css, { parentBackgroundColor: null }));
+					return _this.element;
+				}
+			});
+	
+			/* when the tile is closed, make the font size dynamic */
+			Kefir.merge([this.on('size').filterBy(this.p('open').not()), this.p('open').value(false).map(function () {
+				return _this.size;
+			})]).onValue(function (size) {
+				_this._p_tileSkin_headerElement // formula gotten experimentally
+				.css('fontSize', Math.min(0.2 * Math.pow(size.height, 1.01), 0.13 * Math.pow(size.width, 1.01)));
+				// We're growing / shrinking the font size in proportion to the (1.01)st power of the tile size.
+				// Making the font grow/shrink just a tiny bit faster than the tile prevents an awkward 'flickering'
+				// between different line-breaks that would otherwise happen sometimes.
+			});
+	
+			/* the 'headerSize' observable */
+			this.newProperty('headerSize', {
+				settable: false,
+				isEqual: U.Size.equals
+			}).plug(Kefir.combine([this.p('size'), this.p('fullyOpen'), this.p('fullyClosed')]).map(function (_ref) {
+				var _ref2 = _slicedToArray(_ref, 1);
+	
+				var size = _ref2[0];
+				return new U.Size(_this._p_tileSkin_headerElement.height(), size.width);
+			}));
+	
+			/* the 'headerPosition' observable */
+			this.newProperty('headerPosition', {
+				settable: false
+			}).plug(this.on('position'));
+		});
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ },
+
+/***/ 94:
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
+	
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(2), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, U) {
+		'use strict';
+	
+		function deepTransform(val, fn) {
+			if ($.isPlainObject(val) || $.isArray(val)) {
+				$.each(val, function (key, subVal) {
+					var returned = fn(subVal);
+					if (U.isUndefined(returned)) {
+						deepTransform(subVal, fn);
+					} else {
+						val[key] = returned;
+					}
+				});
+			}
+		}
+	
+		var REF_PATTERN = /`([\[\.].+?)`/g;
+	
+		return function defaults(spec, context) {
+	
+			deepTransform(spec, function (val) {
+				if (typeof val === 'string') {
+					var refs = (val.match(REF_PATTERN) || []).map(function (ref) {
+						var strippedRef = ref.substring(1, ref.length - 1);
+						return new Function('refs', 'return refs' + strippedRef);
+					});
+					var expr = val.replace(REF_PATTERN, "(refs$1)");
+					var templateFn = function templateFn(formalParams) {
+						var newFormalParams = formalParams.concat(['return ' + expr]);
+						return U.applyConstructor(Function, newFormalParams);
+					};
+					templateFn.refs = refs;
+					return templateFn;
+				}
+			});
+	
+			//// recursive auxiliary function; returns true if a change to obj was made
+			function withDefaultsAux(defSpec, obj, refs, params) {
+				var change = false;
+				Object.keys(defSpec).forEach(function (key) {
+	
+					if (key in obj) {
+						if ($.isPlainObject(defSpec[key]) && $.isPlainObject(obj[key])) {
+							change = withDefaultsAux(defSpec[key], obj[key], refs, params) || change;
+						}
+					} else if ($.isPlainObject(defSpec[key])) {
+						obj[key] = {};
+						change = withDefaultsAux(defSpec[key], obj[key], refs, params) || change;
+					} else if ($.isFunction(defSpec[key])) {
+						if (defSpec[key].refs.every(function (ref) {
+							return !U.isUndefined(ref(refs));
+						})) {
+							// if none of the references are undefined, assign this 'default'
+							var allparams = $.extend({ refs: refs }, context, params);
+							var formalParams = Object.keys(allparams);
+							var actualParams = formalParams.map(function (fpar) {
+								return allparams[fpar];
+							});
+							var finalFn = defSpec[key](formalParams);
+							obj[key] = finalFn.apply(null, actualParams);
+						}
+					}
+				});
+				return change;
+			}
+	
+			return function withDefaults(obj, params) {
+				var result = U.isUndefined(obj) ? {} : $.extend(true, {}, obj);
+	
+				var change = true;
+				while (change) {
+					change = withDefaultsAux(spec, result, result, params || {});
+				}
+	
+				return result;
+			};
 		};
-		return list;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ },
+
+/***/ 95:
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
+	
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
+		'use strict';
+	
+		//
+		// takes an object mapping 'selector' → 'property' → 'value' and
+		// applies it as a set of CSS rules to the descendants of the current element
+		//
+		$.fn.extend({
+			amyPutCssRules: function amyPutCssRules(rules) {
+				var _this = this;
+	
+				$.each(rules, function (selector, css) {
+					var context;
+					if (selector.trim() === '&') {
+						context = _this;
+					} else if (selector.trim().charAt(0) === '&') {
+						context = _this.find(selector.trim().substr(1).trim());
+					} else {
+						context = _this.find(selector);
+					}
+					context.css(css);
+				});
+			}
+		});
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ },
+
+/***/ 96:
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(97);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(19)(content, {});
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		module.hot.accept("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/features/p-tile-skin.scss", function() {
+			var newContent = require("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/features/p-tile-skin.scss");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
 	}
+
+/***/ },
+
+/***/ 97:
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(18)();
+	exports.push([module.id, ".skinned-tile {\n  display: -webkit-box;\n  display: -webkit-flex;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -webkit-flex-direction: column;\n      -ms-flex-direction: column;\n          flex-direction: column; }\n  .skinned-tile > header {\n    display: -webkit-box;\n    display: -webkit-flex;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-align: center;\n    -webkit-align-items: center;\n        -ms-flex-align: center;\n            align-items: center;\n    -webkit-box-pack: center;\n    -webkit-justify-content: center;\n        -ms-flex-pack: center;\n            justify-content: center;\n    font-weight: bold;\n    border-width: 1px;\n    overflow: hidden; }\n\n.skinned-tile.open > header {\n  height: 26px;\n  border-style: none none solid none;\n  line-height: 26px;\n  font-size: 19.5px !important;\n  white-space: nowrap; }\n\n.skinned-tile:not(.open) > header {\n  -webkit-box-flex: 1;\n  -webkit-flex-grow: 1;\n      -ms-flex-positive: 1;\n          flex-grow: 1;\n  padding: 0 5px; }\n\n.skinned-tile > section {\n  -webkit-user-select: text;\n     -moz-user-select: text;\n      -ms-user-select: text;\n          user-select: text; }\n\n.skinned-tile.open > section {\n  -webkit-box-flex: 1;\n  -webkit-flex-grow: 1;\n      -ms-flex-positive: 1;\n          flex-grow: 1;\n  opacity: 1; }\n\n.skinned-tile:not(.open) > section {\n  opacity: 0; }\n", ""]);
 
 /***/ }
 

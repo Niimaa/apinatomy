@@ -7,7 +7,7 @@
 		var a = typeof exports === 'object' ? factory(require("jquery")) : factory(root["jquery"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE_62__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_2__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -55,17 +55,24 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(39);
+	module.exports = __webpack_require__(60);
 
 
 /***/ },
 
-/***/ 39:
+/***/ 2:
+/***/ function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_2__;
+
+/***/ },
+
+/***/ 60:
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
 		'use strict';
 	
 		var plugin = $.circuitboard.plugin['do']('tile-button-to-hide', {
@@ -76,8 +83,8 @@ return /******/ (function(modules) { // webpackBootstrap
 			var _this = this;
 	
 			this.addButton({ name: 'hide', icon: {
-					white: __webpack_require__(100),
-					black: __webpack_require__(101)
+					white: __webpack_require__(61),
+					black: __webpack_require__(62)
 				} }).onValue(function () {
 				_this.maximized = false;
 				_this.p('fullyNotMaximized').value(true).onValue(function () {
@@ -89,21 +96,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 62:
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_62__;
-
-/***/ },
-
-/***/ 100:
+/***/ 61:
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "02641236df160c40d9d46e0dd1844a76.png"
 
 /***/ },
 
-/***/ 101:
+/***/ 62:
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "872171647dfe9d2b9d40ddd98e500bfe.png"

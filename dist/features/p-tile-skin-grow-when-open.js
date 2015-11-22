@@ -7,7 +7,7 @@
 		var a = typeof exports === 'object' ? factory(require("jquery"), require("bluebird")) : factory(root["jquery"], root["bluebird"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE_62__, __WEBPACK_EXTERNAL_MODULE_63__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_3__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -55,137 +55,48 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(57);
+	module.exports = __webpack_require__(101);
 
 
 /***/ },
 
-/***/ 57:
-/***/ function(module, exports, __webpack_require__) {
+/***/ 2:
+/***/ function(module, exports) {
 
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
-	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(62), __webpack_require__(63), __webpack_require__(98)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P) {
-		'use strict';
-	
-		var plugin = $.circuitboard.plugin['do']('tile-skin-grow-when-open', {
-			resolves: ['tile-skin', 'tile-grow-when-open'],
-			after: ['tile-hidden']
-		}).modify('Tile.prototype');
-	
-		///*  react to a tile opening or closing by      */
-		///*  timely showing/hiding the content section  */
-		///*  to ensure smooth transition animation      */
-		//plugin.append('construct', function () {
-		//	var sectionElement = this.element.children('section');
-		//	this.p('open').value(true).onValue(() => {
-		//		sectionElement.css('opacity', 0);
-		//	});
-		//	this.p('fullyOpen').onValue((open) => {
-		//		if (open) {
-		//			sectionElement.css('visibility', 'visible');
-		//			sectionElement.css('opacity', 1);
-		//		} else {
-		//			sectionElement.css('visibility', 'hidden');
-		//			sectionElement.css('opacity', 0);
-		//		}
-		//	});
-		//});
-	
-		plugin.append('construct', function () {
-			var flexGrowFrom = 1;
-			var rowFlexGrowFrom = this.element.parent().children().length;
-			this.element.velocity({ flexGrow: [flexGrowFrom, flexGrowFrom] }, { duration: 1 });
-			this.element.parent().velocity({ flexGrow: [rowFlexGrowFrom, rowFlexGrowFrom] }, { duration: 1 });
-		});
-	
-		plugin.replace('growWhenOpen', function (open) {
-			var _this = this;
-	
-			var openCloseTransition = function openCloseTransition() {
-				var flexGrowFrom = parseFloat(_this.element.data('amyFlexGrowTarget') || 1);
-				var flexGrowTo = _this.hidden ? 0 : open ? _this.weightWhenOpen() : _this.weightWhenClosed();
-				_this.element.data('amyFlexGrowTarget', flexGrowTo);
-				var rowFlexGrowTo = 0;
-				_this.element.parent().children().each(function () {
-					rowFlexGrowTo += parseFloat($(this).data('amyFlexGrowTarget') || 1);
-				});
-				var rowFlexGrowFrom = rowFlexGrowTo - flexGrowTo + flexGrowFrom;
-				return P.all([new P(function (resolve) {
-					_this.element.velocity({ flexGrow: [flexGrowTo, flexGrowFrom] }, { complete: resolve, duration: 300 });
-				}), new P(function (resolve) {
-					_this.element.parent().velocity({ flexGrow: [rowFlexGrowTo, rowFlexGrowFrom] }, { complete: resolve, duration: 300 });
-				})]);
-			};
-			// TODO: get the above with delta 'replace' operation that provides previous implementation
-	
-			var sectionElement = this.element.children('section');
-			if (open) {
-				sectionElement.css({ visibility: 'hidden', opacity: 0 });
-				return openCloseTransition().then(function () {
-					return new P(function (resolve) {
-						sectionElement.css('visibility', 'visible');
-						sectionElement.velocity({ opacity: [1, 0] }, { complete: resolve, duration: 200 });
-					});
-				});
-			} else {
-				sectionElement.css('visibility', 'visible');
-				return openCloseTransition().then(function () {
-					sectionElement.css('visibility', 'hidden');
-				});
+	module.exports = __WEBPACK_EXTERNAL_MODULE_2__;
+
+/***/ },
+
+/***/ 3:
+/***/ function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_3__;
+
+/***/ },
+
+/***/ 18:
+/***/ function(module, exports) {
+
+	module.exports = function() {
+		var list = [];
+		list.toString = function toString() {
+			var result = [];
+			for(var i = 0; i < this.length; i++) {
+				var item = this[i];
+				if(item[2]) {
+					result.push("@media " + item[2] + "{" + item[1] + "}");
+				} else {
+					result.push(item[1]);
+				}
 			}
-		});
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ },
-
-/***/ 62:
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_62__;
-
-/***/ },
-
-/***/ 63:
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_63__;
-
-/***/ },
-
-/***/ 98:
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(99);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(108)(content, {});
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		module.hot.accept("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/features/p-tile-skin-grow-when-open.scss", function() {
-			var newContent = require("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/features/p-tile-skin-grow-when-open.scss");
-			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-			update(newContent);
-		});
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
+			return result.join("");
+		};
+		return list;
 	}
 
 /***/ },
 
-/***/ 99:
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(109)();
-	exports.push([module.id, ".tilemap .tile>section{opacity:0;visibility:hidden;}", ""]);
-
-/***/ },
-
-/***/ 108:
+/***/ 19:
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -382,25 +293,114 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 
-/***/ 109:
+/***/ 101:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = function() {
-		var list = [];
-		list.toString = function toString() {
-			var result = [];
-			for(var i = 0; i < this.length; i++) {
-				var item = this[i];
-				if(item[2]) {
-					result.push("@media " + item[2] + "{" + item[1] + "}");
-				} else {
-					result.push(item[1]);
-				}
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
+	
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(2), __webpack_require__(3), __webpack_require__(102)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($, P) {
+		'use strict';
+	
+		var plugin = $.circuitboard.plugin['do']('tile-skin-grow-when-open', {
+			resolves: ['tile-skin', 'tile-grow-when-open'],
+			after: ['tile-hidden']
+		}).modify('Tile.prototype');
+	
+		///*  react to a tile opening or closing by      */
+		///*  timely showing/hiding the content section  */
+		///*  to ensure smooth transition animation      */
+		//plugin.append('construct', function () {
+		//	var sectionElement = this.element.children('section');
+		//	this.p('open').value(true).onValue(() => {
+		//		sectionElement.css('opacity', 0);
+		//	});
+		//	this.p('fullyOpen').onValue((open) => {
+		//		if (open) {
+		//			sectionElement.css('visibility', 'visible');
+		//			sectionElement.css('opacity', 1);
+		//		} else {
+		//			sectionElement.css('visibility', 'hidden');
+		//			sectionElement.css('opacity', 0);
+		//		}
+		//	});
+		//});
+	
+		plugin.append('construct', function () {
+			var flexGrowFrom = 1;
+			var rowFlexGrowFrom = this.element.parent().children().length;
+			this.element.velocity({ flexGrow: [flexGrowFrom, flexGrowFrom] }, { duration: 1 });
+			this.element.parent().velocity({ flexGrow: [rowFlexGrowFrom, rowFlexGrowFrom] }, { duration: 1 });
+		});
+	
+		plugin.replace('growWhenOpen', function (open) {
+			var _this = this;
+	
+			var openCloseTransition = function openCloseTransition() {
+				var flexGrowFrom = parseFloat(_this.element.data('amyFlexGrowTarget') || 1);
+				var flexGrowTo = _this.hidden ? 0 : open ? _this.weightWhenOpen() : _this.weightWhenClosed();
+				_this.element.data('amyFlexGrowTarget', flexGrowTo);
+				var rowFlexGrowTo = 0;
+				_this.element.parent().children().each(function () {
+					rowFlexGrowTo += parseFloat($(this).data('amyFlexGrowTarget') || 1);
+				});
+				var rowFlexGrowFrom = rowFlexGrowTo - flexGrowTo + flexGrowFrom;
+				return P.all([new P(function (resolve) {
+					_this.element.velocity({ flexGrow: [flexGrowTo, flexGrowFrom] }, { complete: resolve, duration: 300 });
+				}), new P(function (resolve) {
+					_this.element.parent().velocity({ flexGrow: [rowFlexGrowTo, rowFlexGrowFrom] }, { complete: resolve, duration: 300 });
+				})]);
+			};
+			// TODO: get the above with delta 'replace' operation that provides previous implementation
+	
+			var sectionElement = this.element.children('section');
+			if (open) {
+				sectionElement.css({ visibility: 'hidden', opacity: 0 });
+				return openCloseTransition().then(function () {
+					return new P(function (resolve) {
+						sectionElement.css('visibility', 'visible');
+						sectionElement.velocity({ opacity: [1, 0] }, { complete: resolve, duration: 200 });
+					});
+				});
+			} else {
+				sectionElement.css('visibility', 'visible');
+				return openCloseTransition().then(function () {
+					sectionElement.css('visibility', 'hidden');
+				});
 			}
-			return result.join("");
-		};
-		return list;
+		});
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ },
+
+/***/ 102:
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(103);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(19)(content, {});
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		module.hot.accept("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/features/p-tile-skin-grow-when-open.scss", function() {
+			var newContent = require("!!/home/mhelvens/Projects/apinatomy/node_modules/css-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/autoprefixer-loader/index.js!/home/mhelvens/Projects/apinatomy/node_modules/sass-loader/index.js!/home/mhelvens/Projects/apinatomy/src/features/p-tile-skin-grow-when-open.scss");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
 	}
+
+/***/ },
+
+/***/ 103:
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(18)();
+	exports.push([module.id, ".tilemap .tile > section {\n  opacity: 0;\n  visibility: hidden; }\n", ""]);
 
 /***/ }
 
