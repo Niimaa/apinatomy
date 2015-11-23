@@ -30927,7 +30927,9 @@
 		this.newProperty('canvasSize', {
 			initial: { width: 1, height: 1 },
 			isEqual: sizeEquality
-		}).plug(_utilKefirAndEggsEs6Js2['default'].merge([_utilKefirAndEggsEs6Js2['default'].once(), this.options.resizeEvent || (0, _jquery2['default'])(window).asKefirStream('resize')]).map(function () {
+		}).plug(_utilKefirAndEggsEs6Js2['default'].merge([_utilKefirAndEggsEs6Js2['default'].once(), this.options.resizeEvent || (0, _jquery2['default'])(window).asKefirStream('resize').flatMap(function () {
+			return _utilKefirAndEggsEs6Js2['default'].sequentially(500, [0, 0, 0]);
+		})]).map(function () {
 			return {
 				height: _this.element.height(),
 				width: _this.element.width()
@@ -31116,8 +31118,12 @@
 	}).add('tile', function (tileSelector) {
 		return _utilMiscEs6Js2['default'].getDef(this._p_circuitboardCore_tilesByModelId, tileSelector, _utilDeferEs6Js2['default']).promise;
 	}).add('_registerTile', function (tile) {
-		_utilMiscEs6Js2['default'].getDef(this._p_circuitboardCore_tilesByModelId, tile.model.id, _utilDeferEs6Js2['default']).resolve(tile);
-		this.newTiles.emit(tile);
+		var _this2 = this;
+	
+		tile.afterConstruct.then(function () {
+			_utilMiscEs6Js2['default'].getDef(_this2._p_circuitboardCore_tilesByModelId, tile.model.id, _utilDeferEs6Js2['default']).resolve(tile);
+			_this2.newTiles.emit(tile);
+		});
 	});
 	plugin.modify('Tile.prototype').append('construct', function () {
 		this.circuitboard._registerTile(this);
@@ -31126,27 +31132,27 @@
 	/* main artefact hierarchy */
 	plugin.modify('Circuitboard.prototype') // a circuitboard has a tilemap
 	.append('construct', function () {
-		var _this2 = this;
+		var _this3 = this;
 	
 		this.model.then(function (model) {
-			_this2.tilemap = new _jquery2['default'].circuitboard.Tilemap({
+			_this3.tilemap = new _jquery2['default'].circuitboard.Tilemap({
 				model: model,
-				parent: _this2,
+				parent: _this3,
 				tileDepth: 1
 			});
-			_this2.tilemap.afterConstruct.then(function () {
-				_this2.tilemap.p('size').plug(_this2.p('size'));
-				_this2.tilemap.position = { x: 0, y: 0 };
+			_this3.tilemap.afterConstruct.then(function () {
+				_this3.tilemap.p('size').plug(_this3.p('size'));
+				_this3.tilemap.position = { x: 0, y: 0 };
 			});
 		});
 	});
 	plugin.modify('Tilemap.prototype') // a tilemap has a number of tiles
 	.append('construct', function () {
-		var _this3 = this;
+		var _this4 = this;
 	
 		this._p_tilemapCore_tiles = null;
 		Object.defineProperty(this, 'tiles', { get: function get() {
-				return _this3._p_tilemapCore_tiles;
+				return _this4._p_tilemapCore_tiles;
 			} });
 		this.refreshTiles();
 	});
@@ -31155,18 +31161,18 @@
 	
 		this.tilemap = null;
 	}).add('populateInnerTilemap', function () {
-		var _this4 = this;
+		var _this5 = this;
 	
 		if (!this.tilemap) {
 			(function () {
-				var tilemap = _this4.tilemap = new _jquery2['default'].circuitboard.Tilemap({
-					model: _this4.model,
-					parent: _this4,
-					tileDepth: _this4.options.tileDepth + 1
+				var tilemap = _this5.tilemap = new _jquery2['default'].circuitboard.Tilemap({
+					model: _this5.model,
+					parent: _this5,
+					tileDepth: _this5.options.tileDepth + 1
 				});
 				tilemap.afterConstruct.then(function () {
-					tilemap.p('size').plug(_this4.p('bodySize'));
-					tilemap.p('position').plug(_this4.p('bodyPosition'));
+					tilemap.p('size').plug(_this5.p('bodySize'));
+					tilemap.p('position').plug(_this5.p('bodyPosition'));
 				});
 			})();
 		}
@@ -31175,17 +31181,21 @@
 	
 	/* registering tilemap layouts */
 	plugin.modify('Tile.prototype').add('refreshChildTiles', function () {
-		var _this5 = this;
+		var _this6 = this;
 	
 		this.afterConstruct.then(function () {
-			var tile = _this5;
+			var tile = _this6;
 			tile.tilemap.refreshTiles();
 		});
 	});
 	plugin.modify('Tilemap').add('prototype.refreshTiles', function () {
-		var _this6 = this;
+		var _this7 = this;
 	
-		_bluebird2['default'].resolve(this.model).then(function (model) {
+		if (this._tilesHaveBeenRefreshed) {
+			return _bluebird2['default'].resolve();
+		}
+		this._tilesHaveBeenRefreshed = true;
+		return _bluebird2['default'].resolve(this.model).then(function (model) {
 			return model.getModels(model.getChildIds());
 		}).map(function (a) {
 			return a;
@@ -31198,19 +31208,16 @@
 			for (var i = 0; i < childModels.length; ++i) {
 				tilesP.push(new _jquery2['default'].circuitboard.Tile({
 					model: childModels[i],
-					parent: _this6,
-					tileDepth: _this6.options.tileDepth
+					parent: _this7,
+					tileDepth: _this7.options.tileDepth
 				}));
 			}
 	
 			/* resizing and repositioning tiles */
-			_bluebird2['default'].resolve(tilesP).map(function (a) {
+			return _bluebird2['default'].resolve(tilesP).map(function (a) {
 				return a;
 			}).tap(function (tiles) {
-				var spacing = _utilMiscEs6Js2['default'].defOr(_this6.options.tileSpacing, _this6.circuitboard.options.tileSpacing);
-				var weightProps = tiles.map(function (tile) {
-					return tile.p('weight');
-				});
+				var spacing = _utilMiscEs6Js2['default'].defOr(_this7.options.tileSpacing, _this7.circuitboard.options.tileSpacing);
 	
 				var state = {};
 				var cb = function cb(_ref) {
@@ -31220,9 +31227,14 @@
 					var width = _ref2$0.width;
 					var height = _ref2$0.height;
 	
+					/* only show shown tiles */
+					var shownTiles = tiles.filter(function (t) {
+						return t.shown;
+					});
+	
 					/* get tile positioning array, and incorporate spacing */
 					// which layout to use (e.g., '.rows') should be customizable at some point
-					var positioning = _this6.constructor.layouts.rows(tiles, {
+					var positioning = _this7.constructor.layouts.rows(shownTiles, {
 						width: width - spacing,
 						height: height - spacing
 					}, state).map(function (_ref3) {
@@ -31245,17 +31257,23 @@
 					});
 	
 					/* set tile positioning */
-					for (var i = 0; i < tiles.length; ++i) {
-						tiles[i].size = positioning[i].size;
-						tiles[i].position = positioning[i].position;
+					for (var i = 0; i < shownTiles.length; ++i) {
+						shownTiles[i].size = positioning[i].size;
+						shownTiles[i].position = positioning[i].position;
 					}
 				};
-				if (_this6._deregisterTilePositionObserver) {
-					_this6._deregisterTilePositionObserver();
+				if (_this7._deregisterTilePositionObserver) {
+					_this7._deregisterTilePositionObserver();
 				}
-				var obs = _utilKefirAndEggsEs6Js2['default'].combine([_this6.p('size')].concat(_toConsumableArray(weightProps)));
+				var weightProps = tiles.map(function (tile) {
+					return tile.p('weight');
+				});
+				var shownProps = tiles.map(function (tile) {
+					return tile.p('shown');
+				});
+				var obs = _utilKefirAndEggsEs6Js2['default'].combine([_this7.p('size')].concat(_toConsumableArray(weightProps), _toConsumableArray(shownProps)));
 				obs.onValue(cb);
-				_this6._deregisterTilePositionObserver = function () {
+				_this7._deregisterTilePositionObserver = function () {
 					obs.offValue(cb);
 				};
 			});
@@ -31468,6 +31486,7 @@
 	
 		/* the local object3D of the tile */
 		this.object3D = new _exposeTHREEThreeJs2['default'].Object3D();
+		this.object3D.name = "Tile#object3D";
 		this.p('position').onValue(function (_ref3) {
 			var x = _ref3.x;
 			var y = _ref3.y;
@@ -31477,7 +31496,7 @@
 		});
 	
 		/* 'shown' property */ // TODO: move to other delta
-		this.newProperty('shown', { initial: true }).plug(this.parent.p('shown'));
+		this.newProperty('shown', { initial: this.circuitboard.options.initialTileVisibility !== false }); //.plug(this.parent.p('shown')); // TODO: is this needed?
 		this.parent.afterConstruct.then(function () {
 			_this3.p('shown').onValue(function (shown) {
 				_this3.object3D.skipDomEvents = !shown;
@@ -31485,189 +31504,204 @@
 			});
 		});
 	
-		/* the rectangle representing the tile, and recipient of mouse events */
-		{
-			var _arr;
+		/* create the events but do not bind them yet */
+		var _arr = ['click', 'dblclick', 'mouseup', 'mousedown', 'mouseover', 'mouseout'];
+		for (var _i = 0; _i < _arr.length; _i++) {
+			var _event = _arr[_i];
+			this.newEvent(_event);
+		}
 	
-			var _i;
+		///* setting colors */
+		//this.newProperty();
+		//Object.defineProperty(this, 'backgroundColor', {
+		//	get: () => this.mesh3D.material.color,
+		//	set: (c) => { this.mesh3D.material.color.set(c) }
+		//});
+		//Object.defineProperty(this, 'textColor', {
+		//	get: () => this.nameMesh.material.color,
+		//	set: (c) => { this.nameMesh.material.color.set(c) }
+		//});
 	
-			(function () {
-				/* creating the tile mesh */
-				_this3.mesh3D = new _exposeTHREEThreeJs2['default'].Mesh(new _exposeTHREEThreeJs2['default'].PlaneBufferGeometry(1, 1), new _exposeTHREEThreeJs2['default'].MeshBasicMaterial({
-					color: _this3.options.tileDepth % 2 ? 0xcccccc : 0x777777,
-					polygonOffset: true,
-					polygonOffsetUnits: 1,
-					polygonOffsetFactor: -_this3.options.tileDepth
-				}) // TODO: make configurable / dynamic
-				);
-				_this3.object3D.add(_this3.mesh3D);
+		this.p('shown').value(true).take(1).onValue(function () {
 	
-				/* borders around the tile mesh */
-				_this3.meshBorders3D = new _exposeTHREEThreeJs2['default'].Line((function () {
-					var geo = new _exposeTHREEThreeJs2['default'].Geometry();
-					geo.vertices.push(new _exposeTHREEThreeJs2['default'].Vector3(-0.5, -0.5), new _exposeTHREEThreeJs2['default'].Vector3(0.5, -0.5), new _exposeTHREEThreeJs2['default'].Vector3(0.5, 0.5), new _exposeTHREEThreeJs2['default'].Vector3(-0.5, 0.5), new _exposeTHREEThreeJs2['default'].Vector3(-0.5, -0.5));
-					return geo;
-				})(), new _exposeTHREEThreeJs2['default'].LineBasicMaterial({
-					color: 0x000000, // TODO: customizable border color
-					lineWidth: 1,
-					polygonOffset: true,
-					polygonOffsetUnits: 1,
-					polygonOffsetFactor: -_this3.options.tileDepth
-				}));
-				_this3.object3D.add(_this3.meshBorders3D);
+			/* the rectangle representing the tile, and recipient of mouse events */
+			{
+				var _arr2;
 	
-				/* auto-sizing the rectangle and borders */
-				_this3.p('size').onValue(function (_ref4) {
-					var width = _ref4.width;
-					var height = _ref4.height;
+				var _i2;
 	
-					if (width > 0 && height > 0) {
-						_this3.mesh3D.visible = true;
-						_this3.meshBorders3D.visible = true;
-						_this3.mesh3D.scale.x = width;
-						_this3.mesh3D.scale.y = height;
-						_this3.mesh3D.position.x = 0.5 * width;
-						_this3.mesh3D.position.y = 0.5 * height;
-						_this3.meshBorders3D.scale.x = width;
-						_this3.meshBorders3D.scale.y = height;
-						_this3.meshBorders3D.position.x = 0.5 * width;
-						_this3.meshBorders3D.position.y = 0.5 * height;
-					} else {
-						_this3.mesh3D.visible = false;
-						_this3.meshBorders3D.visible = false;
-					}
-				});
+				(function () {
+					/* creating the tile mesh */
+					_this3.mesh3D = new _exposeTHREEThreeJs2['default'].Mesh(new _exposeTHREEThreeJs2['default'].PlaneBufferGeometry(1, 1), new _exposeTHREEThreeJs2['default'].MeshBasicMaterial({
+						color: _this3.options.tileDepth % 2 ? 0xcccccc : 0x777777,
+						polygonOffset: true,
+						polygonOffsetUnits: 1,
+						polygonOffsetFactor: -_this3.options.tileDepth
+					}) // TODO: make configurable / dynamic
+					);
+					_this3.mesh3D.name = "Tile#mesh3D";
+					_this3.object3D.add(_this3.mesh3D);
 	
-				/* defining dom-like events on this tile */
-				var eventHandler = _this3.circuitboard.eventHandler3D;
-				_arr = ['click', 'dblclick', 'mouseup', 'mousedown', 'mouseover', 'mouseout'];
-	
-				var _loop = function () {
-					var event = _arr[_i];
-					_this3.newEvent(event).plug(_utilKefirAndEggsEs6Js2['default'].fromBinder(function (emitter) {
-						eventHandler.addEventListener(_this3.mesh3D, event, emitter.emit);
-						return function () {
-							eventHandler.removeEventListener(_this3.mesh3D, event, emitter.emit);
-						};
+					/* borders around the tile mesh */
+					_this3.meshBorders3D = new _exposeTHREEThreeJs2['default'].Line((function () {
+						var geo = new _exposeTHREEThreeJs2['default'].Geometry();
+						geo.vertices.push(new _exposeTHREEThreeJs2['default'].Vector3(-0.5, -0.5), new _exposeTHREEThreeJs2['default'].Vector3(0.5, -0.5), new _exposeTHREEThreeJs2['default'].Vector3(0.5, 0.5), new _exposeTHREEThreeJs2['default'].Vector3(-0.5, 0.5), new _exposeTHREEThreeJs2['default'].Vector3(-0.5, -0.5));
+						return geo;
+					})(), new _exposeTHREEThreeJs2['default'].LineBasicMaterial({
+						color: 0x000000, // TODO: customizable border color
+						lineWidth: 1,
+						polygonOffset: true,
+						polygonOffsetUnits: 1,
+						polygonOffsetFactor: -_this3.options.tileDepth
 					}));
-				};
+					_this3.meshBorders3D.name = "Tile#meshBorders3D";
+					_this3.object3D.add(_this3.meshBorders3D);
 	
-				for (_i = 0; _i < _arr.length; _i++) {
-					_loop();
-				}
-			})();
-		}
+					/* auto-sizing the rectangle and borders */
+					_this3.p('size').onValue(function (_ref4) {
+						var width = _ref4.width;
+						var height = _ref4.height;
 	
-		/* separator between header and body */
-		{
-			(function () {
-				var separator = new _exposeTHREEThreeJs2['default'].Line((function () {
-					var geo = new _exposeTHREEThreeJs2['default'].Geometry();
-					geo.vertices.push(new _exposeTHREEThreeJs2['default'].Vector3(0, 0), new _exposeTHREEThreeJs2['default'].Vector3(1, 0));
-					return geo;
-				})(), new _exposeTHREEThreeJs2['default'].LineBasicMaterial({
-					color: 0x000000, // TODO: customizable border color
-					lineWidth: 1
-				}));
-				_this3.object3D.add(separator);
+						if (width > 0 && height > 0) {
+							_this3.mesh3D.visible = true;
+							_this3.meshBorders3D.visible = true;
+							_this3.mesh3D.scale.x = width;
+							_this3.mesh3D.scale.y = height;
+							_this3.mesh3D.position.x = 0.5 * width;
+							_this3.mesh3D.position.y = 0.5 * height;
+							_this3.meshBorders3D.scale.x = width;
+							_this3.meshBorders3D.scale.y = height;
+							_this3.meshBorders3D.position.x = 0.5 * width;
+							_this3.meshBorders3D.position.y = 0.5 * height;
+						} else {
+							_this3.mesh3D.visible = false;
+							_this3.meshBorders3D.visible = false;
+						}
+					});
 	
-				/* auto-positioning the separator */
-				_utilKefirAndEggsEs6Js2['default'].combine([_this3.p('size'), _this3.p('headerTilemapSeparator')]).onValue(function (_ref5) {
-					var _ref52 = _slicedToArray(_ref5, 2);
+					/* defining dom-like events on this tile */
+					var eventHandler = _this3.circuitboard.eventHandler3D;
+					_arr2 = ['click', 'dblclick', 'mouseup', 'mousedown', 'mouseover', 'mouseout'];
 	
-					var _ref52$0 = _ref52[0];
-					var width = _ref52$0.width;
-					var height = _ref52$0.height;
-					var y = _ref52[1];
+					var _loop = function () {
+						var event = _arr2[_i2];
+						_this3.event(event).plug(_utilKefirAndEggsEs6Js2['default'].fromBinder(function (emitter) {
+							eventHandler.addEventListener(_this3.mesh3D, event, emitter.emit);
+							return function () {
+								eventHandler.removeEventListener(_this3.mesh3D, event, emitter.emit);
+							};
+						}));
+					};
 	
-					var hasChildren = _this3.model.getChildIds().length > 0; // TODO: this should be about tiles, not children in the model
-					if (!hasChildren) {
-						y = 0;
+					for (_i2 = 0; _i2 < _arr2.length; _i2++) {
+						_loop();
 					}
-					var headerHeight = Math.max((1 - y) * height, 24);
-					separator.scale.x = width;
-					separator.position.x = 0;
-					separator.position.y = height - headerHeight;
-				});
-			})();
-		}
-	
-		/* the header of the tile, printing the name, etc. */
-		{
-			(function () {
-				/* the object representing the tile header */
-				_this3.header3D = new _exposeTHREEThreeJs2['default'].Object3D();
-				_this3.object3D.add(_this3.header3D);
-				_this3.p('headerPosition').onValue(function (_ref6) {
-					var x = _ref6.x;
-					var y = _ref6.y;
-	
-					_this3.header3D.position.x = x;
-					_this3.header3D.position.y = y;
-				});
-	
-				/* creating the name geometry */
-				var textShapes = _exposeTHREEThreeJs2['default'].FontUtils.generateShapes(_this3.model.name, {
-					font: 'helvetiker',
-					size: 150
-				});
-				var textGeometry = new _exposeTHREEThreeJs2['default'].ShapeGeometry(textShapes);
-	
-				/* one-time scaling and positioning of text to unit size */
-				textGeometry.computeBoundingBox();
-				var _textGeometry$boundingBox = textGeometry.boundingBox;
-				var min = _textGeometry$boundingBox.min;
-				var max = _textGeometry$boundingBox.max;
-	
-				var oWidth = max.x - min.x;
-				var oHeight = max.y - min.y;
-				var factor1 = oWidth < oHeight ? 1 / oHeight : 1 / oWidth;
-				textGeometry.applyMatrix(new _exposeTHREEThreeJs2['default'].Matrix4().setPosition(new _exposeTHREEThreeJs2['default'].Vector3(-min.x, -min.y, 0)));
-				textGeometry.applyMatrix(new _exposeTHREEThreeJs2['default'].Matrix4().scale(new _exposeTHREEThreeJs2['default'].Vector3(factor1, factor1, 1)));
-	
-				/* creating the name mesh */
-				_this3.nameMesh = new _exposeTHREEThreeJs2['default'].Mesh(textGeometry, new _exposeTHREEThreeJs2['default'].MeshBasicMaterial({
-					color: _this3.options.tileDepth % 2 ? 0x777777 : 0xCCCCCC,
-					polygonOffset: true,
-					polygonOffsetUnits: 1,
-					polygonOffsetFactor: -_this3.options.tileDepth - 1
-				}));
-				_this3.header3D.add(_this3.nameMesh);
-	
-				/* auto-sizing the text */
-				_this3.p('headerSize').onValue(function (_ref7) {
-					var width = _ref7.width;
-					var height = _ref7.height;
-	
-					var padding = Math.min(width, height) / 20;
-					padding = Math.max(padding, 4);
-					width -= 2 * padding;
-					height -= 2 * padding;
-					var factor2 = width / oWidth < height / oHeight ? width : height * oWidth / oHeight;
-					_this3.nameMesh.scale.x = factor2;
-					_this3.nameMesh.scale.y = factor2;
-					_this3.nameMesh.position.x = 0.5 * (width - oWidth * factor1 * factor2) + padding;
-					_this3.nameMesh.position.y = 0.5 * (height - oHeight * factor1 * factor2) + padding;
-				});
-			})();
-		}
-	
-		/* setting colors */
-		Object.defineProperty(this, 'backgroundColor', {
-			get: function get() {
-				return _this3.mesh3D.material.color;
-			},
-			set: function set(c) {
-				_this3.mesh3D.material.color.set(c);
+				})();
 			}
-		});
-		Object.defineProperty(this, 'textColor', {
-			get: function get() {
-				return _this3.nameMesh.material.color;
-			},
-			set: function set(c) {
-				_this3.nameMesh.material.color.set(c);
+	
+			/* separator between header and body */
+			{
+				(function () {
+					var separator = new _exposeTHREEThreeJs2['default'].Line((function () {
+						var geo = new _exposeTHREEThreeJs2['default'].Geometry();
+						geo.vertices.push(new _exposeTHREEThreeJs2['default'].Vector3(0, 0), new _exposeTHREEThreeJs2['default'].Vector3(1, 0));
+						return geo;
+					})(), new _exposeTHREEThreeJs2['default'].LineBasicMaterial({
+						color: 0x000000, // TODO: customizable border color
+						lineWidth: 1
+					}));
+					separator.name = "separator";
+					_this3.object3D.add(separator);
+	
+					/* auto-positioning the separator */
+					_utilKefirAndEggsEs6Js2['default'].combine([_this3.p('size'), _this3.p('headerTilemapSeparator')]).onValue(function (_ref5) {
+						var _ref52 = _slicedToArray(_ref5, 2);
+	
+						var _ref52$0 = _ref52[0];
+						var width = _ref52$0.width;
+						var height = _ref52$0.height;
+						var y = _ref52[1];
+	
+						var hasChildren = _this3.model.getChildIds().length > 0; // TODO: this should be about tiles, not children in the model
+						if (!hasChildren) {
+							y = 0;
+						}
+						var headerHeight = Math.max((1 - y) * height, 24);
+						separator.scale.x = width;
+						separator.position.x = 0;
+						separator.position.y = height - headerHeight;
+					});
+				})();
 			}
+	
+			/* the header of the tile, printing the name, etc. */
+			{
+				(function () {
+					/* the object representing the tile header */
+					_this3.header3D = new _exposeTHREEThreeJs2['default'].Object3D();
+					_this3.header3D.name = "Tile#header3D";
+					_this3.object3D.add(_this3.header3D);
+					_this3.p('headerPosition').onValue(function (_ref6) {
+						var x = _ref6.x;
+						var y = _ref6.y;
+	
+						_this3.header3D.position.x = x;
+						_this3.header3D.position.y = y;
+					});
+	
+					/* creating the name geometry */
+					var textShapes = _exposeTHREEThreeJs2['default'].FontUtils.generateShapes(_this3.model.name, {
+						font: 'helvetiker',
+						size: 150
+					});
+					var textGeometry = new _exposeTHREEThreeJs2['default'].ShapeGeometry(textShapes);
+	
+					/* one-time scaling and positioning of text to unit size */
+					textGeometry.computeBoundingBox();
+					var _textGeometry$boundingBox = textGeometry.boundingBox;
+					var min = _textGeometry$boundingBox.min;
+					var max = _textGeometry$boundingBox.max;
+	
+					var oWidth = max.x - min.x;
+					var oHeight = max.y - min.y;
+					var factor1 = oWidth < oHeight ? 1 / oHeight : 1 / oWidth;
+					textGeometry.applyMatrix(new _exposeTHREEThreeJs2['default'].Matrix4().setPosition(new _exposeTHREEThreeJs2['default'].Vector3(-min.x, -min.y, 0)));
+					textGeometry.applyMatrix(new _exposeTHREEThreeJs2['default'].Matrix4().scale(new _exposeTHREEThreeJs2['default'].Vector3(factor1, factor1, 1)));
+	
+					/* creating the name mesh */
+					_this3.nameMesh = new _exposeTHREEThreeJs2['default'].Mesh(textGeometry, new _exposeTHREEThreeJs2['default'].MeshBasicMaterial({
+						color: _this3.options.tileDepth % 2 ? 0x777777 : 0xCCCCCC,
+						polygonOffset: true,
+						polygonOffsetUnits: 1,
+						polygonOffsetFactor: -_this3.options.tileDepth - 1
+					}));
+					_this3.nameMesh.name = "Tile#nameMesh";
+					_this3.header3D.add(_this3.nameMesh);
+	
+					/* auto-sizing the text */
+					_this3.p('headerSize').onValue(function (_ref7) {
+						var width = _ref7.width;
+						var height = _ref7.height;
+	
+						var padding = Math.min(width, height) / 20;
+						padding = Math.max(padding, 4);
+						width -= 2 * padding;
+						height -= 2 * padding;
+						var factor2 = width / oWidth < height / oHeight ? width : height * oWidth / oHeight;
+						_this3.nameMesh.scale.x = factor2;
+						_this3.nameMesh.scale.y = factor2;
+						_this3.nameMesh.position.x = 0.5 * (width - oWidth * factor1 * factor2) + padding;
+						_this3.nameMesh.position.y = 0.5 * (height - oHeight * factor1 * factor2) + padding;
+					});
+				})();
+			}
+	
+			/* strange hack to compensate for this block being delayed to the first this.p('shown').value(true) */
+			// TODO; figure out why this is needed, then use a more elegant solution
+			setTimeout(function () {
+				_this3.parent.shown = false;
+				_this3.parent.shown = true;
+			});
 		});
 	});
 	
@@ -32638,7 +32672,7 @@
 	/* allow a tile to be `open` (or closed) */
 	plugin.append('construct', function () {
 	
-		/* the 'open' observable */
+		/* the 'weight' observable */
 		this.newProperty('weight', { initial: 1 });
 	
 		// TODO: make a tile as weighty as the sum of its children?
@@ -42145,7 +42179,7 @@
 			(function () {
 				var tooltip = (0, _jquery2['default'])('#amy-tooltip');
 				if (tooltip.length === 0) {
-					tooltip = (0, _jquery2['default'])('\n\t\t\t\t\t<div id="amy-tooltip" style="\n\t\t\t\t\t\tdisplay:          none;\n\t\t\t\t\t\tposition:         absolute;\n\t\t\t\t\t\tpointer-events:   none;\n\t\t\t\t\t\tbackground-color: #ffffca;\n\t\t\t\t\t\tborder:           solid 1px #000023;\n\t\t\t\t\t\tpadding:          1px 2px;\n\t\t\t\t\t\twhite-space:      nowrap;\n\t\t\t\t\t"></div>\n\t\t\t\t').appendTo('body');
+					tooltip = (0, _jquery2['default'])('\n\t\t\t\t\t<div id="amy-tooltip" style="\n\t\t\t\t\t\tdisplay:          none;\n\t\t\t\t\t\tposition:         absolute;\n\t\t\t\t\t\tpointer-events:   none;\n\t\t\t\t\t\tbackground-color: #ffffca;\n\t\t\t\t\t\tborder:           solid 1px #000023;\n\t\t\t\t\t\tpadding:          1px 2px;\n\t\t\t\t\t\twhite-space:      nowrap;\n\t\t\t\t\t\tz-index:          99999;\n\t\t\t\t\t"></div>\n\t\t\t\t').appendTo('body');
 				}
 				glyph.event('mouseover').onValue(function () {
 					tooltip.text(tooltipText);
@@ -42238,7 +42272,8 @@
 				vertex.group = this;
 				this.vertices[vertex.id] = vertex;
 				this.circuitboard._d3_vertices[vertex.id] = vertex;
-				vertex.p('shown').plug(this.p('shown'));
+				//vertex.p('shown').plug(this.p('shown').value(false));
+				//this.p('shown').plug(vertex.p('shown').value(true));
 				this.circuitboard.updateGraph();
 				return vertex;
 			},
@@ -42248,8 +42283,8 @@
 					if (typeof vertex === 'string') {
 						vertex = this.vertices[vertex];
 					}
-					vertex.p('shown').unplug(this.p('shown'));
-					vertex.destroy();
+					//vertex.p('shown').unplug(this.p('shown'));
+					//vertex.destroy();
 					delete this.circuitboard._d3_vertices[vertex.id];
 					delete this.vertices[vertex.id];
 					this.circuitboard.updateGraph();
@@ -42796,17 +42831,12 @@
 	
 			var parent = _ref.parent;
 	
+			console.log(this);
+	
 			_utilMiscEs6Js2['default'].assert(parent.type === 'D3Group', "D3Vertex objects need to have a D3Group object as their parent.");
 	
 			/* the 3D object representing the vertex */
 			this.object3D = new _exposeTHREEThreeJs2['default'].Object3D();
-	
-			/* visibility */
-			this.newProperty('shown', { initial: true });
-			this.p('shown').onValue(function (shown) {
-				_this.object3D.skipDomEvents = !shown;
-				_this.circuitboard.object3D[shown ? 'add' : 'remove'](_this.object3D); // TODO: remove on destroy
-			});
 	
 			/* the size of the vertex 'glyph' */
 			this.newProperty('size', {
@@ -42893,10 +42923,18 @@
 				_this.object3D.position.y = y;
 			});
 	
-			parent.addVertex(this);
-			this.on('destroy').take(1).onValue(function () {
-				parent.removeVertex(_this);
+			/* visibility */
+			this.newProperty('shown', { initial: this.circuitboard.options.initialVertexVisibility !== false });
+			this.p('shown').onValue(function (shown) {
+				_this.object3D.skipDomEvents = !shown;
+				_this.circuitboard.object3D[shown ? 'add' : 'remove'](_this.object3D); // TODO: remove on destroy
+				parent[shown ? 'addVertex' : 'removeVertex'](_this);
 			});
+	
+			//parent.addVertex(this);
+			//this.on('destroy').take(1).onValue(() => {
+			//	parent.removeVertex(this);
+			//});
 	
 			/* implementing vertex-dragging */
 			var body = (0, _jquery2['default'])('body');

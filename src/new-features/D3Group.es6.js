@@ -45,7 +45,8 @@ export default ArtefactP.then((Artefact) => {
 			vertex.group = this;
 			this.vertices[vertex.id] = vertex;
 			this.circuitboard._d3_vertices[vertex.id] = vertex;
-			vertex.p('shown').plug(this.p('shown'));
+			//vertex.p('shown').plug(this.p('shown').value(false));
+			//this.p('shown').plug(vertex.p('shown').value(true));
 			this.circuitboard.updateGraph();
 			return vertex;
 		},
@@ -55,8 +56,8 @@ export default ArtefactP.then((Artefact) => {
 				if (typeof vertex === 'string') {
 					vertex = this.vertices[vertex];
 				}
-				vertex.p('shown').unplug(this.p('shown'));
-				vertex.destroy();
+				//vertex.p('shown').unplug(this.p('shown'));
+				//vertex.destroy();
 				delete this.circuitboard._d3_vertices[vertex.id];
 				delete this.vertices[vertex.id];
 				this.circuitboard.updateGraph();

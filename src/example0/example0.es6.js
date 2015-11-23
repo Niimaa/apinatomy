@@ -17,57 +17,18 @@ import 'golden-layout/src/css/goldenlayout-light-theme.css';
 
 
 /* load the circuitboard, model loader and plugins */
-import circuitboard from '../circuitboard.es6.js';
-//import getFmaModels from './fma-model.es6.js';
+import circuitboard    from '../circuitboard-widget.es6.js';
 import {getLyphModels} from './lyph-model.es6.js';
-//import fetchPathsFn    from '../util/path-model.es6.js';
-import '../features/p-core.es6.js';
-import '../features/p-tile-skin.es6.js';
-import '../features/p-tile-spacing.es6.js';
-import '../features/p-tile-click-to-open.es6.js';
-import '../features/p-tile-weight.es6.js';
-import '../features/p-tile-active.es6.js';
-import '../features/p-tile-open.es6.js';
-import '../features/p-tile-grow-when-open.es6.js';
-import '../features/p-tile-shrink-when-hidden.es6.js';
-import '../features/p-tile-grow-when-maximized.es6.js';
-import '../features/p-tile-open-active.es6.js';
-import '../features/p-tile-skin-grow-when-open.es6.js';
-import '../features/p-position-tracking.es6.js';
-import '../features/p-transition-position-tracking.es6.js';
-import '../features/p-tile-hidden.es6.js';
-import '../features/p-tile-effectively-visible.es6.js';
-import '../features/p-tile-maximized.es6.js';
-import '../features/p-tile-middleclick-to-maximize.es6.js';
-import '../features/p-tile-buttons.es6.js';
-import '../features/p-tile-button-to-hide.es6.js';
-import '../features/p-tile-button-to-maximize.es6.js';
-import '../features/p-tile-button-to-unhide-children.es6.js';
-import '../features/p-tile-child-count-if-closed.es6.js';
-import '../features/p-tile-correlation-count-if-closed.es6.js';
-import '../features/p-tile-glyphs.es6.js';
-import '../features/p-d3.es6.js';
-//import '../features/p-connectivity.es6.js';
+import '../new-features/positioning.es6.js';
+import '../new-features/core.es6.js';
+import '../new-features/3d.es6.js';
+import '../new-features/tile-weight.es6.js';
+import '../new-features/tile-open.es6.js';
+import '../new-features/tile-click-to-open.es6.js';
+import '../new-features/d3.es6.js';
+import '../new-features/tile-glyphs.es6.js';
 
-//import '../features/p-ppi.es6.js';
-//import '../features/p-three-d.es6.js';
-//import '../features/p-three-d-geometric-models.es6.js';
-//import '../features/p-three-d-geometric-models-stl.es6.js';
-//import '../features/p-three-d-geometric-models-obj.es6.js';
-//import '../features/p-three-d-geometric-models-json.es6.js';
-//import '../features/p-three-d-spinner.es6.js';
-//import '../features/p-d3-three-d.es6.js';
-//import '../features/p-three-d-manual-controls.es6.js';
-//import '../features/p-three-d-auto-controls.es6.js';
-//import '../features/p-snapshot.es6.js';
-//import '../features/p-tile-visible-snapshot.es6.js';
-//import '../features/p-tile-maximized-snapshot.es6.js';
-//import '../features/p-three-d-camera-snapshot.es6.js';
-//import '../features/p-tile-open-snapshot.es6.js';
-//import '../features/p-three-d-tubes.es6.js';
-//import '../features/p-three-d-model-snapshot.es6.js';
-//import '../features/p-tile-button-to-swap-three-d-model.es6.js';
-//import '../features/p-tile-button-to-point-camera.es6.js';
+
 
 
 import './shims.es6.js';
@@ -75,7 +36,7 @@ import './shims.es6.js';
 
 /* fetch query parameters */
 const root = U.getQueryVariable('root') ||  185;
-const host = U.getQueryVariable('host') || 'localhost'; // alternative; 'open-physiology.org'
+const host = U.getQueryVariable('host') || 'open-physiology.org'; // alternative; 'open-physiology.org'
 const port = U.getQueryVariable('port') || '8888';
 
 
@@ -168,17 +129,17 @@ let allClIndices = P.resolve($.ajax({
 });
 
 
-/* start the brain tile opened up */
-circuitboard.plugin.do('start-brain-open', { if: true, after: ['tile-open', 'tile-hidden'] })
-	.append('Tile.prototype.construct', function () {
-		if (this.model.id === root) {
-			this.open = true;
-			this.visible = true;
-		}
-	});
+///* start the brain tile opened up */ // TODO do we want this back?
+//circuitboard.plugin.do('start-brain-open', { if: true, after: ['tile-open'] })
+//	.append('Tile.prototype.construct', function () {
+//		if (this.model.id === root) {
+//			this.open = true;
+//			this.shown = true;
+//		}
+//	});
 
 
-/* load all tiles immediately */
+/* load all tiles immediately */ // TODO do we want this back?
 // this does it recursively, which implies many server queries;
 // TODO: arrange a single command for this
 circuitboard.plugin.do('start-tiles-loaded', { if: true, after: ['core'] })
@@ -204,33 +165,11 @@ function sortElements(parentElement, entityList, sortKey, element) {
 }
 
 
-
-
 /* select plugins to activate them  (note that these must already be *loaded* at this point) */
 circuitboard.plugin.select(
-	'tile-skin',
+	'tile-open',
 	'tile-click-to-open',
-	'tile-grow-when-open',
-	'tile-shrink-when-hidden',
-	'tile-grow-when-maximized',
-	'tile-middleclick-to-maximize',
-	'tile-spacing',
-	'tile-active',
-	'tile-button-to-hide',
-	'tile-button-to-maximize',
-	'tile-button-to-unhide-children',
-	'tile-child-count-if-closed',
-	'tile-correlation-count-if-closed',
 	'tile-glyphs'
-	//'connectivity'
-
-	//'three-d-manual-controls',
-	//'three-d-auto-controls',
-	//'three-d-geometric-models-obj',
-	//'three-d-geometric-models-json',
-	//'snapshot',
-	//'tile-button-to-swap-three-d-model',
-	//'tile-button-to-point-camera',
 );
 
 
@@ -249,10 +188,11 @@ $(document).ready(() => {
 	preloadAllResources({host, port}).then(() => $('#circuitboard').circuitboard({
 		model:          getLyphModels('root', { root, port }),
 		//fetchPaths:     fetchPathsFn({ port }),
-		tileSpacing:    8,
+		tileSpacing:    6,
 		tilemapMargin:  8,
 		weightWhenOpen: 4,
-		initialTileVisibility: false
+		initialTileVisibility: false,
+		initialVertexVisibility: false
 	}).circuitboard('instance')).then(function (circuitboard) {
 
 
@@ -264,7 +204,7 @@ $(document).ready(() => {
 			for (let v of getAllResources_sync(type)) {
 				let newV = new KefirSignalHandler();
 				U.extend(newV, v);
-				newV.newProperty('visible', { settable: true, initial: false });
+				newV.newProperty('shown', { settable: true, initial: false });
 				X[type][v.id] = newV;
 			}
 		}
@@ -286,10 +226,35 @@ $(document).ready(() => {
 		}
 		for (let lyphTemplate of Object.values(X.lyphTemplates)) {
 			lyphTemplate.locatedMeasures = lyphTemplate.locatedMeasures.map(id => X.locatedMeasures[id]);
+			lyphTemplate.parents = lyphTemplate.parents.map(id => X.lyphTemplates[id]);
+			lyphTemplate.children = lyphTemplate.children.map(id => X.lyphTemplates[id]);
+
+			/* propagate visibility in the hierarchy */
+			if (lyphTemplate.parents.length > 0) {
+				lyphTemplate.p('shown').plug(lyphTemplate.parents[0].p('shown').value(false));
+				lyphTemplate.parents[0].p('shown').plug(lyphTemplate.p('shown').value(true));
+			}
+
+			/* sync lyphTemplate visibility with tile visibility */
+			circuitboard.tile(lyphTemplate.id).then((tile) => {
+				tile.p('shown').plug(lyphTemplate.p('shown'));
+				lyphTemplate.p('shown').plug(tile.p('shown'));
+			});
 		}
 		for (let publication of Object.values(X.publications)) {
 			publication.correlations = publication.correlations.map(id => X.correlations[id]);
 		}
+
+
+		const allReachableLyphTemplates = (cb) => {
+			const recurse = (lt) => {
+				cb(lt);
+				for (let child of lt.children) {
+					recurse(child);
+				}
+			};
+			recurse(X.lyphTemplates[root]);
+		};
 
 
 
@@ -300,22 +265,18 @@ $(document).ready(() => {
 		//////////////////////////////////////////////////////////////////////////
 
 
-		/* propagating tile visibility and open-ness */
+		/* propagating tile visibility to parent-open-ness */
 		circuitboard.newTiles.onValue((tile) => {
 			setTimeout(() => {
-				tile.p('visible').onValue((visible) => {
-					if (visible) {
-						let parent = tile.closestAncestorByType('Tile');
-						if (parent) {
-							parent.open = true;
-							parent.visible = true;
-						}
-					} else {
-						for (let child of tile.closestDescendantsByType('Tile')) {
-							child.visible = false;
-						}
-					}
-				});
+				let parent = tile.closestAncestorByType('Tile');
+				if (parent) {
+					tile.p('shown').value(true).onValue(() => {
+						parent.open = true;
+					});
+					parent.p('open').value(false).onValue(() => {
+						tile.shown = false;
+					});
+				}
 			});
 		});
 
@@ -355,8 +316,8 @@ $(document).ready(() => {
 			let checkbox = createCheckbox();
 
 			/* sync clindex visibility with checkbox checked-ness */
-			checkbox.p('checked').plug(correlation.p('visible'));
-			correlation.p('visible').plug(checkbox.p('checked'));
+			checkbox.p('checked').plug(correlation.p('shown'));
+			correlation.p('shown').plug(checkbox.p('checked'));
 
 			/* add checkbox and header */
 			result.element
@@ -378,10 +339,10 @@ $(document).ready(() => {
 			}
 
 			/* add clinical indices */
-			for (let variable of correlation.clinicalIndices) {
-				let clIndexCheckbox = createCheckbox(variable.title);
-				clIndexCheckbox.p('checked').plug(variable.p('visible'));
-				variable.p('visible').plug(clIndexCheckbox.p('checked'));
+			for (let clinicalIndex of correlation.clinicalIndices) {
+				let clIndexCheckbox = createCheckbox(clinicalIndex.title);
+				clIndexCheckbox.p('checked').plug(clinicalIndex.p('shown'));
+				clinicalIndex.p('shown').plug(clIndexCheckbox.p('checked'));
 				result.element.append(clIndexCheckbox.element);
 			}
 
@@ -391,42 +352,37 @@ $(document).ready(() => {
 		/* establish relation between located measures and correlations */
 		for (let correlation of Object.values(X.correlations)) {
 			for (let locatedMeasure of correlation.locatedMeasures) {
-				correlation.p('visible').value(true).onValue(() => {
+				correlation.p('shown').value(true).onValue(() => {
 					locatedMeasure.correlationVisibleCounter += 1;
-					locatedMeasure.visible = true;
+					locatedMeasure.shown = true;
 					setTimeout(() => {
-						correlation.p('visible').value(false).take(1).onValue(() => {
+						correlation.p('shown').value(false).take(1).onValue(() => {
 							locatedMeasure.correlationVisibleCounter -= 1;
 							if (locatedMeasure.correlationVisibleCounter === 0) {
-								locatedMeasure.visible = false;
+								locatedMeasure.shown = false;
 							}
 						});
 					});
 				});
-				locatedMeasure.p('visible').value(false).onValue(() => {
-					correlation.visible = false;
+				locatedMeasure.p('shown').value(false).onValue(() => {
+					correlation.shown = false;
 				});
 			}
 		}
 
 		/* glyphs for located measures */
 		for (let locatedMeasure of Object.values(X.locatedMeasures)) {
-			locatedMeasure.tile.then((tile) => {
+			locatedMeasure.tile.tap(tile => tile.afterConstruct).then((tile) => {
 				/* the glyph */
 				let glyph = tile.addGlyph({
 					tooltipText: `${locatedMeasure.quality} of ${locatedMeasure.lyphTemplate.name} `
 					+ `(correlation ${[...locatedMeasure.correlations].map(c => c.id).join(', ')})`,
-					shape: 'square'
+					shape: 'square',
+					color: locatedMeasure.correlations[0].color
 				});
 
-				/* the color of the glyph */
-				// using the color of only one correlation (there is only one per located measure right now anyway)
-				glyph.element.children()
-					.css('fill',   '#' + decimalToHex(locatedMeasure.correlations[0].color, 6))
-					.css('stroke', '#' + decimalToHex(locatedMeasure.correlations[0].color, 6));
-
 				/* clicking on a glyph populates the info-box */
-				glyph.element.children().click(() => {
+				glyph.event('click').onValue(() => {
 					let infoBox = $('#correlation-info');
 					infoBox.empty();
 					for (let correlation of locatedMeasure.correlations) {
@@ -435,15 +391,15 @@ $(document).ready(() => {
 				});
 
 				/* sync visibility between located measure and glyph */
-				glyph.p('visible').plug(locatedMeasure.p('visible'));
-				locatedMeasure.p('visible').plug(glyph.p('visible'));
+				glyph.p('shown').plug(locatedMeasure.p('shown'));
+				locatedMeasure.p('shown').plug(glyph.p('shown'));
 
 				/* maintain (visible glyph ⇒ visible tile) */
-				glyph.p('visible').value(true).onValue(() => {
-					tile.visible = true;
+				glyph.p('shown').value(true).onValue(() => {
+					tile.shown = true;
 				});
-				tile.p('visible').value(false).onValue(() => {
-					glyph.visible = false;
+				tile.p('shown').value(false).onValue(() => {
+					glyph.shown = false;
 				});
 
 			});
@@ -452,20 +408,20 @@ $(document).ready(() => {
 		/* establish relation between clinical indices and correlations */
 		for (let correlation of Object.values(X.correlations)) {
 			for (let clinicalIndex of correlation.clinicalIndices) {
-				clinicalIndex.p('visible').value(true).onValue(() => {
+				clinicalIndex.p('shown').value(true).onValue(() => {
 					correlation.clIndexVisibleCounter += 1;
-					correlation.visible = true;
+					correlation.shown = true;
 					setTimeout(() => {
-						clinicalIndex.p('visible').value(false).take(1).onValue(() => {
+						clinicalIndex.p('shown').value(false).take(1).onValue(() => {
 							correlation.clIndexVisibleCounter -= 1;
 							if (correlation.clIndexVisibleCounter === 0) {
-								correlation.visible = false;
+								correlation.shown = false;
 							}
 						});
 					});
 				});
-				correlation.p('visible').value(false).onValue(() => {
-					clinicalIndex.visible = false;
+				correlation.p('shown').value(false).onValue(() => {
+					clinicalIndex.shown = false;
 				});
 			}
 		}
@@ -479,8 +435,8 @@ $(document).ready(() => {
 			clIndexCheckboxes.set(clinicalIndex.id, checkbox);
 
 			/* sync clindex visibility with checkbox checked-ness */
-			checkbox.p('checked').plug(clinicalIndex.p('visible'));
-			clinicalIndex.p('visible').plug(checkbox.p('checked'));
+			checkbox.p('checked').plug(clinicalIndex.p('shown'));
+			clinicalIndex.p('shown').plug(checkbox.p('checked'));
 
 			/* hide checkbox if there are no connected correlations */
 			if (clinicalIndex.correlations.length > 0) {
@@ -491,33 +447,37 @@ $(document).ready(() => {
 			}
 
 			/* sort the checkbox-list */
-			sortElements(clIndexCheckboxesElement, clIndexCheckboxes, cb => cb[1].title, cb => cb[1].element); // TODO: title / label?
+			sortElements(clIndexCheckboxesElement, clIndexCheckboxes, cb => cb[1].title, cb => cb[1].element);
 		}
 
 		/* lyph checkboxes */
-		let lyphCheckboxesElement = $('#lyph-checkboxes');
-		circuitboard.newTiles.onValue((tile) => {
-			tile.model.then((model) => {
+		const giveLyphTemplateCheckbox = (lyphTemplate) => {
 
-				/* create checkbox */
-				let checkbox = createCheckbox(model.name);
-				checkbox.checked = (model.id === root);
+			/* create checkbox */
+			let checkbox = createCheckbox(lyphTemplate.name);
+			checkbox.checked = (lyphTemplate.id === root);
 
-				/* sync tile visibility with checkbox checked-ness */
-				checkbox.p('checked').plug(tile.p('visible'));
-				tile.p('visible').plug(checkbox.p('checked'));
+			/* sync lyphTemplate visibility with checkbox checked-ness */
+			checkbox.p('checked').plug(lyphTemplate.p('shown'));
+			lyphTemplate.p('shown').plug(checkbox.p('checked'));
 
-				/* render the checkbox subtree in HTML */
-				let checkboxSubtree = tile._lyphCheckbox = $(`
-					<div>
-						<div class="checkbox-indenter" style="margin-left: 18px"></div>
-					</div>
-				`).prepend(checkbox.element);
-				if (model.id === root) { lyphCheckboxesElement.append(checkboxSubtree) }
-				else { tile.closestAncestorByType('Tile')._lyphCheckbox.children('.checkbox-indenter').append(checkboxSubtree) }
+			/* render the checkbox subtree in HTML */
+			lyphTemplate._checkboxTreeElement = $(`
+				<div>
+					<div class="checkbox-indenter" style="margin-left: 18px"></div>
+				</div>
+			`).prepend(checkbox.element);
+			for (let child of lyphTemplate.children) {
+				lyphTemplate._checkboxTreeElement.children('.checkbox-indenter')
+					.append(giveLyphTemplateCheckbox(child));
+			}
 
-			});
-		});
+			/* return the HTML subtree */
+			return lyphTemplate._checkboxTreeElement;
+
+		};
+		$('#lyph-checkboxes').append(giveLyphTemplateCheckbox(X.lyphTemplates[root]));
+
 
 		/* all correlations */
 		let correlationBoxes = [];
@@ -528,23 +488,36 @@ $(document).ready(() => {
 		}
 
 		/* clicking tile correlation counters */
-		circuitboard.newTiles.onValue((tile) => {
-			setTimeout(() => {
-				tile.event('correlation-counter-click').onValue(() => {
+		const recursiveCorrelations = (lyphTemplate) => {
+			if (!lyphTemplate.recursiveCorrelations) {
+				let result = new Set();
+				for (let child of lyphTemplate.children) {
+					let childResult = recursiveCorrelations(child);
+					for (let corr of childResult) {
+						result.add(corr);
+					}
+				}
+				for (let lm of lyphTemplate.locatedMeasures) {
+					for (let corr of lm.correlations) {
+						result.add(corr);
+					}
+				}
+				lyphTemplate.recursiveCorrelations = result;
+			}
+			return lyphTemplate.recursiveCorrelations;
+		};
 
-					let correlationsToShow = new Map();
-					tile.traverseArtefactsByType('Tile', (descendant) => {
-						for (let correlation of X.lyphTemplates[descendant.model.id].correlations) {
-							if (!correlationsToShow.has(correlation.id)) {
-								correlationsToShow.set(correlation.id, correlation);
-							}
-						}
-					});
+
+		allReachableLyphTemplates((lyphTemplate) => {
+			let correlationsToShow = recursiveCorrelations(lyphTemplate);
+			circuitboard.tile(lyphTemplate.id).tap(t => t.afterConstruct).then((tile) => {
+				tile.counter = correlationsToShow.size;
+				tile.event('correlation-counter-click').onValue(() => {
 
 					let infoBox = $('#correlation-info');
 					infoBox.empty();
 					let boxes = [];
-					for (let [, correlation] of correlationsToShow) {
+					for (let correlation of correlationsToShow) {
 						boxes.push(correlationBox(correlation));
 					}
 					sortElements(infoBox, boxes, b => b.correlation.publication.title, b => b.element);
@@ -552,6 +525,33 @@ $(document).ready(() => {
 				});
 			});
 		});
+
+
+
+		//circuitboard.newTiles.onValue((tile) => {
+		//	setTimeout(() => {
+		//		tile.event('correlation-counter-click').onValue(() => {
+		//
+		//			let correlationsToShow = new Map();
+		//			tile.traverseArtefactsByType('Tile', (descendant) => {
+		//				for (let correlation of X.lyphTemplates[descendant.model.id].correlations) {
+		//					if (!correlationsToShow.has(correlation.id)) {
+		//						correlationsToShow.set(correlation.id, correlation);
+		//					}
+		//				}
+		//			});
+		//
+		//			let infoBox = $('#correlation-info');
+		//			infoBox.empty();
+		//			let boxes = [];
+		//			for (let [, correlation] of correlationsToShow) {
+		//				boxes.push(correlationBox(correlation));
+		//			}
+		//			sortElements(infoBox, boxes, b => b.correlation.publication.title, b => b.element);
+		//
+		//		});
+		//	});
+		//});
 
 
 

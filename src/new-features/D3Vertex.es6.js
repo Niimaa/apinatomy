@@ -29,13 +29,6 @@ export default ArtefactP.then((Artefact) => {
 		/* the 3D object representing the vertex */
 		this.object3D = new THREE.Object3D();
 
-		/* visibility */
-		this.newProperty('shown', { initial: true });
-		this.p('shown').onValue((shown) => {
-			this.object3D.skipDomEvents = !shown;
-			this.circuitboard.object3D[shown ? 'add' : 'remove'](this.object3D); // TODO: remove on destroy
-		});
-
 		/* the size of the vertex 'glyph' */
 		this.newProperty('size', {
 			initial: {
@@ -44,6 +37,7 @@ export default ArtefactP.then((Artefact) => {
 			},
 			isEqual: (a, b) => (a.width === b.width && a.height === b.height)
 		});
+
 
 		/* the global position of the vertex */
 		this.newProperty('position', { // relative to circuitboard (0, 0)
@@ -108,10 +102,29 @@ export default ArtefactP.then((Artefact) => {
 		});
 
 
-		parent.addVertex(this);
-		this.on('destroy').take(1).onValue(() => {
-			parent.removeVertex(this);
+
+		/* visibility */
+		this.newProperty('shown', { initial: (this.circuitboard.options.initialVertexVisibility !== false) });
+		this.p('shown').onValue((shown) => {
+			this.object3D.skipDomEvents = !shown;
+			this.circuitboard.object3D[shown ? 'add' : 'remove'](this.object3D); // TODO: remove on destroy
+			parent[shown ? 'addVertex' : 'removeVertex'](this);
+			if (shown) {
+
+				/* strange hack, needed to show glyphs the first time they are shown */
+				// TODO; figure out why this is needed, then use a more elegant solution
+				setTimeout(() => {
+					this.circuitboard.object3D.remove(this.object3D);
+					this.circuitboard.object3D.add(this.object3D);
+				});
+			}
 		});
+
+
+		//parent.addVertex(this);
+		//this.on('destroy').take(1).onValue(() => {
+		//	parent.removeVertex(this);
+		//});
 
 
 
@@ -140,6 +153,8 @@ export default ArtefactP.then((Artefact) => {
 			}).onValue(({x, y}) => {
 				this.position = {x, y};
 			});
+
+
 
 
 	}, {

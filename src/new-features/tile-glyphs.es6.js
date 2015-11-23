@@ -52,6 +52,7 @@ plugin.modify('Tile.prototype')
 						border:           solid 1px #000023;
 						padding:          1px 2px;
 						white-space:      nowrap;
+						z-index:          99999;
 					"></div>
 				`).appendTo('body');
 			}

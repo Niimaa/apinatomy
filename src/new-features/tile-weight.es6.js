@@ -15,7 +15,7 @@ var plugin = $.circuitboard.plugin.do('tile-weight', {
 /* allow a tile to be `open` (or closed) */
 plugin.append('construct', function () {
 
-	/* the 'open' observable */
+	/* the 'weight' observable */
 	this.newProperty('weight', { initial: 1 });
 
 	// TODO: make a tile as weighty as the sum of its children?

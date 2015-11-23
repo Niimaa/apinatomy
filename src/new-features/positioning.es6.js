@@ -24,7 +24,7 @@ plugin.modify('Circuitboard.prototype')
 			isEqual: sizeEquality
 		}).plug(Kefir.merge([
 			Kefir.once(),
-			(this.options.resizeEvent || $(window).asKefirStream('resize'))
+			(this.options.resizeEvent || $(window).asKefirStream('resize').flatMap(() => Kefir.sequentially(500, [0,0,0])))
 		]).map(() => ({
 			height: this.element.height(),
 			width:  this.element.width()

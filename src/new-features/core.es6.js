@@ -32,8 +32,10 @@ plugin.modify('Circuitboard.prototype')
 	}).add('tile', function (tileSelector) {
 		return U.getDef(this._p_circuitboardCore_tilesByModelId, tileSelector, defer).promise;
 	}).add('_registerTile', function (tile) {
-		U.getDef(this._p_circuitboardCore_tilesByModelId, tile.model.id, defer).resolve(tile);
-		this.newTiles.emit(tile);
+		tile.afterConstruct.then(() => {
+			U.getDef(this._p_circuitboardCore_tilesByModelId, tile.model.id, defer).resolve(tile);
+			this.newTiles.emit(tile);
+		});
 	});
 plugin.modify('Tile.prototype')
 	.append('construct', function () {
@@ -100,7 +102,9 @@ plugin.modify('Tile.prototype')
 	});
 plugin.modify('Tilemap')
 	.add('prototype.refreshTiles', function () {
-		P.resolve(this.model).then(model => model.getModels(model.getChildIds())).map(a=>a).filter(this.circuitboard.options.filter || (()=>true)).then((childModels) => {
+		if (this._tilesHaveBeenRefreshed) { return P.resolve() }
+		this._tilesHaveBeenRefreshed = true;
+		return P.resolve(this.model).then(model => model.getModels(model.getChildIds())).map(a=>a).filter(this.circuitboard.options.filter || (()=>true)).then((childModels) => {
 
 			/* gather tiles */
 			let tilesP = [];
@@ -113,16 +117,18 @@ plugin.modify('Tilemap')
 			}
 
 			/* resizing and repositioning tiles */
-			P.resolve(tilesP).map(a=>a).tap((tiles) => {
+			return P.resolve(tilesP).map(a=>a).tap((tiles) => {
 				const spacing = U.defOr(this.options.tileSpacing, this.circuitboard.options.tileSpacing);
-				const weightProps = tiles.map(tile => tile.p('weight'));
 
 				let state = {};
 				const cb = ([{width, height}]) => {
 
+					/* only show shown tiles */
+					let shownTiles = tiles.filter(t => t.shown);
+
 					/* get tile positioning array, and incorporate spacing */
 					// which layout to use (e.g., '.rows') should be customizable at some point
-					let positioning = this.constructor.layouts.rows(tiles, {
+					let positioning = this.constructor.layouts.rows(shownTiles, {
 						width:  width  - spacing,
 						height: height - spacing
 					}, state).map(({size: {width, height}, position: {x, y}}) => ({
@@ -137,16 +143,18 @@ plugin.modify('Tilemap')
 					}));
 
 					/* set tile positioning */
-					for (let i = 0; i < tiles.length; ++i) {
-						tiles[i].size     = positioning[i].size;
-						tiles[i].position = positioning[i].position;
+					for (let i = 0; i < shownTiles.length; ++i) {
+						shownTiles[i].size     = positioning[i].size;
+						shownTiles[i].position = positioning[i].position;
 					}
 
 				};
 				if (this._deregisterTilePositionObserver) {
 					this._deregisterTilePositionObserver();
 				}
-				let obs = Kefir.combine([this.p('size'), ...weightProps]);
+				const weightProps = tiles.map(tile => tile.p('weight'));
+				const shownProps = tiles.map(tile => tile.p('shown'));
+				let obs = Kefir.combine([this.p('size'), ...weightProps, ...shownProps]);
 				obs.onValue(cb);
 				this._deregisterTilePositionObserver = () => { obs.offValue(cb) };
 			});
